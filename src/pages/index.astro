@@ -1,0 +1,209 @@
+﻿---
+import Layout from '../layouts/Layout.astro';
+---
+<Layout title="GeoScore - Free GEO Audit Tool">
+  <section class="text-center py-8 md:py-12" id="hero-section">
+    <h1 class="text-4xl md:text-6xl font-extrabold mb-6">Check Your Website's <span class="gradient-text">GEO Readiness</span></h1>
+    <p class="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto mb-4">Score your site's visibility to ChatGPT, Perplexity, Claude, Gemini, and Google AI Overviews.</p>
+    <p class="text-sm text-gray-500 mb-8">Generative Engine Optimization (GEO) - 12 dimensions - 100-point scoring</p>
+    <div class="max-w-xl mx-auto mb-8"><div class="flex gap-3">
+      <input id="url-input" type="url" placeholder="e.g. deng.zh.kg" class="flex-1 px-5 py-3.5 rounded-xl glass-light text-white placeholder-gray-500 border border-gray-600 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 text-lg transition" />
+      <button onclick="startAudit()" id="audit-btn" class="px-8 py-3.5 rounded-xl font-semibold text-white bg-gradient-to-r from-geo-600 to-brand-600 hover:from-geo-500 hover:to-brand-500 transition transform hover:scale-105 active:scale-95 shadow-lg">Start Audit</button>
+    </div></div>
+  </section>
+  <div id="loading-section" class="hidden text-center py-12">
+    <div class="w-16 h-16 border-4 border-brand-500 border-t-transparent rounded-full animate-spin mx-auto mb-6"></div>
+    <h2 class="text-2xl font-bold mb-2">Analyzing <span class="gradient-text" id="scanning-url"></span></h2>
+    <p class="text-gray-400">Checking robots.txt, llms.txt, schema markup, content quality...</p>
+  </div>
+  <div id="report-section" class="hidden"></div>
+  <div id="history-root" class="max-w-2xl mx-auto mb-8"></div>
+</Layout>
+
+
+<script>
+import { auditUrl } from '../lib/scanner.js';
+import { addToHistory, getHistory } from '../lib/history.js';
+import { exportMarkdown, exportJson, exportCsv } from '../lib/export.js';
+
+const LABELS = { aiCrawlability: "AI Crawlability", aiGuidance: "AI Guidance", structuredData: "Structured Data", metaSocial: "Meta & Social", contentQuality: "Content Quality", eeat: "E-E-A-T", brandEntity: "Brand & Entity", citationReadiness: "Citation Readiness", discoveryEndpoints: "Discovery", agentFriendliness: "Agent Friendly", freshness: "Freshness" };
+const COLORS = ["#22c55e","#3b82f6","#8b5cf6","#f59e0b","#ec4899","#06b6d4","#10b981","#f97316","#6366f1","#14b8a6","#e11d48"];
+const LEVEL_CLR = { Excellent: "text-geo-500", Good: "text-brand-500", Basic: "text-warn-500", Critical: "text-danger-500" };
+const BG_CLR = { Excellent: "bg-geo-500", Good: "bg-brand-500", Basic: "bg-warn-500", Critical: "bg-danger-500" };
+const BORDER_CLR = { Excellent: "border-geo-500/30", Good: "border-brand-500/30", Basic: "border-warn-500/30", Critical: "border-danger-500/30" };
+
+let radarChartInstance = null;
+
+async function getChartJs() {
+  const mod = await import('chart.js');
+  const { Chart, registerables } = mod;
+  Chart.register(...registerables);
+  return Chart;
+}
+
+window.startAudit = async function () {
+  const input = document.getElementById("url-input");
+  const btn = document.getElementById("audit-btn");
+  const url = input.value.trim();
+  if (!url) { input.focus(); return; }
+  btn.disabled = true; btn.textContent = "Scanning...";
+  document.getElementById("hero-section").classList.add("hidden");
+  document.getElementById("loading-section").classList.remove("hidden");
+  document.getElementById("report-section").classList.add("hidden");
+  document.getElementById("scanning-url").textContent = url;
+  try {
+    let targetUrl = url;
+    if (!/^https?:\/\//i.test(targetUrl)) targetUrl = "https://" + targetUrl;
+    const result = await auditUrl(targetUrl);
+    addToHistory(result);
+    localStorage.setItem("geoscope_last_result", JSON.stringify(result));
+    document.getElementById("loading-section").classList.add("hidden");
+    document.getElementById("report-section").classList.remove("hidden");
+    renderReport(result);
+    renderHistory();
+  } catch (err) {
+    document.getElementById("loading-section").innerHTML = "<div class=\"text-danger-500 text-xl\">Audit failed: " + err.message + "</div>";
+  }
+  btn.disabled = false;
+  btn.textContent = "Start Audit";
+};
+
+function renderReport(r) {
+  if (radarChartInstance) { radarChartInstance.destroy(); radarChartInstance = null; }
+  const root = document.getElementById("report-section");
+  const dimKeys = Object.keys(r.dimensions);
+  let html = "<div class=\"fade-in\">";
+
+  // Header
+  html += "<div class=\"flex flex-col lg:flex-row items-start lg:items-center justify-between mb-8 gap-4\">";
+  html += "<div><h1 class=\"text-3xl font-bold mb-1\">GEO Audit Report</h1><a href=\"" + r.url + "\" target=\"_blank\" class=\"text-brand-500 hover:underline text-sm font-mono\">" + r.url + "</a><p class=\"text-gray-500 text-sm mt-1\">" + new Date(r.timestamp).toLocaleString() + "</p></div>";
+  html += "<div class=\"flex items-center gap-4\"><div class=\"text-center\"><div class=\"text-5xl font-extrabold " + LEVEL_CLR[r.level] + "\">" + r.score + "</div><div class=\"text-sm text-gray-400\">/ 100</div></div>";
+  html += "<div class=\"px-4 py-2 rounded-xl text-sm font-bold " + BG_CLR[r.level] + " text-white\">" + r.level + "</div>";
+  html += "<button onclick=\"location.reload()\" class=\"px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 transition text-sm\">New Audit</button></div></div>";
+
+  const levelDesc = { Excellent: "Fully GEO-optimized. Your site is well positioned for AI citation.", Good: "Minor gaps remain. A few targeted fixes will significantly improve AI visibility.", Basic: "Foundation exists but significant work needed. Prioritize high-weight dimensions.", Critical: "Major overhaul required. Start with robots.txt, llms.txt, and structured data." };
+  html += "<div class=\"mb-8 p-4 rounded-xl glass border " + BORDER_CLR[r.level] + "\"><span class=\"text-gray-300 text-sm\">" + (levelDesc[r.level] || "") + "</span></div>";
+
+  if (r.deduction > 0) {
+    html += "<div class=\"glass rounded-xl p-4 mb-6 border border-danger-500/30 text-sm\"><span class=\"text-danger-500 font-bold\">−" + r.deduction + " points deducted</span> for negative signals</div>";
+  }
+
+  // Radar + Breakdown
+  html += "<div class=\"grid lg:grid-cols-2 gap-6 mb-8\">";
+  html += "<div class=\"glass rounded-2xl p-6\"><h2 class=\"text-lg font-bold mb-4\">12-Dimension Radar</h2><div class=\"aspect-square max-w-md mx-auto\"><canvas id=\"radarChart\"></canvas></div></div>";
+  html += "<div class=\"glass rounded-2xl p-6\"><h2 class=\"text-lg font-bold mb-4\">Score Breakdown</h2><div class=\"space-y-2\">";
+  dimKeys.forEach(function(k) {
+    const d = r.dimensions[k];
+    const pct = d.percentage || 0;
+    html += "<div class=\"flex items-center gap-3 text-sm\"><span class=\"w-2 h-2 rounded-full flex-shrink-0\" style=\"background:" + COLORS[dimKeys.indexOf(k) % COLORS.length] + "\"></span><span class=\"w-36 text-gray-300\">" + (LABELS[k] || k) + "</span><div class=\"flex-1 h-2 rounded-full bg-gray-700 overflow-hidden\"><div class=\"h-full rounded-full\" style=\"width:" + pct + "%;background:" + COLORS[dimKeys.indexOf(k) % COLORS.length] + "\"></div></div><span class=\"w-12 text-right font-mono text-sm\">" + Math.round(pct) + "%</span></div>";
+  });
+  html += "</div></div></div>";
+
+  // Negative signals
+  if (r.negativeSignals && r.negativeSignals.deductions && r.negativeSignals.deductions.length > 0) {
+    html += "<div class=\"glass rounded-2xl p-6 mb-8 border border-danger-500/20\">";
+    html += "<h2 class=\"text-lg font-bold mb-4 flex items-center gap-2\"><span class=\"text-danger-500\">⚠</span> Negative Signals <span class=\"text-sm text-gray-500 font-normal\">(−" + r.deduction + " pts)</span></h2><div class=\"space-y-2\">";
+    r.negativeSignals.deductions.forEach(function(d) {
+      html += "<div class=\"flex items-start gap-3 text-sm p-3 rounded-xl bg-danger-500/5\"><span class=\"text-danger-400 flex-shrink-0 mt-0.5\">⚠</span><div><div class=\"text-gray-200\">" + d.label + "</div><div class=\"text-xs text-gray-500\">−" + d.deduction + " pts" + (d.severity ? " \u00b7 " + d.severity : "") + "</div></div></div>";
+    });
+    html += "</div></div>";
+  }
+
+  // SEO Supplement
+  if (r.seoSupplement) {
+    const s = r.seoSupplement;
+    html += "<div class=\"glass rounded-2xl p-6 mb-8\"><h2 class=\"text-lg font-bold mb-4\">SEO Supplement <span class=\"text-sm text-gray-500 font-normal\">(informational, not GEO-scored)</span></h2><div class=\"grid grid-cols-2 md:grid-cols-4 gap-3\">";
+    html += "<div class=\"p-3 rounded-xl bg-white/5 text-center\"><div class=\"text-xl mb-1\">" + (s.https ? "✅" : "❌") + "</div><div class=\"text-xs text-gray-400\">HTTPS</div></div>";
+    html += "<div class=\"p-3 rounded-xl bg-white/5 text-center\"><div class=\"text-xl mb-1\">" + (s.hasTitle ? "✅" : "❌") + "</div><div class=\"text-xs text-gray-400\">Title Tag</div></div>";
+    html += "<div class=\"p-3 rounded-xl bg-white/5 text-center\"><div class=\"text-xl mb-1\">" + (s.hasMetaDesc ? "✅" : "❌") + "</div><div class=\"text-xs text-gray-400\">Meta Description</div></div>";
+    html += "<div class=\"p-3 rounded-xl bg-white/5 text-center\"><div class=\"text-xl mb-1\">" + (s.responsive ? "✅" : "❌") + "</div><div class=\"text-xs text-gray-400\">Viewport / Responsive</div></div>";
+    html += "</div></div>";
+  }
+
+  // Recommendations
+  html += "<div class=\"glass rounded-2xl p-6 mb-8\"><h2 class=\"text-lg font-bold mb-4\">Prioritized Fixes</h2>";
+  if (r.recommendations && r.recommendations.length > 0) {
+    html += "<div class=\"space-y-3\">";
+    r.recommendations.slice(0, 15).forEach(function(rec, i) {
+      html += "<div class=\"flex items-start gap-3 text-sm p-3 rounded-xl bg-white/5\"><span class=\"mt-0.5 flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold bg-gray-500/20 text-gray-400\">" + (i + 1) + "</span><div class=\"flex-1\"><div class=\"text-gray-200 font-medium\">" + rec.issue + "</div><div class=\"text-gray-500 mt-0.5\">" + rec.fix + "</div><div class=\"text-xs text-gray-600 mt-0.5\">" + rec.dimension + " \u00b7 " + rec.priority + "</div></div></div>";
+    });
+    html += "</div>";
+  } else { html += "<p class=\"text-gray-400\">No issues found!</p>"; }
+  html += "</div>";
+
+  // Export buttons
+  html += "<div class=\"flex flex-wrap gap-3 justify-center mb-8\">";
+  html += "<button onclick=\"doExport('md')\" class=\"px-5 py-2.5 rounded-xl text-sm font-semibold bg-white/10 hover:bg-white/20 transition\">📝 Export Markdown</button>";
+  html += "<button onclick=\"doExport('json')\" class=\"px-5 py-2.5 rounded-xl text-sm font-semibold bg-white/10 hover:bg-white/20 transition\">📋 Export JSON</button>";
+  html += "<button onclick=\"doExport('csv')\" class=\"px-5 py-2.5 rounded-xl text-sm font-semibold bg-white/10 hover:bg-white/20 transition\">📊 Export CSV</button>";
+  html += "</div></div>";
+
+  root.innerHTML = html;
+  renderRadarChart(r);
+}
+
+async function renderRadarChart(r) {
+  const canvas = document.getElementById("radarChart");
+  if (!canvas) return;
+  const Chart = await getChartJs();
+  const dimKeys = Object.keys(r.dimensions);
+  radarChartInstance = new Chart(canvas, {
+    type: "radar",
+    data: {
+      labels: dimKeys.map(function(k) { return LABELS[k] || k; }),
+      datasets: [{
+        label: "GEO Score",
+        data: dimKeys.map(function(k) { const d = r.dimensions[k]; return d.percentage || 0; }),
+        backgroundColor: "rgba(59, 130, 246, 0.15)",
+        borderColor: "#3b82f6",
+        borderWidth: 2,
+        pointBackgroundColor: COLORS,
+        pointBorderColor: "#fff",
+        pointBorderWidth: 1,
+        pointRadius: 4,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: true,
+      scales: {
+        r: {
+          beginAtZero: true,
+          max: 100,
+          ticks: { display: false },
+          grid: { color: "rgba(148, 163, 184, 0.15)" },
+          angleLines: { color: "rgba(148, 163, 184, 0.15)" },
+          pointLabels: { color: "#94a3b8", font: { size: 10 } }
+        }
+      },
+      plugins: { legend: { display: false } }
+    }
+  });
+}
+
+window.doExport = function (fmt) {
+  const stored = localStorage.getItem("geoscope_last_result");
+  if (!stored) return;
+  const r = JSON.parse(stored);
+  let content, ext, mime;
+  if (fmt === "md") { content = exportMarkdown(r); ext = "md"; mime = "text/markdown"; }
+  else if (fmt === "json") { content = exportJson(r); ext = "json"; mime = "application/json"; }
+  else { content = exportCsv(r); ext = "csv"; mime = "text/csv"; }
+  const blob = new Blob([content], { type: mime });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "geoscope-report-" + r.url.replace(/[^a-z0-9]/gi, "-").substring(0, 40) + "." + ext;
+  a.click();
+  URL.revokeObjectURL(a.href);
+};
+
+function renderHistory() {
+  const history = getHistory();
+  const root = document.getElementById("history-root");
+  if (history.length > 0) {
+    root.innerHTML = "<div class=\"glass rounded-xl p-4 text-sm\"><div class=\"text-gray-400 mb-2\">Recent audits:</div>" + history.slice(0, 5).map(function(e) { return "<div class=\"flex justify-between items-center py-1.5 px-2 hover:bg-white/5 rounded cursor-pointer\" onclick=\"document.getElementById('url-input').value='" + e.url + "';window.startAudit()\"><span class=\"text-gray-300\">" + e.url + "</span><span class=\"font-bold\">" + e.score + "/100</span></div>"; }).join("") + "</div>";
+  }
+}
+
+document.addEventListener("DOMContentLoaded", function() { renderHistory(); });
+</script>
