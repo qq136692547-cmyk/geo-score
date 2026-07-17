@@ -1,4 +1,0 @@
-﻿User-agent: *
-Allow: /
-
-Sitemap: https://qq136692547-cmyk.github.io/geo-score/sitemap.xml

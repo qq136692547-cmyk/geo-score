@@ -1,6 +1,0 @@
-﻿name = "geo-score-proxy"
-main = "index.js"
-compatibility_date = "2026-01-01"
-
-[env.production]
-vars = { ENVIRONMENT = "production" }

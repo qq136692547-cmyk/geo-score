@@ -188,6 +188,40 @@ MIT
 
 PRs welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
+
+## Credits & Thanks
+
+GeoScore synthesizes methodologies from these **30+ open-source GEO/AEO projects**. We extend our gratitude to the entire community.
+
+| Project | Stars | What we learned |
+|---------|-------|-----------------|
+| [qq136692547-cmyk/geo-optimization-handbook](https://github.com/qq136692547-cmyk/geo-optimization-handbook) | — | Core GEO handbook, 8-dimension 100-point scoring |
+| [Auriti-Labs/geo-optimizer-skill](https://github.com/Auriti-Labs/geo-optimizer-skill) | ⭐594 | 8-dimension scoring, 47 strategies, multi-format output |
+| [zubair-trabzada/geo-seo-claude](https://github.com/zubair-trabzada/geo-seo-claude) | ⭐9011 | GEO-first SEO skill, parallel sub-agent auditing |
+| [metawhisp/best-aeo-skill](https://github.com/metawhisp/best-aeo-skill) | ⭐1 | 4-vector composite score, 33 evidence collectors, confidence labels |
+| [evolv3ai/aeo-audit](https://github.com/evolv3ai/aeo-audit) | — | 14 ranking factor AEO scoring with weighted dimensions |
+| [agentgram/ax-score](https://github.com/agentgram/ax-score) | ⭐3 | "Lighthouse for AI Agents", 6-dimension agent-friendliness |
+| [antlio/agentimization](https://github.com/antlio/agentimization) | ⭐4 | CLI GEO audit with radar visualization |
+| [carter-wzq/geo-audit-mcp](https://github.com/carter-wzq/geo-audit-mcp) | — | 31-signal MCP GEO audit server |
+| [geo-team-red/geo-optimizer](https://github.com/geo-team-red/geo-optimizer) | ⭐202 | Pluggable GEO framework in Go, 5 built-in strategies |
+| [cxcscmu/AutoGEO](https://github.com/cxcscmu/AutoGEO) | ⭐182 | ICLR 2026 automated GEO framework |
+| [ai-search-guru/getcito](https://github.com/ai-search-guru/getcito-worlds-first-open-source-aio-aeo-or-geo-tool) | ⭐141 | AI search optimization SaaS |
+| [madeburo/GEO-AI-Woo](https://github.com/madeburo/GEO-AI-Woo) | ⭐29 | WordPress GEO integration, llms.txt generation |
+| [waqasbangash121/seo-geo-analyzer](https://github.com/waqasbangash121/seo-geo-analyzer) | — | 24-factor SEO/GEO interactive dashboard |
+| [isreadyai/isreadyai](https://github.com/isreadyai/isreadyai) | ⭐2 | Web UI + CLI + GitHub Action AI visibility scoring |
+| [mykpono/ultimate-seo-geo](https://github.com/mykpono/ultimate-seo-geo) | ⭐58 | Audit->Plan->Execute three-phase workflow |
+| [piiiico/aeo-audit](https://github.com/piiiico/aeo-audit) | — | Schema.org and meta tag deep analysis |
+| [josedasilva11/aeo-audit](https://github.com/josedasilva11/aeo-audit) | — | Python CLI with readability scoring |
+| [onvoyage-ai/gtm-engineer-skills](https://github.com/onvoyage-ai/gtm-engineer-skills) | ⭐1250 | Enterprise-level AEO/GEO skill |
+
+### Research Foundation
+
+- **Princeton KDD 2024** — [GEO: Generative Engine Optimization](https://arxiv.org/abs/2311.09735) (original paper)
+- **CMU ICLR 2026** — [AutoGEO](https://arxiv.org/abs/2510.11438) (automated GEO framework)
+- **UC Berkeley EMNLP 2024** — Negative signals in AI citation
+
+---
+
 ## 🔮 Roadmap
 
 - [ ] Batch audit via sitemap.xml
