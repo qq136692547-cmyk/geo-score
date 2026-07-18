@@ -13,7 +13,7 @@
     ], passed: 0, total: 5 };
   }
 
-  const externalLinks = (html.match(/<a[^>]+href=["\']https?:\/\/[^"\'\/]+[^"\']["\'][^>]*>/gi) || []);
+  const externalLinks = (html.match(/<a[^>]+href=["']https?:\/\/[^"']+["'][^>]*>/gi) || []);
   const eduGovLinks = externalLinks.filter((l) => /\.edu\b|\.gov\b/.test(l)).length;
   const totalExternal = externalLinks.length;
 
