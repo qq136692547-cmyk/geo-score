@@ -10,10 +10,125 @@ Score your site&rsquo;s AI search visibility &mdash; ChatGPT, Perplexity, Claude
 </p> <div class="max-w-xl mx-auto mb-6"> <div class="flex gap-3"> <div class="flex-1 relative"> <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v4l3 3"></path></svg> <input id="url-input" type="url" placeholder="e.g. deng.zh.kg" class="w-full pl-12 pr-5 py-3.5 rounded-xl bg-white/5 text-white placeholder-gray-500 border border-gray-600 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 text-lg transition"> </div> <button onclick="startAudit()" id="audit-btn" class="px-8 py-3.5 rounded-xl font-semibold text-white bg-gradient-to-r from-geo-600 to-brand-600 hover:from-geo-500 hover:to-brand-500 active:from-geo-700 active:to-brand-700 transition shadow-lg shadow-brand-500/20 hover:shadow-brand-500/30 whitespace-nowrap">Start Audit</button> </div> </div> <div class="flex items-center justify-center gap-4 text-xs"> <a onclick="showBatchInput()" class="text-gray-500 hover:text-brand-400 transition cursor-pointer underline underline-offset-2">Batch audit via sitemap</a> <span class="text-gray-600">|</span> <a onclick="showComparison()" id="compare-link" class="text-gray-500 hover:text-brand-400 transition cursor-pointer underline underline-offset-2" style="display:none">Compare sites</a> </div> <div id="batch-section" class="hidden max-w-lg mx-auto mt-4 card p-4"> <h3 class="text-sm font-semibold mb-2 text-gray-300">Batch Audit from Sitemap</h3> <input id="sitemap-url" type="url" placeholder="e.g. example.com/sitemap.xml" class="w-full px-4 py-2 rounded-lg bg-white/5 text-white placeholder-gray-500 border border-gray-600 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 text-sm transition mb-3"> <button onclick="startBatchAudit()" class="px-5 py-2 rounded-lg text-sm font-semibold text-white bg-gradient-to-r from-geo-600 to-brand-600 hover:from-geo-500 hover:to-brand-500 transition">Start Batch Scan</button> <div id="batch-progress" class="mt-3 hidden"> <div class="w-full h-1 rounded-full bg-gray-700/50 overflow-hidden"><div id="batch-bar" class="h-full rounded-full bg-brand-500" style="width:0%"></div></div> <p id="batch-status" class="text-xs text-gray-500 mt-1"></p> </div> <div id="batch-results" class="mt-3 text-xs text-left max-h-60 overflow-y-auto"></div> </div> <div id="compare-section" class="hidden max-w-lg mx-auto mt-4 card p-4" style="display:none"> <h3 class="text-sm font-semibold mb-2 text-gray-300">Select sites to compare</h3> <div id="compare-list" class="space-y-1 mb-3 max-h-40 overflow-y-auto"></div> <button onclick="runComparison()" class="px-4 py-1.5 rounded-lg text-xs font-semibold text-white bg-brand-600 hover:bg-brand-500 transition">Compare Selected</button> </div> </div> </section> <div id="loading-section" class="hidden max-w-lg mx-auto py-12"> <div class="card p-8 text-center"> <div class="scan-bar rounded-full mb-8"></div> <div class="space-y-1 mb-8" id="scan-steps"> <div class="scan-step active" data-step="0"><span class="scan-step-dot"></span><span class="text-sm text-gray-300">Connecting to server</span></div> <div class="scan-step" data-step="1"><span class="scan-step-dot"></span><span class="text-sm text-gray-300">Fetching robots.txt &amp; AI directives</span></div> <div class="scan-step" data-step="2"><span class="scan-step-dot"></span><span class="text-sm text-gray-300">Analyzing llms.txt &amp; AI guidance</span></div> <div class="scan-step" data-step="3"><span class="scan-step-dot"></span><span class="text-sm text-gray-300">Parsing structured data &amp; schema</span></div> <div class="scan-step" data-step="4"><span class="scan-step-dot"></span><span class="text-sm text-gray-300">Checking meta tags &amp; social signals</span></div> <div class="scan-step" data-step="5"><span class="scan-step-dot"></span><span class="text-sm text-gray-300">Evaluating content &amp; E-E-A-T signals</span></div> <div class="scan-step" data-step="6"><span class="scan-step-dot"></span><span class="text-sm text-gray-300">Calculating final score</span></div> </div> <p class="text-xs text-gray-500">Analyzing <span class="text-gray-300 font-mono" id="scanning-url"></span></p> </div> </div> <div id="report-section" class="hidden max-w-6xl mx-auto"></div> <div id="history-root" class="max-w-2xl mx-auto mb-8"></div>  </main> <footer class="border-t border-gray-700/50"> <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"> <div class="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-400"> <p>Open-source GEO audit tool &middot; MIT Licensed</p> <p class="text-xs text-gray-500">Powered by <a href="https://github.com/qq136692547-cmyk/geo-optimization-handbook" class="text-brand-500 hover:underline" target="_blank">GEO Optimization Handbook</a> &middot; <a href="/about" class="text-gray-500 hover:text-gray-300 transition">Methodology</a></p> </div> </div> </footer> </body></html> <script>
 // GeoScore bundled JS (29 files)
 
-// --- components/radarChart.js ---
-var LABELS = { aiCrawlability: "AI Crawlability", aiGuidance: "AI Guidance", structuredData: "Structured Data", metaSocial: "Meta & Social", contentQuality: "Content Quality", eeat: "E-E-A-T", brandEntity: "Brand & Entity", citationReadiness: "Citation Readiness", discoveryEndpoints: "Discovery", agentFriendliness: "Agent Friendly", freshness: "Freshness" };
+// --- components/historyList.js ---
+const LEVEL_CLR = { Excellent: "text-geo-500", Good: "text-brand-500", Basic: "text-warn-500", Critical: "text-danger-500" };
 
-var COLORS = ["#22c55e","#3b82f6","#8b5cf6","#f59e0b","#ec4899","#06b6d4","#10b981","#f97316","#6366f1","#14b8a6","#e11d48"];
+
+
+function renderHistoryList(history) {
+
+  if (!history || history.length === 0) return "";
+
+  return '<div class="card p-4 text-sm"><div class="text-gray-400 mb-2 text-xs uppercase tracking-wider font-semibold">Recent Audits</div>' +
+
+    history.slice(0, 5).map(function(e) {
+
+      var levelCls = LEVEL_CLR[e.level] || "text-gray-400";
+
+      return '<div class="flex justify-between items-center py-2 px-3 card-hover rounded-lg cursor-pointer" onclick="document.getElementById('url-input').value='' + e.url.replace(/'/g, "\\'") + '';window.startAudit()"><span class="text-gray-300 text-sm truncate mr-2">' + e.url + '</span><span class="font-bold text-sm ' + levelCls + '">' + e.score + '</span></div>';
+
+    }).join("") +
+
+    '</div>';
+
+}
+
+// --- components/dimensionBreakdown.js ---
+const LABELS = { aiCrawlability: "AI Crawlability", aiGuidance: "AI Guidance", structuredData: "Structured Data", metaSocial: "Meta & Social", contentQuality: "Content Quality", eeat: "E-E-A-T", brandEntity: "Brand & Entity", citationReadiness: "Citation Readiness", discoveryEndpoints: "Discovery", agentFriendliness: "Agent Friendly", freshness: "Freshness" };
+
+
+
+function renderDimensionBreakdown(dimensions) {
+
+  const dimKeys = Object.keys(dimensions);
+
+  return '<div class="stagger-section fade-in-delay-3 card p-6 mb-8">' +
+
+    '<h2 class="text-lg font-bold mb-5">Dimension Breakdown</h2>' +
+
+    '<div class="space-y-4">' +
+
+    dimKeys.map(function(k) {
+
+      var d = dimensions[k];
+
+      var label = LABELS[k] || k;
+
+      var pct = d.percentage || 0;
+
+      var barColor = pct >= 80 ? 'bg-geo-500' : pct >= 60 ? 'bg-brand-500' : pct >= 40 ? 'bg-warn-500' : 'bg-danger-500';
+
+      var checkCount = (d.passed || 0) + "/" + (d.total || d.checks || 0);
+
+      var items = (d.items || []).map(function(item) {
+
+        var icon = item.pass ? ICONS.check : (item.warn ? ICONS.warning : ICONS.cross);
+
+        var iconCls = item.pass ? 'text-geo-500' : (item.warn ? 'text-warn-500' : 'text-danger-500');
+
+        return '<div class="flex items-start gap-2 py-1.5 text-sm"><span class="flex-shrink-0 mt-0.5 ' + iconCls + '">' + icon + '</span><span class="text-gray-300">' + item.label + '</span></div>';
+
+      }).join("");
+
+      return '<div class="card-hover p-4 rounded-xl">' +
+
+        '<div class="flex justify-between items-center mb-2"><span class="text-sm font-medium text-gray-200">' + label + '</span><span class="text-xs font-mono text-gray-500">' + pct + '% &middot; ' + checkCount + '</span></div>' +
+
+        '<div class="w-full h-1.5 rounded-full bg-gray-700/50 overflow-hidden"><div class="h-full rounded-full ' + barColor + '" style="width:' + pct + '%"></div></div>' +
+
+        (items ? '<div class="mt-3 pl-1">' + items + '</div>' : '') +
+
+      '</div>';
+
+    }).join("") +
+
+    '</div></div>';
+
+}
+
+// --- lib/icons.js ---
+/**
+
+ * Minimal SVG icon set — inline SVGs, zero dependencies.
+
+ * All icons: 24x24 viewBox, 2px stroke, round caps.
+
+ */
+
+const ICONS = {
+
+  check: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>',
+
+  cross: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>',
+
+  warning: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#eab308" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+
+  alert: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>',
+
+  markdown: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h18v16H3z"/><path d="M8 15V9l3 3 3-3v6"/></svg>',
+
+  json: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M9 15v-2a2 2 0 0 1 2-2h1"/></svg>',
+
+  csv: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><rect x="8" y="13" width="8" height="3" rx="1"/></svg>',
+
+  scan: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><circle cx="12" cy="12" r="3"/></svg>',
+
+  globe: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>',
+
+  arrowUp: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>',
+
+  external: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>',
+
+};
+
+
+
+ICONS;
+
+// --- components/radarChart.js ---
+const LABELS = { aiCrawlability: "AI Crawlability", aiGuidance: "AI Guidance", structuredData: "Structured Data", metaSocial: "Meta & Social", contentQuality: "Content Quality", eeat: "E-E-A-T", brandEntity: "Brand & Entity", citationReadiness: "Citation Readiness", discoveryEndpoints: "Discovery", agentFriendliness: "Agent Friendly", freshness: "Freshness" };
+
+const COLORS = ["#22c55e","#3b82f6","#8b5cf6","#f59e0b","#ec4899","#06b6d4","#10b981","#f97316","#6366f1","#14b8a6","#e11d48"];
 
 
 
@@ -141,43 +256,384 @@ async function getChartJs() {
 
 }
 
-// --- components/historyList.js ---
-var LEVEL_CLR = { Excellent: "text-geo-500", Good: "text-brand-500", Basic: "text-warn-500", Critical: "text-danger-500" };
+// --- lib/analyzers/meta.js ---
+function analyzeMeta(html) {
+
+  const checks = [];
+
+  let score = 0;
+
+  const maxScore = 10;
 
 
 
-function renderHistoryList(history) {
+  if (!html) {
 
-  if (!history || history.length === 0) return "";
+    return { score: 0, maxScore, checks: [
 
-  return '<div class="card p-4 text-sm"><div class="text-gray-400 mb-2 text-xs uppercase tracking-wider font-semibold">Recent Audits</div>' +
+      { id: 'og-title', label: 'og:title present and unique', passed: false, weight: 2 },
 
-    history.slice(0, 5).map(function(e) {
+      { id: 'og-desc', label: 'og:description present (120-160 chars)', passed: false, weight: 2 },
 
-      var levelCls = LEVEL_CLR[e.level] || "text-gray-400";
+      { id: 'twitter-card', label: 'twitter:card present', passed: false, weight: 2 },
 
-      return '<div class="flex justify-between items-center py-2 px-3 card-hover rounded-lg cursor-pointer" onclick="document.getElementById('url-input').value='' + e.url.replace(/'/g, "\\'") + '';window.startAudit()"><span class="text-gray-300 text-sm truncate mr-2">' + e.url + '</span><span class="font-bold text-sm ' + levelCls + '">' + e.score + '</span></div>';
+      { id: 'canonical', label: 'Canonical URL set', passed: false, weight: 2 },
+
+      { id: 'lang', label: 'HTML lang attribute correct', passed: false, weight: 2 },
+
+    ], passed: 0, total: 5 };
+
+  }
+
+
+
+  const ogTitle = extractMeta(html, 'og:title');
+
+  checks.push({ id: 'og-title', label: 'og:title present and unique', passed: !!ogTitle, weight: 2 });
+
+  if (ogTitle) score += 2;
+
+
+
+  const ogDesc = extractMeta(html, 'og:description');
+
+  const descLenOk = ogDesc && ogDesc.length >= 60 && ogDesc.length <= 200;
+
+  checks.push({ id: 'og-desc', label: 'og:description present ' + (ogDesc ? `(${ogDesc.length} chars)` : ''), passed: !!ogDesc && descLenOk, weight: 2 });
+
+  if (ogDesc && descLenOk) score += 2;
+
+
+
+  const twitterCard = extractMeta(html, 'twitter:card');
+
+  checks.push({ id: 'twitter-card', label: 'twitter:card present', passed: !!twitterCard, weight: 2 });
+
+  if (twitterCard) score += 2;
+
+
+
+  const canonical = extractLink(html, 'canonical');
+
+  checks.push({ id: 'canonical', label: 'Canonical URL set', passed: !!canonical, weight: 2 });
+
+  if (canonical) score += 2;
+
+
+
+  const langMatch = html.match(/<html[^>]*\blang=["\']([^"\']+)["\']/i);
+
+  const langOk = langMatch && langMatch[1].length >= 2;
+
+  checks.push({ id: 'lang', label: 'HTML lang attribute' + (langMatch ? ` (${langMatch[1]})` : ''), passed: !!langOk, weight: 2 });
+
+  if (langOk) score += 2;
+
+
+
+  return { score, maxScore, checks, passed: checks.filter((c) => c.passed).length, total: checks.length };
+
+}
+
+
+
+function extractMeta(html, property) {
+
+  const propPattern = new RegExp(`<meta[^>]+(?:property|name)=["\']${escapeRegex(property)}["\'][^>]+content=["\']([^"']+)["\']`, 'i');
+
+  const m = html.match(propPattern);
+
+  if (m) return m[1].trim();
+
+  const altPattern = new RegExp(`<meta[^>]+content=["\']([^"']+)["\'][^>]+(?:property|name)=["\']${escapeRegex(property)}["\']`, 'i');
+
+  const m2 = html.match(altPattern);
+
+  return m2 ? m2[1].trim() : null;
+
+}
+
+
+
+function extractLink(html, rel) {
+
+  const m = html.match(new RegExp(`<link[^>]+rel=["\']${rel}["\'][^>]+href=["\']([^"']+)["\']`, 'i'));
+
+  if (m) return m[1];
+
+  const m2 = html.match(new RegExp(`<link[^>]+href=["\']([^"']+)["\'][^>]+rel=["\']${rel}["\']`, 'i'));
+
+  return m2 ? m2[1] : null;
+
+}
+
+
+
+function escapeRegex(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+
+
+
+;
+
+// --- lib/analyzers/brand.js ---
+function analyzeBrand(html, schemaResult) {
+
+  const checks = [];
+
+  let score = 0;
+
+  const maxScore = 8;
+
+
+
+  if (!html) {
+
+    return { score: 0, maxScore, checks: [
+
+      { id: 'brand-consistent', label: 'Consistent brand name across pages', passed: false, weight: 2 },
+
+      { id: 'about-page', label: 'About page with details', passed: false, weight: 2 },
+
+      { id: 'contact', label: 'Contact information available', passed: false, weight: 2 },
+
+      { id: 'sameas', label: 'sameAs links in Organization schema', passed: false, weight: 2 },
+
+    ], passed: 0, total: 4 };
+
+  }
+
+
+
+  const titleBrand = html.match(/<title[^>]*>([^<]+)<\/title>/i);
+
+  const ogSiteName = extractMetaSimple(html, 'og:site_name');
+
+  const brandName = titleBrand?.[1]?.split(/[|-–—]/)?.[0]?.trim() || ogSiteName || '';
+
+  const brandConsistent = brandName.length > 0;
+
+  checks.push({ id: 'brand-consistent', label: 'Brand name detected' + (brandName ? ` (${brandName.slice(0, 30)})` : ''), passed: brandConsistent, weight: 2 });
+
+  if (brandConsistent) score += 2;
+
+
+
+  const hasAboutLink = /href=["\'][^"\']*about[^"\']*["\']/i.test(html);
+
+  checks.push({ id: 'about-page', label: 'About page link found', passed: hasAboutLink, weight: 2 });
+
+  if (hasAboutLink) score += 2;
+
+
+
+  const hasContact = /contact|email|@|phone|address/i.test(html);
+
+  checks.push({ id: 'contact', label: 'Contact information available', passed: hasContact, weight: 2 });
+
+  if (hasContact) score += 2;
+
+
+
+  const blocks = extractJsonLdSimple(html);
+
+  const orgBlock = blocks.find((b) => b['@type'] === 'Organization' || b['@type']?.includes?.('Organization'));
+
+  const hasSameAs = orgBlock?.sameAs && Array.isArray(orgBlock.sameAs) && orgBlock.sameAs.length > 0;
+
+  checks.push({ id: 'sameas', label: hasSameAs ? 'sameAs links in Organization schema' : 'No sameAs links in Organization schema', passed: !!hasSameAs, weight: 2 });
+
+  if (hasSameAs) score += 2;
+
+
+
+  return { score, maxScore, checks, passed: checks.filter((c) => c.passed).length, total: checks.length };
+
+}
+
+
+
+function extractMetaSimple(html, property) {
+
+  const m = html.match(new RegExp(`<meta[^>]+(?:property|name)=["\']${property}["\'][^>]+content=["\']([^"\']+)["\']`, 'i'));
+
+  if (m) return m[1];
+
+  const m2 = html.match(new RegExp(`<meta[^>]+content=["\']([^"\']+)["\'][^>]+(?:property|name)=["\']${property}["\']`, 'i'));
+
+  return m2 ? m2[1] : null;
+
+}
+
+
+
+function extractJsonLdSimple(html) {
+
+  const blocks = [];
+
+  const regex = /<script[^>]*type=["\']application\/ld\+json["\'][^>]*>([\s\S]*?)<\/script>/gi;
+
+  let match;
+
+  while ((match = regex.exec(html)) !== null) {
+
+    try {
+
+      const parsed = JSON.parse(match[1].trim());
+
+      if (Array.isArray(parsed)) blocks.push(...parsed);
+
+      else blocks.push(parsed);
+
+    } catch {}
+
+  }
+
+  return blocks;
+
+}
+
+
+
+;
+
+// --- components/seoSupplement.js ---
+function renderSeoSupplement(s) {
+
+  if (!s) return "";
+
+  var checks = [
+
+    { label: "HTTPS", ok: s.https },
+
+    { label: "Title Tag", ok: s.hasTitle },
+
+    { label: "Meta Description", ok: s.hasMetaDesc },
+
+    { label: "Responsive Viewport", ok: s.responsive }
+
+  ];
+
+  return '<div class="stagger-section fade-in-delay-5 card p-6 mb-8">' +
+
+    '<h2 class="text-lg font-bold mb-4">SEO Supplement <span class="text-sm text-gray-500 font-normal">(informational)</span></h2>' +
+
+    '<div class="grid grid-cols-2 md:grid-cols-4 gap-3">' +
+
+    checks.map(function(c) {
+
+      var icon = c.ok ? ICONS.check : ICONS.cross;
+
+      var cls = c.ok ? 'text-geo-500' : 'text-gray-500';
+
+      return '<div class="card-hover p-4 rounded-xl text-center"><div class="text-xl mb-1 ' + cls + '">' + icon + '</div><div class="text-xs text-gray-400">' + c.label + '</div></div>';
 
     }).join("") +
 
-    '</div>';
+    '</div></div>';
 
 }
+
+// --- lib/analyzers/eeat.js ---
+function analyzeEeat(html, schemaResult) {
+
+  const checks = [];
+
+  let score = 0;
+
+  const maxScore = 8;
+
+
+
+  if (!html) {
+
+    return { score: 0, maxScore, checks: [
+
+      { id: 'author', label: 'Author bylines on content', passed: false, weight: 2 },
+
+      { id: 'author-schema', label: 'Person schema with credentials', passed: false, weight: 2 },
+
+      { id: 'trust-pages', label: 'Trust pages (About, Privacy, Terms)', passed: false, weight: 2 },
+
+      { id: 'reviews', label: 'Reviews or testimonials', passed: false, weight: 1 },
+
+      { id: 'https-eeat', label: 'HTTPS enabled', passed: false, weight: 1 },
+
+    ], passed: 0, total: 5 };
+
+  }
+
+
+
+  const hasAuthor = /rel=["\']author["\']|<meta[^>]+name=["\']author["\']/i.test(html);
+
+  checks.push({ id: 'author', label: 'Author bylines on content', passed: hasAuthor, weight: 2 });
+
+  if (hasAuthor) score += 2;
+
+
+
+  const blocks = schemaResult?.raw?.blocks || [];
+
+  const hasPersonSchema = blocks.some((b) => b['@type'] === 'Person');
+
+  checks.push({ id: 'author-schema', label: 'Person schema with credentials', passed: hasPersonSchema, weight: 2 });
+
+  if (hasPersonSchema) score += 2;
+
+
+
+  const hasAbout = /about/i.test(html);
+
+  const hasPrivacy = /privacy/i.test(html);
+
+  const hasTerms = /terms/i.test(html);
+
+  const trustCount = [hasAbout, hasPrivacy, hasTerms].filter(Boolean).length;
+
+  checks.push({ id: 'trust-pages', label: `Trust pages: ${trustCount}/3 (About, Privacy, Terms)`, passed: trustCount >= 2, weight: 2 });
+
+  if (trustCount >= 2) score += 2;
+
+
+
+  const hasReviews = /reviews?|testimonials?|trustpilot|g2\.com|\.com\/review/i.test(html);
+
+  checks.push({ id: 'reviews', label: 'Reviews or testimonials', passed: hasReviews, weight: 1 });
+
+  if (hasReviews) score += 1;
+
+
+
+  const hasHttps = /Strict-Transport-Security|<meta[^>]+http-equiv=["\']Content-Security-Policy["\']/i.test(html);
+
+  checks.push({ id: 'https-eeat', label: 'HTTPS & security headers', passed: hasHttps, weight: 1 });
+
+  if (hasHttps) score += 1;
+
+
+
+  return { score, maxScore, checks, passed: checks.filter((c) => c.passed).length, total: checks.length };
+
+}
+
+
+
+;
 
 // --- lib/analyzers/llmstxt.js ---
 function analyzeLlmstxt(llmsTxt) {
 
-  var checks = [];
+  const checks = [];
 
-  var score = 0;
+  let score = 0;
 
-  var maxScore = 12;
+  const maxScore = 12;
 
 
 
   // Exists at root
 
-  var exists = llmsTxt !== null && llmsTxt !== undefined;
+  const exists = llmsTxt !== null && llmsTxt !== undefined;
 
   checks.push({ id: 'exists', label: 'llms.txt exists at root', passed: exists, weight: 4 });
 
@@ -187,11 +643,11 @@ function analyzeLlmstxt(llmsTxt) {
 
   if (exists) {
 
-    var lines = llmsTxt.split('\n');
+    const lines = llmsTxt.split('\n');
 
-    var hasH1 = /^#\s+\S/.test(llmsTxt);
+    const hasH1 = /^#\s+\S/.test(llmsTxt);
 
-    var hasBlockquote = />\s+\S/.test(llmsTxt);
+    const hasBlockquote = />\s+\S/.test(llmsTxt);
 
     checks.push({ id: 'structure', label: 'Has H1 + blockquote structure', passed: hasH1 && hasBlockquote, weight: 3 });
 
@@ -199,7 +655,7 @@ function analyzeLlmstxt(llmsTxt) {
 
 
 
-    var areaCount = (llmsTxt.match(/^##\s+\S/gm) || []).length;
+    const areaCount = (llmsTxt.match(/^##\s+\S/gm) || []).length;
 
     checks.push({ id: 'areas', label: `Has ${areaCount} area section(s) (need 2+)`, passed: areaCount >= 2, weight: 2 });
 
@@ -207,7 +663,7 @@ function analyzeLlmstxt(llmsTxt) {
 
 
 
-    var hasDescriptiveLinks = /\[.+\]\(https?:\/\/[^\)]+\)/.test(llmsTxt);
+    const hasDescriptiveLinks = /\[.+\]\(https?:\/\/[^\)]+\)/.test(llmsTxt);
 
     checks.push({ id: 'links', label: 'Has descriptive links', passed: hasDescriptiveLinks, weight: 2 });
 
@@ -215,7 +671,7 @@ function analyzeLlmstxt(llmsTxt) {
 
 
 
-    var under200 = lines.length <= 200;
+    const under200 = lines.length <= 200;
 
     checks.push({ id: 'length', label: `Under 200 lines (${lines.length})`, passed: under200, weight: 1 });
 
@@ -242,6 +698,252 @@ function analyzeLlmstxt(llmsTxt) {
 
 
 ;
+
+// --- components/negativeSignals.js ---
+function renderNegativeSignals(signals) {
+
+  if (!signals || signals.length === 0) return "";
+
+  var found = signals.filter(function(s) { return s.found; }).length;
+
+  return '<div class="stagger-section fade-in-delay-4 card p-6 mb-8 border-danger-500/20">' +
+
+    '<h2 class="text-lg font-bold mb-4 text-danger-500">' + ICONS.alert + ' Negative Signals (' + found + ' found)</h2>' +
+
+    '<div class="space-y-2">' +
+
+    signals.map(function(s) {
+
+      var icon = s.found ? ICONS.cross : ICONS.check;
+
+      var cls = s.found ? 'text-danger-500' : 'text-geo-500';
+
+      return '<div class="flex items-start gap-2 text-sm"><span class="flex-shrink-0 mt-0.5 ' + cls + '">' + icon + '</span><span class="text-gray-300">' + s.label + '</span></div>';
+
+    }).join("") +
+
+    '</div></div>';
+
+}
+
+// --- lib/analyzers/freshness.js ---
+function analyzeFreshness(html) {
+
+  const checks = [];
+
+  let score = 0;
+
+  const maxScore = 4;
+
+
+
+  if (!html) {
+
+    return { score: 0, maxScore, checks: [
+
+      { id: 'date-modified', label: 'Date modified meta or header', passed: false, weight: 1.5 },
+
+      { id: 'recent-content', label: 'Content references recent dates', passed: false, weight: 1.5 },
+
+      { id: 'copyright-year', label: 'Copyright year is current', passed: false, weight: 1 },
+
+    ], passed: 0, total: 3 };
+
+  }
+
+
+
+  const currentYear = new Date().getFullYear().toString();
+
+
+
+  const hasDateModified = /dateModified|last-modified|lastmod|<time[^>]*>/i.test(html);
+
+  checks.push({ id: 'date-modified', label: 'Date modified meta or header', passed: hasDateModified, weight: 1.5 });
+
+  if (hasDateModified) score += 1.5;
+
+
+
+  const recentYear = (parseInt(currentYear) - 2).toString();
+
+  const hasRecentContent = new RegExp(`20[2-9][4-9]|20[3-9][0-9]`).test(html);
+
+  checks.push({ id: 'recent-content', label: 'Content references recent dates', passed: hasRecentContent, weight: 1.5 });
+
+  if (hasRecentContent) score += 1.5;
+
+
+
+  const hasCurrentCopyright = new RegExp(currentYear).test(html);
+
+  checks.push({ id: 'copyright-year', label: `Copyright year ${currentYear}`, passed: hasCurrentCopyright, weight: 1 });
+
+  if (hasCurrentCopyright) score += 1;
+
+
+
+  return { score, maxScore, checks, passed: checks.filter((c) => c.passed).length, total: checks.length };
+
+}
+
+
+
+;
+
+// --- lib/history.js ---
+const HISTORY_KEY = 'geoscope_history';
+
+
+
+function getHistory() {
+
+  try {
+
+    var data = localStorage.getItem(HISTORY_KEY);
+
+    return data ? JSON.parse(data) : [];
+
+  } catch (e) { return []; }
+
+}
+
+
+
+function addToHistory(result) {
+
+  var history = getHistory();
+
+  var entry = {
+
+    id: Date.now().toString(36),
+
+    url: result.url.replace(/https?:\/\//, "").replace(/\/$/, ""),
+
+    score: result.score,
+
+    level: result.level,
+
+    timestamp: result.timestamp,
+
+    dimensions: result.dimensions ? Object.fromEntries(
+
+      Object.entries(result.dimensions).map(function(kv) { return [kv[0], kv[1].percentage || 0]; })
+
+    ) : {}
+
+  };
+
+  var existing = history.findIndex(function(e) { return e.url === entry.url; });
+
+  if (existing >= 0) history.splice(existing, 1);
+
+  history.unshift(entry);
+
+  if (history.length > 50) history = history.slice(0, 50);
+
+  try { localStorage.setItem(HISTORY_KEY, JSON.stringify(history)); } catch (e) {}
+
+  return entry;
+
+}
+
+
+
+function getUrlHistory(url) {
+
+  var clean = url.replace(/https?:\/\//, "").replace(/\/$/, "");
+
+  return getHistory().filter(function(e) { return e.url === clean; });
+
+}
+
+
+
+function getComparisonData(urls) {
+
+  var all = getHistory();
+
+  return urls.map(function(u) {
+
+    var clean = u.replace(/https?:\/\//, "").replace(/\/$/, "");
+
+    return all.find(function(e) { return e.url === clean; }) || null;
+
+  }).filter(Boolean);
+
+}
+
+
+
+function clearHistory() {
+
+  try { localStorage.removeItem(HISTORY_KEY); } catch (e) {}
+
+}
+
+
+
+;
+
+// --- components/comparisonPanel.js ---
+var DIM_LABELS = { aiCrawlability: "AI Crawlability", aiGuidance: "AI Guidance", structuredData: "Structured Data", metaSocial: "Meta & Social", contentQuality: "Content Quality", eeat: "E-E-A-T", brandEntity: "Brand & Entity", citationReadiness: "Citation Readiness", discoveryEndpoints: "Discovery", agentFriendliness: "Agent Friendly", freshness: "Freshness" };
+
+
+
+function renderComparisonPanel(selected) {
+
+  if (!selected || selected.length < 2) return "";
+
+  var dimKeys = Object.keys(DIM_LABELS);
+
+  return '<div class="stagger-section fade-in-delay-5 card p-6 mb-8">' +
+
+    '<h2 class="text-lg font-bold mb-4">Multi-Site Comparison</h2>' +
+
+    '<div class="overflow-x-auto"><table class="w-full text-sm">' +
+
+    '<thead><tr class="border-b border-gray-700"><th class="pb-2 pr-3 text-left text-gray-400 font-medium">Dimension</th>' +
+
+    selected.map(function(s) {
+
+      return '<th class="pb-2 pr-3 text-left font-mono text-xs ' + lc(s.level) + '">' + s.url + '<br/><span class="text-sm font-bold">' + s.score + '</span></th>';
+
+    }).join("") +
+
+    '</tr></thead><tbody>' +
+
+    dimKeys.map(function(k) {
+
+      return '<tr class="border-b border-gray-700/50">' +
+
+        '<td class="py-2 pr-3 text-gray-300 text-xs">' + DIM_LABELS[k] + '</td>' +
+
+        selected.map(function(s) {
+
+          var pct = s.dimensions && s.dimensions[k] != null ? s.dimensions[k] : 0;
+
+          var bc = pct >= 80 ? "bg-geo-500" : pct >= 60 ? "bg-brand-500" : pct >= 40 ? "bg-warn-500" : "bg-danger-500";
+
+          return '<td class="py-2 pr-3"><div class="flex items-center gap-2"><div class="w-16 h-1.5 rounded-full bg-gray-700/50 overflow-hidden"><div class="h-full rounded-full ' + bc + '" style="width:' + pct + '%"></div></div><span class="text-xs font-mono text-gray-400">' + pct + '%</span></div></td>';
+
+        }).join("") +
+
+        '</tr>';
+
+    }).join("") +
+
+    '</tbody></table></div></div>';
+
+}
+
+
+
+function lc(l) {
+
+  return l === "Excellent" ? "text-geo-500" : l === "Good" ? "text-brand-500" : l === "Basic" ? "text-warn-500" : "text-danger-500";
+
+}
 
 // --- lib/fetcher.js ---
 /**
@@ -325,7 +1027,7 @@ async function fetchResource(url, type) {
 ;
 
 // --- lib/analyzers/robots.js ---
-var CHECKS = [
+const CHECKS = [
 
   { id: 'oai-searchbot', label: 'OAI-SearchBot allowed', weight: 3, check: (txt) => /User-agent:\s*OAI-SearchBot/i.test(txt) && /Allow:\s*\//i.test(txt.split(/User-agent:\s*OAI-SearchBot/i)[1].split(/\nUser-agent:/i)[0]) },
 
@@ -345,7 +1047,7 @@ var CHECKS = [
 
 function analyzeRobots(robotsTxt) {
 
-  var checks = CHECKS.map((c) => ({
+  const checks = CHECKS.map((c) => ({
 
     id: c.id,
 
@@ -357,11 +1059,11 @@ function analyzeRobots(robotsTxt) {
 
   }));
 
-  var passed = checks.filter((c) => c.passed).length;
+  const passed = checks.filter((c) => c.passed).length;
 
-  var total = checks.length;
+  const total = checks.length;
 
-  var score = Math.round((passed / total) * 12);
+  const score = Math.round((passed / total) * 12);
 
   return { score, maxScore: 12, checks, passed, total };
 
@@ -374,11 +1076,11 @@ function analyzeRobots(robotsTxt) {
 // --- lib/analyzers/schema.js ---
 function analyzeSchema(html) {
 
-  var checks = [];
+  const checks = [];
 
-  var score = 0;
+  let score = 0;
 
-  var maxScore = 14;
+  const maxScore = 14;
 
 
 
@@ -402,17 +1104,17 @@ function analyzeSchema(html) {
 
 
 
-  var blocks = extractJsonLd(html);
+  const blocks = extractJsonLd(html);
 
 
 
-  var hasOrg = blocks.some((b) => b['@type'] === 'Organization' || b['@type']?.includes?.('Organization'));
+  const hasOrg = blocks.some((b) => b['@type'] === 'Organization' || b['@type']?.includes?.('Organization'));
 
-  var hasArticle = blocks.some((b) => b['@type'] === 'Article' || b['@type'] === 'NewsArticle' || b['@type'] === 'BlogPosting');
+  const hasArticle = blocks.some((b) => b['@type'] === 'Article' || b['@type'] === 'NewsArticle' || b['@type'] === 'BlogPosting');
 
-  var hasFaq = blocks.some((b) => b['@type'] === 'FAQPage');
+  const hasFaq = blocks.some((b) => b['@type'] === 'FAQPage');
 
-  var hasHowto = blocks.some((b) => b['@type'] === 'HowTo');
+  const hasHowto = blocks.some((b) => b['@type'] === 'HowTo');
 
 
 
@@ -440,11 +1142,11 @@ function analyzeSchema(html) {
 
 
 
-  var allProps = blocks.reduce((acc, b) => acc + Object.keys(b).length, 0);
+  const allProps = blocks.reduce((acc, b) => acc + Object.keys(b).length, 0);
 
-  var avgProps = blocks.length > 0 ? allProps / blocks.length : 0;
+  const avgProps = blocks.length > 0 ? allProps / blocks.length : 0;
 
-  var hasEnoughProps = avgProps >= 5;
+  const hasEnoughProps = avgProps >= 5;
 
   checks.push({ id: 'props', label: `Avg ${Math.round(avgProps)} properties per schema (need 5+)`, passed: hasEnoughProps, weight: 3 });
 
@@ -460,9 +1162,9 @@ function analyzeSchema(html) {
 
 function extractJsonLd(html) {
 
-  var blocks = [];
+  const blocks = [];
 
-  var regex = /<script[^>]*type=["\']application\/ld\+json["\'][^>]*>([\s\S]*?)<\/script>/gi;
+  const regex = /<script[^>]*type=["\']application\/ld\+json["\'][^>]*>([\s\S]*?)<\/script>/gi;
 
   let match;
 
@@ -470,7 +1172,7 @@ function extractJsonLd(html) {
 
     try {
 
-      var parsed = JSON.parse(match[1].trim());
+      const parsed = JSON.parse(match[1].trim());
 
       if (Array.isArray(parsed)) blocks.push(...parsed);
 
@@ -488,133 +1190,14 @@ function extractJsonLd(html) {
 
 ;
 
-// --- lib/analyzers/meta.js ---
-function analyzeMeta(html) {
-
-  var checks = [];
-
-  var score = 0;
-
-  var maxScore = 10;
-
-
-
-  if (!html) {
-
-    return { score: 0, maxScore, checks: [
-
-      { id: 'og-title', label: 'og:title present and unique', passed: false, weight: 2 },
-
-      { id: 'og-desc', label: 'og:description present (120-160 chars)', passed: false, weight: 2 },
-
-      { id: 'twitter-card', label: 'twitter:card present', passed: false, weight: 2 },
-
-      { id: 'canonical', label: 'Canonical URL set', passed: false, weight: 2 },
-
-      { id: 'lang', label: 'HTML lang attribute correct', passed: false, weight: 2 },
-
-    ], passed: 0, total: 5 };
-
-  }
-
-
-
-  var ogTitle = extractMeta(html, 'og:title');
-
-  checks.push({ id: 'og-title', label: 'og:title present and unique', passed: !!ogTitle, weight: 2 });
-
-  if (ogTitle) score += 2;
-
-
-
-  var ogDesc = extractMeta(html, 'og:description');
-
-  var descLenOk = ogDesc && ogDesc.length >= 60 && ogDesc.length <= 200;
-
-  checks.push({ id: 'og-desc', label: 'og:description present ' + (ogDesc ? `(${ogDesc.length} chars)` : ''), passed: !!ogDesc && descLenOk, weight: 2 });
-
-  if (ogDesc && descLenOk) score += 2;
-
-
-
-  var twitterCard = extractMeta(html, 'twitter:card');
-
-  checks.push({ id: 'twitter-card', label: 'twitter:card present', passed: !!twitterCard, weight: 2 });
-
-  if (twitterCard) score += 2;
-
-
-
-  var canonical = extractLink(html, 'canonical');
-
-  checks.push({ id: 'canonical', label: 'Canonical URL set', passed: !!canonical, weight: 2 });
-
-  if (canonical) score += 2;
-
-
-
-  var langMatch = html.match(/<html[^>]*\blang=["\']([^"\']+)["\']/i);
-
-  var langOk = langMatch && langMatch[1].length >= 2;
-
-  checks.push({ id: 'lang', label: 'HTML lang attribute' + (langMatch ? ` (${langMatch[1]})` : ''), passed: !!langOk, weight: 2 });
-
-  if (langOk) score += 2;
-
-
-
-  return { score, maxScore, checks, passed: checks.filter((c) => c.passed).length, total: checks.length };
-
-}
-
-
-
-function extractMeta(html, property) {
-
-  var propPattern = new RegExp(`<meta[^>]+(?:property|name)=["\']${escapeRegex(property)}["\'][^>]+content=["\']([^"']+)["\']`, 'i');
-
-  var m = html.match(propPattern);
-
-  if (m) return m[1].trim();
-
-  var altPattern = new RegExp(`<meta[^>]+content=["\']([^"']+)["\'][^>]+(?:property|name)=["\']${escapeRegex(property)}["\']`, 'i');
-
-  var m2 = html.match(altPattern);
-
-  return m2 ? m2[1].trim() : null;
-
-}
-
-
-
-function extractLink(html, rel) {
-
-  var m = html.match(new RegExp(`<link[^>]+rel=["\']${rel}["\'][^>]+href=["\']([^"']+)["\']`, 'i'));
-
-  if (m) return m[1];
-
-  var m2 = html.match(new RegExp(`<link[^>]+href=["\']([^"']+)["\'][^>]+rel=["\']${rel}["\']`, 'i'));
-
-  return m2 ? m2[1] : null;
-
-}
-
-
-
-function escapeRegex(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
-
-
-
-;
-
 // --- lib/analyzers/content.js ---
 function analyzeContent(html) {
 
-  var checks = [];
+  const checks = [];
 
-  var score = 0;
+  let score = 0;
 
-  var maxScore = 12;
+  const maxScore = 12;
 
 
 
@@ -640,15 +1223,15 @@ function analyzeContent(html) {
 
 
 
-  var text = stripHtml(html);
+  const text = stripHtml(html);
 
 
 
   // H1
 
-  var h1Match = html.match(/<h1[^>]*>([^<]+)<\/h1>/i);
+  const h1Match = html.match(/<h1[^>]*>([^<]+)<\/h1>/i);
 
-  var hasH1 = h1Match && h1Match[1].trim().length > 5;
+  const hasH1 = h1Match && h1Match[1].trim().length > 5;
 
   checks.push({ id: 'h1', label: 'H1 present and descriptive', passed: hasH1, weight: 2 });
 
@@ -658,9 +1241,9 @@ function analyzeContent(html) {
 
   // Word count
 
-  var words = text.split(/\s+/).filter(Boolean).length;
+  const words = text.split(/\s+/).filter(Boolean).length;
 
-  var wordOk = words >= 600;
+  const wordOk = words >= 600;
 
   checks.push({ id: 'wordcount', label: `Content ${words} words` + (words >= 600 ? '' : ' (need 600+)'), passed: wordOk, weight: 2 });
 
@@ -670,7 +1253,7 @@ function analyzeContent(html) {
 
   // Statistics
 
-  var hasStats = /\d+%|\d+\.\d+|\$\d+|\d+ million|\d+ billion/i.test(text);
+  const hasStats = /\d+%|\d+\.\d+|\$\d+|\d+ million|\d+ billion/i.test(text);
 
   checks.push({ id: 'stats', label: 'Statistics cited with sources', passed: hasStats, weight: 2 });
 
@@ -680,13 +1263,13 @@ function analyzeContent(html) {
 
   // Heading hierarchy
 
-  var h1s = (html.match(/<h1[^>]*>/gi) || []).length;
+  const h1s = (html.match(/<h1[^>]*>/gi) || []).length;
 
-  var h2s = (html.match(/<h2[^>]*>/gi) || []).length;
+  const h2s = (html.match(/<h2[^>]*>/gi) || []).length;
 
-  var h3s = (html.match(/<h3[^>]*>/gi) || []).length;
+  const h3s = (html.match(/<h3[^>]*>/gi) || []).length;
 
-  var hierarchyOk = h1s === 1 && h2s >= 1;
+  const hierarchyOk = h1s === 1 && h2s >= 1;
 
   checks.push({ id: 'headings', label: `H1:${h1s} H2:${h2s} H3:${h3s} hierarchy`, passed: hierarchyOk, weight: 2 });
 
@@ -696,7 +1279,7 @@ function analyzeContent(html) {
 
   // Lists
 
-  var hasLists = /<ul[^>]*>/i.test(html) || /<ol[^>]*>/i.test(html) || /<table[^>]*>/i.test(html);
+  const hasLists = /<ul[^>]*>/i.test(html) || /<ol[^>]*>/i.test(html) || /<table[^>]*>/i.test(html);
 
   checks.push({ id: 'lists', label: 'Lists or tables present', passed: hasLists, weight: 2 });
 
@@ -706,9 +1289,9 @@ function analyzeContent(html) {
 
   // External citations
 
-  var externalLinks = (html.match(/<a[^>]+href=["']https?:\/\/[^"']+["'][^>]*>/gi) || []).length;
+  const externalLinks = (html.match(/<a[^>]+href=["']https?:\/\/[^"']+["'][^>]*>/gi) || []).length;
 
-  var citesOk = externalLinks >= 3;
+  const citesOk = externalLinks >= 3;
 
   checks.push({ id: 'citations', label: `${externalLinks} external link(s)` + (citesOk ? '' : ' (need 3+)'), passed: citesOk, weight: 2 });
 
@@ -744,222 +1327,14 @@ function stripHtml(html) {
 
 ;
 
-// --- lib/analyzers/eeat.js ---
-function analyzeEeat(html, schemaResult) {
-
-  var checks = [];
-
-  var score = 0;
-
-  var maxScore = 8;
-
-
-
-  if (!html) {
-
-    return { score: 0, maxScore, checks: [
-
-      { id: 'author', label: 'Author bylines on content', passed: false, weight: 2 },
-
-      { id: 'author-schema', label: 'Person schema with credentials', passed: false, weight: 2 },
-
-      { id: 'trust-pages', label: 'Trust pages (About, Privacy, Terms)', passed: false, weight: 2 },
-
-      { id: 'reviews', label: 'Reviews or testimonials', passed: false, weight: 1 },
-
-      { id: 'https-eeat', label: 'HTTPS enabled', passed: false, weight: 1 },
-
-    ], passed: 0, total: 5 };
-
-  }
-
-
-
-  var hasAuthor = /rel=["\']author["\']|<meta[^>]+name=["\']author["\']/i.test(html);
-
-  checks.push({ id: 'author', label: 'Author bylines on content', passed: hasAuthor, weight: 2 });
-
-  if (hasAuthor) score += 2;
-
-
-
-  var blocks = schemaResult?.raw?.blocks || [];
-
-  var hasPersonSchema = blocks.some((b) => b['@type'] === 'Person');
-
-  checks.push({ id: 'author-schema', label: 'Person schema with credentials', passed: hasPersonSchema, weight: 2 });
-
-  if (hasPersonSchema) score += 2;
-
-
-
-  var hasAbout = /about/i.test(html);
-
-  var hasPrivacy = /privacy/i.test(html);
-
-  var hasTerms = /terms/i.test(html);
-
-  var trustCount = [hasAbout, hasPrivacy, hasTerms].filter(Boolean).length;
-
-  checks.push({ id: 'trust-pages', label: `Trust pages: ${trustCount}/3 (About, Privacy, Terms)`, passed: trustCount >= 2, weight: 2 });
-
-  if (trustCount >= 2) score += 2;
-
-
-
-  var hasReviews = /reviews?|testimonials?|trustpilot|g2\.com|\.com\/review/i.test(html);
-
-  checks.push({ id: 'reviews', label: 'Reviews or testimonials', passed: hasReviews, weight: 1 });
-
-  if (hasReviews) score += 1;
-
-
-
-  var hasHttps = /Strict-Transport-Security|<meta[^>]+http-equiv=["\']Content-Security-Policy["\']/i.test(html);
-
-  checks.push({ id: 'https-eeat', label: 'HTTPS & security headers', passed: hasHttps, weight: 1 });
-
-  if (hasHttps) score += 1;
-
-
-
-  return { score, maxScore, checks, passed: checks.filter((c) => c.passed).length, total: checks.length };
-
-}
-
-
-
-;
-
-// --- lib/analyzers/brand.js ---
-function analyzeBrand(html, schemaResult) {
-
-  var checks = [];
-
-  var score = 0;
-
-  var maxScore = 8;
-
-
-
-  if (!html) {
-
-    return { score: 0, maxScore, checks: [
-
-      { id: 'brand-consistent', label: 'Consistent brand name across pages', passed: false, weight: 2 },
-
-      { id: 'about-page', label: 'About page with details', passed: false, weight: 2 },
-
-      { id: 'contact', label: 'Contact information available', passed: false, weight: 2 },
-
-      { id: 'sameas', label: 'sameAs links in Organization schema', passed: false, weight: 2 },
-
-    ], passed: 0, total: 4 };
-
-  }
-
-
-
-  var titleBrand = html.match(/<title[^>]*>([^<]+)<\/title>/i);
-
-  var ogSiteName = extractMetaSimple(html, 'og:site_name');
-
-  var brandName = titleBrand?.[1]?.split(/[|-–—]/)?.[0]?.trim() || ogSiteName || '';
-
-  var brandConsistent = brandName.length > 0;
-
-  checks.push({ id: 'brand-consistent', label: 'Brand name detected' + (brandName ? ` (${brandName.slice(0, 30)})` : ''), passed: brandConsistent, weight: 2 });
-
-  if (brandConsistent) score += 2;
-
-
-
-  var hasAboutLink = /href=["\'][^"\']*about[^"\']*["\']/i.test(html);
-
-  checks.push({ id: 'about-page', label: 'About page link found', passed: hasAboutLink, weight: 2 });
-
-  if (hasAboutLink) score += 2;
-
-
-
-  var hasContact = /contact|email|@|phone|address/i.test(html);
-
-  checks.push({ id: 'contact', label: 'Contact information available', passed: hasContact, weight: 2 });
-
-  if (hasContact) score += 2;
-
-
-
-  var blocks = extractJsonLdSimple(html);
-
-  var orgBlock = blocks.find((b) => b['@type'] === 'Organization' || b['@type']?.includes?.('Organization'));
-
-  var hasSameAs = orgBlock?.sameAs && Array.isArray(orgBlock.sameAs) && orgBlock.sameAs.length > 0;
-
-  checks.push({ id: 'sameas', label: hasSameAs ? 'sameAs links in Organization schema' : 'No sameAs links in Organization schema', passed: !!hasSameAs, weight: 2 });
-
-  if (hasSameAs) score += 2;
-
-
-
-  return { score, maxScore, checks, passed: checks.filter((c) => c.passed).length, total: checks.length };
-
-}
-
-
-
-function extractMetaSimple(html, property) {
-
-  var m = html.match(new RegExp(`<meta[^>]+(?:property|name)=["\']${property}["\'][^>]+content=["\']([^"\']+)["\']`, 'i'));
-
-  if (m) return m[1];
-
-  var m2 = html.match(new RegExp(`<meta[^>]+content=["\']([^"\']+)["\'][^>]+(?:property|name)=["\']${property}["\']`, 'i'));
-
-  return m2 ? m2[1] : null;
-
-}
-
-
-
-function extractJsonLdSimple(html) {
-
-  var blocks = [];
-
-  var regex = /<script[^>]*type=["\']application\/ld\+json["\'][^>]*>([\s\S]*?)<\/script>/gi;
-
-  let match;
-
-  while ((match = regex.exec(html)) !== null) {
-
-    try {
-
-      var parsed = JSON.parse(match[1].trim());
-
-      if (Array.isArray(parsed)) blocks.push(...parsed);
-
-      else blocks.push(parsed);
-
-    } catch {}
-
-  }
-
-  return blocks;
-
-}
-
-
-
-;
-
 // --- lib/analyzers/citations.js ---
 function analyzeCitations(html) {
 
-  var checks = [];
+  const checks = [];
 
-  var score = 0;
+  let score = 0;
 
-  var maxScore = 8;
+  const maxScore = 8;
 
 
 
@@ -983,11 +1358,11 @@ function analyzeCitations(html) {
 
 
 
-  var externalLinks = (html.match(/<a[^>]+href=["']https?:\/\/[^"']+["'][^>]*>/gi) || []);
+  const externalLinks = (html.match(/<a[^>]+href=["']https?:\/\/[^"']+["'][^>]*>/gi) || []);
 
-  var eduGovLinks = externalLinks.filter((l) => /\.edu\b|\.gov\b/.test(l)).length;
+  const eduGovLinks = externalLinks.filter((l) => /\.edu\b|\.gov\b/.test(l)).length;
 
-  var totalExternal = externalLinks.length;
+  const totalExternal = externalLinks.length;
 
 
 
@@ -997,9 +1372,9 @@ function analyzeCitations(html) {
 
 
 
-  var text = stripHtmlSimple(html);
+  const text = stripHtmlSimple(html);
 
-  var hasStats = /\d+%|\d+\.\d+|\$\d+/g.test(text);
+  const hasStats = /\d+%|\d+\.\d+|\$\d+/g.test(text);
 
   checks.push({ id: 'stats', label: 'Statistics with specific numbers', passed: hasStats, weight: 2 });
 
@@ -1007,7 +1382,7 @@ function analyzeCitations(html) {
 
 
 
-  var hasQuotes = /["\u201C][^"\u201D]+["\u201D]\s*[-–—]\s*\w+/g.test(text) || /<blockquote[^>]*>/i.test(html);
+  const hasQuotes = /["\u201C][^"\u201D]+["\u201D]\s*[-–—]\s*\w+/g.test(text) || /<blockquote[^>]*>/i.test(html);
 
   checks.push({ id: 'quotes', label: 'Expert quotations with attribution', passed: hasQuotes, weight: 2 });
 
@@ -1015,7 +1390,7 @@ function analyzeCitations(html) {
 
 
 
-  var hasResearch = /study|research|survey|report|analysis|data/i.test(text);
+  const hasResearch = /study|research|survey|report|analysis|data/i.test(text);
 
   checks.push({ id: 'research', label: 'Original research or data', passed: hasResearch, weight: 1 });
 
@@ -1048,17 +1423,17 @@ function stripHtmlSimple(html) {
 // --- lib/analyzers/discovery.js ---
 function analyzeDiscovery(aiTxt, aiSummary, aiFaq) {
 
-  var checks = [];
+  const checks = [];
 
-  var score = 0;
+  let score = 0;
 
-  var maxScore = 6;
+  const maxScore = 6;
 
 
 
   // .well-known/ai.txt
 
-  var hasAiTxt = aiTxt !== null && aiTxt !== undefined;
+  const hasAiTxt = aiTxt !== null && aiTxt !== undefined;
 
   checks.push({ id: 'ai-txt', label: '.well-known/ai.txt endpoint', passed: hasAiTxt, weight: 2 });
 
@@ -1068,7 +1443,7 @@ function analyzeDiscovery(aiTxt, aiSummary, aiFaq) {
 
   // /ai/summary.json
 
-  var hasSummary = aiSummary !== null && aiSummary !== undefined && !(aiSummary instanceof Error);
+  const hasSummary = aiSummary !== null && aiSummary !== undefined && !(aiSummary instanceof Error);
 
   checks.push({ id: 'ai-summary', label: '/ai/summary.json endpoint', passed: !!hasSummary, weight: 2 });
 
@@ -1078,7 +1453,7 @@ function analyzeDiscovery(aiTxt, aiSummary, aiFaq) {
 
   // /ai/faq.json
 
-  var hasFaq = aiFaq !== null && aiFaq !== undefined && !(aiFaq instanceof Error);
+  const hasFaq = aiFaq !== null && aiFaq !== undefined && !(aiFaq instanceof Error);
 
   checks.push({ id: 'ai-faq', label: '/ai/faq.json endpoint', passed: !!hasFaq, weight: 2 });
 
@@ -1097,11 +1472,11 @@ function analyzeDiscovery(aiTxt, aiSummary, aiFaq) {
 // --- lib/analyzers/agentFriendly.js ---
 function analyzeAgentFriendly(html, robotsTxt, llmsTxt) {
 
-  var checks = [];
+  const checks = [];
 
-  var score = 0;
+  let score = 0;
 
-  var maxScore = 4;
+  const maxScore = 4;
 
 
 
@@ -1123,7 +1498,7 @@ function analyzeAgentFriendly(html, robotsTxt, llmsTxt) {
 
 
 
-  var hasApiDocs = /api|endpoint|graphql|rest/i.test(html);
+  const hasApiDocs = /api|endpoint|graphql|rest/i.test(html);
 
   checks.push({ id: 'api-endpoints', label: 'API endpoints documented', passed: hasApiDocs, weight: 1 });
 
@@ -1131,7 +1506,7 @@ function analyzeAgentFriendly(html, robotsTxt, llmsTxt) {
 
 
 
-  var hasSchema = /<script[^>]*type=["\']application\/ld\+json["\']/i.test(html);
+  const hasSchema = /<script[^>]*type=["\']application\/ld\+json["\']/i.test(html);
 
   checks.push({ id: 'structured-output', label: 'Structured data for AI extraction', passed: hasSchema, weight: 1 });
 
@@ -1139,7 +1514,7 @@ function analyzeAgentFriendly(html, robotsTxt, llmsTxt) {
 
 
 
-  var hasRateLimit = /X-RateLimit|x-ratelimit/i.test(html);
+  const hasRateLimit = /X-RateLimit|x-ratelimit/i.test(html);
 
   checks.push({ id: 'rate-limits', label: 'Rate limiting headers', passed: hasRateLimit, weight: 1 });
 
@@ -1147,7 +1522,7 @@ function analyzeAgentFriendly(html, robotsTxt, llmsTxt) {
 
 
 
-  var hasSitemap = /sitemap/i.test(html);
+  const hasSitemap = /sitemap/i.test(html);
 
   checks.push({ id: 'sitemap', label: 'Sitemap.xml available', passed: hasSitemap, weight: 1 });
 
@@ -1163,77 +1538,12 @@ function analyzeAgentFriendly(html, robotsTxt, llmsTxt) {
 
 ;
 
-// --- lib/analyzers/freshness.js ---
-function analyzeFreshness(html) {
-
-  var checks = [];
-
-  var score = 0;
-
-  var maxScore = 4;
-
-
-
-  if (!html) {
-
-    return { score: 0, maxScore, checks: [
-
-      { id: 'date-modified', label: 'Date modified meta or header', passed: false, weight: 1.5 },
-
-      { id: 'recent-content', label: 'Content references recent dates', passed: false, weight: 1.5 },
-
-      { id: 'copyright-year', label: 'Copyright year is current', passed: false, weight: 1 },
-
-    ], passed: 0, total: 3 };
-
-  }
-
-
-
-  var currentYear = new Date().getFullYear().toString();
-
-
-
-  var hasDateModified = /dateModified|last-modified|lastmod|<time[^>]*>/i.test(html);
-
-  checks.push({ id: 'date-modified', label: 'Date modified meta or header', passed: hasDateModified, weight: 1.5 });
-
-  if (hasDateModified) score += 1.5;
-
-
-
-  var recentYear = (parseInt(currentYear) - 2).toString();
-
-  var hasRecentContent = new RegExp(`20[2-9][4-9]|20[3-9][0-9]`).test(html);
-
-  checks.push({ id: 'recent-content', label: 'Content references recent dates', passed: hasRecentContent, weight: 1.5 });
-
-  if (hasRecentContent) score += 1.5;
-
-
-
-  var hasCurrentCopyright = new RegExp(currentYear).test(html);
-
-  checks.push({ id: 'copyright-year', label: `Copyright year ${currentYear}`, passed: hasCurrentCopyright, weight: 1 });
-
-  if (hasCurrentCopyright) score += 1;
-
-
-
-  return { score, maxScore, checks, passed: checks.filter((c) => c.passed).length, total: checks.length };
-
-}
-
-
-
-;
-
 // --- lib/analyzers/negativeSignals.js ---
 function analyzeNegativeSignals(html) {
 
-  var checks = [];
+  const checks = [];
 
-  var deductions = [];
+  const deductions = [];
 
 
 
@@ -1263,19 +1573,19 @@ function analyzeNegativeSignals(html) {
 
 
 
-  var text = html.replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '').replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+  const text = html.replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '').replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
 
-  var words = text.split(/\s+/).filter(Boolean).length;
+  const words = text.split(/\s+/).filter(Boolean).length;
 
 
 
   // Excessive CTA
 
-  var ctaCount = (html.match(/(buy now|sign up|subscribe|get started|shop now|free trial|contact us)/gi) || []).length;
+  const ctaCount = (html.match(/(buy now|sign up|subscribe|get started|shop now|free trial|contact us)/gi) || []).length;
 
-  var ctaThreshold = Math.max(5, Math.floor(words * 0.01));
+  const ctaThreshold = Math.max(5, Math.floor(words * 0.01));
 
-  var ctaFlag = ctaCount > ctaThreshold;
+  const ctaFlag = ctaCount > ctaThreshold;
 
   checks.push({ id: 'excessive-cta', label: `CTA count: ${ctaCount} (threshold: ${ctaThreshold})`, passed: !ctaFlag, severity: 'medium' });
 
@@ -1285,7 +1595,7 @@ function analyzeNegativeSignals(html) {
 
   // Popups
 
-  var hasPopups = /modal|overlay|lightbox|popup/i.test(html);
+  const hasPopups = /modal|overlay|lightbox|popup/i.test(html);
 
   checks.push({ id: 'popups', label: 'Popup/modal elements detected', passed: !hasPopups, severity: 'medium' });
 
@@ -1295,7 +1605,7 @@ function analyzeNegativeSignals(html) {
 
   // Thin content
 
-  var thinContent = words < 300;
+  const thinContent = words < 300;
 
   checks.push({ id: 'thin-content', label: `Content ${words} words`, passed: !thinContent, severity: 'high' });
 
@@ -1305,9 +1615,9 @@ function analyzeNegativeSignals(html) {
 
   // Broken links check (basic — invalid href patterns)
 
-  var brokenLinkPatterns = /href=["\']#["\']|href=["\']javascript:["\']|href=["\'](\s*)["\']/gi;
+  const brokenLinkPatterns = /href=["\']#["\']|href=["\']javascript:["\']|href=["\'](\s*)["\']/gi;
 
-  var brokenCount = (html.match(brokenLinkPatterns) || []).length;
+  const brokenCount = (html.match(brokenLinkPatterns) || []).length;
 
   checks.push({ id: 'broken-links', label: `${brokenCount} suspicious link(s)`, passed: brokenCount <= 3, severity: 'medium' });
 
@@ -1317,9 +1627,9 @@ function analyzeNegativeSignals(html) {
 
   // Keyword stuffing (rough check)
 
-  var commonStopwords = ['the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by'];
+  const commonStopwords = ['the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by'];
 
-  var wordFreq = {};
+  const wordFreq = {};
 
   text.toLowerCase().split(/\s+/).filter(Boolean).forEach(w => {
 
@@ -1327,13 +1637,13 @@ function analyzeNegativeSignals(html) {
 
   });
 
-  var maxFreq = Math.max(...Object.values(wordFreq), 0);
+  const maxFreq = Math.max(...Object.values(wordFreq), 0);
 
-  var wordTotal = Object.keys(wordFreq).length || 1;
+  const wordTotal = Object.keys(wordFreq).length || 1;
 
-  var maxDensity = maxFreq / wordTotal;
+  const maxDensity = maxFreq / wordTotal;
 
-  var stuffingFlag = maxDensity > 0.025 && maxFreq > 5;
+  const stuffingFlag = maxDensity > 0.025 && maxFreq > 5;
 
   checks.push({ id: 'keyword-stuffing', label: `Top keyword density: ${(maxDensity * 100).toFixed(1)}%`, passed: !stuffingFlag, severity: 'medium' });
 
@@ -1343,7 +1653,7 @@ function analyzeNegativeSignals(html) {
 
   // Missing author
 
-  var hasAuthor = /rel=["\']author["\']|<meta[^>]+name=["\']author["\']/i.test(html);
+  const hasAuthor = /rel=["\']author["\']|<meta[^>]+name=["\']author["\']/i.test(html);
 
   checks.push({ id: 'missing-author', label: 'Author signal found', passed: hasAuthor, severity: 'low' });
 
@@ -1353,11 +1663,11 @@ function analyzeNegativeSignals(html) {
 
   // Boilerplate ratio (nav/footer vs content)
 
-  var navContent = (html.match(/<nav[^>]*>/gi) || []).length + (html.match(/<footer[^>]*>/gi) || []).length;
+  const navContent = (html.match(/<nav[^>]*>/gi) || []).length + (html.match(/<footer[^>]*>/gi) || []).length;
 
-  var bodyContent = (html.match(/<article[^>]*>/gi) || []).length + (html.match(/<main[^>]*>/gi) || []).length + (html.match(/<section[^>]*>/gi) || []).length;
+  const bodyContent = (html.match(/<article[^>]*>/gi) || []).length + (html.match(/<main[^>]*>/gi) || []).length + (html.match(/<section[^>]*>/gi) || []).length;
 
-  var boilerplateFlag = navContent > 0 && bodyContent === 0;
+  const boilerplateFlag = navContent > 0 && bodyContent === 0;
 
   checks.push({ id: 'excessive-boilerplate', label: boilerplateFlag ? 'Excessive boilerplate (no main/article)' : 'Content/boilerplate ratio OK', passed: !boilerplateFlag, severity: 'low' });
 
@@ -1367,15 +1677,15 @@ function analyzeNegativeSignals(html) {
 
   // Mixed signals
 
-  var hasH1 = /<h1[^>]*>/i.test(html);
+  const hasH1 = /<h1[^>]*>/i.test(html);
 
-  var h1Promise = html.match(/<h1[^>]*>([^<]+)<\/h1>/i);
+  const h1Promise = html.match(/<h1[^>]*>([^<]+)<\/h1>/i);
 
-  var h1Text = h1Promise ? h1Promise[1] : '';
+  const h1Text = h1Promise ? h1Promise[1] : '';
 
-  var h1Long = h1Text.length > 10;
+  const h1Long = h1Text.length > 10;
 
-  var mixedFlag = hasH1 && h1Long && words < 200 && !h1Text.toLowerCase().includes('redirect');
+  const mixedFlag = hasH1 && h1Long && words < 200 && !h1Text.toLowerCase().includes('redirect');
 
   checks.push({ id: 'mixed-signals', label: mixedFlag ? 'H1 promises depth but content is thin' : 'H1/content match OK', passed: !mixedFlag, severity: 'low' });
 
@@ -1383,9 +1693,9 @@ function analyzeNegativeSignals(html) {
 
 
 
-  var totalDeduction = deductions.reduce((sum, d) => sum + d.deduction, 0);
+  const totalDeduction = deductions.reduce((sum, d) => sum + d.deduction, 0);
 
-  var severityLevel = deductions.filter(d => d.severity === 'high').length >= 2 ? 'high' :
+  const severityLevel = deductions.filter(d => d.severity === 'high').length >= 2 ? 'high' :
 
     deductions.length >= 3 ? 'medium' :
 
@@ -1418,7 +1728,7 @@ function analyzeNegativeSignals(html) {
 ;
 
 // --- lib/scoring.js ---
-var DIMENSION_WEIGHTS = {
+const DIMENSION_WEIGHTS = {
 
   aiCrawlability: 12,
 
@@ -1444,23 +1754,23 @@ var DIMENSION_WEIGHTS = {
 
 };
 
-var TOTAL_WEIGHT = Object.values(DIMENSION_WEIGHTS).reduce((a, b) => a + b, 0);
+const TOTAL_WEIGHT = Object.values(DIMENSION_WEIGHTS).reduce((a, b) => a + b, 0);
 
 
 
 function computeScore(dimensions, negativeResult) {
 
-  var dimensionScores = {};
+  const dimensionScores = {};
 
-  var weightedSum = 0;
+  let weightedSum = 0;
 
 
 
   for (const [key, dim] of Object.entries(dimensions)) {
 
-    var weight = DIMENSION_WEIGHTS[key];
+    const weight = DIMENSION_WEIGHTS[key];
 
-    var dimScore = dim.maxScore > 0 ? (dim.score / dim.maxScore) * weight : 0;
+    const dimScore = dim.maxScore > 0 ? (dim.score / dim.maxScore) * weight : 0;
 
     dimensionScores[key] = {
 
@@ -1480,9 +1790,9 @@ function computeScore(dimensions, negativeResult) {
 
 
 
-  var total = Math.round((weightedSum / TOTAL_WEIGHT) * 100);
+  let total = Math.round((weightedSum / TOTAL_WEIGHT) * 100);
 
-  var deduction = negativeResult?.deductions?.reduce((s, d) => s + (d.deduction || 0), 0) || 0;
+  const deduction = negativeResult?.deductions?.reduce((s, d) => s + (d.deduction || 0), 0) || 0;
 
   total = Math.max(0, total - deduction);
 
@@ -1509,7 +1819,7 @@ function computeScore(dimensions, negativeResult) {
 ;
 
 // --- lib/recommendations.js ---
-var DIMENSION_LABELS = {
+const DIMENSION_LABELS = {
 
   aiCrawlability: 'AI Crawlability (Robots.txt)',
 
@@ -1539,7 +1849,7 @@ var DIMENSION_LABELS = {
 
 function generateRecommendations(dimensions, negativeResult, scoring) {
 
-  var recommendations = [];
+  const recommendations = [];
 
 
 
@@ -1553,7 +1863,7 @@ function generateRecommendations(dimensions, negativeResult, scoring) {
 
       if (!check.passed) {
 
-        var priority = DIMENSION_WEIGHTS[key] >= 10 ? 'high' : DIMENSION_WEIGHTS[key] >= 6 ? 'medium' : 'low';
+        const priority = DIMENSION_WEIGHTS[key] >= 10 ? 'high' : DIMENSION_WEIGHTS[key] >= 6 ? 'medium' : 'low';
 
         recommendations.push({
 
@@ -1605,7 +1915,7 @@ function generateRecommendations(dimensions, negativeResult, scoring) {
 
   // Sort by priority
 
-  var priorityOrder = { high: 0, medium: 1, low: 2 };
+  const priorityOrder = { high: 0, medium: 1, low: 2 };
 
   recommendations.sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]);
 
@@ -1619,7 +1929,7 @@ function generateRecommendations(dimensions, negativeResult, scoring) {
 
 function getFixSuggestion(dimension, checkId) {
 
-  var fixes = {
+  const fixes = {
 
     aiCrawlability: {
 
@@ -1777,7 +2087,7 @@ function getFixSuggestion(dimension, checkId) {
 
 function getNegativeFix(id) {
 
-  var fixes = {
+  const fixes = {
 
     'excessive-cta': 'Keep CTAs under 5 per page; maintain a 90/10 informative-to-promotional ratio',
 
@@ -1803,7 +2113,7 @@ function getNegativeFix(id) {
 
 
 
-var DIMENSION_WEIGHTS = {
+const DIMENSION_WEIGHTS = {
 
   aiCrawlability: 12, aiGuidance: 12, structuredData: 14, metaSocial: 10,
 
@@ -1843,11 +2153,11 @@ var DIMENSION_WEIGHTS = {
 
 async function auditUrl(url) {
 
-  var normalized = normalizeUrl(url);
+  const normalized = normalizeUrl(url);
 
-  var base = new URL(normalized);
+  const base = new URL(normalized);
 
-  var origin = base.origin;
+  const origin = base.origin;
 
 
 
@@ -1869,33 +2179,33 @@ async function auditUrl(url) {
 
 
 
-  var robotsResult = analyzeRobots(robotsTxt);
+  const robotsResult = analyzeRobots(robotsTxt);
 
-  var llmsResult = analyzeLlmstxt(llmsTxt);
+  const llmsResult = analyzeLlmstxt(llmsTxt);
 
-  var schemaResult = analyzeSchema(pageHtml);
+  const schemaResult = analyzeSchema(pageHtml);
 
-  var metaResult = analyzeMeta(pageHtml);
+  const metaResult = analyzeMeta(pageHtml);
 
-  var contentResult = analyzeContent(pageHtml);
+  const contentResult = analyzeContent(pageHtml);
 
-  var eeatResult = analyzeEeat(pageHtml, schemaResult);
+  const eeatResult = analyzeEeat(pageHtml, schemaResult);
 
-  var brandResult = analyzeBrand(pageHtml, schemaResult);
+  const brandResult = analyzeBrand(pageHtml, schemaResult);
 
-  var citationsResult = analyzeCitations(pageHtml);
+  const citationsResult = analyzeCitations(pageHtml);
 
-  var discoveryResult = analyzeDiscovery(aiTxt, aiSummary, aiFaq);
+  const discoveryResult = analyzeDiscovery(aiTxt, aiSummary, aiFaq);
 
-  var agentResult = analyzeAgentFriendly(pageHtml, robotsTxt, llmsTxt);
+  const agentResult = analyzeAgentFriendly(pageHtml, robotsTxt, llmsTxt);
 
-  var freshnessResult = analyzeFreshness(pageHtml);
+  const freshnessResult = analyzeFreshness(pageHtml);
 
-  var negativeResult = analyzeNegativeSignals(pageHtml);
+  const negativeResult = analyzeNegativeSignals(pageHtml);
 
 
 
-  var dimensions = {
+  const dimensions = {
 
     aiCrawlability: robotsResult,
 
@@ -1923,9 +2233,9 @@ async function auditUrl(url) {
 
 
 
-  var scoring = computeScore(dimensions, negativeResult);
+  const scoring = computeScore(dimensions, negativeResult);
 
-  var recommendations = generateRecommendations(dimensions, negativeResult, scoring);
+  const recommendations = generateRecommendations(dimensions, negativeResult, scoring);
 
 
 
@@ -1969,7 +2279,7 @@ function normalizeUrl(url) {
 
   if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
 
-  var u = new URL(url);
+  const u = new URL(url);
 
   return u.origin + u.pathname.replace(/\/$/, '') || u.origin + '/';
 
@@ -1979,21 +2289,21 @@ function normalizeUrl(url) {
 
 function extractSeoSupplement(html, url) {
 
-  var results = { https: false, hasTitle: false, hasMetaDesc: false, responsive: false };
+  const results = { https: false, hasTitle: false, hasMetaDesc: false, responsive: false };
 
   if (url.startsWith('https://')) results.https = true;
 
   if (!html) return results;
 
-  var titleMatch = html.match(/<title[^>]*>([^<]+)<\/title>/i);
+  const titleMatch = html.match(/<title[^>]*>([^<]+)<\/title>/i);
 
   results.hasTitle = !!(titleMatch && titleMatch[1].trim().length > 0);
 
-  var descMatch = html.match(/<meta[^>]+name=["\']description["\'][^>]+content=["\']([^"']+)["\'][^>]*>/i);
+  const descMatch = html.match(/<meta[^>]+name=["\']description["\'][^>]+content=["\']([^"']+)["\'][^>]*>/i);
 
   results.hasMetaDesc = !!(descMatch && descMatch[1].trim().length > 0);
 
-  var viewportMatch = html.match(/<meta[^>]+name=["\']viewport["\'][^>]*>/i);
+  const viewportMatch = html.match(/<meta[^>]+name=["\']viewport["\'][^>]*>/i);
 
   results.responsive = !!viewportMatch;
 
@@ -2005,92 +2315,38 @@ function extractSeoSupplement(html, url) {
 
 ;
 
-// --- lib/export.js ---
-function exportMarkdown(result) {
+// --- components/fixesPanel.js ---
+function renderFixesPanel(recommendations) {
 
-  var lines = [];
+  var html = '<div class="stagger-section fade-in-delay-6 card p-6 mb-8">' +
 
-  lines.push(`# GEO Audit Report: ${result.url}`);
+    '<h2 class="text-lg font-bold mb-5">Prioritized Fixes</h2>';
 
-  lines.push(`**Date:** ${new Date(result.timestamp).toLocaleDateString()}`);
+  if (recommendations && recommendations.length > 0) {
 
-  lines.push(`**Score:** ${result.score}/100 — ${result.level}`);
+    html += '<div class="space-y-3">' +
 
-  lines.push('');
+      recommendations.slice(0, 15).map(function(rec, i) {
 
-  lines.push('## Dimensions');
+        var priCls = rec.priority === "high" ? "border-l-danger-500" : (rec.priority === "medium" ? "border-l-warn-500" : "border-l-gray-500");
 
-  for (const [key, dim] of Object.entries(result.dimensions)) {
+        return '<div class="flex items-start gap-3 text-sm p-4 rounded-xl bg-white/5 border-l-2 ' + priCls + '">' +
 
-    var pct = typeof dim.percentage !== 'undefined' ? `${dim.percentage}%` : `${dim.score}/${dim.maxScore}`;
+          '<span class="mt-0.5 flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold bg-gray-500/20 text-gray-400">' + (i + 1) + '</span>' +
 
-    lines.push(`- **${key}**: ${pct} (${dim.passed}/${dim.total} checks passed)`);
+          '<div class="flex-1"><div class="text-gray-200 font-medium">' + rec.issue + '</div><div class="text-gray-500 mt-0.5">' + rec.fix + '</div><div class="text-xs text-gray-600 mt-1">' + rec.dimension + ' &middot; ' + rec.priority + ' priority</div></div></div>';
 
-    for (const check of dim.checks || []) {
+      }).join("") +
 
-      lines.push(`  - [${check.passed ? 'x' : ' '}] ${check.label}`);
+      '</div>';
 
-    }
+  } else { html += '<p class="text-gray-400">No issues found!</p>'; }
 
-  }
+  html += '</div>';
 
-  if (result.negativeSignals?.deductions?.length) {
-
-    lines.push('');
-
-    lines.push('## Negative Signals');
-
-    for (const d of result.negativeSignals.deductions) {
-
-      lines.push(`- ⚠ ${d.label} (-${d.deduction} pts)`);
-
-    }
-
-  }
-
-  lines.push('');
-
-  lines.push('## Recommendations');
-
-  for (const rec of result.recommendations || []) {
-
-    lines.push(`- [${rec.priority}] ${rec.issue}`);
-
-    lines.push(`  → ${rec.fix}`);
-
-  }
-
-  return lines.join('\n');
+  return html;
 
 }
-
-
-
-function exportJson(result) {
-
-  return JSON.stringify(result, null, 2);
-
-}
-
-
-
-function exportCsv(result) {
-
-  var lines = ['Dimension,Score,MaxScore,Passed,Total'];
-
-  for (const [key, dim] of Object.entries(result.dimensions)) {
-
-    lines.push(`${key},${dim.score},${dim.maxScore},${dim.passed},${dim.total}`);
-
-  }
-
-  return lines.join('\n');
-
-}
-
-
-
-;
 
 // --- components/trendChart.js ---
 function renderTrendContainer() {
@@ -2259,324 +2515,8 @@ async function getChartJs() {
 
 }
 
-// --- components/comparisonPanel.js ---
-var DIM_LABELS = { aiCrawlability: "AI Crawlability", aiGuidance: "AI Guidance", structuredData: "Structured Data", metaSocial: "Meta & Social", contentQuality: "Content Quality", eeat: "E-E-A-T", brandEntity: "Brand & Entity", citationReadiness: "Citation Readiness", discoveryEndpoints: "Discovery", agentFriendliness: "Agent Friendly", freshness: "Freshness" };
-
-
-
-function renderComparisonPanel(selected) {
-
-  if (!selected || selected.length < 2) return "";
-
-  var dimKeys = Object.keys(DIM_LABELS);
-
-  return '<div class="stagger-section fade-in-delay-5 card p-6 mb-8">' +
-
-    '<h2 class="text-lg font-bold mb-4">Multi-Site Comparison</h2>' +
-
-    '<div class="overflow-x-auto"><table class="w-full text-sm">' +
-
-    '<thead><tr class="border-b border-gray-700"><th class="pb-2 pr-3 text-left text-gray-400 font-medium">Dimension</th>' +
-
-    selected.map(function(s) {
-
-      return '<th class="pb-2 pr-3 text-left font-mono text-xs ' + lc(s.level) + '">' + s.url + '<br/><span class="text-sm font-bold">' + s.score + '</span></th>';
-
-    }).join("") +
-
-    '</tr></thead><tbody>' +
-
-    dimKeys.map(function(k) {
-
-      return '<tr class="border-b border-gray-700/50">' +
-
-        '<td class="py-2 pr-3 text-gray-300 text-xs">' + DIM_LABELS[k] + '</td>' +
-
-        selected.map(function(s) {
-
-          var pct = s.dimensions && s.dimensions[k] != null ? s.dimensions[k] : 0;
-
-          var bc = pct >= 80 ? "bg-geo-500" : pct >= 60 ? "bg-brand-500" : pct >= 40 ? "bg-warn-500" : "bg-danger-500";
-
-          return '<td class="py-2 pr-3"><div class="flex items-center gap-2"><div class="w-16 h-1.5 rounded-full bg-gray-700/50 overflow-hidden"><div class="h-full rounded-full ' + bc + '" style="width:' + pct + '%"></div></div><span class="text-xs font-mono text-gray-400">' + pct + '%</span></div></td>';
-
-        }).join("") +
-
-        '</tr>';
-
-    }).join("") +
-
-    '</tbody></table></div></div>';
-
-}
-
-
-
-function lc(l) {
-
-  return l === "Excellent" ? "text-geo-500" : l === "Good" ? "text-brand-500" : l === "Basic" ? "text-warn-500" : "text-danger-500";
-
-}
-
-// --- components/fixesPanel.js ---
-function renderFixesPanel(recommendations) {
-
-  var html = '<div class="stagger-section fade-in-delay-6 card p-6 mb-8">' +
-
-    '<h2 class="text-lg font-bold mb-5">Prioritized Fixes</h2>';
-
-  if (recommendations && recommendations.length > 0) {
-
-    html += '<div class="space-y-3">' +
-
-      recommendations.slice(0, 15).map(function(rec, i) {
-
-        var priCls = rec.priority === "high" ? "border-l-danger-500" : (rec.priority === "medium" ? "border-l-warn-500" : "border-l-gray-500");
-
-        return '<div class="flex items-start gap-3 text-sm p-4 rounded-xl bg-white/5 border-l-2 ' + priCls + '">' +
-
-          '<span class="mt-0.5 flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold bg-gray-500/20 text-gray-400">' + (i + 1) + '</span>' +
-
-          '<div class="flex-1"><div class="text-gray-200 font-medium">' + rec.issue + '</div><div class="text-gray-500 mt-0.5">' + rec.fix + '</div><div class="text-xs text-gray-600 mt-1">' + rec.dimension + ' &middot; ' + rec.priority + ' priority</div></div></div>';
-
-      }).join("") +
-
-      '</div>';
-
-  } else { html += '<p class="text-gray-400">No issues found!</p>'; }
-
-  html += '</div>';
-
-  return html;
-
-}
-
-// --- components/dimensionBreakdown.js ---
-var LABELS = { aiCrawlability: "AI Crawlability", aiGuidance: "AI Guidance", structuredData: "Structured Data", metaSocial: "Meta & Social", contentQuality: "Content Quality", eeat: "E-E-A-T", brandEntity: "Brand & Entity", citationReadiness: "Citation Readiness", discoveryEndpoints: "Discovery", agentFriendliness: "Agent Friendly", freshness: "Freshness" };
-
-
-
-function renderDimensionBreakdown(dimensions) {
-
-  var dimKeys = Object.keys(dimensions);
-
-  return '<div class="stagger-section fade-in-delay-3 card p-6 mb-8">' +
-
-    '<h2 class="text-lg font-bold mb-5">Dimension Breakdown</h2>' +
-
-    '<div class="space-y-4">' +
-
-    dimKeys.map(function(k) {
-
-      var d = dimensions[k];
-
-      var label = LABELS[k] || k;
-
-      var pct = d.percentage || 0;
-
-      var barColor = pct >= 80 ? 'bg-geo-500' : pct >= 60 ? 'bg-brand-500' : pct >= 40 ? 'bg-warn-500' : 'bg-danger-500';
-
-      var checkCount = (d.passed || 0) + "/" + (d.total || d.checks || 0);
-
-      var items = (d.items || []).map(function(item) {
-
-        var icon = item.pass ? ICONS.check : (item.warn ? ICONS.warning : ICONS.cross);
-
-        var iconCls = item.pass ? 'text-geo-500' : (item.warn ? 'text-warn-500' : 'text-danger-500');
-
-        return '<div class="flex items-start gap-2 py-1.5 text-sm"><span class="flex-shrink-0 mt-0.5 ' + iconCls + '">' + icon + '</span><span class="text-gray-300">' + item.label + '</span></div>';
-
-      }).join("");
-
-      return '<div class="card-hover p-4 rounded-xl">' +
-
-        '<div class="flex justify-between items-center mb-2"><span class="text-sm font-medium text-gray-200">' + label + '</span><span class="text-xs font-mono text-gray-500">' + pct + '% &middot; ' + checkCount + '</span></div>' +
-
-        '<div class="w-full h-1.5 rounded-full bg-gray-700/50 overflow-hidden"><div class="h-full rounded-full ' + barColor + '" style="width:' + pct + '%"></div></div>' +
-
-        (items ? '<div class="mt-3 pl-1">' + items + '</div>' : '') +
-
-      '</div>';
-
-    }).join("") +
-
-    '</div></div>';
-
-}
-
-// --- lib/icons.js ---
-/**
-
- * Minimal SVG icon set — inline SVGs, zero dependencies.
-
- * All icons: 24x24 viewBox, 2px stroke, round caps.
-
- */
-
-var ICONS = {
-
-  check: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>',
-
-  cross: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>',
-
-  warning: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#eab308" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
-
-  alert: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>',
-
-  markdown: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h18v16H3z"/><path d="M8 15V9l3 3 3-3v6"/></svg>',
-
-  json: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M9 15v-2a2 2 0 0 1 2-2h1"/></svg>',
-
-  csv: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><rect x="8" y="13" width="8" height="3" rx="1"/></svg>',
-
-  scan: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><circle cx="12" cy="12" r="3"/></svg>',
-
-  globe: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>',
-
-  arrowUp: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>',
-
-  external: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>',
-
-};
-
-
-
-ICONS;
-
-// --- lib/history.js ---
-var HISTORY_KEY = 'geoscope_history';
-
-
-
-function getHistory() {
-
-  try {
-
-    var data = localStorage.getItem(HISTORY_KEY);
-
-    return data ? JSON.parse(data) : [];
-
-  } catch (e) { return []; }
-
-}
-
-
-
-function addToHistory(result) {
-
-  var history = getHistory();
-
-  var entry = {
-
-    id: Date.now().toString(36),
-
-    url: result.url.replace(/https?:\/\//, "").replace(/\/$/, ""),
-
-    score: result.score,
-
-    level: result.level,
-
-    timestamp: result.timestamp,
-
-    dimensions: result.dimensions ? Object.fromEntries(
-
-      Object.entries(result.dimensions).map(function(kv) { return [kv[0], kv[1].percentage || 0]; })
-
-    ) : {}
-
-  };
-
-  var existing = history.findIndex(function(e) { return e.url === entry.url; });
-
-  if (existing >= 0) history.splice(existing, 1);
-
-  history.unshift(entry);
-
-  if (history.length > 50) history = history.slice(0, 50);
-
-  try { localStorage.setItem(HISTORY_KEY, JSON.stringify(history)); } catch (e) {}
-
-  return entry;
-
-}
-
-
-
-function getUrlHistory(url) {
-
-  var clean = url.replace(/https?:\/\//, "").replace(/\/$/, "");
-
-  return getHistory().filter(function(e) { return e.url === clean; });
-
-}
-
-
-
-function getComparisonData(urls) {
-
-  var all = getHistory();
-
-  return urls.map(function(u) {
-
-    var clean = u.replace(/https?:\/\//, "").replace(/\/$/, "");
-
-    return all.find(function(e) { return e.url === clean; }) || null;
-
-  }).filter(Boolean);
-
-}
-
-
-
-function clearHistory() {
-
-  try { localStorage.removeItem(HISTORY_KEY); } catch (e) {}
-
-}
-
-
-
-;
-
-// --- components/seoSupplement.js ---
-function renderSeoSupplement(s) {
-
-  if (!s) return "";
-
-  var checks = [
-
-    { label: "HTTPS", ok: s.https },
-
-    { label: "Title Tag", ok: s.hasTitle },
-
-    { label: "Meta Description", ok: s.hasMetaDesc },
-
-    { label: "Responsive Viewport", ok: s.responsive }
-
-  ];
-
-  return '<div class="stagger-section fade-in-delay-5 card p-6 mb-8">' +
-
-    '<h2 class="text-lg font-bold mb-4">SEO Supplement <span class="text-sm text-gray-500 font-normal">(informational)</span></h2>' +
-
-    '<div class="grid grid-cols-2 md:grid-cols-4 gap-3">' +
-
-    checks.map(function(c) {
-
-      var icon = c.ok ? ICONS.check : ICONS.cross;
-
-      var cls = c.ok ? 'text-geo-500' : 'text-gray-500';
-
-      return '<div class="card-hover p-4 rounded-xl text-center"><div class="text-xl mb-1 ' + cls + '">' + icon + '</div><div class="text-xs text-gray-400">' + c.label + '</div></div>';
-
-    }).join("") +
-
-    '</div></div>';
-
-}
-
 // --- components/reportHeader.js ---
-var BG_CLR = { Excellent: "bg-geo-500", Good: "bg-brand-500", Basic: "bg-warn-500", Critical: "bg-danger-500" };
+const BG_CLR = { Excellent: "bg-geo-500", Good: "bg-brand-500", Basic: "bg-warn-500", Critical: "bg-danger-500" };
 
 
 
@@ -2639,32 +2579,92 @@ function renderExportButtons() {
 
 }
 
-// --- components/negativeSignals.js ---
-function renderNegativeSignals(signals) {
+// --- lib/export.js ---
+function exportMarkdown(result) {
 
-  if (!signals || signals.length === 0) return "";
+  const lines = [];
 
-  var found = signals.filter(function(s) { return s.found; }).length;
+  lines.push(`# GEO Audit Report: ${result.url}`);
 
-  return '<div class="stagger-section fade-in-delay-4 card p-6 mb-8 border-danger-500/20">' +
+  lines.push(`**Date:** ${new Date(result.timestamp).toLocaleDateString()}`);
 
-    '<h2 class="text-lg font-bold mb-4 text-danger-500">' + ICONS.alert + ' Negative Signals (' + found + ' found)</h2>' +
+  lines.push(`**Score:** ${result.score}/100 — ${result.level}`);
 
-    '<div class="space-y-2">' +
+  lines.push('');
 
-    signals.map(function(s) {
+  lines.push('## Dimensions');
 
-      var icon = s.found ? ICONS.cross : ICONS.check;
+  for (const [key, dim] of Object.entries(result.dimensions)) {
 
-      var cls = s.found ? 'text-danger-500' : 'text-geo-500';
+    const pct = typeof dim.percentage !== 'undefined' ? `${dim.percentage}%` : `${dim.score}/${dim.maxScore}`;
 
-      return '<div class="flex items-start gap-2 text-sm"><span class="flex-shrink-0 mt-0.5 ' + cls + '">' + icon + '</span><span class="text-gray-300">' + s.label + '</span></div>';
+    lines.push(`- **${key}**: ${pct} (${dim.passed}/${dim.total} checks passed)`);
 
-    }).join("") +
+    for (const check of dim.checks || []) {
 
-    '</div></div>';
+      lines.push(`  - [${check.passed ? 'x' : ' '}] ${check.label}`);
+
+    }
+
+  }
+
+  if (result.negativeSignals?.deductions?.length) {
+
+    lines.push('');
+
+    lines.push('## Negative Signals');
+
+    for (const d of result.negativeSignals.deductions) {
+
+      lines.push(`- ⚠ ${d.label} (-${d.deduction} pts)`);
+
+    }
+
+  }
+
+  lines.push('');
+
+  lines.push('## Recommendations');
+
+  for (const rec of result.recommendations || []) {
+
+    lines.push(`- [${rec.priority}] ${rec.issue}`);
+
+    lines.push(`  → ${rec.fix}`);
+
+  }
+
+  return lines.join('\n');
 
 }
+
+
+
+function exportJson(result) {
+
+  return JSON.stringify(result, null, 2);
+
+}
+
+
+
+function exportCsv(result) {
+
+  const lines = ['Dimension,Score,MaxScore,Passed,Total'];
+
+  for (const [key, dim] of Object.entries(result.dimensions)) {
+
+    lines.push(`${key},${dim.score},${dim.maxScore},${dim.passed},${dim.total}`);
+
+  }
+
+  return lines.join('\n');
+
+}
+
+
+
+;
 
 // --- Global assignments ---
 if (typeof doExport !== "undefined" && typeof window.doExport === "undefined") window.doExport = doExport;
