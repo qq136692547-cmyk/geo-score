@@ -1,4 +1,20 @@
-﻿User-agent: *
+User-agent: *
 Allow: /
 
-Sitemap: https://qq136692547-cmyk.github.io/geo-score/sitemap.xml
+# AI Crawlers — explicitly allowed
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+Sitemap: https://deng.zh.kg/sitemap.xml
