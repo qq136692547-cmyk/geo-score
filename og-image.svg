@@ -78,7 +78,7 @@
   </text>
 
   <!-- URL -->
-  <text x="480" y="445" font-family="ui-monospace,monospace" font-size="14" fill="#3b82f6">geoscore.help</text>
+  <text x="480" y="445" font-family="ui-monospace,monospace" font-size="14" fill="#3b82f6">deng.zh.kg</text>
 
   <!-- Footer line -->
   <line x1="80" y1="540" x2="1120" y2="540" stroke="rgba(148,163,184,0.08)" stroke-width="1"/>
