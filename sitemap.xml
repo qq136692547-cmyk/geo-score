@@ -1,47 +1,47 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://deng.zh.kg/</loc>
+    <loc>https://geoscore.help/</loc>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://deng.zh.kg/about/</loc>
+    <loc>https://geoscore.help/about/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://deng.zh.kg/tools/llms-txt-checker/</loc>
+    <loc>https://geoscore.help/tools/llms-txt-checker/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://deng.zh.kg/tools/robots-txt-ai-checker/</loc>
+    <loc>https://geoscore.help/tools/robots-txt-ai-checker/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://deng.zh.kg/tools/ai-readiness-score/</loc>
+    <loc>https://geoscore.help/tools/ai-readiness-score/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://deng.zh.kg/blog/what-is-geo/</loc>
+    <loc>https://geoscore.help/blog/what-is-geo/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://deng.zh.kg/blog/geo-vs-seo/</loc>
+    <loc>https://geoscore.help/blog/geo-vs-seo/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://deng.zh.kg/blog/how-to-write-llms-txt/</loc>
+    <loc>https://geoscore.help/blog/how-to-write-llms-txt/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://deng.zh.kg/blog/ai-search-engine-list/</loc>
+    <loc>https://geoscore.help/blog/ai-search-engine-list/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>

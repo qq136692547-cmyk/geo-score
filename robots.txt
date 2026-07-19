@@ -1,4 +1,4 @@
-User-agent: *
+﻿User-agent: *
 Allow: /
 
 # AI Crawlers — explicitly allowed
@@ -17,4 +17,4 @@ Allow: /
 User-agent: CCBot
 Allow: /
 
-Sitemap: https://deng.zh.kg/sitemap.xml
+Sitemap: https://geoscore.help/sitemap.xml
