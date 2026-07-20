@@ -17,4 +17,19 @@ Allow: /
 User-agent: CCBot
 Allow: /
 
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: Perplexity-User
+Allow: /
+
+User-agent: Cohere-AI
+Allow: /
+
 Sitemap: https://geoscore.help/sitemap.xml
