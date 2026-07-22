@@ -1,0 +1,94 @@
+﻿---
+import Layout from '../../layouts/Layout.astro';
+---
+<Layout title="llms.txt Checker — Free AI Guidance File Audit | GeoScore"
+  schema={{
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    name: 'llms.txt Checker',
+    description: 'Free online tool to check if your website has an llms.txt file that guides AI models like ChatGPT, Claude, and Perplexity to understand your content.',
+    url: 'https://geoscore.help/tools/llms-txt-checker/',
+    applicationCategory: 'SEO Tool',
+    operatingSystem: 'Any',
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+    isPartOf: { '@type': 'WebApplication', name: 'GeoScore', url: 'https://geoscore.help' }
+  }}
+>
+  <section class="max-w-4xl mx-auto">
+    <div class="text-center mb-10">
+      <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-geo-500/10 text-geo-400 border border-geo-500/20 mb-4">
+        Free Tool
+      </div>
+      <h1 class="text-4xl font-extrabold mb-3">llms.txt Checker</h1>
+      <p class="text-gray-400 max-w-2xl mx-auto">Check if your website has an <code class="text-geo-400">llms.txt</code> file that guides AI models like ChatGPT, Claude, and Perplexity to understand your content.</p>
+    </div>
+
+    <div class="card p-8 mb-8">
+      <h2 class="text-xl font-bold mb-4">What is llms.txt?</h2>
+      <p class="text-gray-400 mb-4">
+        <code class="text-geo-400">llms.txt</code> is a proposed standard (similar to robots.txt) that provides AI language models with structured information about your website. It helps AI search engines understand what your site is about, what content to prioritize, and how to cite your pages.
+      </p>
+      <p class="text-gray-400 mb-4">
+        As AI search engines like <strong class="text-white">ChatGPT</strong>, <strong class="text-white">Perplexity</strong>, <strong class="text-white">Claude</strong>, and <strong class="text-white">Google AI Overviews</strong> become mainstream, having a proper llms.txt file is critical for AI visibility.
+      </p>
+    </div>
+
+    <div class="card p-8 mb-8">
+      <h2 class="text-xl font-bold mb-4">How to Check Your llms.txt</h2>
+      <p class="text-gray-400 mb-6">Enter your website URL below to run a full GEO audit, including llms.txt analysis:</p>
+      <div class="flex gap-3 max-w-xl">
+        <div class="flex-1 relative">
+          <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+          <input id="url-input" type="url" placeholder="e.g. example.com" class="w-full pl-12 pr-5 py-3.5 rounded-xl bg-white/5 text-white placeholder-gray-500 border border-gray-600 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 text-lg transition" />
+        </div>
+        <button id="audit-btn" class="px-8 py-3.5 rounded-xl font-semibold text-white bg-gradient-to-r from-geo-600 to-brand-600 hover:from-geo-500 hover:to-brand-500 transition shadow-lg shadow-brand-500/20 whitespace-nowrap">Check Now</button>
+      </div>
+    </div>
+
+    <div class="card p-8 mb-8">
+      <h2 class="text-xl font-bold mb-4">llms.txt Best Practices</h2>
+      <ul class="space-y-3 text-gray-400">
+        <li class="flex gap-3"><span class="text-geo-500 flex-shrink-0">✓</span><span>Place <code class="text-geo-400">llms.txt</code> at the root of your domain (e.g., <code>https://example.com/llms.txt</code>)</span></li>
+        <li class="flex gap-3"><span class="text-geo-500 flex-shrink-0">✓</span><span>Include a brief description of your site or project</span></li>
+        <li class="flex gap-3"><span class="text-geo-500 flex-shrink-0">✓</span><span>List key URLs that AI models should prioritize</span></li>
+        <li class="flex gap-3"><span class="text-geo-500 flex-shrink-0">✓</span><span>Use Markdown-style formatting for readability</span></li>
+        <li class="flex gap-3"><span class="text-geo-500 flex-shrink-0">✓</span><span>Keep it concise — under 2KB is ideal</span></li>
+        <li class="flex gap-3"><span class="text-geo-500 flex-shrink-0">✓</span><span>Update it when you add major new content sections</span></li>
+      </ul>
+    </div>
+
+    <div class="card p-8 mb-8">
+      <h2 class="text-xl font-bold mb-4">Example llms.txt File</h2>
+      <pre class="bg-black/30 rounded-lg p-4 text-sm text-gray-300 overflow-x-auto"><code># Example Site
+
+> A brief description of what this website is about.
+
+## Key Pages
+- [About Us](https://example.com/about): Company background
+- [Products](https://example.com/products): Product catalog
+- [Blog](https://example.com/blog): Latest articles
+- [Contact](https://example.com/contact): Get in touch
+
+## Optional
+- [Privacy Policy](https://example.com/privacy)
+- [Terms](https://example.com/terms)</code></pre>
+    </div>
+
+    <div class="text-center mb-8">
+      <a href="/" class="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-geo-600 to-brand-600 hover:from-geo-500 hover:to-brand-500 transition">
+        Run Full GEO Audit →
+      </a>
+    </div>
+  </section>
+</Layout>
+
+<script is:inline>
+  (function() {
+    var queue = [];
+    ["startAudit","showBatchInput","showComparison","startBatchAudit","runComparison","doExport"].forEach(function(n) {
+      window[n] = function() { queue.push({ n: n, a: arguments }); };
+    });
+    window.__geoFlush = function() { queue.splice(0).forEach(function(q) { window[q.n].apply(null, q.a); }); };
+  })();
+</script>
+<script src="../../scripts/boot.js"></script>

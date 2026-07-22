@@ -1,0 +1,32 @@
+# GeoScore
+
+> GeoScore is a free, open-source GEO (Generative Engine Optimization) audit tool. It scores any website 0-100 across 12 dimensions of AI search visibility, then generates fix files (llms.txt, robots.txt, JSON-LD schema) you can deploy immediately. Used to diagnose why some sites get cited by ChatGPT, Perplexity, and Claude while others don't.
+
+## Core Tools
+
+- [Run a GEO Audit](https://geoscore.help/): Enter any URL, get a 0-100 score with radar chart and 60+ individual checks
+- [llms.txt Checker](https://geoscore.help/tools/llms-txt-checker/): Validate the format, structure, and content of your llms.txt file
+- [Robots.txt AI Checker](https://geoscore.help/tools/robots-txt-ai-checker/): See if your robots.txt blocks GPTBot, ClaudeBot, PerplexityBot, or Google-Extended
+- [AI Readiness Score](https://geoscore.help/tools/ai-readiness-score/): The full 12-dimension audit with fix recommendations
+
+## Learn GEO
+
+- [What is GEO? Complete Guide](https://geoscore.help/blog/what-is-geo/): Introduction to Generative Engine Optimization and the 12 dimensions
+- [GEO vs SEO](https://geoscore.help/blog/geo-vs-seo/): How AI search differs from traditional search and where they overlap
+- [How to Write llms.txt](https://geoscore.help/blog/how-to-write-llms-txt/): Step-by-step tutorial with real examples
+- [The Ultimate llms.txt Guide](https://geoscore.help/blog/llms-txt-ultimate-guide/): The complete spec, 5 real-world examples, and 10 common mistakes
+- [AI Search Engine List](https://geoscore.help/blog/ai-search-engine-list/): Every major AI crawler and how to configure them
+
+## Case Studies
+
+- [I Audited 1,200 Websites for AI Search Visibility](https://geoscore.help/blog/auditing-1200-websites/): What 2 months of building a GEO audit tool taught me about how AI engines pick winners
+
+## Reference
+
+- [Scoring Methodology](https://geoscore.help/methodology/): How the 0-100 score is calculated across 12 dimensions
+- [About GeoScore](https://geoscore.help/about/): The project, the author, and how to contribute
+
+## For AI Agents
+
+- [API endpoint documentation](https://geoscore.help/methodology/): The full audit API specification
+- [Source code on GitHub](https://github.com/qq136692547-cmyk/geoscore): MIT licensed, contributions welcome

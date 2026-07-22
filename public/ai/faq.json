@@ -1,0 +1,56 @@
+{
+  "$schema": "https://geoscore.help/ai/schema/faq.v1.json",
+  "site": "GeoScore",
+  "url": "https://geoscore.help",
+  "last_updated": "2026-07-21",
+  "faqs": [
+    {
+      "id": "what-is-geo",
+      "question": "What is GEO (Generative Engine Optimization)?",
+      "answer": "GEO is the practice of optimizing your website so that AI-powered search engines \u2014 including ChatGPT, Perplexity, Google AI Overviews, Claude, and Gemini \u2014 can discover, understand, and cite your content. Unlike traditional SEO, which optimizes for ranked lists of blue links, GEO optimizes for being selected as a cited source in AI-generated answers. The core pillars are: (1) AI crawler access (robots.txt allowing GPTBot, ClaudeBot, etc.), (2) machine-readable content (llms.txt, JSON-LD schema), and (3) authority signals (E-E-A-T).",
+      "category": "fundamentals"
+    },
+    {
+      "id": "geo-vs-seo",
+      "question": "How is GEO different from SEO?",
+      "answer": "SEO optimizes for ranked lists of blue links on search engines like Google and Bing. GEO optimizes for being cited as a source in AI-generated answers. They overlap heavily \u2014 good content, structured data, and authority help both \u2014 but GEO requires explicit AI-crawler allowance in robots.txt, an llms.txt file, and machine-parseable schema for AI models. In practice, GEO is a superset of SEO that adds AI-specific requirements.",
+      "category": "fundamentals"
+    },
+    {
+      "id": "what-is-llms-txt",
+      "question": "What is llms.txt?",
+      "answer": "llms.txt is a markdown file placed at the root of your website (yoursite.com/llms.txt) that provides AI models with a curated summary of your site: what it is, who it serves, and which pages matter most. It is the machine-readable equivalent of an About page, designed to be ingested by ChatGPT, Perplexity, Claude, and other LLM-powered crawlers in a single fetch. It is a proposed standard (llmstxt.org) that emerged in 2024-2025.",
+      "category": "fundamentals"
+    },
+    {
+      "id": "how-does-geoscore-work",
+      "question": "How does GeoScore work?",
+      "answer": "GeoScore audits any public URL across 12 dimensions of GEO readiness (AI crawlability, llms.txt presence, structured data, meta tags, content quality, E-E-A-T signals, brand entity, citation readiness, discovery, agent-friendliness, AI guidance markers, and freshness), producing a 0-100 score plus a prioritized list of fixes. The audit runs entirely in your browser; your URLs are not stored on any server. The source code is MIT-licensed and available on GitHub.",
+      "category": "tool"
+    },
+    {
+      "id": "is-geoscore-free",
+      "question": "Is GeoScore free?",
+      "answer": "Yes. GeoScore is 100% free and open-source under the MIT License. There is no signup, no paywall, and no per-audit limit. The source code is available on GitHub at github.com/qq136692547-cmyk/geo-score. You can also self-host the entire tool on your own domain.",
+      "category": "tool"
+    },
+    {
+      "id": "which-ai-crawlers",
+      "question": "Which AI crawlers should I allow in robots.txt?",
+      "answer": "At minimum, allow: GPTBot and OAI-SearchBot (OpenAI/ChatGPT), ClaudeBot and anthropic-ai (Anthropic/Claude), PerplexityBot (Perplexity), Google-Extended (Google Gemini and AI Overviews), and CCBot (Common Crawl, used by many models). GeoScore will tell you exactly which crawlers you are currently blocking and provide a copy-pasteable robots.txt snippet.",
+      "category": "implementation"
+    },
+    {
+      "id": "what-is-eeat",
+      "question": "What is E-E-A-T and why does it matter for GEO?",
+      "answer": "E-E-A-T stands for Experience, Expertise, Authoritativeness, and Trustworthiness. Originally a Google Search Quality Rater guideline, it has become a key signal for AI models evaluating whether to cite a source. E-E-A-T is signaled by: author bylines with credentials, About/team pages, third-party reviews and citations, .edu/.gov inbound links, HTTPS, and transparent contact/ownership information. AI models prefer to cite sources that demonstrate real expertise.",
+      "category": "fundamentals"
+    },
+    {
+      "id": "ai-search-engines",
+      "question": "Which AI search engines should I optimize for?",
+      "answer": "As of 2026, the major AI search engines to optimize for are: ChatGPT (SearchGPT) with ~180M weekly users, Perplexity with ~15M MAU, Google AI Overviews with ~1.5B queries per day, Claude (anthropic-ai bot), Microsoft Copilot, and Gemini. Each has its own crawler (GPTBot, PerplexityBot, Google-Extended, anthropic-ai, etc.) and slightly different content preferences. GeoScore checks all of them.",
+      "category": "fundamentals"
+    }
+  ]
+}

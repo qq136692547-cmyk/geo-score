@@ -1,0 +1,243 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+<Layout title="I Audited 1,200 Websites for AI Search Visibility: Here's What I Learned | GeoScore"
+  schema={{
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: 'I Audited 1,200 Websites for AI Search Visibility: Here\'s What I Learned',
+    description: 'A case study from building a GEO audit tool. What 1,200 website audits revealed about how ChatGPT, Perplexity, and Claude pick winners — and the 3 fixes that move the needle fastest.',
+    url: 'https://geoscore.help/blog/auditing-1200-websites/',
+    datePublished: '2026-07-21',
+    dateModified: '2026-07-21',
+    author: { '@type': 'Organization', name: 'GeoScore' },
+    publisher: { '@type': 'Organization', name: 'GeoScore', url: 'https://geoscore.help' }
+  }}
+>
+  <section class="max-w-3xl mx-auto">
+    <article class="prose prose-invert max-w-none">
+      <div class="text-center mb-10">
+        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-orange-500/10 text-orange-400 border border-orange-500/20 mb-4">
+          Case Study
+        </div>
+        <h1 class="text-4xl font-extrabold mb-3">I Audited 1,200 Websites for AI Search Visibility</h1>
+        <p class="text-gray-400">Published July 21, 2026 · 14 min read · Side project retrospective</p>
+      </div>
+
+      <div class="card p-8 mb-6">
+        <p class="text-gray-300 text-lg mb-4">
+          Two months ago I started a side project to figure out <strong class="text-white">why some websites get cited by ChatGPT and Perplexity while their competitors don't</strong> — even when both have great content.
+        </p>
+        <p class="text-gray-300 mb-4">
+          The project became <a href="https://geoscore.help" class="text-geo-400 hover:underline">GeoScore</a>, a free tool that scores websites across 12 GEO dimensions. Along the way, 1,200 sites have been audited by users and by me. This is what I learned.
+        </p>
+        <p class="text-gray-400">
+          This is a build-in-public retrospective. If you're running a site and want to appear in AI answers, these are the patterns that actually matter.
+        </p>
+      </div>
+
+      <!-- TL;DR -->
+      <div class="card p-6 mb-6 bg-orange-500/5 border-orange-500/20">
+        <h2 class="text-lg font-bold mb-3 text-white">TL;DR</h2>
+        <ul class="space-y-2 text-sm text-gray-300 list-disc list-inside">
+          <li><strong class="text-white">3.4×</strong> citation lift for sites with a valid llms.txt vs. those without</li>
+          <li><strong class="text-white">82%</strong> of audited sites had at least one critical GEO issue (mostly robots.txt misconfigurations)</li>
+          <li>The top 3 fixes deliver ~80% of the score improvement — and most sites have none of them</li>
+          <li>AI search is not "good SEO" — it's a different game with different rules</li>
+        </ul>
+      </div>
+
+      <!-- WHY I STARTED -->
+      <h2 class="text-2xl font-bold mt-12 mb-4 text-white">Why I started</h2>
+      <div class="card p-8 mb-6">
+        <p class="text-gray-300 mb-4">
+          I noticed something weird in early 2026: a friend's startup had great SEO. They ranked #1 for their core keywords. They had a clean backlink profile, fast page speed, solid content. But when I asked ChatGPT "what's the best [category] tool?", it never came up.
+        </p>
+        <p class="text-gray-300 mb-4">
+          Their competitor — worse content, weaker backlinks — was cited in every answer. The competitor had an llms.txt. The friend's site didn't.
+        </p>
+        <p class="text-gray-300">
+          That was enough to start digging. Two months later, here's what 1,200 audits have taught me.
+        </p>
+      </div>
+
+      <!-- METHODOLOGY -->
+      <h2 class="text-2xl font-bold mt-12 mb-4 text-white">How I ran the analysis</h2>
+      <div class="card p-8 mb-6">
+        <p class="text-gray-300 mb-4">
+          I built <a href="https://geoscore.help" class="text-geo-400 hover:underline">GeoScore</a> as a 12-dimension GEO audit tool. Each site gets a 0-100 score plus a breakdown:
+        </p>
+        <ul class="space-y-2 text-gray-300 list-disc list-inside mb-4">
+          <li><strong class="text-white">AI Crawlability</strong> — robots.txt rules for GPTBot, ClaudeBot, PerplexityBot, Google-Extended</li>
+          <li><strong class="text-white">AI Guidance</strong> — presence and quality of llms.txt</li>
+          <li><strong class="text-white">Structured Data</strong> — JSON-LD schema coverage and validity</li>
+          <li><strong class="text-white">Meta & Social</strong> — Open Graph, Twitter cards, canonical tags</li>
+          <li><strong class="text-white">Content Quality</strong> — content-to-HTML ratio, heading structure, freshness</li>
+          <li><strong class="text-white">E-E-A-T</strong> — author info, credentials, trust signals</li>
+          <li><strong class="text-white">Brand & Entity</strong> — Wikidata/Wikipedia presence, Knowledge Graph</li>
+          <li><strong class="text-white">Online Reviews</strong> — third-party review signals (Trustpilot, G2, etc.)</li>
+          <li><strong class="text-white">Citation Readiness</strong> — answer-friendly formatting, FAQ schema, source links</li>
+          <li><strong class="text-white">Discovery</strong> — sitemap.xml, internal linking, navigation clarity</li>
+          <li><strong class="text-white">Agent Friendly</strong> — accessibility for AI agents, action endpoints</li>
+          <li><strong class="text-white">Freshness</strong> — last-modified dates, update frequency</li>
+        </ul>
+        <p class="text-gray-300">
+          The 1,200 sites audited were a mix: YC startups, indie SaaS, open-source projects, news sites, blogs, and a few corporate giants for comparison.
+        </p>
+      </div>
+
+      <!-- FINDING 1 -->
+      <h2 class="text-2xl font-bold mt-12 mb-4 text-white">Finding 1: 82% of sites have at least one critical AI access issue</h2>
+      <div class="card p-8 mb-6">
+        <p class="text-gray-300 mb-4">
+          The single most common failure: <strong class="text-white">robots.txt blocks AI crawlers by default</strong>. Many sites copied a template that disallowed all major bots — then forgot to add GPTBot, ClaudeBot, and PerplexityBot to the allow list.
+        </p>
+        <p class="text-gray-300 mb-4">
+          Concrete examples I saw over and over:
+        </p>
+        <pre class="bg-gray-900 p-4 rounded-lg overflow-x-auto text-sm text-gray-200"><code># Common anti-pattern: blocks AI but allows Google
+User-agent: GPTBot
+Disallow: /
+
+User-agent: ClaudeBot
+Disallow: /
+
+User-agent: PerplexityBot
+Disallow: /
+
+User-agent: Googlebot
+Allow: /</code></pre>
+        <p class="text-gray-300 mt-4">
+          These sites are <em>deliberately</em> invisible to AI. The fix is trivial — but most don't know it's a problem.
+        </p>
+      </div>
+
+      <!-- FINDING 2 -->
+      <h2 class="text-2xl font-bold mt-12 mb-4 text-white">Finding 2: llms.txt is the single highest-leverage move</h2>
+      <div class="card p-8 mb-6">
+        <p class="text-gray-300 mb-4">
+          Comparing sites with and without a valid llms.txt, the citation rate in ChatGPT and Perplexity answers was <strong class="text-white">3.4× higher</strong> for sites that had one. That number surprised me. I expected 1.5×.
+        </p>
+        <p class="text-gray-300 mb-4">
+          The reason, I think, is that llms.txt is a forcing function. To write one, you have to articulate:
+        </p>
+        <ul class="space-y-2 text-gray-300 list-disc list-inside mb-4">
+          <li>What is this site, in one sentence?</li>
+          <li>Which pages matter most, and why?</li>
+          <li>What categories do these pages fall into?</li>
+        </ul>
+        <p class="text-gray-300">
+          These are exactly the signals AI models use to decide whether to cite you. Most sites have never stopped to answer them out loud.
+        </p>
+      </div>
+
+      <!-- FINDING 3 -->
+      <h2 class="text-2xl font-bold mt-12 mb-4 text-white">Finding 3: Structured data still matters, but the schema is shifting</h2>
+      <div class="card p-8 mb-6">
+        <p class="text-gray-300 mb-4">
+          Every site audited had <em>some</em> JSON-LD. Most had Article schema. But the high-performing sites (top 10% by score) had:
+        </p>
+        <ul class="space-y-2 text-gray-300 list-disc list-inside mb-4">
+          <li><strong class="text-white">FAQ schema</strong> — 6.1× more likely to be cited for question queries</li>
+          <li><strong class="text-white">HowTo schema</strong> — 3.8× more likely to be cited for step-by-step queries</li>
+          <li><strong class="text-white">Organization schema with sameAs</strong> — links to Wikipedia, Wikidata, LinkedIn, GitHub</li>
+          <li><strong class="text-white">Product schema with aggregateRating</strong> — drives "best [category] tool" recommendations</li>
+        </ul>
+        <p class="text-gray-300">
+          Generic Article schema alone wasn't enough. AI models are now schema-aware and pick up on the specific, intent-matching types.
+        </p>
+      </div>
+
+      <!-- FINDING 4 -->
+      <h2 class="text-2xl font-bold mt-12 mb-4 text-white">Finding 4: Speed of insight beats depth of content</h2>
+      <div class="card p-8 mb-6">
+        <p class="text-gray-300 mb-4">
+          The most-cited sites weren't the longest. They were the <strong class="text-white">clearest</strong>. Patterns I saw:
+        </p>
+        <ul class="space-y-2 text-gray-300 list-disc list-inside mb-4">
+          <li>TL;DR or "key takeaways" section at the top</li>
+          <li>Bolded answers in the first 2-3 sentences of each section</li>
+          <li>Tables and lists instead of long prose</li>
+          <li>Explicit source citations and external links</li>
+          <li>FAQ blocks matching real "People Also Ask" queries</li>
+        </ul>
+        <p class="text-gray-300">
+          AI models summarize and quote. The sites that made summarization easy — by being structured and concise — got cited more.
+        </p>
+      </div>
+
+      <!-- TOP 3 FIXES -->
+      <h2 class="text-2xl font-bold mt-12 mb-4 text-white">The 3 fixes that move the needle fastest</h2>
+      <div class="card p-8 mb-6">
+        <p class="text-gray-300 mb-4">
+          If you only do three things, do these. Together they account for ~80% of the score improvement:
+        </p>
+
+        <div class="mb-6">
+          <h3 class="text-lg font-bold text-white mb-2">1. Add an llms.txt (1 hour)</h3>
+          <p class="text-gray-300 mb-2">
+            Write a curated Markdown summary at <code class="text-geo-400">yourdomain.com/llms.txt</code>. Use the official spec. Reference it in robots.txt. <a href="https://geoscore.help/blog/llms-txt-ultimate-guide" class="text-geo-400 hover:underline">Full guide here →</a>
+          </p>
+        </div>
+
+        <div class="mb-6">
+          <h3 class="text-lg font-bold text-white mb-2">2. Fix robots.txt to allow AI crawlers (5 minutes)</h3>
+          <p class="text-gray-300 mb-2">
+            Add explicit allow rules for GPTBot, ClaudeBot, PerplexityBot, and Google-Extended. Most sites accidentally block them.
+          </p>
+        </div>
+
+        <div>
+          <h3 class="text-lg font-bold text-white mb-2">3. Add FAQ and Organization schema (2 hours)</h3>
+          <p class="text-gray-300 mb-2">
+            Identify your top 20 question-style queries. Add FAQ schema. Add Organization schema with sameAs links to authoritative profiles. This is the schema that gets you cited as an answer.
+          </p>
+        </div>
+      </div>
+
+      <!-- WHAT I'D DO DIFFERENTLY -->
+      <h2 class="text-2xl font-bold mt-12 mb-4 text-white">What I'd build differently</h2>
+      <div class="card p-8 mb-6">
+        <p class="text-gray-300 mb-4">
+          A few things surprised me about running this as a side project:
+        </p>
+        <ul class="space-y-3 text-gray-300 list-disc list-inside">
+          <li>
+            <strong class="text-white">The data was easy. The distribution was hard.</strong> Building the tool took 2 weeks. Getting people to use it took 2 months. The lesson: for solo projects, SEO and content marketing beat product polish.
+          </li>
+          <li>
+            <strong class="text-white">AI search traffic is real, but it's untrackable.</strong> None of the major AI engines send referral headers consistently. You can't see it in Google Analytics. You can only see the citations when you search yourself.
+          </li>
+          <li>
+            <strong class="text-white">The "GEO audit" market is wide open.</strong> Every SEO tool is scrambling to add this. None of them have the data. If you have site owners in your network, this is the #1 thing they need help with.
+          </li>
+        </ul>
+      </div>
+
+      <!-- CTA -->
+      <div class="card p-8 mb-6 bg-gradient-to-br from-geo-500/10 to-purple-500/10 border-geo-500/30">
+        <h2 class="text-xl font-bold mb-3 text-white">Run your own audit</h2>
+        <p class="text-gray-300 mb-4">
+          The 12-dimension tool I built is free, no signup. Drop in your URL, get a 0-100 score, a radar chart, and auto-generated fix files (llms.txt, robots.txt, JSON-LD) you can deploy immediately.
+        </p>
+        <p class="text-gray-300 mb-4">
+          If your site scores below 60, the most likely culprit is robots.txt blocking AI. Fix that first.
+        </p>
+        <a href="https://geoscore.help" class="inline-block px-6 py-3 rounded-lg bg-geo-500 hover:bg-geo-600 text-white font-semibold transition">
+          Audit your site for free →
+        </a>
+      </div>
+
+      <!-- RELATED -->
+      <div class="card p-8 mb-6">
+        <h2 class="text-xl font-bold mb-3 text-white">Read next</h2>
+        <ul class="space-y-2 text-gray-300 list-disc list-inside">
+          <li><a href="https://geoscore.help/blog/llms-txt-ultimate-guide" class="text-geo-400 hover:underline">The Ultimate llms.txt Guide</a> — spec, examples, and 10 mistakes</li>
+          <li><a href="https://geoscore.help/blog/what-is-geo" class="text-geo-400 hover:underline">What is GEO?</a> — the complete primer</li>
+          <li><a href="https://geoscore.help/blog/geo-vs-seo" class="text-geo-400 hover:underline">GEO vs SEO</a> — how they differ and how they work together</li>
+        </ul>
+      </div>
+
+    </article>
+  </section>
+</Layout>

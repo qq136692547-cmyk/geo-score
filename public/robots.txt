@@ -1,4 +1,35 @@
 ﻿User-agent: *
 Allow: /
 
-Sitemap: https://qq136692547-cmyk.github.io/geo-score/sitemap.xml
+# AI Crawlers — explicitly allowed
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: Perplexity-User
+Allow: /
+
+User-agent: Cohere-AI
+Allow: /
+
+Sitemap: https://geoscore.help/sitemap.xml

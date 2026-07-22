@@ -1,6 +1,32 @@
-node_modules
-.cache
-dist
-.env
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Temp scripts
+_*.py
+_*.ps1
+test_*.cjs
+test_*.js
+
+# Screenshots
+screenshots/
+
+# Notes & docs (keep in workspace, not repo)
+geoscore_*.md
+ga4_config_*.md
+google_search_console_*.md
+
+# Deploy config (contains token)
+deploy_root.py
+
+# Upload scripts
+upload-image.ps1
+
+# OS files
 .DS_Store
-worker/.wrangler
+Thumbs.db
+
+# Wrangler build cache
+worker/.wrangler/

@@ -1,0 +1,99 @@
+﻿---
+import Layout from '../../layouts/Layout.astro';
+---
+<Layout title="AI Readiness Score — Check Your Site's AI Search Visibility | GeoScore"
+  schema={{
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    name: 'AI Readiness Score',
+    description: 'Get a 0-100 score showing how well AI search engines like ChatGPT, Perplexity, and Google AI Overviews can discover, understand, and cite your website across 12 dimensions.',
+    url: 'https://geoscore.help/tools/ai-readiness-score/',
+    applicationCategory: 'SEO Tool',
+    operatingSystem: 'Any',
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+    isPartOf: { '@type': 'WebApplication', name: 'GeoScore', url: 'https://geoscore.help' }
+  }}
+>
+  <section class="max-w-4xl mx-auto">
+    <div class="text-center mb-10">
+      <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-brand-500/10 text-brand-400 border border-brand-500/20 mb-4">
+        Free Tool
+      </div>
+      <h1 class="text-4xl font-extrabold mb-3">AI Readiness Score</h1>
+      <p class="text-gray-400 max-w-2xl mx-auto">Get a 0-100 score showing how well AI search engines like ChatGPT, Perplexity, and Google AI Overviews can discover, understand, and cite your website.</p>
+    </div>
+
+    <div class="card p-8 mb-8">
+      <h2 class="text-xl font-bold mb-4">What is AI Readiness?</h2>
+      <p class="text-gray-400 mb-4">
+        AI Readiness measures how effectively your website can be discovered, understood, and cited by generative AI search engines. Unlike traditional SEO, AI readiness evaluates your site across <strong class="text-white">12 dimensions</strong> including AI crawlability, structured data, citation readiness, and agent-friendliness.
+      </p>
+      <p class="text-gray-400">
+        A high AI Readiness score means your site is more likely to appear in AI-generated answers, be cited by ChatGPT and Perplexity, and show up in Google AI Overviews.
+      </p>
+    </div>
+
+    <div class="card p-8 mb-8">
+      <h2 class="text-xl font-bold mb-4">12 Scoring Dimensions</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div class="flex items-center gap-3 p-3 rounded-lg bg-white/5"><span class="text-brand-400 font-bold text-sm w-8">12%</span><span class="text-gray-300 text-sm">AI Crawlability (Robots.txt)</span></div>
+        <div class="flex items-center gap-3 p-3 rounded-lg bg-white/5"><span class="text-brand-400 font-bold text-sm w-8">12%</span><span class="text-gray-300 text-sm">AI Guidance (llms.txt)</span></div>
+        <div class="flex items-center gap-3 p-3 rounded-lg bg-white/5"><span class="text-brand-400 font-bold text-sm w-8">14%</span><span class="text-gray-300 text-sm">Structured Data (Schema)</span></div>
+        <div class="flex items-center gap-3 p-3 rounded-lg bg-white/5"><span class="text-brand-400 font-bold text-sm w-8">10%</span><span class="text-gray-300 text-sm">Meta & Social Tags</span></div>
+        <div class="flex items-center gap-3 p-3 rounded-lg bg-white/5"><span class="text-brand-400 font-bold text-sm w-8">12%</span><span class="text-gray-300 text-sm">Content Quality</span></div>
+        <div class="flex items-center gap-3 p-3 rounded-lg bg-white/5"><span class="text-brand-400 font-bold text-sm w-8">8%</span><span class="text-gray-300 text-sm">E-E-A-T Signals</span></div>
+        <div class="flex items-center gap-3 p-3 rounded-lg bg-white/5"><span class="text-brand-400 font-bold text-sm w-8">8%</span><span class="text-gray-300 text-sm">Brand & Entity</span></div>
+        <div class="flex items-center gap-3 p-3 rounded-lg bg-white/5"><span class="text-brand-400 font-bold text-sm w-8">8%</span><span class="text-gray-300 text-sm">Citation Readiness</span></div>
+        <div class="flex items-center gap-3 p-3 rounded-lg bg-white/5"><span class="text-brand-400 font-bold text-sm w-8">6%</span><span class="text-gray-300 text-sm">Discovery Endpoints</span></div>
+        <div class="flex items-center gap-3 p-3 rounded-lg bg-white/5"><span class="text-brand-400 font-bold text-sm w-8">4%</span><span class="text-gray-300 text-sm">Agent-Friendliness</span></div>
+        <div class="flex items-center gap-3 p-3 rounded-lg bg-white/5"><span class="text-brand-400 font-bold text-sm w-8">4%</span><span class="text-gray-300 text-sm">Freshness & Maintenance</span></div>
+        <div class="flex items-center gap-3 p-3 rounded-lg bg-white/5"><span class="text-brand-400 font-bold text-sm w-8">2%</span><span class="text-gray-300 text-sm">Negative Signals</span></div>
+      </div>
+    </div>
+
+    <div class="card p-8 mb-8">
+      <h2 class="text-xl font-bold mb-4">Check Your AI Readiness</h2>
+      <p class="text-gray-400 mb-6">Enter your URL to get a full 12-dimension audit with actionable recommendations:</p>
+      <div class="flex gap-3 max-w-xl">
+        <div class="flex-1 relative">
+          <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+          <input id="url-input" type="url" placeholder="e.g. example.com" class="w-full pl-12 pr-5 py-3.5 rounded-xl bg-white/5 text-white placeholder-gray-500 border border-gray-600 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 text-lg transition" />
+        </div>
+        <button id="audit-btn" class="px-8 py-3.5 rounded-xl font-semibold text-white bg-gradient-to-r from-geo-600 to-brand-600 hover:from-geo-500 hover:to-brand-500 transition shadow-lg shadow-brand-500/20 whitespace-nowrap">Score My Site</button>
+      </div>
+    </div>
+
+    <div class="card p-8 mb-8">
+      <h2 class="text-xl font-bold mb-4">Score Levels</h2>
+      <div class="space-y-3">
+        <div class="flex items-center gap-4 p-3 rounded-lg bg-geo-500/10 border border-geo-500/20">
+          <span class="text-2xl font-extrabold text-geo-500">86-100</span>
+          <div><strong class="text-white">Excellent</strong> <span class="text-gray-400 text-sm">— Your site is highly visible to AI search engines.</span></div>
+        </div>
+        <div class="flex items-center gap-4 p-3 rounded-lg bg-brand-500/10 border border-brand-500/20">
+          <span class="text-2xl font-extrabold text-brand-500">68-85</span>
+          <div><strong class="text-white">Good</strong> <span class="text-gray-400 text-sm">— Solid foundation with room for improvement.</span></div>
+        </div>
+        <div class="flex items-center gap-4 p-3 rounded-lg bg-warn-500/10 border border-warn-500/20">
+          <span class="text-2xl font-extrabold text-warn-500">36-67</span>
+          <div><strong class="text-white">Basic</strong> <span class="text-gray-400 text-sm">— AI engines may struggle to understand your site.</span></div>
+        </div>
+        <div class="flex items-center gap-4 p-3 rounded-lg bg-danger-500/10 border border-danger-500/20">
+          <span class="text-2xl font-extrabold text-danger-500">0-35</span>
+          <div><strong class="text-white">Critical</strong> <span class="text-gray-400 text-sm">— Your site is nearly invisible to AI search.</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<script is:inline>
+  (function() {
+    var queue = [];
+    ["startAudit","showBatchInput","showComparison","startBatchAudit","runComparison","doExport"].forEach(function(n) {
+      window[n] = function() { queue.push({ n: n, a: arguments }); };
+    });
+    window.__geoFlush = function() { queue.splice(0).forEach(function(q) { window[q.n].apply(null, q.a); }); };
+  })();
+</script>
+<script src="../../scripts/boot.js"></script>

@@ -1,0 +1,84 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+<Layout title="Privacy Policy — GeoScore">
+  <section class="max-w-3xl mx-auto">
+    <div class="text-center mb-10">
+      <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-brand-500/10 text-brand-400 border border-brand-500/20 mb-4">
+        Legal
+      </div>
+      <h1 class="text-4xl font-extrabold mb-3">Privacy Policy</h1>
+      <p class="text-gray-400">Last updated: 2026-07-21</p>
+    </div>
+
+    <div class="card p-8 space-y-6 text-gray-300 leading-relaxed">
+      <section>
+        <h2 class="text-xl font-bold text-white mb-3">1. Overview</h2>
+        <p>
+          GeoScore is a free, open-source audit tool. This policy explains what data we collect, what we don't, and why. The short version: we collect almost nothing, we never sell anything, and the audit tool runs entirely in your browser.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-xl font-bold text-white mb-3">2. Data We Do NOT Collect</h2>
+        <p>The GeoScore audit runs 100% client-side. When you enter a URL to audit:</p>
+        <ul class="list-disc list-inside space-y-1 mt-2">
+          <li>The URL is fetched directly from your browser to public proxies and the target site.</li>
+          <li>The URL is <strong>never sent to our servers</strong> (we don't have any application servers).</li>
+          <li>The URL is <strong>never logged</strong>, <strong>never stored</strong>, and <strong>never shared</strong> with third parties.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2 class="text-xl font-bold text-white mb-3">3. Data We Do Collect</h2>
+        <p>We use Google Analytics 4 (GA4) to understand aggregate traffic patterns. GA4 collects:</p>
+        <ul class="list-disc list-inside space-y-1 mt-2">
+          <li>Page views (URL paths only, no query strings with audit URLs)</li>
+          <li>Referrer (the previous website you came from)</li>
+          <li>Country and city (derived from IP, then discarded)</li>
+          <li>Device type, browser, operating system</li>
+          <li>Screen resolution and viewport size</li>
+        </ul>
+        <p class="mt-2">IP anonymization is enabled. We do not enable Google Signals. We do not use advertising cookies.</p>
+      </section>
+
+      <section>
+        <h2 class="text-xl font-bold text-white mb-3">4. Cookies</h2>
+        <p>
+          GeoScore uses no first-party cookies. GA4 may set its own cookies for visitor identification; you can opt out via your browser's Do Not Track setting, the <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener" class="text-brand-400 hover:underline">Google Analytics Opt-out Browser Add-on</a>, or by blocking third-party cookies in your browser.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-xl font-bold text-white mb-3">5. Third-Party Services</h2>
+        <p>GeoScore relies on the following third-party services, each with their own privacy policies:</p>
+        <ul class="list-disc list-inside space-y-1 mt-2">
+          <li><strong>GitHub Pages</strong> (hosting) — <a href="https://docs.github.com/en/site-policy/privacy-policies/github-privacy-statement" target="_blank" rel="noopener" class="text-brand-400 hover:underline">GitHub Privacy Statement</a></li>
+          <li><strong>Cloudflare Pages</strong> (CORS proxy) — <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener" class="text-brand-400 hover:underline">Cloudflare Privacy Policy</a></li>
+          <li><strong>Google Analytics 4</strong> (analytics) — <a href="https://policies.google.com/privacy" target="_blank" rel="noopener" class="text-brand-400 hover:underline">Google Privacy Policy</a></li>
+        </ul>
+      </section>
+
+      <section>
+        <h2 class="text-xl font-bold text-white mb-3">6. Children's Privacy</h2>
+        <p>
+          GeoScore is not directed at children under 13. We do not knowingly collect information from children. If you believe a child has provided information, please contact us so we can remove it.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-xl font-bold text-white mb-3">7. Changes to This Policy</h2>
+        <p>
+          We may update this policy occasionally. Changes will be posted on this page with a revised "Last updated" date. Material changes will be noted in the GitHub repository changelog.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-xl font-bold text-white mb-3">8. Contact</h2>
+        <p>
+          For privacy questions or data requests, open an issue at <a href="https://github.com/qq136692547-cmyk/geo-score/issues" target="_blank" rel="noopener" class="text-brand-400 hover:underline">github.com/qq136692547-cmyk/geo-score/issues</a>.
+        </p>
+      </section>
+    </div>
+  </section>
+</Layout>

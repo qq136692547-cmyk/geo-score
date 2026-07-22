@@ -1,0 +1,250 @@
+﻿---
+import Layout from '../../layouts/Layout.astro';
+---
+<Layout title="How to Write an llms.txt File: Complete Guide with Examples | GeoScore"
+  schema={{
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: 'How to Write an llms.txt File: Complete Guide with Examples',
+    description: 'Step-by-step guide to creating an llms.txt file for your website. Learn the format, see real examples, and understand how AI models like ChatGPT and Claude use it.',
+    url: 'https://geoscore.help/blog/how-to-write-llms-txt/',
+    datePublished: '2025-07-01',
+    author: { '@type': 'Organization', name: 'GeoScore' },
+    publisher: { '@type': 'Organization', name: 'GeoScore', url: 'https://geoscore.help' }
+  }}
+>
+  <section class="max-w-3xl mx-auto">
+    <article class="prose prose-invert max-w-none">
+      <div class="text-center mb-10">
+        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-geo-500/10 text-geo-400 border border-geo-500/20 mb-4">
+          GEO Guide
+        </div>
+        <h1 class="text-4xl font-extrabold mb-3">How to Write an llms.txt File</h1>
+        <p class="text-gray-400">Published July 2025 · 12 min read</p>
+      </div>
+
+      <div class="card p-8 mb-6">
+        <p class="text-gray-300 text-lg mb-4">
+          <strong class="text-white">llms.txt</strong> is a standardized text file you place at the root of your website (<code class="text-geo-400">yourdomain.com/llms.txt</code>) that helps AI models understand what your site is about and which pages matter most.
+        </p>
+        <p class="text-gray-400">
+          Think of it as a <strong class="text-white">curated guide for AI</strong> — not a full sitemap, but a hand-picked summary with context. It was proposed by Jeremy Howard (founder of fast.ai) in September 2024 and is rapidly becoming a web standard.
+        </p>
+      </div>
+
+      <div class="card p-8 mb-6">
+        <h2 class="text-xl font-bold mb-4">Why llms.txt Matters</h2>
+        <ul class="space-y-3 text-gray-400">
+          <li>🤖 <strong class="text-white">AI models can't read JavaScript</strong> — many modern sites render content via JS, which AI crawlers can't execute. llms.txt provides a plain-text entry point.</li>
+          <li>📋 <strong class="text-white">Websites are complex</strong> — AI crawlers don't know which pages are important. llms.txt tells them directly.</li>
+          <li>📈 <strong class="text-white">Get cited more often</strong> — sites with llms.txt are more likely to be understood and cited by AI search engines.</li>
+          <li>🔍 <strong class="text-white">It's like sitemap.xml for AI</strong> — but instead of listing URLs, it provides context and descriptions.</li>
+        </ul>
+      </div>
+
+      <div class="card p-8 mb-6">
+        <h2 class="text-xl font-bold mb-4">llms.txt vs robots.txt vs sitemap.xml</h2>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead><tr class="border-b border-gray-700 text-left">
+              <th class="pb-3 pr-4 text-gray-300">File</th>
+              <th class="pb-3 pr-4 text-gray-300">Purpose</th>
+              <th class="pb-3 text-gray-300">Format</th>
+            </tr></thead>
+            <tbody class="text-gray-400">
+              <tr class="border-b border-gray-700/50"><td class="py-2 pr-4 font-semibold text-white">robots.txt</td><td class="py-2 pr-4">Tell crawlers what they <em>can/can't</em> access</td><td class="py-2">Plain text directives</td></tr>
+              <tr class="border-b border-gray-700/50"><td class="py-2 pr-4 font-semibold text-white">sitemap.xml</td><td class="py-2 pr-4">List <em>all</em> URLs on your site</td><td class="py-2">XML</td></tr>
+              <tr><td class="py-2 pr-4 font-semibold text-white">llms.txt</td><td class="py-2 pr-4">Explain <em>what your site is</em> and highlight key pages</td><td class="py-2">Markdown</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card p-8 mb-6">
+        <h2 class="text-xl font-bold mb-4">The llms.txt Format</h2>
+        <p class="text-gray-400 mb-3">The file uses <strong class="text-white">Markdown</strong> format with these sections:</p>
+        <div class="bg-gray-900/50 rounded-xl p-4 font-mono text-sm text-gray-300 mb-4 overflow-x-auto">
+<pre># Site Name
+
+> Brief one-line description of your site
+
+## Optional subtitle / additional context
+
+### Section title (optional)
+
+[Page Title](https://example.com/page): Brief description of what this page contains
+
+[Another Page](https://example.com/another): What this page is about
+
+## Links (optional)
+[Related resource](https://example.com/resource)</pre>
+        </div>
+        <p class="text-gray-400 mb-2"><strong class="text-white">Key rules:</strong></p>
+        <ul class="space-y-1 text-gray-400">
+          <li>• Start with <code class="text-geo-400">#</code> followed by your site name (H1)</li>
+          <li>• Use <code class="text-geo-400">&gt;</code> for a blockquote summary (1-2 sentences)</li>
+          <li>• Use <code class="text-geo-400">##</code> for section headers</li>
+          <li>• Links format: <code class="text-geo-400">[Title](URL): Description</code></li>
+          <li>• Keep it concise — AI models have token limits</li>
+        </ul>
+      </div>
+
+      <div class="card p-8 mb-6">
+        <h2 class="text-xl font-bold mb-4">Example 1: SaaS Company</h2>
+        <div class="bg-gray-900/50 rounded-xl p-4 font-mono text-sm text-gray-300 overflow-x-auto">
+<pre># Acme CRM
+
+> Acme CRM is a customer relationship management platform for small businesses. Features include contact management, email tracking, pipeline visualization, and AI-powered insights.
+
+## Product
+
+[Pricing](https://acme.com/pricing): Plans start at $12/user/month. Free tier available for up to 3 users.
+
+[Features](https://acme.com/features): Contact management, email integration, pipeline tracking, custom dashboards, and workflow automation.
+
+[API Documentation](https://acme.com/api): REST API with Webhooks. Rate limit: 1000 req/hour. OAuth 2.0 authentication.
+
+## Resources
+
+[Help Center](https://acme.com/help): Step-by-step guides, video tutorials, and FAQ.
+
+[Blog](https://acme.com/blog): CRM best practices, sales tips, and product updates.
+
+[Security](https://acme.com/security): SOC 2 Type II certified. Data encrypted at rest (AES-256) and in transit (TLS 1.3).</pre>
+        </div>
+      </div>
+
+      <div class="card p-8 mb-6">
+        <h2 class="text-xl font-bold mb-4">Example 2: Developer Tool</h2>
+        <div class="bg-gray-900/50 rounded-xl p-4 font-mono text-sm text-gray-300 overflow-x-auto">
+<pre># FastDeploy
+
+> FastDeploy is a CLI tool for zero-downtime deployments to Kubernetes. Supports blue-green, canary, and rolling update strategies.
+
+## Getting Started
+
+[Quick Start](https://fastdeploy.io/docs/quickstart): Install via `brew install fastdeploy`. Run `fastdeploy init` to get started.
+
+[Installation](https://fastdeploy.io/docs/install): Available on Homebrew, npm, and as a Docker image. Requires Kubernetes 1.24+.
+
+## Documentation
+
+[CLI Reference](https://fastdeploy.io/docs/cli): Complete command reference with examples.
+
+[Configuration](https://fastdeploy.io/docs/config): YAML-based configuration. Supports environment variables and secrets management.
+
+[Examples](https://fastdeploy.io/docs/examples): Real-world deployment configs for common frameworks (Next.js, Django, Rails, Spring Boot).
+
+## Community
+
+[GitHub](https://github.com/fastdeploy/fastdeploy): Source code, issues, and contributions welcome.
+
+[Discord](https://discord.gg/fastdeploy): Community support and discussions.</pre>
+        </div>
+      </div>
+
+      <div class="card p-8 mb-6">
+        <h2 class="text-xl font-bold mb-4">Example 3: Content Site / Blog</h2>
+        <div class="bg-gray-900/50 rounded-xl p-4 font-mono text-sm text-gray-300 overflow-x-auto">
+<pre># GeoScore Blog
+
+> GeoScore Blog publishes guides on Generative Engine Optimization (GEO) — how to make your website visible to AI search engines like ChatGPT, Perplexity, and Google AI Overviews.
+
+## Popular Articles
+
+[What is GEO?](https://geoscore.help/blog/what-is-geo): Complete introduction to Generative Engine Optimization — what it is, why it matters, and how to get started.
+
+[GEO vs SEO](https://geoscore.help/blog/geo-vs-seo): Detailed comparison of GEO and traditional SEO, including target engines, crawlers, content strategy, and success metrics.
+
+[How to Write llms.txt](https://geoscore.help/blog/how-to-write-llms-txt): Step-by-step guide with real examples for creating an llms.txt file for your website.
+
+## Tools
+
+[Free GEO Audit](https://geoscore.help): Get a 12-dimension GEO readiness score for any website.
+
+[llms.txt Checker](https://geoscore.help/tools/llms-txt-checker): Check if your website has an llms.txt file.
+
+[Robots.txt AI Checker](https://geoscore.help/tools/robots-txt-ai-checker): Verify AI crawlers aren't blocked by your robots.txt.</pre>
+        </div>
+      </div>
+
+      <div class="card p-8 mb-6">
+        <h2 class="text-xl font-bold mb-4">Step-by-Step: Create Your llms.txt</h2>
+        <ol class="space-y-4 text-gray-400">
+          <li>
+            <strong class="text-white">Step 1: Write your site summary</strong><br/>
+            One sentence: what is your site? Who is it for? What does it do?
+          </li>
+          <li>
+            <strong class="text-white">Step 2: Pick 5-15 key pages</strong><br/>
+            Don't list every page — choose the ones that best explain your product/service. Pricing, features, docs, about, and top blog posts are good starting points.
+          </li>
+          <li>
+            <strong class="text-white">Step 3: Write a description for each page</strong><br/>
+            One sentence per page. What will an AI learn from this page? Include key facts (prices, versions, requirements).
+          </li>
+          <li>
+            <strong class="text-white">Step 4: Format as Markdown</strong><br/>
+            Use the template above. H1 for site name, blockquote for summary, links for pages.
+          </li>
+          <li>
+            <strong class="text-white">Step 5: Save as <code class="text-geo-400">/llms.txt</code></strong><br/>
+            Place it at the root of your website: <code class="text-geo-400">https://yourdomain.com/llms.txt</code>
+          </li>
+          <li>
+            <strong class="text-white">Step 6: Verify with our checker</strong><br/>
+            Use our <a href="/tools/llms-txt-checker" class="text-brand-500 hover:underline">free llms.txt checker</a> to verify it's accessible and well-formed.
+          </li>
+          <li>
+            <strong class="text-white">Step 7: Link from your robots.txt (optional)</strong><br/>
+            Add <code class="text-geo-400">llms-txt: /llms.txt</code> to your robots.txt to help crawlers discover it.
+          </li>
+        </ol>
+      </div>
+
+      <div class="card p-8 mb-6">
+        <h2 class="text-xl font-bold mb-4">Best Practices</h2>
+        <ul class="space-y-2 text-gray-400">
+          <li>✅ <strong class="text-white">Keep it under 2000 words</strong> — AI models have context limits</li>
+          <li>✅ <strong class="text-white">Include concrete facts</strong> — prices, versions, dates, requirements</li>
+          <li>✅ <strong class="text-white">Update regularly</strong> — when you add major new pages or features</li>
+          <li>✅ <strong class="text-white">Use clear page titles</strong> — AI reads these as context labels</li>
+          <li>❌ <strong class="text-white">Don't list every URL</strong> — that's what sitemap.xml is for</li>
+          <li>❌ <strong class="text-white">Don't include marketing fluff</strong> — AI wants facts, not adjectives</li>
+          <li>❌ <strong class="text-white">Don't duplicate content</strong> — each link should have a unique description</li>
+        </ul>
+      </div>
+
+      <div class="card p-8 mb-6">
+        <h2 class="text-xl font-bold mb-4">Common Mistakes</h2>
+        <div class="space-y-3">
+          <div class="bg-red-500/5 border border-red-500/20 rounded-lg p-3">
+            <p class="text-sm"><strong class="text-red-400">Mistake 1:</strong> Treating llms.txt as a sitemap. Don't list 500 URLs — pick the 10-15 that matter most.</p>
+          </div>
+          <div class="bg-red-500/5 border border-red-500/20 rounded-lg p-3">
+            <p class="text-sm"><strong class="text-red-400">Mistake 2:</strong> Writing for humans, not AI. Use facts and data, not marketing language. "Best CRM ever" → "CRM with 50+ integrations, SOC 2 certified, $12/mo".</p>
+          </div>
+          <div class="bg-red-500/5 border border-red-500/20 rounded-lg p-3">
+            <p class="text-sm"><strong class="text-red-400">Mistake 3:</strong> Forgetting to make it accessible. Ensure your server returns 200 (not 403 or 404) at <code class="text-geo-400">/llms.txt</code>.</p>
+          </div>
+          <div class="bg-red-500/5 border border-red-500/20 rounded-lg p-3">
+            <p class="text-sm"><strong class="text-red-400">Mistake 4:</strong> Blocking it in robots.txt. Make sure <code class="text-geo-400">Allow: /llms.txt</code> is in your robots.txt.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card p-8 mb-6 bg-gradient-to-r from-geo-500/10 to-brand-500/10 border border-brand-500/20">
+        <h2 class="text-xl font-bold mb-4">Check Your llms.txt Now</h2>
+        <p class="text-gray-400 mb-4">Enter your domain and instantly see if you have an llms.txt file — plus get a full 12-dimension GEO score.</p>
+        <a href="/" class="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-geo-600 to-brand-600 hover:from-geo-500 hover:to-brand-500 transition">
+          Start Free GEO Audit →
+        </a>
+      </div>
+
+      <div class="flex flex-wrap gap-3 mt-8">
+        <a href="/blog/geo-vs-seo" class="px-4 py-2 rounded-lg text-sm bg-white/5 hover:bg-white/10 transition">← GEO vs SEO</a>
+        <a href="/blog/what-is-geo" class="px-4 py-2 rounded-lg text-sm bg-white/5 hover:bg-white/10 transition">What is GEO? →</a>
+      </div>
+    </article>
+  </section>
+</Layout>

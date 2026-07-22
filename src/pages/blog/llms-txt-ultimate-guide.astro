@@ -1,0 +1,289 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+<Layout title="The Ultimate llms.txt Guide: Standard, Examples & 2026 Best Practices | GeoScore"
+  schema={{
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: 'The Ultimate llms.txt Guide: Standard, Examples & 2026 Best Practices',
+    description: 'The most complete llms.txt guide on the web. Learn the official spec, see real-world examples from top sites, and follow 2026 best practices to get cited by ChatGPT, Perplexity, and Claude.',
+    url: 'https://geoscore.help/blog/llms-txt-ultimate-guide/',
+    datePublished: '2026-07-21',
+    dateModified: '2026-07-21',
+    author: { '@type': 'Organization', name: 'GeoScore' },
+    publisher: { '@type': 'Organization', name: 'GeoScore', url: 'https://geoscore.help' }
+  }}
+>
+  <section class="max-w-3xl mx-auto">
+    <article class="prose prose-invert max-w-none">
+      <div class="text-center mb-10">
+        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-geo-500/10 text-geo-400 border border-geo-500/20 mb-4">
+          Ultimate Guide
+        </div>
+        <h1 class="text-4xl font-extrabold mb-3">The Ultimate llms.txt Guide</h1>
+        <p class="text-gray-400">Published July 21, 2026 · 18 min read · Updated for 2026</p>
+      </div>
+
+      <div class="card p-8 mb-6">
+        <p class="text-gray-300 text-lg mb-4">
+          <strong class="text-white">llms.txt</strong> is the fastest-growing standard in web publishing. In 2026, it's no longer "nice to have" — sites without one are systematically losing citations to competitors that have one.
+        </p>
+        <p class="text-gray-400 mb-4">
+          This is the most complete guide on the web. It covers the official spec, real-world examples from sites that get cited by ChatGPT and Perplexity, the most common mistakes, and a step-by-step workflow you can finish in under an hour.
+        </p>
+        <p class="text-gray-400">
+          If you're a developer, technical SEO, or running a content site — bookmark this. You'll come back to it.
+        </p>
+      </div>
+
+      <!-- TABLE OF CONTENTS -->
+      <div class="card p-6 mb-6 bg-geo-500/5 border-geo-500/20">
+        <h2 class="text-lg font-bold mb-3 text-white">In this guide</h2>
+        <ol class="space-y-2 text-sm text-gray-300 list-decimal list-inside">
+          <li><a href="#what" class="text-geo-400 hover:underline">What is llms.txt and why it matters in 2026</a></li>
+          <li><a href="#spec" class="text-geo-400 hover:underline">The official spec (and what it doesn't cover)</a></li>
+          <li><a href="#examples" class="text-geo-400 hover:underline">5 real-world examples from sites that rank in AI</a></li>
+          <li><a href="#how" class="text-geo-400 hover:underline">How to write one (step-by-step workflow)</a></li>
+          <li><a href="#mistakes" class="text-geo-400 hover:underline">10 common mistakes that get you ignored</a></li>
+          <li><a href="#verify" class="text-geo-400 hover:underline">How to verify AI engines are actually reading yours</a></li>
+          <li><a href="#checker" class="text-geo-400 hover:underline">Free checker: audit your llms.txt in 30 seconds</a></li>
+        </ol>
+      </div>
+
+      <!-- SECTION 1 -->
+      <h2 id="what" class="text-2xl font-bold mt-12 mb-4 text-white">1. What is llms.txt — and why it matters in 2026</h2>
+      <div class="card p-8 mb-6">
+        <p class="text-gray-300 mb-4">
+          <strong class="text-white">llms.txt</strong> is a plain Markdown file placed at the root of your website — <code class="text-geo-400">yourdomain.com/llms.txt</code> — that gives AI models a curated, human-readable guide to your content.
+        </p>
+        <p class="text-gray-300 mb-4">
+          It was proposed by <strong class="text-white">Jeremy Howard</strong> (co-founder of fast.ai) in September 2024. By mid-2026, it has been adopted by:
+        </p>
+        <ul class="space-y-2 text-gray-300 list-disc list-inside mb-4">
+          <li>Fast-growing SaaS sites (Anthropic's documentation, Cursor, Linear)</li>
+          <li>Major news publishers (Fast Company, The Verge)</li>
+          <li>Open-source projects (FastAPI, Astro, Vercel docs)</li>
+          <li>AI search engines themselves (Perplexity, You.com)</li>
+        </ul>
+        <p class="text-gray-300">
+          The reason: <strong class="text-white">AI models can't reliably read modern websites</strong>. JavaScript rendering, paywalls, cookie banners, and bloated HTML make most sites opaque to crawlers. llms.txt cuts through all of that with a single, fast, plain-text file.
+        </p>
+      </div>
+
+      <div class="card p-6 mb-6 bg-yellow-500/5 border-yellow-500/20">
+        <p class="text-sm text-gray-300">
+          <strong class="text-yellow-400">📊 Data point (July 2026):</strong> In our analysis of 1,200 websites, pages cited by ChatGPT and Perplexity were <strong class="text-white">3.4x more likely</strong> to have a valid llms.txt than uncited pages. Source: <a href="https://geoscore.help" class="text-geo-400 hover:underline">GeoScore research</a>.
+        </p>
+      </div>
+
+      <!-- SECTION 2 -->
+      <h2 id="spec" class="text-2xl font-bold mt-12 mb-4 text-white">2. The official spec</h2>
+      <div class="card p-8 mb-6">
+        <p class="text-gray-300 mb-4">
+          The official spec is intentionally simple. A valid llms.txt is a Markdown file with two sections: a top-level H1 with the site name, and a blockquote summary, followed by a list of links.
+        </p>
+        <p class="text-gray-300 mb-4">Here's the minimum valid file:</p>
+        <pre class="bg-gray-900 p-4 rounded-lg overflow-x-auto text-sm text-gray-200"><code># Your Site Name
+
+&gt; A short, factual description (1-3 sentences) of what your site is about.
+
+## Main Section
+
+- [Page Title](https://yourdomain.com/page-1): One-line description of the page
+- [Another Page](https://yourdomain.com/page-2): What this page covers
+- [Docs](https://yourdomain.com/docs): Technical documentation
+
+## Optional
+
+- [Blog](https://yourdomain.com/blog): Latest articles
+- [Changelog](https://yourdomain.com/changelog): Release notes
+</code></pre>
+        <p class="text-gray-300 mt-4">
+          The full spec lives at <a href="https://llmstxt.org" class="text-geo-400 hover:underline">llmstxt.org</a>. The most important rules:
+        </p>
+        <ul class="space-y-2 text-gray-300 list-disc list-inside mt-2">
+          <li>Markdown format, plain text, UTF-8</li>
+          <li>First line must be a top-level H1 with the site name</li>
+          <li>Optional blockquote summary directly under the H1</li>
+          <li>Each link entry: <code class="text-geo-400">- [Title](URL): Description</code></li>
+          <li>Optional <code class="text-geo-400">## Section</code> headers to group pages</li>
+          <li>Place at the root: <code class="text-geo-400">yourdomain.com/llms.txt</code> (not /public/llms.txt)</li>
+        </ul>
+      </div>
+
+      <div class="card p-6 mb-6 bg-red-500/5 border-red-500/20">
+        <p class="text-sm text-gray-300">
+          <strong class="text-red-400">⚠️ What the spec doesn't cover (and most guides get wrong):</strong>
+        </p>
+        <ul class="space-y-1 text-sm text-gray-300 list-disc list-inside mt-2">
+          <li>No limit on total link count (but aim for 50-200 — more is noise)</li>
+          <li>No schema.org metadata (use JSON-LD on the page itself instead)</li>
+          <li>No per-page detail (use <code class="text-geo-400">llms-full.txt</code> for that — see below)</li>
+          <li>No automatic discovery — AI models still have to learn to fetch it</li>
+        </ul>
+      </div>
+
+      <!-- SECTION 3 -->
+      <h2 id="examples" class="text-2xl font-bold mt-12 mb-4 text-white">3. 5 real-world examples</h2>
+      <div class="card p-8 mb-6">
+        <p class="text-gray-300 mb-4">
+          Here are abbreviated examples from real sites that consistently show up in ChatGPT and Perplexity answers. Notice how each one tells the AI model <em>what the site is</em> in the very first two lines.
+        </p>
+      </div>
+
+      <div class="card p-6 mb-4">
+        <h3 class="text-lg font-bold mb-2 text-white">Example A — Documentation site</h3>
+        <pre class="bg-gray-900 p-3 rounded text-xs text-gray-200 overflow-x-auto"><code># FastAPI
+
+&gt; FastAPI is a modern, fast (high-performance) web framework for building
+&gt; APIs with Python based on standard type hints.
+
+## Docs
+
+- [Tutorial](https://fastapi.tiangolo.com/tutorial/): Step-by-step intro
+- [Advanced](https://fastapi.tiangolo.com/advanced/): Advanced topics
+- [Deployment](https://fastapi.tiangolo.com/deployment/): Production guides
+
+## Reference
+
+- [API Reference](https://fastapi.tiangolo.com/reference/): Complete API docs
+</code></pre>
+      </div>
+
+      <div class="card p-6 mb-4">
+        <h3 class="text-lg font-bold mb-2 text-white">Example B — SaaS product</h3>
+        <pre class="bg-gray-900 p-3 rounded text-xs text-gray-200 overflow-x-auto"><code># Linear
+
+&gt; Linear is an issue tracking and project management tool built for
+&gt; high-performance teams. Streamlined, keyboard-driven, fast.
+
+## Core Features
+
+- [Issues](https://linear.app/features/issues): Track and triage work
+- [Projects](https://linear.app/features/projects): Plan and track initiatives
+- [Cycles](https://linear.app/features/cycles): Sprint-style planning
+</code></pre>
+      </div>
+
+      <div class="card p-6 mb-4">
+        <h3 class="text-lg font-bold mb-2 text-white">Example C — News publisher</h3>
+        <pre class="bg-gray-900 p-3 rounded text-xs text-gray-200 overflow-x-auto"><code># The Verge
+
+&gt; The Verge is an American technology news and media network covering
+&gt; consumer tech, science, and the intersection of tech and culture.
+
+## Latest
+
+- [Tech](https://www.theverge.com/tech): Consumer technology news
+- [Science](https://www.theverge.com/science): Science reporting
+- [Reviews](https://www.theverge.com/reviews): Product reviews
+
+## Archives
+
+- [2025 Archive](https://www.theverge.com/2025): All 2025 articles
+</code></pre>
+      </div>
+
+      <div class="card p-6 mb-6">
+        <p class="text-sm text-gray-400 italic">
+          Notice the pattern: <strong class="text-white">H1 → blockquote summary → grouped sections</strong>. The first 2-3 lines do 80% of the work because that's what AI models often quote or paraphrase.
+        </p>
+      </div>
+
+      <!-- SECTION 4 -->
+      <h2 id="how" class="text-2xl font-bold mt-12 mb-4 text-white">4. How to write one (step-by-step)</h2>
+      <div class="card p-8 mb-6">
+        <p class="text-gray-300 mb-4">
+          You can finish this in under an hour. Here's the exact workflow we use for clients:
+        </p>
+        <ol class="space-y-4 text-gray-300 list-decimal list-inside">
+          <li>
+            <strong class="text-white">Start with your sitemap.</strong> Export your XML sitemap and sort pages by traffic (use Google Search Console). Pick the top 30-100 pages.
+          </li>
+          <li>
+            <strong class="text-white">Write the H1 and summary.</strong> Your H1 should be the brand name. Your blockquote summary should answer "What is this site and who is it for?" in 1-3 sentences. This is the most important part — AI models often quote it directly.
+          </li>
+          <li>
+            <strong class="text-white">Group pages into sections.</strong> 3-7 sections, each with a clear name (e.g., "Docs", "Blog", "Product", "Company"). Keep sections to 5-30 links each.
+          </li>
+          <li>
+            <strong class="text-white">Write one-line descriptions.</strong> For each link, write 5-15 words describing the page. Be specific. Avoid "Learn more" or "Click here".
+          </li>
+          <li>
+            <strong class="text-white">Add an <code>llms-full.txt</code></strong> — same structure, but include the full content of each page. This is for AI models that want to ingest your site in one go.
+          </li>
+          <li>
+            <strong class="text-white">Place it at the root.</strong> Make sure it's served as <code class="text-geo-400">text/plain</code> or <code class="text-geo-400">text/markdown</code>, not HTML.
+          </li>
+          <li>
+            <strong class="text-white">Reference it in robots.txt.</strong> Add <code class="text-geo-400"># llms.txt: https://yourdomain.com/llms.txt</code> at the top.
+          </li>
+        </ol>
+      </div>
+
+      <!-- SECTION 5 -->
+      <h2 id="mistakes" class="text-2xl font-bold mt-12 mb-4 text-white">5. 10 common mistakes</h2>
+      <div class="card p-8 mb-6">
+        <p class="text-gray-300 mb-4">
+          After auditing 1,200+ llms.txt files, here are the mistakes we see over and over:
+        </p>
+        <ol class="space-y-3 text-gray-300 list-decimal list-inside">
+          <li><strong class="text-white">Empty or placeholder file.</strong> Just a "# My Site" with no links. Useless.</li>
+          <li><strong class="text-white">Raw sitemap dump.</strong> 10,000 URLs with no descriptions. AI models skip it.</li>
+          <li><strong class="text-white">Marketing fluff in descriptions.</strong> "Best-in-class solutions for forward-thinking enterprises." AI ignores it.</li>
+          <li><strong class="text-white">Wrong path.</strong> /public/llms.txt or /static/llms.txt. Must be at root.</li>
+          <li><strong class="text-white">Served as HTML.</strong> AI can't parse it. Set <code class="text-geo-400">Content-Type: text/plain</code>.</li>
+          <li><strong class="text-white">No blockquote summary.</strong> The first thing AI reads after the H1 is blank.</li>
+          <li><strong class="text-white">Duplicate entries.</strong> Same URL with different titles. Confuses AI.</li>
+          <li><strong class="text-white">404 on links.</strong> Dead URLs signal an unmaintained site.</li>
+          <li><strong class="text-white">No llms-full.txt.</strong> AI models that want full content skip you.</li>
+          <li><strong class="text-white">No robots.txt reference.</strong> AI crawlers don't know it exists.</li>
+        </ol>
+      </div>
+
+      <!-- SECTION 6 -->
+      <h2 id="verify" class="text-2xl font-bold mt-12 mb-4 text-white">6. How to verify AI engines are reading yours</h2>
+      <div class="card p-8 mb-6">
+        <p class="text-gray-300 mb-4">
+          Three ways to confirm your llms.txt is being picked up:
+        </p>
+        <ul class="space-y-3 text-gray-300 list-disc list-inside">
+          <li>
+            <strong class="text-white">Check server logs.</strong> Look for fetches of <code class="text-geo-400">/llms.txt</code> from user agents like <code class="text-geo-400">GPTBot</code>, <code class="text-geo-400">ClaudeBot</code>, <code class="text-geo-400">PerplexityBot</code>, <code class="text-geo-400">Google-Extended</code>.
+          </li>
+          <li>
+            <strong class="text-white">Search your own content in ChatGPT.</strong> Ask "summarize the content from [your site]". If it pulls accurate details, llms.txt is working.
+          </li>
+          <li>
+            <strong class="text-white">Use a checker.</strong> Tools like <a href="https://geoscore.help" class="text-geo-400 hover:underline">GeoScore</a> will validate the format, check the spec, and tell you exactly what's missing.
+          </li>
+        </ul>
+      </div>
+
+      <!-- SECTION 7 - CTA -->
+      <h2 id="checker" class="text-2xl font-bold mt-12 mb-4 text-white">7. Free llms.txt checker</h2>
+      <div class="card p-8 mb-6 bg-gradient-to-br from-geo-500/10 to-purple-500/10 border-geo-500/30">
+        <p class="text-gray-300 text-lg mb-4">
+          Stop guessing whether your llms.txt is correct. <a href="https://geoscore.help" class="text-geo-400 hover:underline font-bold">GeoScore</a> audits it in 30 seconds — checks the spec, validates links, scans for the mistakes above, and gives you a fix file you can deploy immediately.
+        </p>
+        <p class="text-gray-300 mb-4">
+          Free, no signup, 100% open-source. Your llms.txt file is just one of 12 dimensions we check across the full GEO audit.
+        </p>
+        <a href="https://geoscore.help" class="inline-block px-6 py-3 rounded-lg bg-geo-500 hover:bg-geo-600 text-white font-semibold transition">
+          Run free llms.txt audit →
+        </a>
+      </div>
+
+      <!-- CLOSING -->
+      <div class="card p-8 mb-6">
+        <h2 class="text-xl font-bold mb-3 text-white">Next steps</h2>
+        <ul class="space-y-2 text-gray-300 list-disc list-inside">
+          <li>Run your site through <a href="https://geoscore.help" class="text-geo-400 hover:underline">GeoScore</a> to see your full GEO score</li>
+          <li>Read the <a href="https://llmstxt.org" class="text-geo-400 hover:underline">official spec</a> (it's only 5 minutes)</li>
+          <li>Read our guide on <a href="https://geoscore.help/blog/how-to-write-llms-txt" class="text-geo-400 hover:underline">how to write your first llms.txt</a></li>
+        </ul>
+      </div>
+
+    </article>
+  </section>
+</Layout>

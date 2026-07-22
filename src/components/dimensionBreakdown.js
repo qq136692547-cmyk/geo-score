@@ -13,9 +13,12 @@ export function renderDimensionBreakdown(dimensions) {
       var pct = d.percentage || 0;
       var barColor = pct >= 80 ? 'bg-geo-500' : pct >= 60 ? 'bg-brand-500' : pct >= 40 ? 'bg-warn-500' : 'bg-danger-500';
       var checkCount = (d.passed || 0) + "/" + (d.total || d.checks || 0);
-      var items = (d.items || []).map(function(item) {
-        var icon = item.pass ? ICONS.check : (item.warn ? ICONS.warning : ICONS.cross);
-        var iconCls = item.pass ? 'text-geo-500' : (item.warn ? 'text-warn-500' : 'text-danger-500');
+      // Map analyzer checks to display items
+      var rawItems = d.items || d.checks || [];
+      var items = rawItems.map(function(item) {
+        var pass = item.pass !== undefined ? item.pass : item.passed;
+        var icon = pass ? ICONS.check : ICONS.cross;
+        var iconCls = pass ? 'text-geo-500' : 'text-danger-500';
         return '<div class="flex items-start gap-2 py-1.5 text-sm"><span class="flex-shrink-0 mt-0.5 ' + iconCls + '">' + icon + '</span><span class="text-gray-300">' + item.label + '</span></div>';
       }).join("");
       return '<div class="card-hover p-4 rounded-xl">' +

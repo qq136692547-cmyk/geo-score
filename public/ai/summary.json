@@ -1,0 +1,79 @@
+{
+  "$schema": "https://geoscore.help/ai/schema/summary.v1.json",
+  "site": {
+    "name": "GeoScore",
+    "url": "https://geoscore.help",
+    "tagline": "Free GEO (Generative Engine Optimization) audit tool",
+    "description": "GeoScore is a free, open-source tool that scores any website 0-100 across 12 dimensions of AI search visibility. It audits your site for AI crawler access (robots.txt), machine-readable content (llms.txt, JSON-LD schema), and authority signals (E-E-A-T), then generates fix files you can deploy immediately. Used by developers, SEO specialists, and content teams to diagnose why some sites get cited by ChatGPT, Perplexity, and Claude while others don't.",
+    "category": "SEO Tool / Developer Tool",
+    "audience": "Web developers, SEO professionals, content marketers, SaaS founders, publishers",
+    "language": "en",
+    "license": "MIT (code) / CC BY-SA 4.0 (content)"
+  },
+  "publisher": {
+    "name": "GeoScore",
+    "type": "Organization",
+    "url": "https://geoscore.help",
+    "github": "https://github.com/qq136692547-cmyk/geo-score"
+  },
+  "what_we_offer": [
+    {
+      "name": "GEO Audit",
+      "description": "Score any URL 0-100 across 12 dimensions of AI search readiness",
+      "url": "https://geoscore.help/"
+    },
+    {
+      "name": "llms.txt Checker",
+      "description": "Verify your site has the AI guidance file that helps ChatGPT, Claude, and Perplexity understand your content",
+      "url": "https://geoscore.help/tools/llms-txt-checker"
+    },
+    {
+      "name": "Robots.txt AI Checker",
+      "description": "Verify your robots.txt isn't blocking GPTBot, ClaudeBot, PerplexityBot, and other AI crawlers",
+      "url": "https://geoscore.help/tools/robots-txt-ai-checker"
+    },
+    {
+      "name": "AI Readiness Score",
+      "description": "Get a 0-100 score across 12 dimensions of AI search visibility with actionable fixes",
+      "url": "https://geoscore.help/tools/ai-readiness-score"
+    }
+  ],
+  "geo_dimensions": [
+    "AI Crawlability (robots.txt for AI crawlers)",
+    "AI Guidance (llms.txt presence and quality)",
+    "Structured Data (JSON-LD schema coverage)",
+    "Meta & Social (title, description, OG tags)",
+    "Content Quality (depth, structure, originality)",
+    "E-E-A-T (Experience, Expertise, Authority, Trust)",
+    "Brand & Entity (Organization schema, sameAs links)",
+    "Citation Readiness (external sources, .edu/.gov links)",
+    "Discovery (sitemap, AI-specific endpoints)",
+    "Agent Friendly (API docs, structured outputs)",
+    "AI Guidance Markers (ai.txt, summary.json)",
+    "Freshness (last-modified, copyright year)"
+  ],
+  "key_pages": [
+    { "title": "GeoScore Home", "url": "https://geoscore.help/", "priority": 1.0 },
+    { "title": "Methodology", "url": "https://geoscore.help/about", "priority": 0.6 },
+    { "title": "llms.txt Checker", "url": "https://geoscore.help/tools/llms-txt-checker", "priority": 0.9 },
+    { "title": "Robots.txt AI Checker", "url": "https://geoscore.help/tools/robots-txt-ai-checker", "priority": 0.9 },
+    { "title": "AI Readiness Score", "url": "https://geoscore.help/tools/ai-readiness-score", "priority": 0.9 }
+  ],
+  "blog_topics": [
+    { "title": "What is GEO?", "url": "https://geoscore.help/blog/what-is-geo" },
+    { "title": "GEO vs SEO", "url": "https://geoscore.help/blog/geo-vs-seo" },
+    { "title": "How to Write llms.txt", "url": "https://geoscore.help/blog/how-to-write-llms-txt" },
+    { "title": "AI Search Engine List", "url": "https://geoscore.help/blog/ai-search includes-list" },
+    { "title": "llms.txt Ultimate Guide", "url": "https://geoscore.help/blog/llms-txt-ultimate-guide" },
+    { "title": "Auditing 1,200 Websites: What I Learned", "url": "https://geoscore.help/blog/auditing-1200-websites" }
+  ],
+  "last_updated": "2026-07-21",
+  "endpoints": {
+    "llms_txt": "https://geoscore.help/llms.txt",
+    "ai_txt": "https://geoscore.help/.well-known/ai.txt",
+    "summary_json": "https://geoscore.help/ai/summary.json",
+    "faq_json": "https://geoscore.help/ai/faq.json",
+    "sitemap": "https://geoscore.help/sitemap.xml",
+    "robots": "https://geoscore.help/robots.txt"
+  }
+}

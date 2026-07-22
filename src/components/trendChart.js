@@ -1,5 +1,5 @@
 export function renderTrendContainer() {
-  return '<div id="trend-section" class="stagger-section fade-in-delay-4 card p-6 mb-8" style="display:none">' +
+  return '<div id="trend-section" class="stagger-section fade-in-delay-4 card p-6 mb-8" style="opacity:0;display:none">' +
     '<h2 class="text-lg font-bold mb-4">Score History</h2>' +
     '<div class="max-w-xl mx-auto"><canvas id="trendChart"></canvas></div>' +
     '<p class="text-xs text-gray-500 text-center mt-3">Score trend for this URL over time</p>' +

@@ -1,0 +1,92 @@
+﻿---
+import Layout from '../../layouts/Layout.astro';
+---
+<Layout title="Robots.txt AI Crawler Checker — Is Your Site Blocked by AI Bots? | GeoScore"
+  schema={{
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    name: 'Robots.txt AI Crawler Checker',
+    description: 'Free tool to check if your robots.txt is blocking AI crawlers like GPTBot, ClaudeBot, PerplexityBot, and Google-Extended from accessing your site.',
+    url: 'https://geoscore.help/tools/robots-txt-ai-checker/',
+    applicationCategory: 'SEO Tool',
+    operatingSystem: 'Any',
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+    isPartOf: { '@type': 'WebApplication', name: 'GeoScore', url: 'https://geoscore.help' }
+  }}
+>
+  <section class="max-w-4xl mx-auto">
+    <div class="text-center mb-10">
+      <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-brand-500/10 text-brand-400 border border-brand-500/20 mb-4">
+        Free Tool
+      </div>
+      <h1 class="text-4xl font-extrabold mb-3">Robots.txt AI Crawler Checker</h1>
+      <p class="text-gray-400 max-w-2xl mx-auto">Check if your robots.txt is blocking AI crawlers like GPTBot, ClaudeBot, PerplexityBot, and Google-Extended from accessing your site.</p>
+    </div>
+
+    <div class="card p-8 mb-8">
+      <h2 class="text-xl font-bold mb-4">Why AI Crawler Access Matters</h2>
+      <p class="text-gray-400 mb-4">
+        AI search engines use specialized crawlers to discover and index web content. If your <code class="text-brand-400">robots.txt</code> blocks these crawlers, your site will <strong class="text-white">not appear</strong> in AI-generated answers from ChatGPT, Perplexity, Claude, or Google AI Overviews.
+      </p>
+      <p class="text-gray-400">
+        Many site owners accidentally block AI crawlers by using generic <code class="text-brand-400">Disallow: /</code> rules or aggressive bot-blocking plugins. This tool checks your robots.txt for common AI crawler blocking patterns.
+      </p>
+    </div>
+
+    <div class="card p-8 mb-8">
+      <h2 class="text-xl font-bold mb-4">AI Crawlers We Check For</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div class="p-3 rounded-lg bg-white/5"><code class="text-geo-400 text-sm">GPTBot</code><p class="text-gray-500 text-xs mt-1">OpenAI / ChatGPT</p></div>
+        <div class="p-3 rounded-lg bg-white/5"><code class="text-geo-400 text-sm">ClaudeBot</code><p class="text-gray-500 text-xs mt-1">Anthropic / Claude</p></div>
+        <div class="p-3 rounded-lg bg-white/5"><code class="text-geo-400 text-sm">PerplexityBot</code><p class="text-gray-500 text-xs mt-1">Perplexity AI</p></div>
+        <div class="p-3 rounded-lg bg-white/5"><code class="text-geo-400 text-sm">Google-Extended</code><p class="text-gray-500 text-xs mt-1">Google AI Overviews / Gemini</p></div>
+        <div class="p-3 rounded-lg bg-white/5"><code class="text-geo-400 text-sm">CCBot</code><p class="text-gray-500 text-xs mt-1">Common Crawl (used by many AI models)</p></div>
+        <div class="p-3 rounded-lg bg-white/5"><code class="text-geo-400 text-sm">Bytespider</code><p class="text-gray-500 text-xs mt-1">ByteDance AI</p></div>
+      </div>
+    </div>
+
+    <div class="card p-8 mb-8">
+      <h2 class="text-xl font-bold mb-4">Check Your Robots.txt</h2>
+      <p class="text-gray-400 mb-6">Enter your URL to run a full audit including robots.txt AI crawler analysis:</p>
+      <div class="flex gap-3 max-w-xl">
+        <div class="flex-1 relative">
+          <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+          <input id="url-input" type="url" placeholder="e.g. example.com" class="w-full pl-12 pr-5 py-3.5 rounded-xl bg-white/5 text-white placeholder-gray-500 border border-gray-600 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 text-lg transition" />
+        </div>
+        <button id="audit-btn" class="px-8 py-3.5 rounded-xl font-semibold text-white bg-gradient-to-r from-geo-600 to-brand-600 hover:from-geo-500 hover:to-brand-500 transition shadow-lg shadow-brand-500/20 whitespace-nowrap">Check Now</button>
+      </div>
+    </div>
+
+    <div class="card p-8 mb-8">
+      <h2 class="text-xl font-bold mb-4">Ideal robots.txt for AI Visibility</h2>
+      <pre class="bg-black/30 rounded-lg p-4 text-sm text-gray-300 overflow-x-auto"><code># Allow AI crawlers
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: *
+Disallow: /admin/
+Disallow: /private/</code></pre>
+      <p class="text-gray-500 text-sm mt-3">Tip: Only block paths that truly need protection. Don't block AI crawlers from your public content.</p>
+    </div>
+  </section>
+</Layout>
+
+<script is:inline>
+  (function() {
+    var queue = [];
+    ["startAudit","showBatchInput","showComparison","startBatchAudit","runComparison","doExport"].forEach(function(n) {
+      window[n] = function() { queue.push({ n: n, a: arguments }); };
+    });
+    window.__geoFlush = function() { queue.splice(0).forEach(function(q) { window[q.n].apply(null, q.a); }); };
+  })();
+</script>
+<script src="../../scripts/boot.js"></script>

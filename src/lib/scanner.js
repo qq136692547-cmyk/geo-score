@@ -22,14 +22,28 @@ async function auditUrl(url) {
   const base = new URL(normalized);
   const origin = base.origin;
 
-  const [robotsTxt, llmsTxt, pageHtml, aiTxt, aiSummary, aiFaq] = await Promise.all([
+  // Core resources: if these fail, the audit cannot proceed
+  const [robotsTxt, llmsTxt, pageHtml] = await Promise.all([
     fetchResource(`${origin}/robots.txt`),
     fetchResource(`${origin}/llms.txt`),
     fetchResource(normalized),
+  ]);
+
+  // If the page HTML itself couldn't be fetched, we can't audit
+  if (!pageHtml) {
+    throw new Error(
+      "Could not fetch " + normalized + ". The site may be blocking cross-origin requests or is offline."
+    );
+  }
+
+  // Optional AI discovery endpoints: failure here should NOT abort the audit
+  const [aiTxt, aiSummary, aiFaq] = await Promise.allSettled([
     fetchResource(`${origin}/.well-known/ai.txt`),
     fetchResource(`${origin}/ai/summary.json`, 'json'),
     fetchResource(`${origin}/ai/faq.json`, 'json'),
-  ]);
+  ]).then(function(results) {
+    return results.map(function(r) { return r.status === 'fulfilled' ? r.value : null; });
+  });
 
   const robotsResult = analyzeRobots(robotsTxt);
   const llmsResult = analyzeLlmstxt(llmsTxt);
@@ -61,11 +75,17 @@ async function auditUrl(url) {
   const scoring = computeScore(dimensions, negativeResult);
   const recommendations = generateRecommendations(dimensions, negativeResult, scoring);
 
+  // Generate a human-readable summary
+  const passedDims = Object.values(scoring.dimensions).filter(d => d.percentage >= 60).length;
+  const totalDims = Object.keys(scoring.dimensions).length;
+  const summary = `Score ${scoring.total}/100 (${scoring.level}). ${passedDims}/${totalDims} dimensions above 60%. ${negativeResult.deductions.length} negative signal(s) detected.`;
+
   return {
     url: normalized,
     timestamp: new Date().toISOString(),
     score: scoring.total,
     level: scoring.level,
+    summary,
     dimensions: scoring.dimensions,
     negativeSignals: negativeResult,
     seoSupplement: extractSeoSupplement(pageHtml, normalized),

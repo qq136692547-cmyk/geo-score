@@ -1,7 +1,72 @@
 ---
 import Layout from '../layouts/Layout.astro';
 ---
-<Layout title="GeoScore - Free GEO Audit Tool">
+<Layout title="GeoScore - Free GEO Audit Tool" schema={{
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'What is GEO?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'GEO (Generative Engine Optimization) is the practice of optimizing your website to be discovered, understood, and cited by AI-powered search engines such as ChatGPT, Perplexity, Google AI Overviews, Claude, and Gemini. It focuses on AI crawler access, machine-readable content (llms.txt, JSON-LD schema), and authority signals (E-E-A-T).'
+      }
+    },
+    {
+      '@type': 'Question',
+      name: 'How is GEO different from SEO?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'SEO optimizes for ranked lists of blue links on search engines like Google and Bing. GEO optimizes for being cited as a source in AI-generated answers. They overlap heavily &mdash; good content, structured data, and authority help both &mdash; but GEO requires explicit AI-crawler allowance in robots.txt, an llms.txt file, and machine-parseable schema for AI models.'
+      }
+    },
+    {
+      '@type': 'Question',
+      name: 'What is llms.txt?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'llms.txt is a markdown file placed at the root of your website (yoursite.com/llms.txt) that provides AI models with a curated summary of your site: what it is, who it serves, and which pages matter most. It is the machine-readable equivalent of an About page, designed to be ingested by ChatGPT, Perplexity, Claude, and other LLM-powered crawlers in a single fetch.'
+      }
+    },
+    {
+      '@type': 'Question',
+      name: 'How does GeoScore work?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'GeoScore audits any public URL across 12 dimensions of GEO readiness (AI crawlability, llms.txt presence, structured data, meta tags, content quality, E-E-A-T signals, brand entity, citation readiness, discovery, agent-friendliness, and freshness), producing a 0-100 score plus a prioritized list of fixes. The audit runs entirely in your browser; your URLs are not stored.'
+      }
+    },
+    {
+      '@type': 'Question',
+      name: 'Is GeoScore free?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes. GeoScore is 100% free and open-source under the MIT License. There is no signup, no paywall, and no per-audit limit. The source code is available on GitHub at github.com/qq136692547-cmyk/geo-score.'
+      }
+    },
+    {
+      '@type': 'Question',
+      name: 'Which AI crawlers should I allow in robots.txt?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'At minimum, allow: GPTBot and OAI-SearchBot (OpenAI/ChatGPT), ClaudeBot and anthropic-ai (Anthropic/Claude), PerplexityBot (Perplexity), Google-Extended (Google Gemini and AI Overviews), and CCBot (Common Crawl, used by many models). GeoScore will tell you exactly which crawlers you are currently blocking.'
+      }
+    }
+  ]
+}}>
+  <!-- Bootstrap: stub global functions until boot.js module loads -->
+  <script is:inline>
+    (function() {
+      var queue = [];
+      ["startAudit","showBatchInput","showComparison","startBatchAudit","runComparison","doExport"].forEach(function(n) {
+        window[n] = function() { queue.push({ n: n, a: arguments }); };
+      });
+      window.__geoFlush = function() { queue.splice(0).forEach(function(q) { window[q.n].apply(null, q.a); }); };
+    })();
+  </script>
+  
+  
   <section class="hero-grid-bg text-center py-8 md:py-16" id="hero-section">
     <div class="max-w-3xl mx-auto">
       <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-brand-500/10 text-brand-400 border border-brand-500/20 mb-6">
@@ -19,25 +84,25 @@ import Layout from '../layouts/Layout.astro';
         12 dimensions &middot; 100-point scoring &middot; Free &amp; open-source
       </p>
 
-      <div class="max-w-xl mx-auto mb-6">
-        <div class="flex gap-3">
+      <div class="max-w-xl mx-auto mb-6 px-1">
+        <div class="flex flex-col sm:flex-row gap-3">
           <div class="flex-1 relative">
             <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
-            <input id="url-input" type="url" placeholder="e.g. deng.zh.kg" class="w-full pl-12 pr-5 py-3.5 rounded-xl bg-white/5 text-white placeholder-gray-500 border border-gray-600 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 text-lg transition" />
+            <input id="url-input" type="text" placeholder="输入网址，如 geoscore.help" class="w-full pl-12 pr-5 py-3.5 rounded-xl bg-white/5 text-white placeholder-gray-500 border border-gray-600 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 text-lg transition" onkeydown="if(event.key==='Enter'){document.getElementById('audit-btn').click();}" />
           </div>
-          <button onclick="startAudit()" id="audit-btn" class="px-8 py-3.5 rounded-xl font-semibold text-white bg-gradient-to-r from-geo-600 to-brand-600 hover:from-geo-500 hover:to-brand-500 active:from-geo-700 active:to-brand-700 transition shadow-lg shadow-brand-500/20 hover:shadow-brand-500/30 whitespace-nowrap">Start Audit</button>
+          <button id="audit-btn" class="px-8 py-3.5 rounded-xl font-semibold text-white bg-gradient-to-r from-geo-600 to-brand-600 hover:from-geo-500 hover:to-brand-500 active:from-geo-700 active:to-brand-700 transition shadow-lg shadow-brand-500/20 hover:shadow-brand-500/30 whitespace-nowrap w-full sm:w-auto">Start Audit</button>
         </div>
       </div>
 
       <div class="flex items-center justify-center gap-4 text-xs">
-        <a onclick="showBatchInput()" class="text-gray-500 hover:text-brand-400 transition cursor-pointer underline underline-offset-2">Batch audit via sitemap</a>
+        <a id="batch-link" class="text-gray-500 hover:text-brand-400 transition cursor-pointer underline underline-offset-2">Batch audit via sitemap</a>
         <span class="text-gray-600">|</span>
-        <a onclick="showComparison()" id="compare-link" class="text-gray-500 hover:text-brand-400 transition cursor-pointer underline underline-offset-2" style="display:none">Compare sites</a>
+        <a id="compare-link" class="text-gray-500 hover:text-brand-400 transition cursor-pointer underline underline-offset-2" style="display:none">Compare sites</a>
       </div>
       <div id="batch-section" class="hidden max-w-lg mx-auto mt-4 card p-4">
         <h3 class="text-sm font-semibold mb-2 text-gray-300">Batch Audit from Sitemap</h3>
         <input id="sitemap-url" type="url" placeholder="e.g. example.com/sitemap.xml" class="w-full px-4 py-2 rounded-lg bg-white/5 text-white placeholder-gray-500 border border-gray-600 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 text-sm transition mb-3" />
-        <button onclick="startBatchAudit()" class="px-5 py-2 rounded-lg text-sm font-semibold text-white bg-gradient-to-r from-geo-600 to-brand-600 hover:from-geo-500 hover:to-brand-500 transition">Start Batch Scan</button>
+        <button id="batch-btn" class="px-5 py-2 rounded-lg text-sm font-semibold text-white bg-gradient-to-r from-geo-600 to-brand-600 hover:from-geo-500 hover:to-brand-500 transition">Start Batch Scan</button>
         <div id="batch-progress" class="mt-3 hidden">
           <div class="w-full h-1 rounded-full bg-gray-700/50 overflow-hidden"><div id="batch-bar" class="h-full rounded-full bg-brand-500" style="width:0%"></div></div>
           <p id="batch-status" class="text-xs text-gray-500 mt-1"></p>
@@ -47,7 +112,7 @@ import Layout from '../layouts/Layout.astro';
       <div id="compare-section" class="hidden max-w-lg mx-auto mt-4 card p-4" style="display:none">
         <h3 class="text-sm font-semibold mb-2 text-gray-300">Select sites to compare</h3>
         <div id="compare-list" class="space-y-1 mb-3 max-h-40 overflow-y-auto"></div>
-        <button onclick="runComparison()" class="px-4 py-1.5 rounded-lg text-xs font-semibold text-white bg-brand-600 hover:bg-brand-500 transition">Compare Selected</button>
+        <button id="compare-btn" class="px-4 py-1.5 rounded-lg text-xs font-semibold text-white bg-brand-600 hover:bg-brand-500 transition">Compare Selected</button>
       </div>
     </div>
   </section>
@@ -70,244 +135,107 @@ import Layout from '../layouts/Layout.astro';
 
   <div id="report-section" class="hidden max-w-6xl mx-auto"></div>
   <div id="history-root" class="max-w-2xl mx-auto mb-8"></div>
+
+  <!-- SEO Content Section -->
+  <section class="max-w-4xl mx-auto py-12 border-t border-gray-700/50">
+
+    <!-- Educational intro: What is GEO? (300+ words for AI crawlers) -->
+    <div class="mb-12">
+      <h2 class="text-2xl font-bold text-center mb-6">What is GEO (Generative Engine Optimization)?</h2>
+      <div class="prose prose-invert max-w-none text-gray-300 leading-relaxed">
+        <p class="mb-4">
+          <strong class="text-white">Generative Engine Optimization (GEO)</strong> is the practice of optimizing your website so that AI-powered search engines &mdash; including ChatGPT, Perplexity, Google AI Overviews, Claude, and Gemini &mdash; can discover, understand, and cite your content. Unlike traditional SEO, which optimizes for ranked lists of blue links, GEO optimizes for being selected as a cited source in AI-generated answers.
+        </p>
+        <p class="mb-4">
+          The shift is fundamental. In 2026, more than 40% of search sessions on Google now end without a click, and a growing share of queries never reach Google at all &mdash; users go directly to ChatGPT or Perplexity. For content creators, SaaS founders, and publishers, this means a new discipline is required. Your site needs to be readable to AI crawlers (robots.txt, llms.txt), machine-parseable (JSON-LD schema), and authoritative (E-E-A-T signals, third-party citations).
+        </p>
+        <p class="mb-4">
+          GeoScore measures 12 dimensions of this readiness: AI crawlability (which crawlers can access your site), AI guidance (whether you provide a curated llms.txt), structured data (JSON-LD coverage and quality), meta and social signals, content quality and depth, E-E-A-T signals (author bylines, trust pages, reviews), brand and entity presence, citation readiness (external sources, expert quotes, .edu/.gov links), discovery (sitemap, AI-specific endpoints like /ai/summary.json), agent-friendliness (API documentation, structured outputs), and content freshness.
+        </p>
+        <p class="mb-4">
+          Each audit produces a 0&ndash;100 score, a radar chart of the 12 dimensions, and a prioritized list of fixes. The tool also auto-generates three fix files you can deploy immediately: a production-ready llms.txt, an AI-crawler-friendly robots.txt, and a JSON-LD snippet for Organization, Article, FAQ, and HowTo schema. The audit runs entirely client-side and your URLs are not stored.
+        </p>
+        <p>
+          If your site scores below 60, the most common cause is robots.txt blocking AI crawlers by default. Adding GPTBot, ClaudeBot, PerplexityBot, and Google-Extended to the allow list, and shipping an llms.txt, typically raises the score by 20&ndash;30 points in a single deployment. The highest-scoring sites combine technical compliance with content depth, source citations, and structured data that AI models can parse in one pass.
+        </p>
+      </div>
+    </div>
+
+    <h2 class="text-2xl font-bold text-center mb-8">Free GEO Tools</h2>
+    <h2 class="text-2xl font-bold text-center mb-8">Free GEO Tools</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-12">
+      <a href="/tools/llms-txt-checker" class="card card-hover card-lift p-6 block">
+        <div class="text-geo-400 text-sm font-mono mb-2">/tools/llms-txt-checker</div>
+        <h3 class="text-lg font-bold mb-2">llms.txt Checker</h3>
+        <p class="text-gray-400 text-sm">Check if your site has the AI guidance file that helps ChatGPT, Claude, and Perplexity understand your content.</p>
+      </a>
+      <a href="/tools/robots-txt-ai-checker" class="card card-hover card-lift p-6 block">
+        <div class="text-brand-400 text-sm font-mono mb-2">/tools/robots-txt-ai-checker</div>
+        <h3 class="text-lg font-bold mb-2">Robots.txt AI Checker</h3>
+        <p class="text-gray-400 text-sm">Verify your robots.txt isn't blocking GPTBot, ClaudeBot, PerplexityBot, and other AI crawlers.</p>
+      </a>
+      <a href="/tools/ai-readiness-score" class="card card-hover card-lift p-6 block">
+        <div class="text-brand-400 text-sm font-mono mb-2">/tools/ai-readiness-score</div>
+        <h3 class="text-lg font-bold mb-2">AI Readiness Score</h3>
+        <p class="text-gray-400 text-sm">Get a 0-100 score across 12 dimensions of AI search visibility with actionable fixes.</p>
+      </a>
+    </div>
+
+    <h2 class="text-2xl font-bold text-center mb-8">Learn GEO</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
+      <a href="/blog/what-is-geo" class="card card-hover card-lift p-6 block">
+        <div class="text-xs text-gray-500 mb-2">Guide · 8 min</div>
+        <h3 class="text-base font-bold mb-2">What is GEO?</h3>
+        <p class="text-gray-400 text-sm">Complete introduction to Generative Engine Optimization and the 12 dimensions of readiness.</p>
+      </a>
+      <a href="/blog/geo-vs-seo" class="card card-hover card-lift p-6 block">
+        <div class="text-xs text-gray-500 mb-2">Guide · 10 min</div>
+        <h3 class="text-base font-bold mb-2">GEO vs SEO</h3>
+        <p class="text-gray-400 text-sm">What's the difference? Target engines, crawlers, content strategy, and how they work together.</p>
+      </a>
+      <a href="/blog/how-to-write-llms-txt" class="card card-hover card-lift p-6 block">
+        <div class="text-xs text-gray-500 mb-2">Tutorial · 12 min</div>
+        <h3 class="text-base font-bold mb-2">How to Write llms.txt</h3>
+        <p class="text-gray-400 text-sm">Step-by-step guide with real examples for creating an llms.txt file for your website.</p>
+      </a>
+      <a href="/blog/ai-search-engine-list" class="card card-hover card-lift p-6 block">
+        <div class="text-xs text-gray-500 mb-2">Reference · 9 min</div>
+        <h3 class="text-base font-bold mb-2">AI Search Engine List</h3>
+        <p class="text-gray-400 text-sm">Complete list of AI crawlers — GPTBot, ClaudeBot, PerplexityBot — and how to allow them.</p>
+      </a>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-12">
+      <a href="/about" class="card card-hover card-lift p-6 block">
+        <div class="text-xs text-gray-500 mb-2">Reference</div>
+        <h3 class="text-lg font-bold mb-2">Scoring Methodology</h3>
+        <p class="text-gray-400 text-sm">Detailed breakdown of how GeoScore calculates your 0-100 score across 12 dimensions.</p>
+      </a>
+      <a href="https://github.com/qq136692547-cmyk/geo-optimization-handbook" target="_blank" rel="noopener" class="card card-hover card-lift p-6 block">
+        <div class="text-xs text-gray-500 mb-2">External Resource</div>
+        <h3 class="text-lg font-bold mb-2">GEO Optimization Handbook</h3>
+        <p class="text-gray-400 text-sm">Comprehensive handbook covering advanced GEO strategies and best practices.</p>
+      </a>
+    </div>
+
+    <div class="text-center">
+      <h2 class="text-2xl font-bold mb-4">Why GeoScore?</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-3xl mx-auto">
+        <div class="text-left">
+          <div class="text-geo-500 text-3xl font-extrabold mb-2">12</div>
+          <p class="text-gray-400 text-sm">Dimensions analyzed — from AI crawlability to citation readiness</p>
+        </div>
+        <div class="text-left">
+          <div class="text-brand-500 text-3xl font-extrabold mb-2">60+</div>
+          <p class="text-gray-400 text-sm">Individual checks across all dimensions, with specific fix recommendations</p>
+        </div>
+        <div class="text-left">
+          <div class="text-geo-500 text-3xl font-extrabold mb-2">100%</div>
+          <p class="text-gray-400 text-sm">Free and open-source — no signup, no paywall, no limits</p>
+        </div>
+      </div>
+    </div>
+  </section>
 </Layout>
 
-<script type="module">
-import { auditUrl } from '../lib/scanner.js';
-import { addToHistory, getHistory, getUrlHistory, getComparisonData } from '../lib/history.js';
-import { exportMarkdown, exportJson, exportCsv } from '../lib/export.js';
-import { renderScoreHeader } from '../components/reportHeader.js';
-import { renderRadarContainer, initRadarChart } from '../components/radarChart.js';
-import { renderDimensionBreakdown } from '../components/dimensionBreakdown.js';
-import { renderNegativeSignals } from '../components/negativeSignals.js';
-import { renderSeoSupplement } from '../components/seoSupplement.js';
-import { renderFixesPanel } from '../components/fixesPanel.js';
-import { renderExportButtons } from '../components/exportButtons.js';
-import { renderHistoryList } from '../components/historyList.js';
-import { renderTrendContainer, initTrendChart } from '../components/trendChart.js';
-import { renderComparisonPanel } from '../components/comparisonPanel.js';
-
-var radarChartInstance = null;
-var trendChartInstance = null;
-var scanTimer = null;
-
-window.showBatchInput = function() {
-  var el = document.getElementById("batch-section");
-  if (el) el.classList.toggle("hidden");
-};
-
-window.showComparison = function() {
-  var el = document.getElementById("compare-section");
-  if (el) {
-    el.style.display = el.style.display === "none" ? "block" : "none";
-    if (el.style.display !== "none") populateCompareList();
-  }
-};
-
-function populateCompareList() {
-  var root = document.getElementById("compare-list");
-  var history = getHistory();
-  if (history.length < 2) { root.innerHTML = "Audit at least 2 sites first."; return; }
-  root.innerHTML = history.slice(0, 10).map(function(e) {
-    var lc = e.level === "Excellent" ? "text-geo-500" : e.level === "Good" ? "text-brand-500" : e.level === "Basic" ? "text-warn-500" : "text-danger-500";
-    return '<label class="flex items-center gap-2 py-1 px-2 card-hover rounded cursor-pointer text-sm">' +
-      '<input type="checkbox" class="compare-cb" value="' + e.id + '" />' +
-      '<span class="flex-1 text-gray-300 truncate">' + e.url + '</span>' +
-      '<span class="font-mono text-xs font-bold ' + lc + '">' + e.score + '</span></label>';
-  }).join("");
-}
-
-window.runComparison = function() {
-  var cbs = document.querySelectorAll(".compare-cb:checked");
-  var ids = Array.from(cbs).map(function(cb) { return cb.value; });
-  var history = getHistory();
-  var selected = history.filter(function(e) { return ids.indexOf(e.id) >= 0; });
-  if (selected.length < 2) return;
-  document.getElementById("compare-section").style.display = "none";
-
-  // Inject comparison panel into report
-  var reportRoot = document.getElementById("report-section");
-  var comparisonHtml = renderComparisonPanel(selected);
-  if (comparisonHtml) {
-    var div = document.createElement("div");
-    div.innerHTML = comparisonHtml;
-    // Insert before export buttons (last section)
-    var exportSection = reportRoot.querySelector(".stagger-section.fade-in-delay-7");
-    if (exportSection) {
-      exportSection.parentNode.insertBefore(div.firstElementChild, exportSection);
-    } else {
-      reportRoot.appendChild(div.firstElementChild);
-    }
-  }
-};
-
-window.startBatchAudit = async function() {
-  var input = document.getElementById("sitemap-url");
-  var url = (input.value || "").trim();
-  if (!url) return;
-  if (!/^https?:\/\//i.test(url)) url = "https://" + url;
-
-  var progress = document.getElementById("batch-progress");
-  var bar = document.getElementById("batch-bar");
-  var status = document.getElementById("batch-status");
-  var results = document.getElementById("batch-results");
-  progress.classList.remove("hidden");
-  results.innerHTML = "Fetching sitemap...";
-
-  try {
-    var resp = await fetch(url);
-    var text = await resp.text();
-    var urls = extractUrlsFromSitemap(text);
-    if (urls.length === 0) { results.innerHTML = "No URLs found in sitemap."; return; }
-    if (urls.length > 20) { results.innerHTML = "Found " + urls.length + " URLs. Auditing first 20."; urls = urls.slice(0, 20); }
-    results.innerHTML = "";
-    var completed = 0;
-
-    for (var i = 0; i < urls.length; i++) {
-      status.textContent = "Scanning " + (i + 1) + "/" + urls.length + ": " + urls[i];
-      bar.style.width = ((i / urls.length) * 100) + "%";
-      try {
-        var r = await auditUrl(urls[i]);
-        completed++;
-        var lc = r.level === "Excellent" ? "text-geo-500" : r.level === "Good" ? "text-brand-500" : r.level === "Basic" ? "text-warn-500" : "text-danger-500";
-        results.innerHTML += '<div class="flex justify-between py-1 ' + ((i % 2 === 0) ? "bg-white/5" : "") + ' px-2 rounded"><span class="truncate mr-2 text-gray-300">' + urls[i] + '</span><span class="font-mono font-bold ' + lc + '">' + r.score + '</span></div>';
-      } catch (e) {
-        results.innerHTML += '<div class="flex justify-between py-1 px-2 rounded text-danger-500"><span class="truncate mr-2">' + urls[i] + '</span><span class="text-xs">Error</span></div>';
-      }
-    }
-    bar.style.width = "100%";
-    status.textContent = "Completed: " + completed + "/" + urls.length + " URLs";
-  } catch (e) {
-    results.innerHTML = "Error: " + e.message;
-  }
-};
-
-function extractUrlsFromSitemap(xml) {
-  var urls = [];
-  var regex = /<loc[^>]*>([^<]+)<\/loc>/gi;
-  var match;
-  while ((match = regex.exec(xml)) !== null) urls.push(match[1].trim());
-  return urls;
-}
-
-window.startAudit = async function () {
-  var input = document.getElementById("url-input");
-  var btn = document.getElementById("audit-btn");
-  var url = (input.value || "").trim();
-  if (!url) { input.focus(); return; }
-  btn.disabled = true; btn.textContent = "Scanning…";
-  document.getElementById("hero-section").classList.add("hidden");
-  document.getElementById("loading-section").classList.remove("hidden");
-  document.getElementById("report-section").classList.add("hidden");
-  document.getElementById("scanning-url").textContent = url;
-
-  var stepIdx = 0;
-  var steps = document.querySelectorAll(".scan-step");
-  steps.forEach(function(s) { s.className = "scan-step"; });
-  if (steps.length > 0) steps[0].classList.add("active");
-  if (scanTimer) clearInterval(scanTimer);
-  scanTimer = setInterval(function() {
-    if (stepIdx < steps.length) {
-      steps[stepIdx].classList.remove("active");
-      steps[stepIdx].classList.add("done");
-      stepIdx++;
-      if (stepIdx < steps.length) steps[stepIdx].classList.add("active");
-    }
-  }, 350);
-
-  try {
-    var targetUrl = url;
-    if (!/^https?:\/\//i.test(targetUrl)) targetUrl = "https://" + targetUrl;
-    var result = await auditUrl(targetUrl);
-    addToHistory(result);
-    localStorage.setItem("geoscope_last_result", JSON.stringify(result));
-    clearInterval(scanTimer);
-    document.getElementById("loading-section").classList.add("hidden");
-    document.getElementById("report-section").classList.remove("hidden");
-    renderReport(result);
-    renderHistory();
-    // Show compare link if enough history
-    var history = getHistory();
-    if (history.length >= 2) {
-      document.getElementById("compare-link").style.display = "inline";
-    }
-  } catch (err) {
-    clearInterval(scanTimer);
-    document.getElementById("loading-section").innerHTML = '<div class="card p-8 text-center"><div class="text-danger-500 text-lg font-semibold mb-2">Audit Failed</div><p class="text-gray-400 text-sm">' + err.message + '</p><button onclick="location.reload()" class="mt-4 px-4 py-2 rounded-lg text-sm bg-white/10 hover:bg-white/20 transition">Try Again</button></div>';
-  }
-  btn.disabled = false;
-  btn.textContent = "Start Audit";
-};
-
-function renderReport(r) {
-  if (radarChartInstance) { radarChartInstance.destroy(); radarChartInstance = null; }
-  if (trendChartInstance) { trendChartInstance.destroy(); trendChartInstance = null; }
-  var root = document.getElementById("report-section");
-  var parts = [
-    renderScoreHeader(r),
-    renderRadarContainer(),
-    renderDimensionBreakdown(r.dimensions),
-    renderNegativeSignals(r.negativeSignals),
-    renderSeoSupplement(r.seoSupplement),
-    renderFixesPanel(r.recommendations),
-    renderExportButtons()
-  ];
-  root.innerHTML = "<div>" + parts.join("") + "</div>";
-  initRadarChart(r.dimensions).then(function(chart) { radarChartInstance = chart; });
-  // Show trend if history exists
-  var urlHistory = getUrlHistory(r.url);
-  if (urlHistory.length >= 2) {
-    var trendHtml = renderTrendContainer();
-    var exportSection = root.querySelector("[class*='fade-in-delay-7']");
-    if (exportSection) {
-      var trendDiv = document.createElement("div");
-      trendDiv.innerHTML = trendHtml;
-      exportSection.parentNode.insertBefore(trendDiv.firstElementChild, exportSection);
-      initTrendChart(urlHistory).then(function(chart) { trendChartInstance = chart; });
-    }
-  }
-}
-
-window.doExport = function (fmt) {
-  var stored = localStorage.getItem("geoscope_last_result");
-  if (!stored) return;
-  var r = JSON.parse(stored);
-  var content, ext, mime;
-  if (fmt === "md") { content = exportMarkdown(r); ext = "md"; mime = "text/markdown"; }
-  else if (fmt === "json") { content = exportJson(r); ext = "json"; mime = "application/json"; }
-  else if (fmt === "html") { content = exportHtml(r); ext = "html"; mime = "text/html"; }
-  else { content = exportCsv(r); ext = "csv"; mime = "text/csv"; }
-  var blob = new Blob([content], { type: mime });
-  var a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = "geoscope-report-" + r.url.replace(/[^a-z0-9]/gi, "-").substring(0, 40) + "." + ext;
-  a.click();
-  URL.revokeObjectURL(a.href);
-};
-
-function exportHtml(r) {
-  var dimHtml = Object.entries(r.dimensions).map(function(kv) {
-    var k = kv[0]; var d = kv[1];
-    return "<tr><td>" + k + "</td><td>" + (d.percentage || 0) + "%</td><td>" + (d.passed || 0) + "/" + (d.total || d.checks || 0) + "</td></tr>";
-  }).join("");
-  return '<!DOCTYPE html><html><head><meta charset="utf-8"><title>GEO Report: ' + r.url + '</title><style>body{font-family:system-ui,sans-serif;max-width:800px;margin:40px auto;padding:0 20px;background:#0f172a;color:#e2e8f0}h1{background:linear-gradient(135deg,#22c55e,#3b82f6);-webkit-background-clip:text;-webkit-text-fill-color:transparent}.score{font-size:64px;font-weight:800;text-align:center}.lvl{display:inline-block;padding:4px 12px;border-radius:999px;font-size:12px;font-weight:700;color:#fff}table{width:100%;border-collapse:collapse;margin:20px 0}td,th{padding:8px 12px;text-align:left;border-bottom:1px solid rgba(148,163,184,0.15)}.rec{border-left:3px solid #3b82f6;padding:8px 16px;margin:8px 0;background:rgba(255,255,255,0.03)}</style></head><body>' +
-    '<h1>GEO Audit Report</h1>' +
-    '<p style="color:#94a3b8">' + r.url + ' &middot; ' + new Date(r.timestamp).toLocaleDateString() + '</p>' +
-    '<div class="score">' + r.score + '<span style="font-size:18px;color:#94a3b8">/100</span></div>' +
-    '<div style="text-align:center;margin:10px 0"><span class="lvl" style="background:' + (r.level === "Excellent" ? "#22c55e" : r.level === "Good" ? "#3b82f6" : r.level === "Basic" ? "#eab308" : "#ef4444") + '">' + r.level + '</span></div>' +
-    '<p style="color:#94a3b8;text-align:center">' + (r.summary || "") + '</p>' +
-    '<h2>Dimensions</h2><table><thead><tr style="color:#94a3b8"><th>Dimension</th><th>Score</th><th>Checks</th></tr></thead><tbody>' + dimHtml + '</tbody></table>' +
-    '<h2>Recommendations</h2>' + (r.recommendations || []).slice(0, 10).map(function(rec) {
-      return '<div class="rec"><strong>' + rec.issue + '</strong><br/><span style="color:#94a3b8;font-size:14px">' + rec.fix + '</span><br/><span style="color:#64748b;font-size:12px">' + rec.dimension + ' &middot; ' + rec.priority + '</span></div>';
-    }).join("") +
-    '<p style="color:#64748b;font-size:12px;text-align:center;margin-top:40px">Generated by GeoScore &middot; deng.zh.kg</p>' +
-    '</body></html>';
-}
-
-function renderHistory() {
-  var root = document.getElementById("history-root");
-  root.innerHTML = renderHistoryList(getHistory());
-}
-
-document.addEventListener("DOMContentLoaded", function() { renderHistory(); });
-</script>
+<script src="../scripts/boot.js"></script>

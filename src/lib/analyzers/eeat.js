@@ -17,7 +17,8 @@
   checks.push({ id: 'author', label: 'Author bylines on content', passed: hasAuthor, weight: 2 });
   if (hasAuthor) score += 2;
 
-  const blocks = schemaResult?.raw?.blocks || [];
+  // Extract JSON-LD directly from HTML to check for Person schema
+  const blocks = extractJsonLd(html);
   const hasPersonSchema = blocks.some((b) => b['@type'] === 'Person');
   checks.push({ id: 'author-schema', label: 'Person schema with credentials', passed: hasPersonSchema, weight: 2 });
   if (hasPersonSchema) score += 2;
@@ -40,4 +41,18 @@
   return { score, maxScore, checks, passed: checks.filter((c) => c.passed).length, total: checks.length };
 }
 
-export { analyzeEeat };
+export { analyzeEeat, extractJsonLd };
+
+function extractJsonLd(html) {
+  const blocks = [];
+  const regex = /<script[^>]*type=["\']application\/ld\+json["\'][^>]*>([\s\S]*?)<\/script>/gi;
+  let match;
+  while ((match = regex.exec(html)) !== null) {
+    try {
+      const parsed = JSON.parse(match[1].trim());
+      if (Array.isArray(parsed)) blocks.push(...parsed);
+      else blocks.push(parsed);
+    } catch {}
+  }
+  return blocks;
+}
