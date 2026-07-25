@@ -149,6 +149,7 @@ geo-optimization-handbook/
 - 🆕 **New guide**: [GEO for Small Businesses](./practical-guides/04-small-business-geo.md) — zero-click search survival guide for 2026
 - 🔬 Added recent research: C-SEO Bench (NeurIPS 2025), IF-GEO, Multimodal GEO papers, Conductor 2026 AEO/GEO Benchmarks
 - 🛠️ **Built with this handbook**: [GeoScore](https://geoscore.help/) — free GEO audit tool
+- 📣 **Promotion plan**: [Promotion Launch Checklist](./promotion-checklist.md) + [Reddit/HN draft copy](./promotion-drafts.md) — platform-specific post types, titles, and do/don't (Reddit 90/10, HN Show HN)
 
 ## 🛠️ Built with This Handbook
 
