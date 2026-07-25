@@ -71,6 +71,7 @@ Coined in the paper [*GEO: Generative Engine Optimization*](https://arxiv.org/ab
 | [Pre-Publish Checklist](./checklists/pre-publish-checklist.md) | 8-item self-check before publishing any content |
 | [Audit Scoring](./checklists/audit-scoring.md) | 8-dimension scoring system (0-100) |
 | [Robots.txt Template](./templates/robots-template.md) | Allow AI citation, block AI training |
+| [Promotion Launch Checklist](./promotion-checklist.md) | Step-by-step launch plan for Reddit / Hacker News (account rules, post types, do/don't) |
 
 ## 🚀 Quick Start
 

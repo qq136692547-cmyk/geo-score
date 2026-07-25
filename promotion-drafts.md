@@ -1,47 +1,55 @@
-# Reddit 推广文案
+# Reddit / Hacker News 推广文案（按平台规则精修版）
 
-## r/SEO (适用于)
+> 发布前提：这些账号需是你自己的、有正常活动历史的账号。
+> Reddit 通用 90/10 规则：≤10% 你的活动是自我推广，其余 90% 应是真诚参与（评论、帮人、分享他人内容）。
+> r/SEO 自推政策严格：工具投放 / 联盟链接 / 机构广告会被删，基础问题会被转到置顶周帖。
 
-**标题:** We built an open-source GEO handbook (47 citation strategies, trust scoring, platform guides) — free for anyone to use
+---
+
+## r/SEO
+
+**类型：** 普通帖（先确认账号有正常评论历史，不要新号直接发）
+
+**标题:** An open-source GEO handbook — what I learned compiling 47 citation strategies
 
 **正文:**
 
-GEO (Generative Engine Optimization) is a new field that traditional SEO tools don't cover well. AI search engines like ChatGPT, Perplexity, and Google AI Overviews look for different signals than Google's blue links.
+GEO (Generative Engine Optimization) is a new field that traditional SEO tools don't cover well. AI search engines like ChatGPT, Perplexity, and Google AI Overviews look for different signals than the blue links we're used to.
 
-I've been compiling an open-source handbook with everything I've learned:
+I've been compiling everything I learn into a free, MIT-licensed handbook. The part that surprised me most:
 
-**What's inside:**
-- 📘 7 chapters on GEO methodology (core concepts → platform differences → citation strategies → trust stack)
-- 🔧 4 practical guides (static sites, Blogger, FAQPage schema, small business GEO)
-- ✅ Pre-publish checklist + audit scoring system
-- 🧱 Robots.txt templates that allow AI citation but block training
+**28.3% of ChatGPT's most-cited pages have ZERO Google organic visibility** (Ahrefs). GEO is a genuinely separate channel from SEO — ranking nowhere on Google doesn't mean you can't get cited by AI search.
 
-**The key insight that surprised me:**
-28.3% of ChatGPT's most-cited pages have ZERO Google organic visibility. GEO is a completely separate channel from traditional SEO.
+What's inside:
+- 7 chapters on GEO methodology (core concepts → platform differences → citation strategies → trust stack)
+- 4 practical guides (static sites, Blogger, FAQPage schema, small business GEO)
+- Pre-publish checklist + 8-dimension audit scoring
+- Robots.txt templates that allow AI citation but block training
 
-The handbook is MIT-licensed and lives at:
+Happy to take feedback or questions — GEO moves fast and I'd love help keeping it accurate.
+
 https://github.com/qq136692547-cmyk/geo-optimization-handbook
-
-PRs welcome. GEO moves fast and I'd love help keeping it current.
 
 ---
 
 ## r/webdev
 
-**标题:** Your static site probably isn't optimized for AI search engines — here's a free handbook that shows how
+**类型：** 普通帖（强调"看到自己的内容被 ChatGPT 引用但 Google 零排名"这个开发者有共鸣的切入点）
+
+**标题:** My static site was getting cited in ChatGPT but ranked nowhere on Google — here's what I learned
 
 **正文:**
 
-I built an open-source GEO (Generative Engine Optimization) handbook after noticing that my content was getting cited in ChatGPT but ranking nowhere on Google.
+I noticed my content was getting cited in ChatGPT answers while ranking nowhere on Google. Turns out AI search engines select sources using different signals than traditional SEO, and there's a whole optimization practice (GEO) around being the source they cite.
 
-The handbook covers:
+I turned what I learned into a free, open-source handbook. It covers:
 - How ChatGPT, Perplexity, and Google AI Overviews actually select sources
 - 47 citation strategies ranked by impact (from KDD 2024 + ICLR 2026 research)
 - FAQPage schema implementation (boosts LLM extraction from 16% to 54%)
-- A 5-layer trust scoring system
+- A trust-scoring system for AI-engine credibility
 - Robots.txt that allows AI citation while blocking AI training
 
-For static site owners specifically, there's a guide on optimizing GitHub Pages for AI citation.
+There's a dedicated guide for optimizing GitHub Pages / static sites for AI citation.
 
 https://github.com/qq136692547-cmyk/geo-optimization-handbook
 
@@ -49,45 +57,50 @@ https://github.com/qq136692547-cmyk/geo-optimization-handbook
 
 ## r/smallbusiness
 
-**标题:** How to show up in ChatGPT & Google AI Overviews without technical SEO — a free guide for small business owners
+**类型：** 普通帖（弱化"免费指南"广告感，强调"不用技术 SEO 也能被 AI 搜到"）
+
+**标题:** How to show up in ChatGPT & Google AI Overviews without technical SEO
 
 **正文:**
 
-In 2026, a growing share of searches never click through to any website. Users get their answers directly from ChatGPT, Perplexity, or Google AI Overviews.
+In 2026 a growing share of searches never click through to any website — users get answers straight from ChatGPT, Perplexity, or Google AI Overviews. That doesn't mean a small business can't benefit. The trick is to BE the source the AI engine cites.
 
-This doesn't mean your business can't benefit from AI search. The trick is to BE the source that AI engines cite.
+I put together a free, open-source guide aimed at small business owners. The 5-step plan is deliberately simple:
 
-I wrote a free open-source guide specifically for small businesses:
-https://github.com/qq136692547-cmyk/geo-optimization-handbook/blob/main/practical-guides/04-small-business-geo.md
-
-The 5-step plan is dead simple:
 1. Answer real customer questions (not generic "about us" content)
-2. Structure pages for AI extraction (H1 → H2 → FAQ → Author attribution)
+2. Structure pages for AI extraction (H1 → H2 → FAQ → author attribution)
 3. Add a few lines of JSON-LD (FAQPage schema)
 4. Cite authoritative sources
 5. Build a trust stack (author bios, reviews, credentials)
 
-No technical SEO experience required. The whole handbook is free.
+No technical SEO experience required.
+
+https://github.com/qq136692547-cmyk/geo-optimization-handbook/blob/main/practical-guides/04-small-business-geo.md
 
 ---
 
 ## Hacker News
 
-**标题:** GEO Optimization Handbook — Open-source guide for AI search visibility
+**入口：** 用 **Show HN**（这是发自己作品的正式入口，不是普通 submit）。标题不要带 gratuitous number / 感叹号 / 大写。
+
+**标题:** Show HN: An open-source handbook for Generative Engine Optimization (GEO)
 
 **正文:**
 
-I've been working on an open-source handbook for Generative Engine Optimization (GEO) — the practice of optimizing content so AI search engines cite you.
+I've been working on an open-source handbook for Generative Engine Optimization (GEO) — the practice of optimizing content so AI search engines (ChatGPT, Perplexity, Google AI Overviews) cite it.
 
-After reading the KDD 2024 paper and seeing 28.3% of ChatGPT's cited sources having zero Google visibility, I realized GEO is a genuinely separate channel from SEO. Most existing resources focus on either pure SEO theory or individual platform tips. This handbook tries to bridge that gap with:
+What got me into it: after reading the KDD 2024 GEO paper, I saw Ahrefs data showing 28.3% of ChatGPT's most-cited pages have zero Google organic visibility. GEO is a genuinely separate channel from SEO, and most existing resources are either pure SEO theory or one-off platform tips. This tries to bridge that gap:
 
-- Methodology (7 chapters): from core concepts to trust stack to negative signals
+- Methodology (7 chapters): core concepts → platform differences → citation strategies → trust stack → negative signals
 - Practical guides: static sites, Blogger, schema markup, small businesses
 - Checklists: pre-publish checklist + 8-dimension audit scoring
 - Templates: robots.txt that allows AI citation crawlers
 
-Latest 2026 research is included (C-SEO Bench NeurIPS 2025, IF-GEO, Multimodal GEO).
+It includes recent 2025–2026 research (C-SEO Bench / NeurIPS 2025, IF-GEO, AutoGEO / ICLR 2026). MIT licensed, PRs welcome.
 
 https://github.com/qq136692547-cmyk/geo-optimization-handbook
 
-MIT licensed, PRs welcome.
+**注意（HN 铁律）：**
+- 正文必须是你**本人手写**，不要用 AI 生成/AI 润色文本贴上去（HN 指南明确禁止 posted generated text）。
+- 不要 solicit upvotes，不要回帖求赞。
+- 首发后自己在评论区真诚回答技术质疑，别删帖重发。
