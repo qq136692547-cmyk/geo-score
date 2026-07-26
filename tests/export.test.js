@@ -1,5 +1,5 @@
 ﻿import { describe, it, expect } from 'vitest';
-import { exportMarkdown, exportJson, exportCsv } from '../src/lib/export.js';
+import { exportMarkdown, exportJson, exportCsv, exportHtml } from '../src/lib/export.js';
 
 const mockResult = {
   url: 'example.com',
@@ -48,5 +48,16 @@ describe('export functions', () => {
     expect(csv).toContain('Dimension,Score,MaxScore,Passed,Total');
     expect(csv).toContain('aiCrawlability,10,12,4,6');
     expect(csv).toContain('metaSocial,8,10,4,5');
+  });
+
+  it('should export HTML with full report', () => {
+    const html = exportHtml(mockResult);
+    expect(html).toContain('<!DOCTYPE html>');
+    expect(html).toContain('GEO Audit Report');
+    expect(html).toContain('example.com');
+    expect(html).toContain('85');
+    expect(html).toContain('/100');
+    expect(html).toContain('aiCrawlability');
+    expect(html).toContain('Recommendations');
   });
 });
