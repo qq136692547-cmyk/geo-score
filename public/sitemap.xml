@@ -35,11 +35,7 @@
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
-  <url>
-    <loc>https://geoscore.help/blog/how-to-write-llms-txt/</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
+  <!-- how-to-write-llms-txt 301 redirected to llms-txt-ultimate-guide -->
   <url>
     <loc>https://geoscore.help/blog/ai-search-engine-list/</loc>
     <changefreq>monthly</changefreq>
@@ -72,6 +68,11 @@
   </url>
   <url>
     <loc>https://geoscore.help/blog/json-ld-structured-data-ai-search/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://geoscore.help/blog/eeat-signals-ai-search/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>

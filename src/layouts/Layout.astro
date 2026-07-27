@@ -56,6 +56,18 @@ const path = Astro.url.pathname;
     ]
   })} />
 
+  <!-- JSON-LD: WebSite (site-level entity + search action) -->
+  <script is:inline type="application/ld+json" set:html={JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    '@id': 'https://geoscore.help/#website',
+    url: 'https://geoscore.help',
+    name: 'GeoScore',
+    description: 'Free GEO audit tool — check your website visibility to AI search engines.',
+    publisher: { '@id': 'https://geoscore.help/#organization' },
+    inLanguage: 'en'
+  })} />
+
   <!-- JSON-LD: Person (author) -->
   <script is:inline type="application/ld+json" set:html={JSON.stringify({
     '@context': 'https://schema.org',
@@ -86,7 +98,7 @@ const path = Astro.url.pathname;
     features: ['12-dimension GEO scoring', 'AI search visibility audit', 'llms.txt checker', 'robots.txt AI crawler analysis', 'structured data audit', 'E-E-A-T signals'],
     author: { '@type': 'Person', name: 'GeoScore Team', url: 'https://geoscore.help/about' },
     publisher: { '@type': 'Organization', name: 'GeoScore', url: 'https://geoscore.help' },
-    dateModified: '2026-07-21'    }]
+    dateModified: '2026-07-27'    }]
   } : {
     '@context': 'https://schema.org',
     '@graph': [{
@@ -101,7 +113,7 @@ const path = Astro.url.pathname;
     features: ['12-dimension GEO scoring', 'AI search visibility audit', 'llms.txt checker', 'robots.txt AI crawler analysis', 'structured data audit', 'E-E-A-T signals'],
     author: { '@type': 'Person', name: 'GeoScore Team', url: 'https://geoscore.help/about' },
     publisher: { '@type': 'Organization', name: 'GeoScore', url: 'https://geoscore.help' },
-    dateModified: '2026-07-21'    }]
+    dateModified: '2026-07-27'    }]
   })} />
 
 </head>
@@ -150,9 +162,10 @@ const path = Astro.url.pathname;
           <ul class="space-y-2 text-sm text-gray-400">
             <li><a href="/blog/what-is-geo" class="hover:text-brand-500 transition">What is GEO?</a></li>
             <li><a href="/blog/geo-vs-seo" class="hover:text-brand-500 transition">GEO vs SEO</a></li>
-            <li><a href="/blog/how-to-write-llms-txt" class="hover:text-brand-500 transition">How to Write llms.txt</a></li>
+            <li><a href="/blog/llms-txt-ultimate-guide" class="hover:text-brand-500 transition">llms.txt Ultimate Guide</a></li>
             <li><a href="/blog/ai-search-engine-list" class="hover:text-brand-500 transition">AI Search Engine List</a></li>
             <li><a href="/blog/json-ld-structured-data-ai-search" class="hover:text-brand-500 transition">JSON-LD for AI Search</a></li>
+            <li><a href="/blog/eeat-signals-ai-search" class="hover:text-brand-500 transition">E-E-A-T for AI Search</a></li>
             <li><a href="/blog/why-doesnt-chatgpt-cite-my-website" class="hover:text-brand-500 transition">Why ChatGPT Doesn't Cite You</a></li>
             <li><a href="/about" class="hover:text-brand-500 transition">Methodology</a></li>
             <li><a href="https://github.com/qq136692547-cmyk/geo-optimization-handbook" target="_blank" rel="noopener" class="hover:text-brand-500 transition">GEO Handbook</a></li>

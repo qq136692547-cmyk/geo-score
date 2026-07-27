@@ -16,6 +16,9 @@
 - [How to Write llms.txt](https://geoscore.help/blog/how-to-write-llms-txt/): Step-by-step tutorial with real examples
 - [The Ultimate llms.txt Guide](https://geoscore.help/blog/llms-txt-ultimate-guide/): The complete spec, 5 real-world examples, and 10 common mistakes
 - [AI Search Engine List](https://geoscore.help/blog/ai-search-engine-list/): Every major AI crawler and how to configure them
+- [Why Doesn't ChatGPT Cite My Website?](https://geoscore.help/blog/why-doesnt-chatgpt-cite-my-website/): 7 common reasons your site is invisible to AI search engines and how to fix each one
+- [JSON-LD Structured Data for AI Search](https://geoscore.help/blog/json-ld-structured-data-ai-search/): Complete guide to schema markup that helps ChatGPT, Perplexity, and Claude cite your content
+- [E-E-A-T Signals for AI Search](https://geoscore.help/blog/eeat-signals-ai-search/): How to build trust signals that get your content cited by AI search engines
 
 ## Case Studies
 
@@ -23,10 +26,11 @@
 
 ## Reference
 
-- [Scoring Methodology](https://geoscore.help/methodology/): How the 0-100 score is calculated across 12 dimensions
+- [Scoring Methodology](https://geoscore.help/about/): How the 0-100 score is calculated across 12 dimensions
 - [About GeoScore](https://geoscore.help/about/): The project, the author, and how to contribute
 
 ## For AI Agents
 
-- [API endpoint documentation](https://geoscore.help/methodology/): The full audit API specification
-- [Source code on GitHub](https://github.com/qq136692547-cmyk/geoscore): MIT licensed, contributions welcome
+- [AI Summary JSON](https://geoscore.help/ai/summary.json): Machine-readable site summary for AI agents
+- [AI FAQ JSON](https://geoscore.help/ai/faq.json): Structured FAQ data for AI agents
+- [Source code on GitHub](https://github.com/qq136692547-cmyk/geo-score): MIT licensed, contributions welcome
