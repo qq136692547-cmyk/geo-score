@@ -26,6 +26,21 @@ This is not a replacement for SEO — it's a complement. Good SEO practices (tec
 | **Success Metric** | Ranking, CTR, traffic | Citations, brand mentions, conversions |
 | **Authority Signal** | Backlinks / Domain Authority | Expert citations / original research |
 
+## Google's Official Position (June 2026)
+
+In June 2026, Google published its first official documentation on optimizing for generative AI features on Google Search. The key takeaway:
+
+> "From Google Search's perspective, optimizing for generative AI search experiences is optimizing for the search experience, and thus still SEO."
+
+This means:
+- **GEO is not separate from SEO** — Google considers it an extension of existing SEO best practices
+- **Foundational SEO still matters** — technical performance, structured data, and content quality remain prerequisites
+- **Google officially recognizes AEO/GEO terminology** — the documentation explicitly addresses both terms
+
+The guide also debunks common GEO myths, clarifies that RAG (Retrieval-Augmented Generation) and query fan-out are core to how AI features work, and introduces Search Console features for monitoring AI visibility.
+
+**Source:** [Google Search Central — Optimizing for generative AI features](https://developers.google.com/search/docs/fundamentals/ai-optimization-guide)
+
 ## Why GEO Matters
 
 - **ChatGPT** has 900M+ weekly active users (1B+ monthly), with AI search built in (DemandSage / OpenAI Jul 2026)
@@ -37,7 +52,7 @@ This is not a replacement for SEO — it's a complement. Good SEO practices (tec
 - GEO strategies can improve visibility by **up to 40%** (KDD 2024) and rank in ChatGPT in **as little as 14 days** (OtterlyAI 2026)
 - Correct JSON-LD structured data improves LLM extraction accuracy from **16% to 54%** (Semrush)
 - ChatGPT referral traffic converts at **15.9%** versus Google's 1.76% (Conductor 2026)
-- **97% of companies** report positive AEO impact; 94% plan to increase investment (Conductor 2026)
+- **97% of enterprise marketing leaders** report positive AEO impact; 94% plan to increase investment (Conductor 2026)
 
 ## The Three Pillars of GEO
 

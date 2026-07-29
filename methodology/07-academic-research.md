@@ -70,6 +70,7 @@ This research formed the basis of the 8-signal negative detection system used in
 | KDD 2024 (Princeton) | Apply the 47 citation strategies ranked by impact |
 | ICLR 2026 (CMU) | Understand platform-specific optimization |
 | EMNLP 2024 (Berkeley) | Audit your content for negative signals |
+| SIGIR 2026 (Vishwakarma et al.) | Competitive GEO dynamics — freshness > domain authority |
 
 ---
 
@@ -100,12 +101,26 @@ Extends GEO to vision-language model rankers — optimizing content for multimod
 
 Analysis of which source types, domains, and formats are most frequently cited by AI search platforms.
 
+### What Gets Cited: Competitive GEO in AI Answer Engines (SIGIR 2026)
+
+**Paper:** [arXiv:2605.25517](https://arxiv.org/abs/2605.25517)
+**Venue:** ACM SIGIR 2026 (July 2026)
+
+Conducted **252,000 controlled trials** across 6 LLMs testing 18 content factors in paired comparisons. Key findings:
+
+- **Source freshness and content quality** are more important than domain authority for AI citation
+- When two retrieved candidates compete for a single citation slot, **being cited is the bottleneck** — not being retrieved
+- Content factors that help retrieval (SEO) can differ from factors that help citation (GEO)
+- Introduces a competitive GEO framework for understanding multi-agent content dynamics
+
 ### Additional Papers
 
 | Year | Paper | Link |
 |------|-------|------|
-| 2026 | Navigating the Shift: Web Search vs Generative AI | [arXiv:2601.16858](https://arxiv.org/abs/2601.16858) |
-| 2025 | Beyond SEO: Transformer-Based Content Optimization | [ChatPaper](https://chatpaper.com/chatpaper/paper/158775) |
+|| 2026 | What Gets Cited: Competitive GEO in AI Answer Engines (SIGIR 2026) | [arXiv:2605.25517](https://arxiv.org/abs/2605.25517) |
+|| 2026 | Navigating the Shift: Web Search vs Generative AI | [arXiv:2601.16858](https://arxiv.org/abs/2601.16858) |
+|| 2025 | GEO: How to Dominate AI Search | [arXiv:2509.08919](https://arxiv.org/abs/2509.08919) |
+|| 2025 | Beyond SEO: Transformer-Based Content Optimization | [ChatPaper](https://chatpaper.com/chatpaper/paper/158775) |
 | 2025 | StealthRank: LLM Ranking Manipulation | [arXiv:2504.05804](https://arxiv.org/abs/2504.05804) |
 | 2025 | NExT-Search: User Feedback for Generative AI Search | [arXiv:2505.14680](https://arxiv.org/abs/2505.14680) |
 | 2024 | Ranking Manipulation for Conversational Search Engines | [arXiv:2406.03589](https://arxiv.org/abs/2406.03589) |

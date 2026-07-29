@@ -150,6 +150,8 @@ geo-optimization-handbook/
 - 🔬 Added recent research: C-SEO Bench (NeurIPS 2025), IF-GEO, Multimodal GEO papers, Conductor 2026 AEO/GEO Benchmarks
 - 🛠️ **Built with this handbook**: [GeoScore](https://geoscore.help/) — free GEO audit tool
 - 📣 **Promotion plan**: [Promotion Launch Checklist](./promotion-checklist.md) + [Reddit/HN draft copy](./promotion-drafts.md) — platform-specific post types, titles, and do/don't (Reddit 90/10, HN Show HN)
+- 🏛️ **Google's official GEO guide**: [Optimizing for generative AI features](https://developers.google.com/search/docs/fundamentals/ai-optimization-guide) — Google's first official documentation (June 2026)
+- 🔬 **New research**: SIGIR 2026 — [What Gets Cited: Competitive GEO](https://arxiv.org/abs/2605.25517) — 252K trials across 6 LLMs; GEO now has a [Wikipedia page](https://en.wikipedia.org/wiki/Generative_engine_optimization)
 
 ## 🛠️ Built with This Handbook
 
@@ -173,11 +175,14 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 | [C-SEO Bench (NeurIPS 2025)](https://arxiv.org/abs/2506.11097) | Academic Paper | Conversational SEO Benchmark |
 | [Auriti-Labs GEO Optimizer](https://github.com/Auriti-Labs/geo-optimizer-skill) | Open Source | GEO audit framework (MIT) |
 | [llmstxt.org](https://llmstxt.org) | Specification | llms.txt standard for AI crawlers |
-| [Google Search Central](https://developers.google.com/search/docs/fundamentals/ai-content) | Documentation | AI content and search |
+| [Google Search Central — AI content & search](https://developers.google.com/search/docs/fundamentals/ai-content) | Documentation | AI content and search |
+| [Google Search Central — Optimizing for generative AI features](https://developers.google.com/search/docs/fundamentals/ai-optimization-guide) | Documentation | Google's official GEO/AEO guide (June 2026) |
 | [SEMrush GEO Guide](https://www.semrush.com/blog/generative-engine-optimization/) | Industry Guide | Practical GEO strategies |
 | [Conductor 2026 AEO/GEO Benchmarks](https://www.conductor.com/academy/aeo-geo-benchmarks-report/) | Industry Report | First large-scale AI visibility analysis across 10 industries |
 | [Conductor State of AEO/GEO 2026](https://www.conductor.com/academy/state-of-aeo-geo-report/) | Industry Report | CMO investment trends: 97% positive impact, 94% increasing investment |
 | [OtterlyAI GEO Experiment](https://otterly.ai/blog/from-zero-to-rank7-ai-search-in-14days/) | Case Study | #7 in ChatGPT in 14 days |
+| [Wikipedia — Generative engine optimization](https://en.wikipedia.org/wiki/Generative_engine_optimization) | Reference | GEO article on Wikipedia (Jul 2026) |
+| [SIGIR 2026 — What Gets Cited](https://arxiv.org/abs/2605.25517) | Academic Paper | Competitive GEO: 252K trials across 6 LLMs |
 
 ## 📄 License
 
