@@ -13,12 +13,12 @@
 
 - [What is GEO? Complete Guide](https://geoscore.help/blog/what-is-geo/): Introduction to Generative Engine Optimization and the 12 dimensions
 - [GEO vs SEO](https://geoscore.help/blog/geo-vs-seo/): How AI search differs from traditional search and where they overlap
-- [How to Write llms.txt](https://geoscore.help/blog/how-to-write-llms-txt/): Step-by-step tutorial with real examples
 - [The Ultimate llms.txt Guide](https://geoscore.help/blog/llms-txt-ultimate-guide/): The complete spec, 5 real-world examples, and 10 common mistakes
 - [AI Search Engine List](https://geoscore.help/blog/ai-search-engine-list/): Every major AI crawler and how to configure them
 - [Why Doesn't ChatGPT Cite My Website?](https://geoscore.help/blog/why-doesnt-chatgpt-cite-my-website/): 7 common reasons your site is invisible to AI search engines and how to fix each one
 - [JSON-LD Structured Data for AI Search](https://geoscore.help/blog/json-ld-structured-data-ai-search/): Complete guide to schema markup that helps ChatGPT, Perplexity, and Claude cite your content
 - [E-E-A-T Signals for AI Search](https://geoscore.help/blog/eeat-signals-ai-search/): How to build trust signals that get your content cited by AI search engines
+- [GEO Tracking Guide 2026](https://geoscore.help/blog/geo-tracking-ai-visibility/): How to monitor your AI search visibility — citation rate, mention frequency, and sentiment tracking.
 
 ## Case Studies
 
