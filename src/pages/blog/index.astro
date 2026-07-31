@@ -1,0 +1,47 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const posts = [
+  { slug: 'why-doesnt-chatgpt-cite-my-website', title: 'Why Doesn\'t ChatGPT Cite My Website? 7 Reasons (And How to Fix Them)', tag: 'Popular · 12 min', excerpt: '7 common reasons your site is invisible to AI search engines — and exactly how to fix each one.' },
+  { slug: 'what-is-geo', title: 'What is GEO (Generative Engine Optimization)? 2026 Complete Guide', tag: 'Guide · 8 min', excerpt: 'Complete introduction to Generative Engine Optimization and the 12 dimensions of readiness.' },
+  { slug: 'geo-vs-seo', title: 'GEO vs SEO: 7 Key Differences (2026 Comparison)', tag: 'Guide · 10 min', excerpt: 'What\'s the difference? Target engines, crawlers, content strategy, and how they work together.' },
+  { slug: 'llms-txt-ultimate-guide', title: 'llms.txt Ultimate Guide: How to Write One (With Examples)', tag: 'Tutorial · 15 min', excerpt: 'Step-by-step guide with real examples for creating an llms.txt file for your website.' },
+  { slug: 'ai-search-engine-list', title: 'AI Search Engine List 2026: Crawlers, Bots & User Agents', tag: 'Reference · 9 min', excerpt: 'Complete list of AI crawlers — GPTBot, ClaudeBot, PerplexityBot — and how to allow them.' },
+  { slug: 'json-ld-structured-data-ai-search', title: 'JSON-LD for AI Search: Complete Structured Data Guide', tag: 'Guide · 14 min', excerpt: 'Complete guide to structured data that helps ChatGPT, Perplexity, and Claude cite your content.' },
+  { slug: 'eeat-signals-ai-search', title: 'E-E-A-T Signals for AI Search: Building Trust with AI Engines', tag: 'Guide · 12 min', excerpt: 'Build trust signals that get your content cited by ChatGPT, Perplexity, and Claude.' },
+  { slug: 'multimodal-geo-2026', title: 'Multimodal GEO 2026: Optimizing Images, Video & Audio for AI Search', tag: 'Guide · 11 min', excerpt: 'Optimize images, video, and audio for AI search visibility.' },
+  { slug: 'geo-tracking-ai-visibility', title: 'GEO Tracking & AI Visibility: How to Monitor Your AI Search Presence', tag: 'Guide · 14 min', excerpt: 'How to monitor your AI search visibility — citation rate, mention frequency, and sentiment tracking.' },
+  { slug: 'auditing-1200-websites', title: 'Auditing 1,200 Websites for AI Readiness: What We Learned', tag: 'Analysis · 10 min', excerpt: 'Key findings from large-scale GEO audits — common gaps, patterns, and quick wins.' },
+  { slug: 'how-to-write-llms-txt', title: 'How to Write llms.txt (Redirected)', tag: 'Redirect', excerpt: 'This post has been merged into the llms.txt Ultimate Guide.' },
+];
+---
+<Layout title="GEO Blog & Guides | GeoScore"
+  schema={{
+    '@context': 'https://schema.org',
+    '@type': 'Blog',
+    name: 'GeoScore Blog',
+    description: 'In-depth guides on Generative Engine Optimization (GEO), AI search visibility, structured data, and llms.txt.',
+    url: 'https://geoscore.help/blog/',
+    publisher: { '@type': 'Organization', name: 'GeoScore', url: 'https://geoscore.help' }
+  }}
+>
+  <section class="max-w-4xl mx-auto py-12">
+    <div class="text-center mb-12">
+      <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-geo-500/10 text-geo-400 border border-geo-500/20 mb-4">
+        GeoScore Blog
+      </div>
+      <h1 class="text-4xl font-extrabold mb-3">GEO Guides & Articles</h1>
+      <p class="text-gray-400 max-w-2xl mx-auto">In-depth guides on Generative Engine Optimization, AI search visibility, structured data, and getting your content cited by ChatGPT, Perplexity, and Claude.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {posts.filter(p => p.tag !== 'Redirect').map((post) => (
+        <a href={`/blog/${post.slug}`} class="card card-hover card-lift p-6 block">
+          <div class="text-xs text-gray-500 mb-2">{post.tag}</div>
+          <h2 class="text-lg font-bold mb-2">{post.title}</h2>
+          <p class="text-gray-400 text-sm">{post.excerpt}</p>
+        </a>
+      ))}
+    </div>
+  </section>
+</Layout>
