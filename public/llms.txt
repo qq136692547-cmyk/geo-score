@@ -18,6 +18,7 @@
 - [Why Doesn't ChatGPT Cite My Website?](https://geoscore.help/blog/why-doesnt-chatgpt-cite-my-website/): 7 common reasons your site is invisible to AI search engines and how to fix each one
 - [JSON-LD Structured Data for AI Search](https://geoscore.help/blog/json-ld-structured-data-ai-search/): Complete guide to schema markup that helps ChatGPT, Perplexity, and Claude cite your content
 - [E-E-A-T Signals for AI Search](https://geoscore.help/blog/eeat-signals-ai-search/): How to build trust signals that get your content cited by AI search engines
+- [Multimodal GEO 2026](https://geoscore.help/blog/multimodal-geo-2026/): Optimizing images, video, and audio for AI search 鈥?alt text, transcripts, and schema that get non-text content cited.
 - [GEO Tracking Guide 2026](https://geoscore.help/blog/geo-tracking-ai-visibility/): How to monitor your AI search visibility — citation rate, mention frequency, and sentiment tracking.
 
 ## Case Studies
