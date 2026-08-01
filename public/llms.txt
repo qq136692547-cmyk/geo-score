@@ -20,6 +20,7 @@
 - [E-E-A-T Signals for AI Search](https://geoscore.help/blog/eeat-signals-ai-search/): How to build trust signals that get your content cited by AI search engines
 - [Multimodal GEO 2026](https://geoscore.help/blog/multimodal-geo-2026/): Optimizing images, video, and audio for AI search 鈥?alt text, transcripts, and schema that get non-text content cited.
 - [GEO Tracking Guide 2026](https://geoscore.help/blog/geo-tracking-ai-visibility/): How to monitor your AI search visibility — citation rate, mention frequency, and sentiment tracking.
+- [GEO Metrics That Matter 2026](https://geoscore.help/blog/geo-metrics-2026/): The 5 core GEO metrics — citation rate, mention frequency, sentiment accuracy, share of voice, and zero-click reach — with measurement methods and targets.
 
 ## Case Studies
 
