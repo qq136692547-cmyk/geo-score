@@ -7,6 +7,7 @@
 [![GitHub Stars](https://img.shields.io/github/stars/qq136692547-cmyk/geo-optimization-handbook?style=social)](https://github.com/qq136692547-cmyk/geo-optimization-handbook)
 [![Last Updated](https://img.shields.io/github/last-commit/qq136692547-cmyk/geo-optimization-handbook)](https://github.com/qq136692547-cmyk/geo-optimization-handbook/commits/main)
 [![Awesome GEO](https://awesome.re/badge.svg)](https://github.com/amplifying-ai/awesome-generative-engine-optimization)
+[![Website](https://img.shields.io/badge/🌐-geoscore.help-blue)](https://geoscore.help/)
 
 ---
 
@@ -158,7 +159,7 @@ geo-optimization-handbook/
 
 | Project | Description |
 |---------|-------------|
-| [GeoScore](https://geoscore.help/) | Free GEO audit tool — scores your site 0–100 across 12 dimensions, generates llms.txt, robots.txt, and JSON-LD fixes. Built from this handbook's methodology. |
+| [GeoScore](https://geoscore.help/) 🏠 **Official Site** | Free GEO audit tool — scores your site 0–100 across 12 dimensions, generates llms.txt, robots.txt, and JSON-LD fixes. Built from this handbook's methodology. |
 
 ## 🤝 Contributing
 
