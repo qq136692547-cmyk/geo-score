@@ -28,13 +28,14 @@ Coined in the paper [*GEO: Generative Engine Optimization*](https://arxiv.org/ab
 
 | Stat | Source |
 |------|--------|
-| ChatGPT has **900M+ weekly active users** (1B+ monthly) with AI search built-in | DemandSage / OpenAI (Jul 2026) |
+| ChatGPT has **900M+ weekly active users** (1B+ monthly) with AI search built-in | OpenAI (Feb 2026) |
 | Google AI Overviews now reaches **2B+ users/month** across 200+ countries | Google (Jul 2025) |
 | Google AI Mode surpassed **1B monthly active users** within a year of launch | Google I/O 2026 |
-| AI Overviews appear on **48% of all search queries**, reducing organic CTR by 58–61% | Stacc (Jul 2026) |
-| Gemini app has **750M+ monthly active users** | Google (Jul 2026) |
-| **up to 40% visibility improvement** possible with GEO strategies | KDD 2024 / ICLR 2026 |
+| AI Overviews appear on **48% of all search queries**, reducing organic CTR by 34–61% | Stacc (Jul 2026) |
+| Gemini app has **950M+ monthly active users** | Alphabet Q2 2026 earnings |
+| **80% of URLs cited by AI engines** don't rank in Google's top 100 for the query | Ahrefs 2026 AEO Report |
 | **28.3%** of ChatGPT's most-cited pages have **zero Google organic visibility** | Ahrefs |
+| **up to 40% visibility improvement** possible with GEO strategies | KDD 2024 / ICLR 2026 |
 | Correct JSON-LD schema boosts LLM extraction from **16% to 54%** | Semrush |
 | AI search queries average **23 words** (vs 4 for traditional search) | Multiple studies |
 | ChatGPT referral traffic converts at **15.9%** (vs Google's 1.76%) | Conductor 2026 Benchmarks |
@@ -143,15 +144,15 @@ geo-optimization-handbook/
 - **Running static sites?** The [Static Site Guide](./practical-guides/01-static-site-geo.md) and [Blogger Guide](./practical-guides/03-blogger-geo.md) are for you.
 - **Small business owner?** Start with the [Small Business GEO Guide](./practical-guides/04-small-business-geo.md) — no technical expertise required.
 
-## What's New (July 2026)
+## What's New (August 2026)
 
-- 📊 **Data refresh**: ChatGPT 400M→900M weekly users, Google AIO 1B→2B users, added AI Mode (1B), Gemini (750M), Conductor benchmarks
-- 🆕 **New guide**: [GEO for Small Businesses](./practical-guides/04-small-business-geo.md) — zero-click search survival guide for 2026
-- 🔬 Added recent research: C-SEO Bench (NeurIPS 2025), IF-GEO, Multimodal GEO papers, Conductor 2026 AEO/GEO Benchmarks
-- 🛠️ **Built with this handbook**: [GeoScore](https://geoscore.help/) — free GEO audit tool
-- 📣 **Promotion plan**: [Promotion Launch Checklist](./promotion-checklist.md) + [Reddit/HN draft copy](./promotion-drafts.md) — platform-specific post types, titles, and do/don't (Reddit 90/10, HN Show HN)
+- 📊 **Data refresh (Aug 2026)**: Gemini app 750M→**950M+ MAU** (Alphabet Q2 2026 earnings), added Ahrefs 2026 AEO finding (**80% of AI-cited URLs don't rank in Google top 100**), corrected AIO CTR impact to 34–61% (Stacc)
 - 🏛️ **Google's official GEO guide**: [Optimizing for generative AI features](https://developers.google.com/search/docs/fundamentals/ai-optimization-guide) — Google's first official documentation (June 2026)
 - 🔬 **New research**: SIGIR 2026 — [What Gets Cited: Competitive GEO](https://arxiv.org/abs/2605.25517) — 252K trials across 6 LLMs; GEO now has a [Wikipedia page](https://en.wikipedia.org/wiki/Generative_engine_optimization)
+- 📣 **Promotion plan**: [Promotion Launch Checklist](./promotion-checklist.md) + [Reddit/HN draft copy](./promotion-drafts.md) — platform-specific post types, titles, and do/don't (Reddit 90/10, HN Show HN)
+- 🛠️ **Built with this handbook**: [GeoScore](https://geoscore.help/) — free GEO audit tool
+- 🆕 **New guide**: [GEO for Small Businesses](./practical-guides/04-small-business-geo.md) — zero-click search survival guide for 2026
+- 🔬 Added recent research: C-SEO Bench (NeurIPS 2025), IF-GEO, Multimodal GEO papers, Conductor 2026 AEO/GEO Benchmarks
 
 ## 🛠️ Built with This Handbook
 

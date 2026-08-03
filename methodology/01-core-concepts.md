@@ -43,12 +43,12 @@ The guide also debunks common GEO myths, clarifies that RAG (Retrieval-Augmented
 
 ## Why GEO Matters
 
-- **ChatGPT** has 900M+ weekly active users (1B+ monthly), with AI search built in (DemandSage / OpenAI Jul 2026)
+- **ChatGPT** has 900M+ weekly active users (1B+ monthly), with AI search built in (OpenAI, Feb 2026)
 - **Google AI Overviews** reaches 2B+ users monthly across 200+ countries (Google I/O 2026)
 - **Google AI Mode** surpassed 1B monthly active users within a year of launch (Google I/O 2026)
-- **Gemini app** has 750M+ monthly active users (Google Jul 2026)
-- AI Overviews appear on **48% of all search queries**, reducing organic CTR by 58–61% (Stacc / Conductor Jul 2026)
-- **28.3%** of ChatGPT's most-cited pages have zero Google organic visibility (Ahrefs)
+- **Gemini app** has 950M+ monthly active users (Alphabet Q2 2026 earnings)
+- AI Overviews appear on **48% of all search queries**, reducing organic CTR by 34–61% (Stacc, Jul 2026)
+- **28.3%** of ChatGPT's most-cited pages have zero Google organic visibility — and **80% of AI-cited URLs don't rank in Google's top 100** for the query (Ahrefs 2026)
 - GEO strategies can improve visibility by **up to 40%** (KDD 2024) and rank in ChatGPT in **as little as 14 days** (OtterlyAI 2026)
 - Correct JSON-LD structured data improves LLM extraction accuracy from **16% to 54%** (Semrush)
 - ChatGPT referral traffic converts at **15.9%** versus Google's 1.76% (Conductor 2026)

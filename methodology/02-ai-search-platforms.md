@@ -16,6 +16,7 @@ Each AI search platform has different behavior, source preferences, and optimiza
 - **AI Mode** (launched 2025) provides deeper AI-generated responses; surpassed **1B monthly active users** by mid-2026 (Google I/O 2026)
 - AI Overviews now reach **2B+ users/month** across 200+ countries and 40+ languages (Google, Jul 2025)
 - Appear on **48% of all search queries** (Stacc, Jul 2026) — note: Conductor's 2026 AEO/GEO Benchmarks reports a lower 25.11% AIO coverage rate; the two figures use different query samples and aren't directly comparable
+- AI Mode and AI Overviews **cite the same URLs only ~13% of the time** — they use different retrieval mechanisms, so content optimized for one isn't automatically visible in the other (Ahrefs 2026)
 
 ### Optimization Tips
 
