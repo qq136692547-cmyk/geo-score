@@ -20,13 +20,13 @@ import Layout from '../../layouts/Layout.astro';
         Free Tool
       </div>
       <h1 class="text-4xl font-extrabold mb-3">Robots.txt AI Crawler Checker</h1>
-      <p class="text-gray-400 max-w-2xl mx-auto">Check if your robots.txt is blocking AI crawlers like GPTBot, ClaudeBot, PerplexityBot, and Google-Extended from accessing your site.</p>
+      <p class="text-gray-400 max-w-2xl mx-auto">Check if your robots.txt is blocking AI crawlers like GPTBot, OAI-SearchBot, ClaudeBot, PerplexityBot, Google-Extended, Meta-ExternalAgent, and Amazonbot from accessing your site.</p>
     </div>
 
     <div class="card p-8 mb-8">
       <h2 class="text-xl font-bold mb-4">Why AI Crawler Access Matters</h2>
       <p class="text-gray-400 mb-4">
-        AI search engines use specialized crawlers to discover and index web content. If your <code class="text-brand-400">robots.txt</code> blocks these crawlers, your site will <strong class="text-white">not appear</strong> in AI-generated answers from ChatGPT, Perplexity, Claude, or Google AI Overviews.
+        AI search engines use specialized crawlers to discover and index web content. If your <code class="text-brand-400">robots.txt</code> blocks these crawlers, your site will <strong class="text-white">not appear</strong> in AI-generated answers from ChatGPT, ChatGPT Search, Perplexity, Claude, Google AI Overviews, Meta AI, or Amazon Rufus.
       </p>
       <p class="text-gray-400">
         Many site owners accidentally block AI crawlers by using generic <code class="text-brand-400">Disallow: /</code> rules or aggressive bot-blocking plugins. This tool checks your robots.txt for common AI crawler blocking patterns.
@@ -37,11 +37,14 @@ import Layout from '../../layouts/Layout.astro';
       <h2 class="text-xl font-bold mb-4">AI Crawlers We Check For</h2>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
         <div class="p-3 rounded-lg bg-white/5"><code class="text-geo-400 text-sm">GPTBot</code><p class="text-gray-500 text-xs mt-1">OpenAI / ChatGPT</p></div>
+        <div class="p-3 rounded-lg bg-white/5"><code class="text-geo-400 text-sm">OAI-SearchBot</code><p class="text-gray-500 text-xs mt-1">OpenAI Search / ChatGPT Search</p></div>
         <div class="p-3 rounded-lg bg-white/5"><code class="text-geo-400 text-sm">ClaudeBot</code><p class="text-gray-500 text-xs mt-1">Anthropic / Claude</p></div>
         <div class="p-3 rounded-lg bg-white/5"><code class="text-geo-400 text-sm">PerplexityBot</code><p class="text-gray-500 text-xs mt-1">Perplexity AI</p></div>
         <div class="p-3 rounded-lg bg-white/5"><code class="text-geo-400 text-sm">Google-Extended</code><p class="text-gray-500 text-xs mt-1">Google AI Overviews / Gemini</p></div>
         <div class="p-3 rounded-lg bg-white/5"><code class="text-geo-400 text-sm">CCBot</code><p class="text-gray-500 text-xs mt-1">Common Crawl (used by many AI models)</p></div>
         <div class="p-3 rounded-lg bg-white/5"><code class="text-geo-400 text-sm">Bytespider</code><p class="text-gray-500 text-xs mt-1">ByteDance AI</p></div>
+        <div class="p-3 rounded-lg bg-white/5"><code class="text-geo-400 text-sm">Meta-ExternalAgent</code><p class="text-gray-500 text-xs mt-1">Meta AI / Meta Search</p></div>
+        <div class="p-3 rounded-lg bg-white/5"><code class="text-geo-400 text-sm">Amazonbot</code><p class="text-gray-500 text-xs mt-1">Amazon AI / Rufus</p></div>
       </div>
     </div>
 
@@ -63,6 +66,9 @@ import Layout from '../../layouts/Layout.astro';
 User-agent: GPTBot
 Allow: /
 
+User-agent: OAI-SearchBot
+Allow: /
+
 User-agent: ClaudeBot
 Allow: /
 
@@ -70,6 +76,12 @@ User-agent: PerplexityBot
 Allow: /
 
 User-agent: Google-Extended
+Allow: /
+
+User-agent: Meta-ExternalAgent
+Allow: /
+
+User-agent: Amazonbot
 Allow: /
 
 User-agent: *
