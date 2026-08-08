@@ -1,4 +1,4 @@
-﻿{
+{
     "$schema":  "https://geoscore.help/ai/schema/summary.v1.json",
     "site":  {
                  "name":  "GeoScore",
@@ -128,10 +128,6 @@
                         {
                             "url":  "https://geoscore.help/blog/geo-tracking-ai-visibility/",
                             "title":  "GEO Tracking \u0026 AI Visibility"
-                        },
-                        {
-                            "url":  "https://geoscore.help/blog/local-geo-2026/",
-                            "title":  "Local GEO 2026"
                         },
                         {
                             "url":  "https://geoscore.help/blog/auditing-1200-websites/",
