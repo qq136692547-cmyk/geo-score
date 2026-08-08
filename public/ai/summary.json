@@ -118,6 +118,10 @@
                             "title":  "GEO Metrics That Matter 2026"
                         },
                         {
+                            "url":  "https://geoscore.help/blog/geo-citation-optimization/",
+                            "title":  "GEO Citation Optimization"
+                        },
+                        {
                             "url":  "https://geoscore.help/blog/multimodal-geo-2026/",
                             "title":  "Multimodal GEO 2026"
                         },
@@ -134,7 +138,7 @@
                             "title":  "Auditing 1,200 Websites"
                         }
                     ],
-    "last_updated":  "2026-08-05",
+    "last_updated":  "2026-08-08",
     "endpoints":  {
                       "llms_txt":  "https://geoscore.help/llms.txt",
                       "ai_txt":  "https://geoscore.help/.well-known/ai.txt",

@@ -1,0 +1,267 @@
+---
+import Layout from '../../layouts/Layout.astro';
+const schemaGraph = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: 'GEO Citation Optimization: How to Get Cited by AI Engines in 2026',
+    description: 'The complete guide to AI citation optimization in 2026. Learn how ChatGPT, Perplexity, and Google AI Overviews select sources, the 5 pillars of citation optimization, how to measure citation rate, and 10 actionable fixes you can deploy today.',
+    url: 'https://geoscore.help/blog/geo-citation-optimization/',
+    mainEntityOfPage: { '@type': 'WebPage', '@id': 'https://geoscore.help/blog/geo-citation-optimization/' },
+    datePublished: '2026-08-08',
+    dateModified: '2026-08-08',
+    author: { '@type': 'Organization', name: 'GeoScore' },
+    publisher: { '@type': 'Organization', name: 'GeoScore', url: 'https://geoscore.help' },
+    keywords: 'GEO citation optimization, AI citations, ChatGPT citations, Perplexity citations, Google AI Overviews, llms.txt, JSON-LD, E-E-A-T, citation rate, generative engine optimization 2026'
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: [
+      {
+        '@type': 'Question',
+        name: 'How long does it take for AI engines to start citing my content?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Typically 2 to 8 weeks. The timeline depends on AI crawler frequency, content indexation speed, and your site\'s existing authority. Sites with strong E-E-A-T signals and existing authority get cited faster. New domains or sites with thin content history may take longer. You can accelerate this by submitting an llms.txt file, ensuring AI crawlers are not blocked in robots.txt, and publishing content with clear FAQ structures.'
+        }
+      },
+      {
+        '@type': 'Question',
+        name: 'Does llms.txt guarantee AI citations?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'No, llms.txt does not guarantee citations. However, it significantly increases the probability that AI crawlers discover, understand, and correctly represent your content. llms.txt serves as a guide for AI models, helping them parse your site\'s structure and key content. Think of it as a necessary but not sufficient condition — you still need high-quality, structured, authoritative content to earn citations.'
+        }
+      },
+      {
+        '@type': 'Question',
+        name: "What's a good citation rate?",
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'The industry average citation rate is approximately 2-5%. A citation rate above 10% is considered excellent, meaning your domain appears as a cited source in over 10% of relevant AI-generated answers. Top-performing brands in competitive categories maintain 15-30% citation rates on brand queries. If your citation rate is below 2%, focus on structural fixes: JSON-LD schema, llms.txt, author information, and content depth.'
+        }
+      }
+    ]
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://geoscore.help/' },
+      { '@type': 'ListItem', position: 2, name: 'Blog', item: 'https://geoscore.help/blog/' },
+      { '@type': 'ListItem', position: 3, name: 'GEO Citation Optimization', item: 'https://geoscore.help/blog/geo-citation-optimization/' }
+    ]
+  }
+];
+---
+<Layout title="GEO Citation Optimization: How to Get Cited by AI Engines in 2026" schema={schemaGraph}>
+  <article class="max-w-3xl mx-auto px-4 py-12">
+    <a href="/" class="text-brand-400 hover:text-brand-300 text-sm transition">&larr; Back to GeoScore</a>
+    <div class="mt-4 mb-2 text-xs text-gray-500">Guide · 12 min read</div>
+    <h1 class="text-3xl md:text-4xl font-extrabold mb-6 leading-tight">
+      GEO Citation Optimization: How to Get Cited by AI Engines in 2026
+    </h1>
+    <p class="text-lg text-gray-400 mb-8 leading-relaxed">
+      Getting cited by AI engines used to be a bonus. In 2026, it is the entire game. When <strong class="text-white">38.7% of all searches</strong> are powered by generative AI, a citation from ChatGPT or Perplexity can drive more qualified traffic than a #1 ranking on Google. But AI engines do not cite content the way Google ranks pages &mdash; they evaluate <em>source credibility</em>, parse <em>semantic structure</em>, and prioritize <em>entity authority</em>. This guide breaks down exactly how to make your content citable, from structured data fundamentals to the 10-step checklist you can execute today.
+    </p>
+
+    <div class="border-l-2 border-brand-500 pl-4 my-8 text-gray-400 text-sm">
+      <strong class="text-white">TL;DR:</strong> AI citation optimization rests on 5 pillars: (1) <strong class="text-white">Structured data</strong> (JSON-LD schema), (2) <strong class="text-white">Semantic clarity</strong> (FAQ format, clear answers), (3) <strong class="text-white">Source authority</strong> (E-E-A-T, author info, citations), (4) <strong class="text-white">Content uniqueness</strong> (original data, case studies), (5) <strong class="text-white">Multimodal coverage</strong> (text + images + video). Track your <strong class="text-white">citation rate</strong> weekly &mdash; industry average is 2-5%, anything above 10% is excellent. Start with a free <a href="/tools/ai-readiness-score/" class="text-brand-400 hover:text-brand-300">AI Readiness Score audit</a> and verify your <a href="/tools/llms-txt-checker/" class="text-brand-400 hover:text-brand-300">llms.txt file</a>.
+    </div>
+
+    <nav class="my-8 p-4 rounded-xl bg-white/5 border border-gray-700/50">
+      <p class="text-sm font-semibold text-gray-300 mb-3">Table of Contents</p>
+      <ul class="text-sm text-gray-400 space-y-1.5">
+        <li><a href="#paradigm-shift" class="hover:text-brand-400 transition">1. From "Being Referenced" to "Being Trusted"</a></li>
+        <li><a href="#source-selection" class="hover:text-brand-400 transition">2. How AI Engines Select Sources</a></li>
+        <li><a href="#five-pillars" class="hover:text-brand-400 transition">3. The 5 Pillars of Citation Optimization</a></li>
+        <li><a href="#citation-rate" class="hover:text-brand-400 transition">4. Citation Rate: The New North Star Metric</a></li>
+        <li><a href="#common-mistakes" class="hover:text-brand-400 transition">5. Common Mistakes That Kill Citations</a></li>
+        <li><a href="#tools" class="hover:text-brand-400 transition">6. Tools for Tracking AI Citations</a></li>
+        <li><a href="#checklist" class="hover:text-brand-400 transition">7. Actionable Checklist</a></li>
+        <li><a href="#faq" class="hover:text-brand-400 transition">FAQ</a></li>
+      </ul>
+    </nav>
+
+    <h2 id="paradigm-shift" class="text-2xl font-bold mt-12 mb-4">1. From "Being Referenced" to "Being Trusted"</h2>
+    <p class="text-gray-300 mb-4 leading-relaxed">
+      In 2024 and 2025, GEO practitioners chased a single goal: get cited by AI engines at least once. Success was binary &mdash; you either appeared in a ChatGPT response or you did not. Teams optimized for citation frequency the same way they once chased keyword density, treating each AI mention as a win regardless of context.
+    </p>
+    <p class="text-gray-300 mb-4 leading-relaxed">
+      But 2026 has brought a paradigm shift. AI models &mdash; including ChatGPT, Perplexity, Google AI Overviews, and Claude &mdash; now construct <strong class="text-white">knowledge graphs</strong> that map relationships between brands, people, concepts, and claims. Your position in that graph determines whether AI engines cite you once and forget you, or consistently reference you as an authority. The goal has moved from <em>being referenced</em> to <em>being trusted</em>.
+    </p>
+    <p class="text-gray-300 mb-4 leading-relaxed">
+      Trust is built differently than visibility. A site with 50 high-quality backlinks from authoritative sources, strong <a href="/blog/eeat-signals-ai-search/" class="text-brand-400 hover:text-brand-300">E-E-A-T signals</a>, and clear author credentials will outperform a site with 500 low-quality directory links. AI models now evaluate <strong class="text-white">source credibility</strong> at the retrieval stage &mdash; before they decide whether to cite you in the final answer. This means citation optimization must happen at the content architecture level, not the keyword level.
+    </p>
+    <p class="text-gray-300 mb-4 leading-relaxed">
+      The brands winning in 2026 are those that treat AI citations as a trust-building exercise, not a link-building one. They invest in <a href="/blog/what-is-geo/" class="text-brand-400 hover:text-brand-300">generative engine optimization</a> holistically &mdash; schema, author authority, content depth, and structural clarity &mdash; rather than chasing individual citations.
+    </p>
+
+    <h2 id="source-selection" class="text-2xl font-bold mt-12 mb-4">2. How AI Engines Select Sources</h2>
+    <p class="text-gray-300 mb-4 leading-relaxed">
+      To optimize for AI citations, you need to understand the selection logic. ChatGPT, Perplexity, and Google AI Overviews each use slightly different pipelines, but they share a common three-stage process: <strong class="text-white">retrieve, filter, synthesize</strong>.
+    </p>
+    <p class="text-gray-300 mb-4 leading-relaxed">
+      <strong class="text-white">Stage 1 &mdash; Retrieval:</strong> When a user asks a question, the AI engine queries its index (or the live web) for relevant content passages. Unlike Google, which retrieves and ranks whole pages, AI models retrieve <em>passages</em> &mdash; chunks of text broken from your pages. If a chunk lacks clear context, headings, or semantic structure, it will not be retrieved even if the content is excellent.
+    </p>
+    <p class="text-gray-300 mb-4 leading-relaxed">
+      <strong class="text-white">Stage 2 &mdash; Filtering:</strong> Retrieved passages are then scored for quality and authority. The model evaluates: Is this source authoritative? Is the author credible? Is the content recent? Is the site trustworthy? Passages from low-authority sources are discarded even if they are semantically relevant. This is where <a href="/blog/eeat-signals-ai-search/" class="text-brand-400 hover:text-brand-300">E-E-A-T signals</a> and structured data matter most.
+    </p>
+    <p class="text-gray-300 mb-4 leading-relaxed">
+      <strong class="text-white">Stage 3 &mdash; Synthesis:</strong> The AI combines filtered passages into a coherent answer, citing the sources it used. This stage favors content that is easy to paraphrase &mdash; clear, factual statements with specific data points. Content that is verbose, opinion-heavy, or poorly organized is less likely to be synthesized into the final response.
+    </p>
+    <p class="text-gray-300 mb-4 leading-relaxed">
+      Each engine has its own nuances. <strong class="text-white">ChatGPT</strong> favors content from domains it has crawl access to via GPTBot and prioritizes sources with strong entity presence in its knowledge graph. <strong class="text-white">Perplexity</strong> performs real-time web retrieval and favors pages with clear question-answer structures. <strong class="text-white">Google AI Overviews</strong> integrates with Google's existing index, meaning traditional SEO ranking signals still matter &mdash; but they are filtered through an additional layer of AI-quality assessment.
+    </p>
+
+    <h2 id="five-pillars" class="text-2xl font-bold mt-12 mb-4">3. The 5 Pillars of Citation Optimization</h2>
+    <p class="text-gray-300 mb-4 leading-relaxed">
+      After analyzing 1,200+ websites through GeoScore audits, we identified five structural pillars that consistently predict whether content gets cited by AI engines. These are not hacks &mdash; they are foundational content architecture decisions.
+    </p>
+
+    <h3 class="text-xl font-semibold mt-8 mb-3 text-gray-200">Pillar 1: Structured Data (JSON-LD Schema)</h3>
+    <p class="text-gray-300 mb-4 leading-relaxed">
+      JSON-LD schema markup is the single most impactful citation optimization. It tells AI engines exactly what your page is about &mdash; an article, a FAQ, a product, a person &mdash; without requiring them to infer it. At minimum, every citable page should have <code class="text-brand-400 bg-white/5 px-1.5 py-0.5 rounded">Article</code> schema with <code class="text-brand-400 bg-white/5 px-1.5 py-0.5 rounded">author</code>, <code class="text-brand-400 bg-white/5 px-1.5 py-0.5 rounded">datePublished</code>, and <code class="text-brand-400 bg-white/5 px-1.5 py-0.5 rounded">dateModified</code> fields. For FAQ content, add <code class="text-brand-400 bg-white/5 px-1.5 py-0.5 rounded">FAQPage</code> schema. For organization info, implement <code class="text-brand-400 bg-white/5 px-1.5 py-0.5 rounded">Organization</code> schema with <code class="text-brand-400 bg-white/5 px-1.5 py-0.5 rounded">sameAs</code> links to your profiles. See our complete <a href="/blog/json-ld-structured-data-ai-search/" class="text-brand-400 hover:text-brand-300">JSON-LD for AI Search guide</a> for implementation details.
+    </p>
+
+    <h3 class="text-xl font-semibold mt-8 mb-3 text-gray-200">Pillar 2: Semantic Clarity (FAQ Format, Q&amp;A Structure, Clear Answers)</h3>
+    <p class="text-gray-300 mb-4 leading-relaxed">
+      AI models retrieve passages, not pages. A well-structured FAQ section with clear question headings and concise answer paragraphs is far more retrievable than a 3,000-word essay without headings. Write in <strong class="text-white">answer-first format</strong>: state the answer in the first sentence, then elaborate. Use H2 and H3 headings that match how users phrase questions to AI engines. Avoid burying key facts in long paragraphs &mdash; break them into scannable chunks with clear semantic anchors.
+    </p>
+
+    <h3 class="text-xl font-semibold mt-8 mb-3 text-gray-200">Pillar 3: Source Authority (E-E-A-T Signals, Author Info, Citations)</h3>
+    <p class="text-gray-300 mb-4 leading-relaxed">
+      AI engines evaluate source credibility at the filtering stage. Pages with clear author information &mdash; author name, credentials, bio page with <code class="text-brand-400 bg-white/5 px-1.5 py-0.5 rounded">Person</code> schema &mdash; outperform anonymous content. Link to primary sources when making claims. Include an author bio with relevant expertise. Ensure your domain has consistent NAP (Name, Address, Phone) information across the web. These signals collectively tell AI models: <em>this source is credible and should be trusted in synthesized answers.</em>
+    </p>
+
+    <h3 class="text-xl font-semibold mt-8 mb-3 text-gray-200">Pillar 4: Content Uniqueness (Original Data, Exclusive Insights, Case Studies)</h3>
+    <p class="text-gray-300 mb-4 leading-relaxed">
+      AI models are trained to avoid citing duplicate or derivative content. If your page says the same thing as 50 other pages, the AI has no reason to cite you specifically. Original data &mdash; survey results, benchmarks, proprietary research &mdash; is the strongest uniqueness signal. Case studies with specific metrics and outcomes are highly citable because they provide evidence that generic content cannot. Exclusive expert opinions and frameworks also perform well. The principle is simple: <strong class="text-white">if your content could be replaced by content from any other site, AI engines will cite any other site.</strong>
+    </p>
+
+    <h3 class="text-xl font-semibold mt-8 mb-3 text-gray-200">Pillar 5: Multimodal Coverage (Text + Images + Video)</h3>
+    <p class="text-gray-300 mb-4 leading-relaxed">
+      AI models in 2026 extract semantic meaning from images and video, not just text. Pages with descriptive <code class="text-brand-400 bg-white/5 px-1.5 py-0.5 rounded">alt</code> attributes, video transcripts, and <code class="text-brand-400 bg-white/5 px-1.5 py-0.5 rounded">ImageObject</code> schema give AI engines more data to work with. A page that includes a well-captioned infographic, a transcripted video, and structured text gives the AI three modalities to draw from &mdash; increasing the probability that your content is selected during retrieval. For a deeper dive, see our guide on <a href="/blog/multimodal-geo-2026/" class="text-brand-400 hover:text-brand-300">multimodal GEO in 2026</a>.
+    </p>
+
+    <div class="overflow-x-auto my-6">
+      <table class="w-full text-sm text-gray-300 border border-gray-700/50 rounded-lg overflow-hidden">
+        <thead class="bg-white/5">
+          <tr>
+            <th class="text-left p-3 font-semibold text-white">Pillar</th>
+            <th class="text-left p-3 font-semibold text-white">What It Does</th>
+            <th class="text-left p-3 font-semibold text-white">Key Implementation</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-700/30">
+          <tr><td class="p-3"><strong class="text-white">Structured Data</strong></td><td class="p-3">Tells AI what your page is about</td><td class="p-3">JSON-LD Article + FAQPage schema</td></tr>
+          <tr><td class="p-3"><strong class="text-white">Semantic Clarity</strong></td><td class="p-3">Makes content retrievable as passages</td><td class="p-3">FAQ format, answer-first paragraphs</td></tr>
+          <tr><td class="p-3"><strong class="text-white">Source Authority</strong></td><td class="p-3">Passes the filtering stage</td><td class="p-3">Author bios, Person schema, E-E-A-T</td></tr>
+          <tr><td class="p-3"><strong class="text-white">Content Uniqueness</strong></td><td class="p-3">Gives AI a reason to cite you</td><td class="p-3">Original data, case studies, benchmarks</td></tr>
+          <tr><td class="p-3"><strong class="text-white">Multimodal Coverage</strong></td><td class="p-3">Expands retrieval surface</td><td class="p-3">Alt text, video transcripts, ImageObject</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 id="citation-rate" class="text-2xl font-bold mt-12 mb-4">4. Citation Rate: The New North Star Metric</h2>
+    <p class="text-gray-300 mb-4 leading-relaxed">
+      <strong class="text-white">Citation rate</strong> is the percentage of AI-generated answers that include a citation to your domain, measured across a set of representative queries. It is the most direct analog to traditional search rankings &mdash; but instead of tracking position, you track presence.
+    </p>
+    <p class="text-gray-300 mb-4 leading-relaxed">
+      If an AI engine generates an answer for "best project management tools" and cites your domain, that is one citation. If you run 100 representative queries and your domain appears in 8 of them, your citation rate is 8%. The goal is to increase that percentage over time.
+    </p>
+    <p class="text-gray-300 mb-4 leading-relaxed">
+      <strong class="text-white">How to measure citation rate:</strong> Define a set of 50&ndash;100 representative queries (brand queries + category queries + informational queries). Run them weekly across ChatGPT, Perplexity, Google AI Overviews, and Claude. Log which queries produce a citation to your domain. Citation Rate = (queries with citation / total queries) &times; 100.
+    </p>
+    <p class="text-gray-300 mb-4 leading-relaxed">
+      <strong class="text-white">Industry benchmarks:</strong> The average citation rate across all industries is approximately 2-5%. Sites that actively optimize for GEO achieve 8-12%. Top-performing brands in competitive categories maintain 15-30% citation rates on brand queries. If your citation rate is below 2%, the problem is almost always structural &mdash; missing schema, no llms.txt, blocked AI crawlers, or thin content.
+    </p>
+    <p class="text-gray-300 mb-4 leading-relaxed">
+      For a deeper look at citation rate and the other four core <a href="/blog/geo-metrics-2026/" class="text-brand-400 hover:text-brand-300">GEO metrics</a>, see our metrics guide. To get an automated baseline measurement, run a free <a href="/tools/ai-readiness-score/" class="text-brand-400 hover:text-brand-300">AI Readiness Score audit</a>.
+    </p>
+
+    <h2 id="common-mistakes" class="text-2xl font-bold mt-12 mb-4">5. Common Mistakes That Kill Citations</h2>
+    <p class="text-gray-300 mb-4 leading-relaxed">
+      Through auditing 1,200+ websites, we identified five mistakes that consistently prevent sites from being cited by AI engines. Each one is easy to fix &mdash; but most sites have at least two.
+    </p>
+    <ol class="text-gray-300 mb-4 space-y-4 list-decimal list-inside">
+      <li><strong class="text-white">Content is too shallow.</strong> AI engines need passages with enough context to synthesize an answer. Pages with fewer than 300 words of substantive content, or pages that restate generic information without adding depth, are filtered out. Fix: Aim for 1,000+ words per article with specific data points, examples, and original insights.</li>
+      <li><strong class="text-white">No structured data.</strong> Without JSON-LD schema, the AI model must infer what your page is about &mdash; and it will often guess wrong or skip you entirely. Fix: Implement at minimum <code class="text-brand-400 bg-white/5 px-1.5 py-0.5 rounded">Article</code>, <code class="text-brand-400 bg-white/5 px-1.5 py-0.5 rounded">FAQPage</code>, and <code class="text-brand-400 bg-white/5 px-1.5 py-0.5 rounded">Organization</code> schema. Use our <a href="/tools/llms-txt-checker/" class="text-brand-400 hover:text-brand-300">llms.txt checker</a> to verify.</li>
+      <li><strong class="text-white">Ignoring llms.txt.</strong> A missing or poorly written llms.txt file means AI crawlers cannot efficiently discover and understand your content. Fix: Create a well-structured llms.txt that lists your key pages with clear descriptions. See the <a href="/blog/llms-txt-ultimate-guide/" class="text-brand-400 hover:text-brand-300">llms.txt ultimate guide</a> for examples.</li>
+      <li><strong class="text-white">No author information.</strong> Anonymous content is treated as low-authority by AI filtering systems. Fix: Add author bylines with linked bio pages, implement <code class="text-brand-400 bg-white/5 px-1.5 py-0.5 rounded">Person</code> schema, and include credentials and expertise signals.</li>
+      <li><strong class="text-white">Content is duplicated or derivative.</strong> If your content says the same thing as dozens of other pages, the AI has no reason to cite you over them. Fix: Add original data, exclusive case studies, proprietary frameworks, or unique expert perspectives that no other site can replicate.</li>
+    </ol>
+
+    <h2 id="tools" class="text-2xl font-bold mt-12 mb-4">6. Tools for Tracking AI Citations</h2>
+    <p class="text-gray-300 mb-4 leading-relaxed">
+      You cannot optimize what you cannot measure. Here are the tools we recommend for tracking AI citation performance:
+    </p>
+    <ul class="text-gray-300 mb-4 space-y-3 list-disc list-inside">
+      <li><strong class="text-white"><a href="/tools/ai-readiness-score/" class="text-brand-400 hover:text-brand-300">GeoScore AI Readiness Score</a></strong> &mdash; The most comprehensive starting point. Scores your site 0-100 across 12 dimensions of AI search visibility, including citation readiness, structured data coverage, E-E-A-T signals, and technical accessibility. Free, with actionable fix recommendations.</li>
+      <li><strong class="text-white">Perplexity manual search</strong> &mdash; Run your target queries in Perplexity and check whether your domain appears in citations. Perplexity is the most transparent AI engine about source attribution, making it the easiest platform for manual tracking. Log results weekly in a spreadsheet.</li>
+      <li><strong class="text-white"><a href="/tools/llms-txt-checker/" class="text-brand-400 hover:text-brand-300">GeoScore llms.txt Checker</a></strong> &mdash; Verifies that your llms.txt file is correctly formatted, complete, and discoverable by AI crawlers. A broken llms.txt is one of the most common preventable citation killers.</li>
+      <li><strong class="text-white">ChatGPT manual search</strong> &mdash; Run queries in ChatGPT with web search enabled and check whether your domain appears in source links. Less transparent than Perplexity but covers the largest user base.</li>
+      <li><strong class="text-white">Google AI Overviews monitoring</strong> &mdash; Search for your target queries in Google and check whether AI Overviews appear and whether they cite your domain. Google is rolling out AI Overviews for more query types each month.</li>
+    </ul>
+    <p class="text-gray-300 mb-4 leading-relaxed">
+      The manual approach takes 2&ndash;3 hours per week and captures 80% of the insight that paid tools provide. The key is consistency &mdash; use the same query set, the same engines, and the same tracking spreadsheet every week. For more on tracking methodology, see our <a href="/blog/geo-tracking-ai-visibility/" class="text-brand-400 hover:text-brand-300">GEO Tracking Guide</a>.
+    </p>
+
+    <h2 id="checklist" class="text-2xl font-bold mt-12 mb-4">7. Actionable Checklist</h2>
+    <p class="text-gray-300 mb-4 leading-relaxed">
+      Here are 10 things you can do today to improve your AI citation rate. Each item takes 30 minutes or less.
+    </p>
+    <ol class="text-gray-300 mb-4 space-y-3 list-decimal list-inside">
+      <li><strong class="text-white">Run a free AI Readiness Score audit</strong> at <a href="/tools/ai-readiness-score/" class="text-brand-400 hover:text-brand-300">geoscore.help/tools/ai-readiness-score</a> to identify your weakest dimensions.</li>
+      <li><strong class="text-white">Verify your llms.txt file</strong> using the <a href="/tools/llms-txt-checker/" class="text-brand-400 hover:text-brand-300">llms.txt checker</a>. Fix any format or content issues.</li>
+      <li><strong class="text-white">Add JSON-LD Article schema</strong> to every blog post and guide page. Include <code class="text-brand-400 bg-white/5 px-1.5 py-0.5 rounded">headline</code>, <code class="text-brand-400 bg-white/5 px-1.5 py-0.5 rounded">author</code>, <code class="text-brand-400 bg-white/5 px-1.5 py-0.5 rounded">datePublished</code>, and <code class="text-brand-400 bg-white/5 px-1.5 py-0.5 rounded">dateModified</code>.</li>
+      <li><strong class="text-white">Implement FAQPage schema</strong> on pages with Q&amp;A content. Write 3&ndash;5 FAQ entries per important page.</li>
+      <li><strong class="text-white">Add author bios with Person schema</strong> to all content pages. Link to a dedicated author page with credentials and expertise signals.</li>
+      <li><strong class="text-white">Check robots.txt for AI crawler blocks</strong> &mdash; ensure GPTBot, ClaudeBot, PerplexityBot, and Google-Extended are allowed.</li>
+      <li><strong class="text-white">Restructure content for passage retrieval</strong> &mdash; use H2/H3 headings that match user questions, write answer-first paragraphs, and break long sections into scannable chunks.</li>
+      <li><strong class="text-white">Add original data or a case study</strong> to your most important pages &mdash; a survey result, a benchmark, a proprietary framework. Give AI engines a reason to cite you over competitors.</li>
+      <li><strong class="text-white">Add alt text to all images</strong> and implement <code class="text-brand-400 bg-white/5 px-1.5 py-0.5 rounded">ImageObject</code> schema. Add video transcripts where applicable.</li>
+      <li><strong class="text-white">Set up a weekly citation tracking routine</strong> &mdash; define 50 representative queries, run them across ChatGPT, Perplexity, and Google AI Overviews, and log results in a spreadsheet.</li>
+    </ol>
+
+    <h2 id="faq" class="text-2xl font-bold mt-12 mb-4">FAQ</h2>
+    <div class="space-y-6 my-6">
+      <div class="p-5 rounded-xl bg-white/5 border border-gray-700/50">
+        <h3 class="text-lg font-semibold text-white mb-2">How long does it take for AI engines to start citing my content?</h3>
+        <p class="text-gray-400 leading-relaxed">Typically 2 to 8 weeks. The timeline depends on AI crawler frequency, content indexation speed, and your site's existing authority. Sites with strong E-E-A-T signals and existing authority get cited faster &mdash; sometimes within days of publishing. New domains or sites with thin content history may take the full 8 weeks or longer. You can accelerate the process by submitting an <a href="/blog/llms-txt-ultimate-guide/" class="text-brand-400 hover:text-brand-300">llms.txt file</a>, ensuring AI crawlers are not blocked in robots.txt, and publishing content with clear FAQ structures that are easy for AI models to retrieve and synthesize.</p>
+      </div>
+      <div class="p-5 rounded-xl bg-white/5 border border-gray-700/50">
+        <h3 class="text-lg font-semibold text-white mb-2">Does llms.txt guarantee AI citations?</h3>
+        <p class="text-gray-400 leading-relaxed">No, llms.txt does not guarantee citations. However, it significantly increases the probability that AI crawlers discover, understand, and correctly represent your content. llms.txt serves as a <em>guide</em> for AI models &mdash; helping them parse your site's structure, identify key content, and understand your brand entity. Think of it as a necessary but not sufficient condition: you still need high-quality, structured, authoritative content to earn citations. Sites without llms.txt can still get cited, but they miss a critical discovery and comprehension signal. Verify yours with the <a href="/tools/llms-txt-checker/" class="text-brand-400 hover:text-brand-300">llms.txt checker</a>.</p>
+      </div>
+      <div class="p-5 rounded-xl bg-white/5 border border-gray-700/50">
+        <h3 class="text-lg font-semibold text-white mb-2">What's a good citation rate?</h3>
+        <p class="text-gray-400 leading-relaxed">The industry average citation rate is approximately 2-5%. A citation rate above 10% is considered excellent &mdash; meaning your domain appears as a cited source in over 10% of relevant AI-generated answers. Top-performing brands in competitive categories maintain 15-30% citation rates on brand queries (queries containing their brand name). If your citation rate is below 2%, focus on structural fixes: JSON-LD schema, llms.txt implementation, author information, and content depth. Run a free <a href="/tools/ai-readiness-score/" class="text-brand-400 hover:text-brand-300">AI Readiness Score audit</a> to identify which structural gaps are holding you back.</p>
+      </div>
+    </div>
+
+    <div class="mt-12 p-6 rounded-xl bg-gradient-to-r from-brand-500/10 to-geo-500/10 border border-brand-500/20 text-center">
+      <h3 class="text-xl font-bold mb-3">Start Optimizing for AI Citations Today</h3>
+      <p class="text-gray-400 mb-6">Run a free GeoScore audit to measure your citation readiness across 12 dimensions &mdash; structured data, E-E-A-T, llms.txt, content selectability, and more. Get actionable fixes you can deploy today.</p>
+      <div class="flex flex-col sm:flex-row gap-3 justify-center">
+        <a href="/tools/ai-readiness-score/" class="inline-block px-6 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-geo-600 to-brand-600 hover:from-geo-500 hover:to-brand-500 transition">Run AI Readiness Score &rarr;</a>
+        <a href="/tools/llms-txt-checker/" class="inline-block px-6 py-3 rounded-xl font-semibold text-brand-400 border border-brand-500/30 hover:bg-brand-500/10 transition">Check Your llms.txt</a>
+      </div>
+    </div>
+
+    <div class="mt-8 pt-8 border-t border-gray-700/50 text-sm text-gray-500">
+      <p class="mb-2"><strong class="text-gray-400">Related reading:</strong></p>
+      <ul class="space-y-1">
+        <li><a href="/blog/geo-metrics-2026/" class="text-brand-400 hover:text-brand-300">GEO Metrics That Matter: How to Measure AI Search Performance in 2026</a></li>
+        <li><a href="/blog/eeat-signals-ai-search/" class="text-brand-400 hover:text-brand-300">E-E-A-T Signals for AI Search</a></li>
+        <li><a href="/blog/json-ld-structured-data-ai-search/" class="text-brand-400 hover:text-brand-300">JSON-LD for AI Search: Complete Structured Data Guide</a></li>
+        <li><a href="/blog/llms-txt-ultimate-guide/" class="text-brand-400 hover:text-brand-300">llms.txt Ultimate Guide</a></li>
+        <li><a href="/blog/geo-tracking-ai-visibility/" class="text-brand-400 hover:text-brand-300">GEO Tracking &amp; AI Visibility Guide</a></li>
+        <li><a href="/blog/why-doesnt-chatgpt-cite-my-website/" class="text-brand-400 hover:text-brand-300">Why Doesn't ChatGPT Cite My Website?</a></li>
+      </ul>
+    </div>
+
+    <p class="mt-8 text-xs text-gray-600">Last updated: 2026-08-08. GeoScore is a free, open-source GEO audit tool. <a href="https://github.com/qq136692547-cmyk/geo-score" class="text-gray-500 hover:text-brand-400">View on GitHub</a>.</p>
+  </article>
+</Layout>
