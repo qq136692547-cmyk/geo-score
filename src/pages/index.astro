@@ -267,6 +267,23 @@ import Layout from '../layouts/Layout.astro';
       </div>
     </div>
   </section>
+
+  <!-- JSON-LD: HowTo (audit process) -->
+  <script is:inline type="application/ld+json" set:html={JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'HowTo',
+    name: 'How to Audit Your Website for AI Search Visibility',
+    description: 'Run a free GEO audit to check if AI search engines like ChatGPT, Perplexity, and Claude can discover and cite your website.',
+    step: [
+      { '@type': 'HowToStep', position: 1, name: 'Enter your URL', text: 'Type any public website URL into the GeoScore audit input box.' },
+      { '@type': 'HowToStep', position: 2, name: 'Run the audit', text: 'GeoScore fetches your robots.txt, llms.txt, and page HTML, then analyzes 12 dimensions of AI search visibility.' },
+      { '@type': 'HowToStep', position: 3, name: 'Review your score', text: 'Get a 0-100 score with a radar chart showing strengths and weaknesses across 12 dimensions.' },
+      { '@type': 'HowToStep', position: 4, name: 'Check AI crawler access', text: 'See which of 20 AI crawlers (GPTBot, ClaudeBot, PerplexityBot, etc.) are allowed or blocked.' },
+      { '@type': 'HowToStep', position: 5, name: 'Download fix files', text: 'Generate ready-to-deploy llms.txt, robots.txt, and JSON-LD schema fix files for your site.' }
+    ],
+    tool: { '@type': 'HowToTool', name: 'GeoScore (free, https://geoscore.help)' },
+    totalTime: 'PT2M'
+  })} />
 </Layout>
 
 <script src="../scripts/boot.js"></script>

@@ -48,11 +48,22 @@ function extractJsonLd(html) {
   while ((match = regex.exec(html)) !== null) {
     try {
       const parsed = JSON.parse(match[1].trim());
-      if (Array.isArray(parsed)) blocks.push(...parsed);
-      else blocks.push(parsed);
+      if (Array.isArray(parsed)) {
+        for (const item of parsed) blocks.push(...flattenGraph(item));
+      } else {
+        blocks.push(...flattenGraph(parsed));
+      }
     } catch { /* skip invalid JSON-LD */ }
   }
   return blocks;
+}
+
+function flattenGraph(obj) {
+  if (!obj || typeof obj !== 'object') return [obj];
+  if (obj['@graph'] && Array.isArray(obj['@graph'])) {
+    return obj['@graph'];
+  }
+  return [obj];
 }
 
 export { analyzeSchema, extractJsonLd };

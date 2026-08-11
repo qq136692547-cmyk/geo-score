@@ -25,10 +25,15 @@
   checks.push({ id: 'excessive-cta', label: `CTA count: ${ctaCount} (threshold: ${ctaThreshold})`, passed: !ctaFlag, severity: 'medium' });
   if (ctaFlag) deductions.push({ id: 'excessive-cta', label: 'Excessive CTA density', deduction: 3, severity: 'medium' });
 
-  // Popups
-  const hasPopups = /modal|overlay|lightbox|popup/i.test(html);
-  checks.push({ id: 'popups', label: 'Popup/modal elements detected', passed: !hasPopups, severity: 'medium' });
-  if (hasPopups) deductions.push({ id: 'popups', label: 'Popup/modal interference', deduction: 3, severity: 'medium' });
+  // Popups — check for actual modal/popup patterns in visible HTML (not in script/style)
+  const bodyHtml = html.replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '').replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '');
+  // Match: role=dialog, aria-modal=true, class containing modal+popup, or explicit popup/lightbox classes
+  const hasModalDialog = /<[^>]+role=["']dialog["']/i.test(bodyHtml) ||
+    /<[^>]+aria-modal=["']true["']/i.test(bodyHtml) ||
+    /class=["'][^"']*(?:\bmodal\b[^"']*\bpopup\b|\bpopup\b[^"']*\bmodal\b|modal-overlay|popup-window|lightbox-show)[^"']*["']/i.test(bodyHtml) ||
+    /class=["'][^"']*(?:\bshow-modal\b|\bactive-modal\b|\bmodal-open\b|\bpopup-show\b)[^"']*["']/i.test(bodyHtml);
+  checks.push({ id: 'popups', label: hasModalDialog ? 'Popup/modal elements detected' : 'No intrusive popups', passed: !hasModalDialog, severity: 'medium' });
+  if (hasModalDialog) deductions.push({ id: 'popups', label: 'Popup/modal interference', deduction: 3, severity: 'medium' });
 
   // Thin content
   const thinContent = words < 300;
@@ -42,7 +47,7 @@
   if (brokenCount > 3) deductions.push({ id: 'broken-links', label: 'Broken or empty links', deduction: 2, severity: 'medium' });
 
   // Keyword stuffing (rough check)
-  const commonStopwords = ['the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by'];
+  const commonStopwords = ['the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by', 'your', 'this', 'that', 'from', 'is', 'are', 'was', 'be', 'it', 'as', 'we', 'you', 'our', 'their', 'they', 'have', 'has', 'will', 'can'];
   const wordFreq = {};
   text.toLowerCase().split(/\s+/).filter(Boolean).forEach(w => {
     if (!commonStopwords.includes(w) && w.length > 3) wordFreq[w] = (wordFreq[w] || 0) + 1;
@@ -50,7 +55,7 @@
   const maxFreq = Math.max(...Object.values(wordFreq), 0);
   const wordTotal = Object.keys(wordFreq).length || 1;
   const maxDensity = maxFreq / wordTotal;
-  const stuffingFlag = maxDensity > 0.025 && maxFreq > 5;
+  const stuffingFlag = maxDensity > 0.045 && maxFreq > 10;
   checks.push({ id: 'keyword-stuffing', label: `Top keyword density: ${(maxDensity * 100).toFixed(1)}%`, passed: !stuffingFlag, severity: 'medium' });
   if (stuffingFlag) deductions.push({ id: 'keyword-stuffing', label: 'Keyword stuffing', deduction: 2, severity: 'medium' });
 
