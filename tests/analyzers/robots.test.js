@@ -28,6 +28,6 @@ describe('analyzeRobots', () => {
 
   it('should return correct check count', () => {
     const result = analyzeRobots('User-agent: *\nAllow: /');
-    expect(result.checks.length).toBe(6);
+    expect(result.checks.length).toBe(20);
   });
 });

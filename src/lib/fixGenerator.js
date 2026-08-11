@@ -61,7 +61,7 @@ function generateRobotsTxt(result) {
       if (uaMatch) {
         var ua = uaMatch[1].trim().toLowerCase();
         // Skip known AI crawler blocks — we'll regenerate them
-        var aiBots = ['gptbot', 'claudebot', 'perplexitybot', 'google-extended', 'ccbot', 'bytespider', 'amazonbot'];
+        var aiBots = ['gptbot','oai-searchbot','chatgpt-user','claudebot','anthropic-ai','claude-searchbot','perplexitybot','perplexity-user','google-extended','ccbot','bytespider','meta-externalagent','amazonbot','applebot-extended','cohere-ai','duckassistbot','ai2bot','xai-bot','youbot','petalbot'];
         skipBlock = aiBots.indexOf(ua) >= 0;
         inUserAgent = true;
         if (!skipBlock) {
@@ -85,12 +85,29 @@ function generateRobotsTxt(result) {
   }
 
   content += '# AI Crawlers — explicitly allowed for GEO\n';
+  content += '# Tier 1: Critical (ChatGPT, Claude, Perplexity, Gemini)\n';
   content += 'User-agent: GPTBot\nAllow: /\n\n';
+  content += 'User-agent: OAI-SearchBot\nAllow: /\n\n';
+  content += 'User-agent: ChatGPT-User\nAllow: /\n\n';
   content += 'User-agent: ClaudeBot\nAllow: /\n\n';
+  content += 'User-agent: anthropic-ai\nAllow: /\n\n';
+  content += 'User-agent: Claude-SearchBot\nAllow: /\n\n';
   content += 'User-agent: PerplexityBot\nAllow: /\n\n';
+  content += 'User-agent: Perplexity-User\nAllow: /\n\n';
   content += 'User-agent: Google-Extended\nAllow: /\n\n';
+  content += '# Tier 2: Important\n';
   content += 'User-agent: CCBot\nAllow: /\n\n';
   content += 'User-agent: Bytespider\nAllow: /\n\n';
+  content += 'User-agent: meta-externalagent\nAllow: /\n\n';
+  content += 'User-agent: Amazonbot\nAllow: /\n\n';
+  content += 'User-agent: Applebot-Extended\nAllow: /\n\n';
+  content += '# Tier 3: Emerging\n';
+  content += 'User-agent: cohere-ai\nAllow: /\n\n';
+  content += 'User-agent: DuckAssistBot\nAllow: /\n\n';
+  content += 'User-agent: AI2Bot\nAllow: /\n\n';
+  content += 'User-agent: xAI-Bot\nAllow: /\n\n';
+  content += 'User-agent: YouBot\nAllow: /\n\n';
+  content += 'User-agent: PetalBot\nAllow: /\n\n';
   content += 'Sitemap: ' + origin + '/sitemap.xml\n';
 
   return content;

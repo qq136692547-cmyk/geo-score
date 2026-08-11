@@ -1,35 +1,68 @@
-﻿User-agent: *
+User-agent: *
 Allow: /
 
-# AI Crawlers — explicitly allowed
+# AI Crawlers — explicitly allowed for GEO
+# Tier 1: Critical (ChatGPT, Claude, Perplexity, Gemini)
 User-agent: GPTBot
-Allow: /
-
-User-agent: ClaudeBot
-Allow: /
-
-User-agent: PerplexityBot
-Allow: /
-
-User-agent: Google-Extended
-Allow: /
-
-User-agent: CCBot
 Allow: /
 
 User-agent: OAI-SearchBot
 Allow: /
 
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
 User-agent: anthropic-ai
 Allow: /
 
-User-agent: Claude-Web
+User-agent: Claude-SearchBot
+Allow: /
+
+User-agent: PerplexityBot
 Allow: /
 
 User-agent: Perplexity-User
 Allow: /
 
-User-agent: Cohere-AI
+User-agent: Google-Extended
+Allow: /
+
+# Tier 2: Important (Common Crawl, ByteDance, Meta, Amazon, Apple)
+User-agent: CCBot
+Allow: /
+
+User-agent: Bytespider
+Allow: /
+
+User-agent: meta-externalagent
+Allow: /
+
+User-agent: Amazonbot
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+# Tier 3: Emerging (Cohere, DuckDuckGo, Allen Institute, xAI, You.com, Huawei)
+User-agent: cohere-ai
+Allow: /
+
+User-agent: DuckAssistBot
+Allow: /
+
+User-agent: AI2Bot
+Allow: /
+
+User-agent: xAI-Bot
+Allow: /
+
+User-agent: YouBot
+Allow: /
+
+User-agent: PetalBot
 Allow: /
 
 Sitemap: https://geoscore.help/sitemap.xml
