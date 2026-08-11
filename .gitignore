@@ -33,3 +33,6 @@ worker/.wrangler/
 
 # CLI test output
 geo-fixes/
+
+# Temporary test scripts
+test_*.mjs
