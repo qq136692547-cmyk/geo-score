@@ -30,3 +30,6 @@ Thumbs.db
 
 # Wrangler build cache
 worker/.wrangler/
+
+# CLI test output
+geo-fixes/
