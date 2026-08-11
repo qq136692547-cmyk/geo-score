@@ -18,7 +18,7 @@
 - [Why Doesn't ChatGPT Cite My Website?](https://geoscore.help/blog/why-doesnt-chatgpt-cite-my-website/): 7 common reasons your site is invisible to AI search engines and how to fix each one
 - [JSON-LD Structured Data for AI Search](https://geoscore.help/blog/json-ld-structured-data-ai-search/): Complete guide to schema markup that helps ChatGPT, Perplexity, and Claude cite your content
 - [E-E-A-T Signals for AI Search](https://geoscore.help/blog/eeat-signals-ai-search/): How to build trust signals that get your content cited by AI search engines
-- [Multimodal GEO 2026](https://geoscore.help/blog/multimodal-geo-2026/): Optimizing images, video, and audio for AI search 鈥?alt text, transcripts, and schema that get non-text content cited.
+- [Multimodal GEO 2026](https://geoscore.help/blog/multimodal-geo-2026/): Optimizing images, video, and audio for AI search — alt text, transcripts, and schema that get non-text content cited.
 - [GEO Tracking Guide 2026](https://geoscore.help/blog/geo-tracking-ai-visibility/): How to monitor your AI search visibility — citation rate, mention frequency, and sentiment tracking.
 - [GEO Metrics That Matter 2026](https://geoscore.help/blog/geo-metrics-2026/): The 5 core GEO metrics — citation rate, mention frequency, sentiment accuracy, share of voice, and zero-click reach — with measurement methods and targets.
 - [GEO Citation Optimization 2026](https://geoscore.help/blog/geo-citation-optimization/): How to get cited by ChatGPT, Perplexity, and Google AI Overviews — the 5 pillars of citation optimization, common mistakes, and a 10-step actionable checklist.
@@ -31,6 +31,15 @@
 
 - [Scoring Methodology](https://geoscore.help/about/): How the 0-100 score is calculated across 12 dimensions
 - [About GeoScore](https://geoscore.help/about/): The project, the author, and how to contribute
+
+## 中文版 (Chinese)
+
+- [GeoScore 中文版](https://geoscore.help/zh/): 免费开源的 GEO 审计工具 — 12 维度评分、20 个 AI 爬虫检测、一键生成修复文件
+- [评分方法论](https://geoscore.help/zh/about/): 12 维度评分体系与权重
+- [llms.txt 检测器](https://geoscore.help/zh/tools/llms-txt-checker/): 验证 llms.txt 格式、结构和内容
+- [Robots.txt AI 检测器](https://geoscore.help/zh/tools/robots-txt-ai-checker/): 检查 robots.txt 是否阻止 GPTBot、ClaudeBot 等 20 个 AI 爬虫
+- [AI 就绪评分](https://geoscore.help/zh/tools/ai-readiness-score/): 完整 12 维度审计与修复建议
+- [示例审计报告](https://geoscore.help/zh/report/demo/): 查看示例 GEO 审计报告
 
 ## For AI Agents
 
