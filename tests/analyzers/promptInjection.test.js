@@ -36,17 +36,30 @@ describe('analyzePromptInjection', () => {
     expect(result.flags[0].severity).toBe('critical');
   });
 
-  it('detects hidden text (display:none)', () => {
+  it('detects hidden text (display:none) with substantive content', () => {
     const hiddenHtml = `<!DOCTYPE html>
 <html><head><title>Test</title></head>
 <body>
-  <div style="display:none">Hidden SEO text with keywords</div>
+  <div style="display:none">Hidden SEO text with keywords and lots of content that exceeds fifty characters threshold for detection</div>
   <h1>Visible content</h1>
 </body></html>`;
     const result = analyzePromptInjection(hiddenHtml);
     const hiddenCheck = result.checks.find(c => c.id === 'hidden-text');
     expect(hiddenCheck.passed).toBe(false);
     expect(result.flags.some(f => f.id === 'hidden-text')).toBe(true);
+  });
+
+  it('does not flag short hidden UI elements (loading states, etc.)', () => {
+    const uiHtml = `<!DOCTYPE html>
+<html><head><title>Test</title></head>
+<body>
+  <div class="hidden">Loading...</div>
+  <div style="display:none">Error</div>
+  <h1>Visible content with enough text to be normal</h1>
+</body></html>`;
+    const result = analyzePromptInjection(uiHtml);
+    const hiddenCheck = result.checks.find(c => c.id === 'hidden-text');
+    expect(hiddenCheck.passed).toBe(true);
   });
 
   it('detects system instructions', () => {

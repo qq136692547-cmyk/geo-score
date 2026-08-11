@@ -70,21 +70,29 @@ function analyzePromptInjection(html) {
   if (hasIgnorePatterns) flags.push({ id: 'ignore-instructions', label: `"Ignore previous instructions" patterns (${ignoreMatches.length})`, severity: 'critical' });
 
   // --- 3. Hidden text (display:none, visibility:hidden, color matching background) ---
-  // Check inline styles and style blocks
-  const hiddenStylePatterns = [
-    /style=["'][^"']*(?:display\s*:\s*none|visibility\s*:\s*hidden|opacity\s*:\s*0[^.]|font-size\s*:\s*0px|height\s*:\s*0|width\s*:\s*0|overflow\s*:\s*hidden[^"']*height\s*:\s*0)[^"']*["']/i,
-    /class=["'][^"']*(?:hidden|sr-only|visually-hidden|screen-reader-text)[^"']*["']/i,
-  ];
-  // Also check for white-on-white or same-color text (simplified)
+  // Only flag hidden elements that contain substantive text content (>50 chars)
+  // to avoid false positives from legitimate UI patterns (loading states, error messages, etc.)
+  const bodyHtml = html.replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '').replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '');
+  
+  // Find elements with hidden styles and extract their text content
+  const hiddenElementRegex = /<(?:div|span|p|section|article|ul|ol|li|h[1-6])[^>]*(?:style="[^"]*(?:display\s*:\s*none|visibility\s*:\s*hidden|font-size\s*:\s*0px)[^"]*"|class="[^"]*(?:\bhidden\b|\bsr-only\b|\bvisually-hidden\b)[^"]*")[^>]*>([\s\S]*?)<\/(?:div|span|p|section|article|ul|ol|li|h[1-6])>/gi;
+  let hiddenTextContent = '';
+  let match;
+  while ((match = hiddenElementRegex.exec(bodyHtml)) !== null) {
+    // Strip inner HTML tags, get text only
+    const text = match[1].replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+    if (text.length > 50) hiddenTextContent += text + ' ';
+  }
+  // Also check for white-on-white or same-color text
   const colorMatch = html.match(/style=["'][^"']*color\s*:\s*(white|#fff|#ffffff)[^"']*background[^"']*color\s*:\s*(white|#fff|#ffffff)[^"']*["']/i) ||
     html.match(/style=["'][^"']*background[^"']*color\s*:\s*(white|#fff|#ffffff)[^"']*color\s*:\s*(white|#fff|#ffffff)[^"']*["']/i);
-  const hasHiddenText = hiddenStylePatterns.some(p => p.test(html)) || !!colorMatch;
+  const hasHiddenText = hiddenTextContent.length > 100 || !!colorMatch;
   checks.push({
     id: 'hidden-text',
-    label: hasHiddenText ? 'Hidden text elements detected' : 'No hidden text detected',
+    label: hasHiddenText ? `Hidden text with content detected (${hiddenTextContent.length} chars)` : 'No hidden text detected',
     passed: !hasHiddenText,
   });
-  if (hasHiddenText) flags.push({ id: 'hidden-text', label: 'Hidden text (display:none / visibility:hidden / color match)', severity: 'high' });
+  if (hasHiddenText) flags.push({ id: 'hidden-text', label: 'Hidden text (display:none / visibility:hidden / color match) with substantive content', severity: 'high' });
 
   // --- 4. Zero-width / invisible unicode characters ---
   // U+200B (zero-width space), U+200C (ZWNJ), U+200D (ZWJ), U+FEFF (BOM/ZWNBSP), U+2060 (word joiner), U+00AD (soft hyphen)
