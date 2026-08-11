@@ -1,0 +1,84 @@
+---
+import LayoutZh from '../../layouts/LayoutZh.astro';
+---
+<LayoutZh title="隐私政策 — GeoScore">
+  <section class="max-w-3xl mx-auto">
+    <div class="text-center mb-10">
+      <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-brand-500/10 text-brand-400 border border-brand-500/20 mb-4">
+        法律
+      </div>
+      <h1 class="text-4xl font-extrabold mb-3">隐私政策</h1>
+      <p class="text-gray-400">最后更新：2026-07-21</p>
+    </div>
+
+    <div class="card p-8 space-y-6 text-gray-300 leading-relaxed">
+      <section>
+        <h2 class="text-xl font-bold text-white mb-3">1. 概述</h2>
+        <p>
+          GeoScore 是一个免费开源审计工具。本政策解释我们收集哪些数据、不收集哪些数据以及原因。简短版本：我们几乎不收集任何数据，从不出售任何东西，审计工具完全在你的浏览器中运行。
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-xl font-bold text-white mb-3">2. 我们不收集的数据</h2>
+        <p>GeoScore 审计 100% 在客户端运行。当你输入 URL 进行审计时：</p>
+        <ul class="list-disc list-inside space-y-1 mt-2">
+          <li>URL 直接从你的浏览器获取到公共代理和目标站点。</li>
+          <li>URL <strong>绝不会发送到我们的服务器</strong>（我们没有任何应用服务器）。</li>
+          <li>URL <strong>绝不会被记录</strong>、<strong>绝不会被存储</strong>，也<strong>绝不会被分享</strong>给第三方。</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2 class="text-xl font-bold text-white mb-3">3. 我们收集的数据</h2>
+        <p>我们使用 Google Analytics 4 (GA4) 了解聚合流量模式。GA4 收集：</p>
+        <ul class="list-disc list-inside space-y-1 mt-2">
+          <li>页面浏览（仅 URL 路径，不含审计 URL 的查询字符串）</li>
+          <li>来源（你来自的上一个网站）</li>
+          <li>国家和城市（从 IP 推导，然后丢弃）</li>
+          <li>设备类型、浏览器、操作系统</li>
+          <li>屏幕分辨率和视口大小</li>
+        </ul>
+        <p class="mt-2">已启用 IP 匿名化。我们未启用 Google Signals。我们不使用广告 Cookie。</p>
+      </section>
+
+      <section>
+        <h2 class="text-xl font-bold text-white mb-3">4. Cookie</h2>
+        <p>
+          GeoScore 不使用第一方 Cookie。GA4 可能设置自己的 Cookie 用于访客识别；你可以通过浏览器的 Do Not Track 设置、<a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener" class="text-brand-400 hover:underline">Google Analytics 退测浏览器插件</a>，或在浏览器中阻止第三方 Cookie 来退出。
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-xl font-bold text-white mb-3">5. 第三方服务</h2>
+        <p>GeoScore 依赖以下第三方服务，各有其自己的隐私政策：</p>
+        <ul class="list-disc list-inside space-y-1 mt-2">
+          <li><strong>GitHub Pages</strong>（托管）— <a href="https://docs.github.com/en/site-policy/privacy-policies/github-privacy-statement" target="_blank" rel="noopener" class="text-brand-400 hover:underline">GitHub 隐私声明</a></li>
+          <li><strong>Cloudflare Pages</strong>（CORS 代理）— <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener" class="text-brand-400 hover:underline">Cloudflare 隐私政策</a></li>
+          <li><strong>Google Analytics 4</strong>（分析）— <a href="https://policies.google.com/privacy" target="_blank" rel="noopener" class="text-brand-400 hover:underline">Google 隐私政策</a></li>
+        </ul>
+      </section>
+
+      <section>
+        <h2 class="text-xl font-bold text-white mb-3">6. 儿童隐私</h2>
+        <p>
+          GeoScore 不面向 13 岁以下的儿童。我们不会有意收集儿童信息。如果你认为有儿童提供了信息，请联系我们以便删除。
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-xl font-bold text-white mb-3">7. 政策变更</h2>
+        <p>
+          我们可能不定期更新本政策。变更将发布在此页面并更新"最后更新"日期。重大变更将在 GitHub 仓库更新日志中注明。
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-xl font-bold text-white mb-3">8. 联系我们</h2>
+        <p>
+          如有隐私问题或数据请求，请在 <a href="https://github.com/qq136692547-cmyk/geo-score/issues" target="_blank" rel="noopener" class="text-brand-400 hover:underline">github.com/qq136692547-cmyk/geo-score/issues</a> 提交 issue。
+        </p>
+      </section>
+    </div>
+  </section>
+</LayoutZh>

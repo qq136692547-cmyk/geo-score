@@ -1,0 +1,125 @@
+---
+import LayoutZh from '../../layouts/LayoutZh.astro';
+---
+<LayoutZh title="关于 GeoScore — 评分方法论与致谢">
+  <section class="max-w-4xl mx-auto">
+    <div class="text-center mb-12">
+      <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-brand-500/10 text-brand-400 border border-brand-500/20 mb-4">
+        方法论与社区
+      </div>
+      <h1 class="text-4xl font-extrabold mb-3">关于 GeoScore</h1>
+      <p class="text-gray-400 max-w-2xl mx-auto">一个开源的 GEO 审计工具，综合了社区领先项目的框架。</p>
+    </div>
+
+    <div class="card p-8 mb-8">
+      <h2 class="text-xl font-bold mb-4">评分方法论</h2>
+      <p class="text-gray-400 mb-6">
+        GeoScore 从 <strong class="text-white">12 个维度</strong>评估网站的生成式引擎优化（GEO）就绪度，
+        生成 <strong class="text-white">0-100 分</strong>。评分系统综合了 5 个领先开源项目的框架。
+      </p>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead><tr class="text-left border-b border-gray-700">
+            <th class="pb-3 font-semibold text-gray-300 pr-4">维度</th><th class="pb-3 font-semibold text-gray-300 pr-4">权重</th><th class="pb-3 font-semibold text-gray-300 pr-4">来源</th><th class="pb-3 font-semibold text-gray-300">检查项数</th>
+          </tr></thead>
+          <tbody class="text-gray-400">
+            {[
+              ['AI 可爬性 (Robots.txt)', '12%', 'geo-optimization-handbook, Auriti-Labs', '20'],
+              ['AI 引导 (llms.txt)', '12%', 'geo-optimization-handbook, best-aeo-skill', '5'],
+              ['结构化数据 (Schema)', '14%', 'handbook, evolv3ai, Auriti-Labs', '8'],
+              ['Meta 和社交标签', '10%', 'geo-optimization-handbook, piiiico', '5'],
+              ['内容质量', '12%', 'handbook, Auriti-Labs, geo-optimizer (Go)', '6'],
+              ['E-E-A-T 信号', '8%', 'evolv3ai, best-aeo-skill', '5'],
+              ['品牌和实体', '8%', 'geo-optimization-handbook, best-aeo-skill', '4'],
+              ['引用就绪度', '8%', 'best-aeo-skill, geo-seo-claude', '5'],
+              ['发现端点', '6%', 'geo-optimization-handbook', '3'],
+              ['Agent 友好性', '4%', 'ax-score, agentscore', '4'],
+              ['新鲜度和维护', '4%', 'evolv3ai', '3'],
+              ['负面信号', '&minus; (扣分)', 'handbook, UC Berkeley EMNLP 2024', '8'],
+            ].map(row => (
+              <tr class="border-b border-gray-700/50 card-hover">
+                <td class="py-3 pr-4 text-gray-200">{row[0]}</td><td class="py-3 pr-4 font-mono text-gray-300">{row[1]}</td><td class="py-3 pr-4 text-xs text-gray-500 max-w-xs">{row[2]}</td><td class="py-3 font-mono text-gray-300">{row[3]}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card p-8 mb-8">
+      <h2 class="text-xl font-bold mb-4">评分分段</h2>
+      <div class="space-y-3">
+        {[
+          ['86-100', '优秀', 'text-geo-500', 'bg-geo-500', '完全 GEO 优化。在 AI 引用中位置有利。'],
+          ['68-85', '良好', 'text-brand-500', 'bg-brand-500', '存在少量差距。针对性修复可提升 AI 可见性。'],
+          ['36-67', '一般', 'text-warn-500', 'bg-warn-500', '基础存在但需要大量改进。'],
+          ['0-35', '差', 'text-danger-500', 'bg-danger-500', '需要全面整改——从 robots.txt、llms.txt、schema 开始。'],
+        ].map(row => (
+          <div class="flex items-start gap-4 p-4 rounded-xl bg-white/5">
+            <div class={row[2] + ' font-mono font-bold text-lg whitespace-nowrap'}>{row[0]}</div>
+            <div class={'px-2.5 py-0.5 rounded text-xs font-bold text-white ' + row[3]}>{row[1]}</div>
+            <div class="text-gray-400 text-sm">{row[4]}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <div class="card p-8 mb-8">
+      <h2 class="text-xl font-bold mb-4">开源致谢</h2>
+      <p class="text-gray-400 mb-6">GeoScore 站在这些开源项目的肩膀上。感谢整个 GEO/AEO 社区。</p>
+
+      <div class="grid md:grid-cols-2 gap-4 text-sm">
+        {[
+          ['qq136692547-cmyk/geo-optimization-handbook', '综合 GEO 参考手册 (MIT)', 'https://github.com/qq136692547-cmyk/geo-optimization-handbook'],
+          ['Auriti-Labs/geo-optimizer-skill', '8 维度评分，47 种策略', 'https://github.com/Auriti-Labs/geo-optimizer-skill'],
+          ['zubair-trabzada/geo-seo-claude', 'GEO 优先的 SEO Claude 技能 (9K+ stars)', 'https://github.com/zubair-trabzada/geo-seo-claude'],
+          ['metawhisp/best-aeo-skill', '4 向量 GEO 评分，33 个证据收集器', 'https://github.com/metawhisp/best-aeo-skill'],
+          ['evolv3ai/aeo-audit', '14 项排名因子 AEO 评分', 'https://github.com/evolv3ai/aeo-audit'],
+          ['agentgram/ax-score', 'AX Score — AI Agent 的 Lighthouse', 'https://github.com/agentgram/ax-score'],
+          ['antlio/agentimization', 'GEO 审计 CLI，带雷达图输出', 'https://github.com/antlio/agentimization'],
+          ['carter-wzq/geo-audit-mcp', '31 信号 MCP GEO 审计服务器', 'https://github.com/carter-wzq/geo-audit-mcp'],
+          ['isreadyai/isreadyai', 'AI 可见性评分 Web 工具', 'https://github.com/isreadyai/isreadyai'],
+          ['madeburo/GEO-AI-Woo', 'WordPress GEO 插件', 'https://github.com/madeburo/GEO-AI-Woo'],
+          ['geo-team-red/geo-optimizer', 'Go 语言可插拔 GEO 框架', 'https://github.com/geo-team-red/geo-optimizer'],
+          ['cxcscmu/AutoGEO', 'ICLR 2026 自动化 GEO 框架', 'https://github.com/cxcscmu/AutoGEO'],
+          ['ai-search-guru/getcito', 'AI 搜索优化 SaaS（开源）', 'https://github.com/ai-search-guru/getcito-worlds-first-open-source-aio-aeo-or-geo-tool'],
+          ['mykpono/ultimate-seo-geo', '审计→计划→执行 GEO 工作流', 'https://github.com/mykpono/ultimate-seo-geo'],
+          ['waqasbangash121/seo-geo-analyzer', '24 因子 SEO/GEO 交互式仪表板', 'https://github.com/waqasbangash121/seo-geo-analyzer'],
+          ['piiiico/aeo-audit', 'Schema.org 和 meta 标签深度分析', 'https://github.com/piiiico/aeo-audit'],
+        ].map(p => (
+          <a href={p[2]} target="_blank" rel="noopener" class="card-hover rounded-xl p-4">
+            <div class="font-medium text-white mb-1">{p[0]}</div>
+            <div class="text-gray-500 text-xs">{p[1]}</div>
+          </a>
+        ))}
+      </div>
+    </div>
+
+    <div class="card p-8 mb-12">
+      <h2 class="text-xl font-bold mb-4">技术说明</h2>
+      <div class="space-y-4 text-sm text-gray-400">
+        <div class="flex gap-3">
+          <span class="w-1.5 h-1.5 rounded-full bg-brand-500 mt-2 flex-shrink-0"></span>
+          <span><strong class="text-gray-300">数据来源：</strong>所有分析在客户端完成，通过获取公开可访问的资源（robots.txt、llms.txt、HTML、JSON-LD）。不在服务器上收集或存储用户数据。</span>
+        </div>
+        <div class="flex gap-3">
+          <span class="w-1.5 h-1.5 rounded-full bg-brand-500 mt-2 flex-shrink-0"></span>
+          <span><strong class="text-gray-300">CORS 处理：</strong>当浏览器直接访问被阻止时，部分资源通过 Cloudflare Worker 代理获取。</span>
+        </div>
+        <div class="flex gap-3">
+          <span class="w-1.5 h-1.5 rounded-full bg-brand-500 mt-2 flex-shrink-0"></span>
+          <span><strong class="text-gray-300">隐私：</strong>审计结果仅存储在浏览器的 localStorage 中。不会向第三方传输数据。</span>
+        </div>
+        <div class="flex gap-3">
+          <span class="w-1.5 h-1.5 rounded-full bg-brand-500 mt-2 flex-shrink-0"></span>
+          <span><strong class="text-gray-300">局限性：</strong>JavaScript 渲染的内容可能无法完全捕获。对于 SPA，建议使用静态渲染或预渲染以获得最佳效果。</span>
+        </div>
+        <div class="flex gap-3">
+          <span class="w-1.5 h-1.5 rounded-full bg-brand-500 mt-2 flex-shrink-0"></span>
+          <span><strong class="text-gray-300">许可证：</strong>MIT — 免费使用、修改和分发。</span>
+        </div>
+      </div>
+    </div>
+  </section>
+</LayoutZh>

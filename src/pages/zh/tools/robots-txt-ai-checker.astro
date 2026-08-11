@@ -1,0 +1,142 @@
+---
+import LayoutZh from '../../../layouts/LayoutZh.astro';
+---
+<LayoutZh title="Robots.txt AI 检测器 — 你的网站是否被 AI 爬虫阻止？| GeoScore"
+  schema={{
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    name: 'Robots.txt AI 检测器',
+    description: '免费工具，检测你的 robots.txt 是否阻止了 20 个 AI 爬虫，包括 GPTBot、ClaudeBot、PerplexityBot、Google-Extended、Applebot-Extended 等。',
+    url: 'https://geoscore.help/zh/tools/robots-txt-ai-checker/',
+    applicationCategory: 'SEO Tool',
+    operatingSystem: 'Any',
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+    isPartOf: { '@type': 'WebApplication', name: 'GeoScore', url: 'https://geoscore.help' }
+  }}
+>
+  <section class="max-w-4xl mx-auto">
+    <div class="text-center mb-10">
+      <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-brand-500/10 text-brand-400 border border-brand-500/20 mb-4">
+        免费工具
+      </div>
+      <h1 class="text-4xl font-extrabold mb-3">Robots.txt AI 检测器</h1>
+      <p class="text-gray-400 max-w-2xl mx-auto">检测你的 robots.txt 是否阻止了 3 个层级共 20 个 AI 爬虫 — ChatGPT、Claude、Perplexity、Gemini、Meta AI、Apple Intelligence、xAI 等。</p>
+    </div>
+
+    <div class="card p-8 mb-8">
+      <h2 class="text-xl font-bold mb-4">为什么 AI 爬虫访问很重要</h2>
+      <p class="text-gray-400 mb-4">
+        AI 搜索引擎使用专门的爬虫来发现和索引网页内容。如果你的 <code class="text-brand-400">robots.txt</code> 阻止了这些爬虫，你的网站将<strong class="text-white">不会出现</strong>在 ChatGPT、ChatGPT Search、Perplexity、Claude、Google AI Overviews、Meta AI、Apple Intelligence 或 Amazon Rufus 的 AI 生成回答中。
+      </p>
+      <p class="text-gray-400">
+        许多网站所有者意外地通过使用通用的 <code class="text-brand-400">Disallow: /</code> 规则或激进的机器人阻止插件阻止了 AI 爬虫。此工具检测你的 robots.txt 中 20 个 AI 爬虫的阻止模式。
+      </p>
+    </div>
+
+    <div class="card p-8 mb-8">
+      <h2 class="text-xl font-bold mb-4">我们检测的 AI 爬虫（20 个，3 个层级）</h2>
+
+      <h3 class="text-sm font-semibold text-geo-400 mb-3">第 1 层 — 关键（6 个）</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
+        <div class="p-3 rounded-lg bg-white/5"><code class="text-geo-400 text-sm">GPTBot</code><p class="text-gray-500 text-xs mt-1">OpenAI / ChatGPT</p></div>
+        <div class="p-3 rounded-lg bg-white/5"><code class="text-geo-400 text-sm">OAI-SearchBot</code><p class="text-gray-500 text-xs mt-1">OpenAI 搜索 / ChatGPT 搜索</p></div>
+        <div class="p-3 rounded-lg bg-white/5"><code class="text-geo-400 text-sm">ClaudeBot</code><p class="text-gray-500 text-xs mt-1">Anthropic / Claude</p></div>
+        <div class="p-3 rounded-lg bg-white/5"><code class="text-geo-400 text-sm">anthropic-ai</code><p class="text-gray-500 text-xs mt-1">Anthropic（备用爬虫）</p></div>
+        <div class="p-3 rounded-lg bg-white/5"><code class="text-geo-400 text-sm">PerplexityBot</code><p class="text-gray-500 text-xs mt-1">Perplexity AI</p></div>
+        <div class="p-3 rounded-lg bg-white/5"><code class="text-geo-400 text-sm">Google-Extended</code><p class="text-gray-500 text-xs mt-1">Google AI Overviews / Gemini</p></div>
+      </div>
+
+      <h3 class="text-sm font-semibold text-brand-400 mb-3">第 2 层 — 重要（7 个）</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
+        <div class="p-3 rounded-lg bg-white/5"><code class="text-brand-400 text-sm">CCBot</code><p class="text-gray-500 text-xs mt-1">Common Crawl（被许多 AI 模型使用）</p></div>
+        <div class="p-3 rounded-lg bg-white/5"><code class="text-brand-400 text-sm">Bytespider</code><p class="text-gray-500 text-xs mt-1">字节跳动 / TikTok AI</p></div>
+        <div class="p-3 rounded-lg bg-white/5"><code class="text-brand-400 text-sm">meta-externalagent</code><p class="text-gray-500 text-xs mt-1">Meta AI / Meta 搜索</p></div>
+        <div class="p-3 rounded-lg bg-white/5"><code class="text-brand-400 text-sm">Amazonbot</code><p class="text-gray-500 text-xs mt-1">Amazon AI / Rufus</p></div>
+        <div class="p-3 rounded-lg bg-white/5"><code class="text-brand-400 text-sm">Applebot-Extended</code><p class="text-gray-500 text-xs mt-1">Apple Intelligence / Apple AI</p></div>
+        <div class="p-3 rounded-lg bg-white/5"><code class="text-brand-400 text-sm">ChatGPT-User</code><p class="text-gray-500 text-xs mt-1">OpenAI（用户发起）</p></div>
+        <div class="p-3 rounded-lg bg-white/5"><code class="text-brand-400 text-sm">Claude-SearchBot</code><p class="text-gray-500 text-xs mt-1">Anthropic 搜索</p></div>
+      </div>
+
+      <h3 class="text-sm font-semibold text-gray-400 mb-3">第 3 层 — 新兴（7 个）</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div class="p-3 rounded-lg bg-white/5"><code class="text-gray-300 text-sm">cohere-ai</code><p class="text-gray-500 text-xs mt-1">Cohere</p></div>
+        <div class="p-3 rounded-lg bg-white/5"><code class="text-gray-300 text-sm">DuckAssistBot</code><p class="text-gray-500 text-xs mt-1">DuckDuckGo AI</p></div>
+        <div class="p-3 rounded-lg bg-white/5"><code class="text-gray-300 text-sm">AI2Bot</code><p class="text-gray-500 text-xs mt-1">Allen Institute (AI2)</p></div>
+        <div class="p-3 rounded-lg bg-white/5"><code class="text-gray-300 text-sm">xAI-Bot</code><p class="text-gray-500 text-xs mt-1">Grok / xAI</p></div>
+        <div class="p-3 rounded-lg bg-white/5"><code class="text-gray-300 text-sm">Perplexity-User</code><p class="text-gray-500 text-xs mt-1">Perplexity（用户发起）</p></div>
+        <div class="p-3 rounded-lg bg-white/5"><code class="text-gray-300 text-sm">YouBot</code><p class="text-gray-500 text-xs mt-1">You.com AI</p></div>
+        <div class="p-3 rounded-lg bg-white/5"><code class="text-gray-300 text-sm">PetalBot</code><p class="text-gray-500 text-xs mt-1">华为 AI</p></div>
+      </div>
+    </div>
+
+    <div class="card p-8 mb-8">
+      <h2 class="text-xl font-bold mb-4">检测你的 Robots.txt</h2>
+      <p class="text-gray-400 mb-6">输入你的 URL，运行完整审计，包括 robots.txt AI 爬虫分析：</p>
+      <div class="flex gap-3 max-w-xl">
+        <div class="flex-1 relative">
+          <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+          <input id="url-input" type="url" placeholder="输入网址，如 example.com" class="w-full pl-12 pr-5 py-3.5 rounded-xl bg-white/5 text-white placeholder-gray-500 border border-gray-600 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 text-lg transition" />
+        </div>
+        <button id="audit-btn" class="px-8 py-3.5 rounded-xl font-semibold text-white bg-gradient-to-r from-geo-600 to-brand-600 hover:from-geo-500 hover:to-brand-500 transition shadow-lg shadow-brand-500/20 whitespace-nowrap">检测</button>
+      </div>
+    </div>
+
+    <div class="card p-8 mb-8">
+      <h2 class="text-xl font-bold mb-4">AI 可见性的理想 robots.txt</h2>
+      <pre class="bg-black/30 rounded-lg p-4 text-sm text-gray-300 overflow-x-auto"><code># 允许 AI 爬虫 — 第 1 层：关键
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+# 第 2 层：重要
+User-agent: CCBot
+Allow: /
+
+User-agent: meta-externalagent
+Allow: /
+
+User-agent: Amazonbot
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+# 第 3 层：新兴
+User-agent: DuckAssistBot
+Allow: /
+
+User-agent: xAI-Bot
+Allow: /
+
+User-agent: *
+Disallow: /admin/
+Disallow: /private/</code></pre>
+      <p class="text-gray-500 text-sm mt-3">提示：只阻止真正需要保护的路径。不要阻止 AI 爬虫访问你的公开内容。</p>
+    </div>
+  </section>
+</LayoutZh>
+
+<script is:inline>
+  (function() {
+    var queue = [];
+    ["startAudit","showBatchInput","showComparison","startBatchAudit","runComparison","doExport"].forEach(function(n) {
+      window[n] = function() { queue.push({ n: n, a: arguments }); };
+    });
+    window.__geoFlush = function() { queue.splice(0).forEach(function(q) { window[q.n].apply(null, q.a); }); };
+  })();
+</script>
+<script src="../../../scripts/boot.js"></script>

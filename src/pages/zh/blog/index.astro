@@ -1,0 +1,50 @@
+---
+import LayoutZh from '../../../layouts/LayoutZh.astro';
+
+const posts = [
+  { slug: 'why-doesnt-chatgpt-cite-my-website', title: '为什么 ChatGPT 不引用你的网站？7 个原因（及修复方法）', tag: '热门 · 12 分钟', excerpt: '你的网站对 AI 搜索引擎不可见的 7 个常见原因——以及如何逐一修复。' },
+  { slug: 'what-is-geo', title: '什么是 GEO（生成式引擎优化）？2026 完全指南', tag: '指南 · 8 分钟', excerpt: '生成式引擎优化的完整介绍和 12 个就绪维度。' },
+  { slug: 'geo-vs-seo', title: 'GEO vs SEO：7 个关键区别（2026 对比）', tag: '指南 · 10 分钟', excerpt: '有什么区别？目标引擎、爬虫、内容策略以及如何协同工作。' },
+  { slug: 'llms-txt-ultimate-guide', title: 'llms.txt 完全指南：如何编写（含示例）', tag: '教程 · 15 分钟', excerpt: '为你的网站创建 llms.txt 文件的分步指南和真实示例。' },
+  { slug: 'ai-search-engine-list', title: 'AI 搜索引擎列表 2026：爬虫、机器人和用户代理', tag: '参考 · 9 分钟', excerpt: 'AI 爬虫完整列表——GPTBot、ClaudeBot、PerplexityBot——以及如何允许它们。' },
+  { slug: 'json-ld-structured-data-ai-search', title: 'AI 搜索的 JSON-LD 结构化数据：完全指南', tag: '指南 · 14 分钟', excerpt: '帮助 ChatGPT、Perplexity 和 Claude 引用你内容的结构化数据完全指南。' },
+  { slug: 'eeat-signals-ai-search', title: 'AI 搜索的 E-E-A-T 信号：与 AI 引擎建立信任', tag: '指南 · 12 分钟', excerpt: '建立让 ChatGPT、Perplexity 和 Claude 引用你内容的信任信号。' },
+  { slug: 'multimodal-geo-2026', title: '多模态 GEO 2026：为 AI 搜索优化图片、视频和音频', tag: '指南 · 11 分钟', excerpt: '为 AI 搜索可见性优化图片、视频和音频。' },
+  { slug: 'geo-tracking-ai-visibility', title: 'GEO 追踪与 AI 可见性：如何监控你的 AI 搜索存在', tag: '指南 · 14 分钟', excerpt: '如何监控你的 AI 搜索可见性——引用率、提及频率和情感追踪。' },
+  { slug: 'geo-metrics-2026', title: '重要的 GEO 指标：如何衡量 2026 年 AI 搜索表现', tag: '指南 · 12 分钟', excerpt: '5 个核心 GEO 指标——引用率、提及频率、情感准确性、声量份额和零触达覆盖——含测量方法和目标。' },
+  { slug: 'geo-citation-optimization', title: 'GEO 引用优化：如何在 2026 年被 AI 引擎引用', tag: '指南 · 12 分钟', excerpt: 'AI 引用优化的 5 大支柱——结构化数据、语义清晰度、来源权威性、内容独特性和多模态覆盖——含 10 步清单。' },
+  { slug: 'auditing-1200-websites', title: '审计 1200 个网站的 AI 就绪度：我们学到了什么', tag: '分析 · 10 分钟', excerpt: '大规模 GEO 审计的关键发现——常见差距、模式和快速修复。' },
+  { slug: 'how-to-write-llms-txt', title: '如何编写 llms.txt（已重定向）', tag: '重定向', excerpt: '此文章已合并到 llms.txt 完全指南中。' },
+  { slug: 'local-geo-2026', title: '本地 GEO 2026', tag: '指南 · 10 分钟', excerpt: '本地商家的生成式引擎优化策略和实践。' },
+];
+---
+<LayoutZh title="GEO 博客与指南 | GeoScore"
+  schema={{
+    '@context': 'https://schema.org',
+    '@type': 'Blog',
+    name: 'GeoScore 博客',
+    description: '关于生成式引擎优化（GEO）、AI 搜索可见性、结构化数据和 llms.txt 的深度指南。',
+    url: 'https://geoscore.help/zh/blog/',
+    publisher: { '@type': 'Organization', name: 'GeoScore', url: 'https://geoscore.help' }
+  }}
+>
+  <section class="max-w-4xl mx-auto py-12">
+    <div class="text-center mb-12">
+      <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-geo-500/10 text-geo-400 border border-geo-500/20 mb-4">
+        GeoScore 博客
+      </div>
+      <h1 class="text-4xl font-extrabold mb-3">GEO 指南与文章</h1>
+      <p class="text-gray-400 max-w-2xl mx-auto">关于生成式引擎优化、AI 搜索可见性、结构化数据以及如何让 ChatGPT、Perplexity 和 Claude 引用你内容的深度指南。</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {posts.filter(p => p.tag !== '重定向').map((post) => (
+        <a href={`/zh/blog/${post.slug}`} class="card card-hover card-lift p-6 block">
+          <div class="text-xs text-gray-500 mb-2">{post.tag}</div>
+          <h2 class="text-lg font-bold mb-2">{post.title}</h2>
+          <p class="text-gray-400 text-sm">{post.excerpt}</p>
+        </a>
+      ))}
+    </div>
+  </section>
+</LayoutZh>

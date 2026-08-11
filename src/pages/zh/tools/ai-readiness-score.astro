@@ -1,0 +1,99 @@
+---
+import LayoutZh from '../../../layouts/LayoutZh.astro';
+---
+<LayoutZh title="AI 就绪评分 — 检测你的网站 AI 搜索可见性 | GeoScore"
+  schema={{
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    name: 'AI 就绪评分',
+    description: '获取 0-100 评分，了解 ChatGPT、Perplexity、Google AI Overviews 等 AI 搜索引擎能否发现、理解并引用你的网站，涵盖 12 个维度。',
+    url: 'https://geoscore.help/zh/tools/ai-readiness-score/',
+    applicationCategory: 'SEO Tool',
+    operatingSystem: 'Any',
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+    isPartOf: { '@type': 'WebApplication', name: 'GeoScore', url: 'https://geoscore.help' }
+  }}
+>
+  <section class="max-w-4xl mx-auto">
+    <div class="text-center mb-10">
+      <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-brand-500/10 text-brand-400 border border-brand-500/20 mb-4">
+        免费工具
+      </div>
+      <h1 class="text-4xl font-extrabold mb-3">AI 就绪评分</h1>
+      <p class="text-gray-400 max-w-2xl mx-auto">获取 0-100 评分，了解 ChatGPT、Perplexity、Google AI Overviews 等 AI 搜索引擎能否发现、理解并引用你的网站。</p>
+    </div>
+
+    <div class="card p-8 mb-8">
+      <h2 class="text-xl font-bold mb-4">什么是 AI 就绪度？</h2>
+      <p class="text-gray-400 mb-4">
+        AI 就绪度衡量你的网站被生成式 AI 搜索引擎发现、理解和引用的有效程度。与传统 SEO 不同，AI 就绪度从 <strong class="text-white">12 个维度</strong>评估你的网站，包括 AI 可爬性、结构化数据、引用就绪度和 Agent 友好性。
+      </p>
+      <p class="text-gray-400">
+        高 AI 就绪分数意味着你的网站更有可能出现在 AI 生成的回答中，被 ChatGPT 和 Perplexity 引用，并在 Google AI Overviews 中展示。
+      </p>
+    </div>
+
+    <div class="card p-8 mb-8">
+      <h2 class="text-xl font-bold mb-4">12 个评分维度</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div class="flex items-center gap-3 p-3 rounded-lg bg-white/5"><span class="text-brand-400 font-bold text-sm w-8">12%</span><span class="text-gray-300 text-sm">AI 可爬性 (Robots.txt)</span></div>
+        <div class="flex items-center gap-3 p-3 rounded-lg bg-white/5"><span class="text-brand-400 font-bold text-sm w-8">12%</span><span class="text-gray-300 text-sm">AI 引导 (llms.txt)</span></div>
+        <div class="flex items-center gap-3 p-3 rounded-lg bg-white/5"><span class="text-brand-400 font-bold text-sm w-8">14%</span><span class="text-gray-300 text-sm">结构化数据 (Schema)</span></div>
+        <div class="flex items-center gap-3 p-3 rounded-lg bg-white/5"><span class="text-brand-400 font-bold text-sm w-8">10%</span><span class="text-gray-300 text-sm">Meta 和社交标签</span></div>
+        <div class="flex items-center gap-3 p-3 rounded-lg bg-white/5"><span class="text-brand-400 font-bold text-sm w-8">12%</span><span class="text-gray-300 text-sm">内容质量</span></div>
+        <div class="flex items-center gap-3 p-3 rounded-lg bg-white/5"><span class="text-brand-400 font-bold text-sm w-8">8%</span><span class="text-gray-300 text-sm">E-E-A-T 信号</span></div>
+        <div class="flex items-center gap-3 p-3 rounded-lg bg-white/5"><span class="text-brand-400 font-bold text-sm w-8">8%</span><span class="text-gray-300 text-sm">品牌和实体</span></div>
+        <div class="flex items-center gap-3 p-3 rounded-lg bg-white/5"><span class="text-brand-400 font-bold text-sm w-8">8%</span><span class="text-gray-300 text-sm">引用就绪度</span></div>
+        <div class="flex items-center gap-3 p-3 rounded-lg bg-white/5"><span class="text-brand-400 font-bold text-sm w-8">6%</span><span class="text-gray-300 text-sm">发现端点</span></div>
+        <div class="flex items-center gap-3 p-3 rounded-lg bg-white/5"><span class="text-brand-400 font-bold text-sm w-8">4%</span><span class="text-gray-300 text-sm">Agent 友好性</span></div>
+        <div class="flex items-center gap-3 p-3 rounded-lg bg-white/5"><span class="text-brand-400 font-bold text-sm w-8">4%</span><span class="text-gray-300 text-sm">新鲜度和维护</span></div>
+        <div class="flex items-center gap-3 p-3 rounded-lg bg-white/5"><span class="text-brand-400 font-bold text-sm w-8">2%</span><span class="text-gray-300 text-sm">负面信号</span></div>
+      </div>
+    </div>
+
+    <div class="card p-8 mb-8">
+      <h2 class="text-xl font-bold mb-4">检测你的 AI 就绪度</h2>
+      <p class="text-gray-400 mb-6">输入你的 URL，获取完整的 12 维度审计和可操作的修复建议：</p>
+      <div class="flex gap-3 max-w-xl">
+        <div class="flex-1 relative">
+          <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+          <input id="url-input" type="url" placeholder="输入网址，如 example.com" class="w-full pl-12 pr-5 py-3.5 rounded-xl bg-white/5 text-white placeholder-gray-500 border border-gray-600 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 text-lg transition" />
+        </div>
+        <button id="audit-btn" class="px-8 py-3.5 rounded-xl font-semibold text-white bg-gradient-to-r from-geo-600 to-brand-600 hover:from-geo-500 hover:to-brand-500 transition shadow-lg shadow-brand-500/20 whitespace-nowrap">为我的网站评分</button>
+      </div>
+    </div>
+
+    <div class="card p-8 mb-8">
+      <h2 class="text-xl font-bold mb-4">评分分段</h2>
+      <div class="space-y-3">
+        <div class="flex items-center gap-4 p-3 rounded-lg bg-geo-500/10 border border-geo-500/20">
+          <span class="text-2xl font-extrabold text-geo-500">86-100</span>
+          <div><strong class="text-white">优秀</strong> <span class="text-gray-400 text-sm">— 你的网站对 AI 搜索引擎高度可见。</span></div>
+        </div>
+        <div class="flex items-center gap-4 p-3 rounded-lg bg-brand-500/10 border border-brand-500/20">
+          <span class="text-2xl font-extrabold text-brand-500">68-85</span>
+          <div><strong class="text-white">良好</strong> <span class="text-gray-400 text-sm">— 基础扎实，仍有提升空间。</span></div>
+        </div>
+        <div class="flex items-center gap-4 p-3 rounded-lg bg-warn-500/10 border border-warn-500/20">
+          <span class="text-2xl font-extrabold text-warn-500">36-67</span>
+          <div><strong class="text-white">一般</strong> <span class="text-gray-400 text-sm">— AI 引擎可能难以理解你的网站。</span></div>
+        </div>
+        <div class="flex items-center gap-4 p-3 rounded-lg bg-danger-500/10 border border-danger-500/20">
+          <span class="text-2xl font-extrabold text-danger-500">0-35</span>
+          <div><strong class="text-white">差</strong> <span class="text-gray-400 text-sm">— 你的网站对 AI 搜索几乎不可见。</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</LayoutZh>
+
+<script is:inline>
+  (function() {
+    var queue = [];
+    ["startAudit","showBatchInput","showComparison","startBatchAudit","runComparison","doExport"].forEach(function(n) {
+      window[n] = function() { queue.push({ n: n, a: arguments }); };
+    });
+    window.__geoFlush = function() { queue.splice(0).forEach(function(q) { window[q.n].apply(null, q.a); }); };
+  })();
+</script>
+<script src="../../../scripts/boot.js"></script>
