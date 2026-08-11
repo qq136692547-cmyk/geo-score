@@ -3,6 +3,14 @@
   "version": "1.1.0",
   "description": "GEO Audit Tool - Check your website visibility to AI search engines",
   "type": "module",
+  "bin": {
+    "geoscore": "bin/geoscore.mjs"
+  },
+  "files": [
+    "bin",
+    "src/lib",
+    "public"
+  ],
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",

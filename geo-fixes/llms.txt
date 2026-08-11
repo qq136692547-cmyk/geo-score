@@ -1,0 +1,17 @@
+# geoscore.help
+
+> Check your website visibility to AI search engines. Free GEO audit tool.
+
+## Key Pages
+
+[geoscore.help](https://geoscore.help): Main website homepage.
+
+[About](https://geoscore.help/about): About geoscore.help.
+[Contact](https://geoscore.help/contact): Contact information and inquiry form.
+[Privacy Policy](https://geoscore.help/privacy): Privacy policy and data handling practices.
+
+## AI Resources
+
+[llms.txt](https://geoscore.help/llms.txt): This file — AI guidance for geoscore.help.
+[robots.txt](https://geoscore.help/robots.txt): Crawler directives for geoscore.help.
+[Sitemap](https://geoscore.help/sitemap.xml): XML sitemap listing all pages.
