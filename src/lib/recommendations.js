@@ -12,7 +12,7 @@
   freshness: 'Freshness & Maintenance',
 };
 
-function generateRecommendations(dimensions, negativeResult, scoring) {
+function generateRecommendations(dimensions, negativeResult, promptInjectionResult, scoring) {
   const recommendations = [];
 
   // Per-dimension failed checks
@@ -41,6 +41,19 @@ function generateRecommendations(dimensions, negativeResult, scoring) {
         issue: d.label,
         priority: d.severity === 'high' ? 'high' : d.severity === 'medium' ? 'medium' : 'low',
         fix: getNegativeFix(d.id),
+      });
+    }
+  }
+
+  // Prompt injection flags
+  if (promptInjectionResult?.flags) {
+    for (const f of promptInjectionResult.flags) {
+      recommendations.push({
+        dimension: 'Prompt Injection Safety',
+        dimensionKey: 'promptInjection',
+        issue: f.label,
+        priority: f.severity === 'critical' ? 'high' : f.severity === 'high' ? 'high' : f.severity === 'medium' ? 'medium' : 'low',
+        fix: getPromptInjectionFix(f.id),
       });
     }
   }
@@ -160,5 +173,17 @@ const DIMENSION_WEIGHTS = {
   contentQuality: 12, eeat: 8, brandEntity: 8, citationReadiness: 8,
   discoveryEndpoints: 6, agentFriendliness: 4, freshness: 4,
 };
+
+function getPromptInjectionFix(id) {
+  const fixes = {
+    'system-instructions': 'Remove any hidden system/role instructions targeting AI crawlers from your HTML',
+    'ignore-instructions': 'Remove "ignore previous instructions" patterns immediately — AI engines may penalize or block your site',
+    'hidden-text': 'Remove hidden text (display:none, visibility:hidden, color-matched text) that could be flagged as manipulation',
+    'zero-width-chars': 'Remove excessive zero-width unicode characters; they can trigger adversarial content detection',
+    'data-exfil': 'Remove hidden tracking pixels or external resource URLs in hidden contexts',
+    'homoglyphs': 'Remove mixed-script (Latin + Cyrillic) characters that could be confused for homoglyph attacks',
+  };
+  return fixes[id] || 'Review and remove potential prompt injection patterns';
+}
 
 export { generateRecommendations, DIMENSION_LABELS };

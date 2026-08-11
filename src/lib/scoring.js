@@ -13,7 +13,7 @@
 };
 const TOTAL_WEIGHT = Object.values(DIMENSION_WEIGHTS).reduce((a, b) => a + b, 0);
 
-function computeScore(dimensions, negativeResult) {
+function computeScore(dimensions, negativeResult, promptInjectionResult) {
   const dimensionScores = {};
   let weightedSum = 0;
 
@@ -31,7 +31,12 @@ function computeScore(dimensions, negativeResult) {
 
   let total = Math.round((weightedSum / TOTAL_WEIGHT) * 100);
   const deduction = negativeResult?.deductions?.reduce((s, d) => s + (d.deduction || 0), 0) || 0;
-  total = Math.max(0, total - deduction);
+  // Prompt injection flags add deduction: critical=4, high=3, medium=2, low=1
+  const piDeduction = (promptInjectionResult?.flags || []).reduce((s, f) => {
+    const weights = { critical: 4, high: 3, medium: 2, low: 1 };
+    return s + (weights[f.severity] || 1);
+  }, 0);
+  total = Math.max(0, total - deduction - piDeduction);
 
   let level;
   if (total >= 86) level = 'Excellent';
@@ -39,7 +44,7 @@ function computeScore(dimensions, negativeResult) {
   else if (total >= 36) level = 'Basic';
   else level = 'Critical';
 
-  return { total, level, dimensions: dimensionScores, deduction };
+  return { total, level, dimensions: dimensionScores, deduction, piDeduction };
 }
 
 export { computeScore, DIMENSION_WEIGHTS, TOTAL_WEIGHT };

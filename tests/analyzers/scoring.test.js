@@ -21,7 +21,7 @@ describe('computeScore', () => {
   };
 
   it('should return 100 for perfect scores with no deductions', () => {
-    const result = computeScore(perfectDims, { deductions: [] });
+    const result = computeScore(perfectDims, { deductions: [] }, { flags: [] });
     expect(result.total).toBe(100);
     expect(result.level).toBe('Excellent');
   });
@@ -30,7 +30,7 @@ describe('computeScore', () => {
     const dims = Object.fromEntries(
       Object.keys(perfectDims).map(k => [k, makeDim(0, 1)])
     );
-    const result = computeScore(dims, { deductions: [] });
+    const result = computeScore(dims, { deductions: [] }, { flags: [] });
     expect(result.total).toBe(0);
     expect(result.level).toBe('Critical');
   });
@@ -38,14 +38,30 @@ describe('computeScore', () => {
   it('should apply deductions', () => {
     const result = computeScore(perfectDims, {
       deductions: [{ id: 'test', label: 'test', deduction: 20, severity: 'high' }]
-    });
+    }, { flags: [] });
     expect(result.total).toBe(80);
   });
 
   it('should not go below 0 with deductions', () => {
     const result = computeScore(perfectDims, {
       deductions: [{ id: 'test', label: 'test', deduction: 200, severity: 'high' }]
-    });
+    }, { flags: [] });
     expect(result.total).toBe(0);
+  });
+
+  it('should apply prompt injection deductions', () => {
+    const result = computeScore(perfectDims, { deductions: [] }, {
+      flags: [{ id: 'ignore-instructions', label: 'test', severity: 'critical' }]
+    });
+    expect(result.total).toBe(96); // 100 - 4 (critical)
+  });
+
+  it('should combine negative + prompt injection deductions', () => {
+    const result = computeScore(perfectDims, {
+      deductions: [{ id: 'test', label: 'test', deduction: 10, severity: 'high' }]
+    }, {
+      flags: [{ id: 'ignore-instructions', label: 'test', severity: 'critical' }]
+    });
+    expect(result.total).toBe(86); // 100 - 10 - 4
   });
 });

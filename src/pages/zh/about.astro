@@ -37,6 +37,7 @@ import LayoutZh from '../../layouts/LayoutZh.astro';
               ['Agent 友好性', '4%', 'ax-score, agentscore', '4'],
               ['新鲜度和维护', '4%', 'evolv3ai', '3'],
               ['负面信号', '&minus; (扣分)', 'handbook, UC Berkeley EMNLP 2024', '8'],
+              ['提示注入安全', '&minus; (扣分)', 'OWASP LLM Top 10, NIST AI RMF', '6'],
             ].map(row => (
               <tr class="border-b border-gray-700/50 card-hover">
                 <td class="py-3 pr-4 text-gray-200">{row[0]}</td><td class="py-3 pr-4 font-mono text-gray-300">{row[1]}</td><td class="py-3 pr-4 text-xs text-gray-500 max-w-xs">{row[2]}</td><td class="py-3 font-mono text-gray-300">{row[3]}</td>

@@ -15,6 +15,7 @@ import { analyzeDiscovery } from './analyzers/discovery.js';
 import { analyzeAgentFriendly } from './analyzers/agentFriendly.js';
 import { analyzeFreshness } from './analyzers/freshness.js';
 import { analyzeNegativeSignals } from './analyzers/negativeSignals.js';
+import { analyzePromptInjection } from './analyzers/promptInjection.js';
 import { computeScore } from './scoring.js';
 import { generateRecommendations } from './recommendations.js';
 
@@ -58,6 +59,7 @@ async function auditUrl(url) {
   const agentResult = analyzeAgentFriendly(pageHtml, robotsTxt, llmsTxt);
   const freshnessResult = analyzeFreshness(pageHtml);
   const negativeResult = analyzeNegativeSignals(pageHtml);
+  const promptInjectionResult = analyzePromptInjection(pageHtml);
 
   const dimensions = {
     aiCrawlability: robotsResult,
@@ -73,13 +75,14 @@ async function auditUrl(url) {
     freshness: freshnessResult,
   };
 
-  const scoring = computeScore(dimensions, negativeResult);
-  const recommendations = generateRecommendations(dimensions, negativeResult, scoring);
+  const scoring = computeScore(dimensions, negativeResult, promptInjectionResult);
+  const recommendations = generateRecommendations(dimensions, negativeResult, promptInjectionResult, scoring);
 
   // Generate a human-readable summary
   const passedDims = Object.values(scoring.dimensions).filter(d => d.percentage >= 60).length;
   const totalDims = Object.keys(scoring.dimensions).length;
-  const summary = 'Score ' + scoring.total + '/100 (' + scoring.level + '). ' + passedDims + '/' + totalDims + ' dimensions above 60%. ' + negativeResult.deductions.length + ' negative signal(s) detected.';
+  const piFlags = promptInjectionResult.flags.length;
+  const summary = 'Score ' + scoring.total + '/100 (' + scoring.level + '). ' + passedDims + '/' + totalDims + ' dimensions above 60%. ' + negativeResult.deductions.length + ' negative signal(s) detected. ' + piFlags + ' prompt injection flag(s).';
 
   return {
     url: normalized,
@@ -89,6 +92,7 @@ async function auditUrl(url) {
     summary,
     dimensions: scoring.dimensions,
     negativeSignals: negativeResult,
+    promptInjection: promptInjectionResult,
     seoSupplement: extractSeoSupplement(pageHtml, normalized),
     recommendations,
     raw: {
