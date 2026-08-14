@@ -1,0 +1,150 @@
+---
+import LayoutZh from '../../layouts/LayoutZh.astro';
+---
+<LayoutZh title="GeoScore 定价 - 免费与专业版">
+  <section class="max-w-5xl mx-auto py-12">
+    <div class="text-center mb-12">
+      <h1 class="text-4xl md:text-5xl font-extrabold mb-4 tracking-tight">
+        简单<span class="gradient-text">透明</span>的定价
+      </h1>
+      <p class="text-lg text-gray-400 max-w-2xl mx-auto">
+        单次审计永久免费。需要监控、历史记录或团队功能时再升级。
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
+      <!-- Free -->
+      <div class="card p-6 flex flex-col">
+        <div class="text-sm font-semibold text-gray-400 mb-2">Free</div>
+        <div class="text-3xl font-extrabold mb-1">¥0</div>
+        <div class="text-xs text-gray-500 mb-6">永久免费</div>
+        <ul class="text-sm text-gray-400 space-y-2 mb-6 flex-1">
+          <li class="flex gap-2"><span class="text-geo-500">✓</span> 单 URL 审计</li>
+          <li class="flex gap-2"><span class="text-geo-500">✓</span> 12 维度，85+ 检查项</li>
+          <li class="flex gap-2"><span class="text-geo-500">✓</span> 修复文件生成器</li>
+          <li class="flex gap-2"><span class="text-geo-500">✓</span> CLI & MCP Server</li>
+          <li class="flex gap-2"><span class="text-geo-500">✓</span> 无需注册</li>
+        </ul>
+        <a href="/zh/" class="block text-center py-2.5 rounded-lg font-semibold text-sm border border-gray-600 text-gray-300 hover:border-brand-500 hover:text-white transition">开始使用</a>
+      </div>
+
+      <!-- Pro -->
+      <div class="card p-6 flex flex-col ring-2 ring-brand-500/50 relative">
+        <div class="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full text-xs font-semibold bg-brand-500 text-white">热门</div>
+        <div class="text-sm font-semibold text-brand-400 mb-2">Pro</div>
+        <div class="text-3xl font-extrabold mb-1">$19<span class="text-base font-normal text-gray-500">/月</span></div>
+        <div class="text-xs text-gray-500 mb-6">7 天免费试用</div>
+        <ul class="text-sm text-gray-400 space-y-2 mb-6 flex-1">
+          <li class="flex gap-2"><span class="text-brand-500">✓</span> Free 全部功能</li>
+          <li class="flex gap-2"><span class="text-brand-500">✓</span> 每周自动审计</li>
+          <li class="flex gap-2"><span class="text-brand-500">✓</span> 30 天审计历史</li>
+          <li class="flex gap-2"><span class="text-brand-500">✓</span> 回归告警</li>
+          <li class="flex gap-2"><span class="text-brand-500">✓</span> PDF 导出</li>
+          <li class="flex gap-2"><span class="text-brand-500">✓</span> 1 个域名</li>
+        </ul>
+        <button id="upgrade-pro" class="block text-center py-2.5 rounded-lg font-semibold text-sm text-white bg-gradient-to-r from-geo-600 to-brand-600 hover:from-geo-500 hover:to-brand-500 transition cursor-pointer">开始免费试用</button>
+      </div>
+
+      <!-- Studio -->
+      <div class="card p-6 flex flex-col">
+        <div class="text-sm font-semibold text-geo-400 mb-2">Studio</div>
+        <div class="text-3xl font-extrabold mb-1">$49<span class="text-base font-normal text-gray-500">/月</span></div>
+        <div class="text-xs text-gray-500 mb-6">7 天免费试用</div>
+        <ul class="text-sm text-gray-400 space-y-2 mb-6 flex-1">
+          <li class="flex gap-2"><span class="text-geo-500">✓</span> Pro 全部功能</li>
+          <li class="flex gap-2"><span class="text-geo-500">✓</span> 每日自动审计</li>
+          <li class="flex gap-2"><span class="text-geo-500">✓</span> 12 个月审计历史</li>
+          <li class="flex gap-2"><span class="text-geo-500">✓</span> 竞品对比</li>
+          <li class="flex gap-2"><span class="text-geo-500">✓</span> 15 个域名</li>
+          <li class="flex gap-2"><span class="text-geo-500">✓</span> API 访问</li>
+        </ul>
+        <button id="upgrade-studio" class="block text-center py-2.5 rounded-lg font-semibold text-sm text-white bg-gradient-to-r from-geo-600 to-brand-600 hover:from-geo-500 hover:to-brand-500 transition cursor-pointer">开始免费试用</button>
+      </div>
+
+      <!-- Agency -->
+      <div class="card p-6 flex flex-col">
+        <div class="text-sm font-semibold text-gray-400 mb-2">Agency</div>
+        <div class="text-3xl font-extrabold mb-1">$89<span class="text-base font-normal text-gray-500">/月</span></div>
+        <div class="text-xs text-gray-500 mb-6">7 天免费试用</div>
+        <ul class="text-sm text-gray-400 space-y-2 mb-6 flex-1">
+          <li class="flex gap-2"><span class="text-geo-500">✓</span> Studio 全部功能</li>
+          <li class="flex gap-2"><span class="text-geo-500">✓</span> 每小时审计</li>
+          <li class="flex gap-2"><span class="text-geo-500">✓</span> 无限审计历史</li>
+          <li class="flex gap-2"><span class="text-geo-500">✓</span> 团队工作区</li>
+          <li class="flex gap-2"><span class="text-geo-500">✓</span> 50 个域名</li>
+          <li class="flex gap-2"><span class="text-geo-500">✓</span> 白标 PDF 报告</li>
+        </ul>
+        <button id="upgrade-agency" class="block text-center py-2.5 rounded-lg font-semibold text-sm text-white bg-gradient-to-r from-geo-600 to-brand-600 hover:from-geo-500 hover:to-brand-500 transition cursor-pointer">开始免费试用</button>
+      </div>
+    </div>
+
+    <!-- 对比表 -->
+    <div class="card p-6 md:p-8 mb-12">
+      <h2 class="text-xl font-bold mb-6 text-center">功能对比</h2>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="border-b border-gray-700">
+              <th class="text-left py-3 text-gray-400 font-medium">功能</th>
+              <th class="text-center py-3 text-gray-400 font-medium">Free</th>
+              <th class="text-center py-3 text-brand-400 font-medium">Pro</th>
+              <th class="text-center py-3 text-geo-400 font-medium">Studio</th>
+              <th class="text-center py-3 text-gray-400 font-medium">Agency</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-700/50">
+            <tr><td class="py-2.5 text-gray-300">单 URL 审计</td><td class="text-center">✓</td><td class="text-center">✓</td><td class="text-center">✓</td><td class="text-center">✓</td></tr>
+            <tr><td class="py-2.5 text-gray-300">12 维度 85+ 检查项</td><td class="text-center">✓</td><td class="text-center">✓</td><td class="text-center">✓</td><td class="text-center">✓</td></tr>
+            <tr><td class="py-2.5 text-gray-300">修复文件生成器</td><td class="text-center">✓</td><td class="text-center">✓</td><td class="text-center">✓</td><td class="text-center">✓</td></tr>
+            <tr><td class="py-2.5 text-gray-300">CLI & MCP Server</td><td class="text-center">✓</td><td class="text-center">✓</td><td class="text-center">✓</td><td class="text-center">✓</td></tr>
+            <tr><td class="py-2.5 text-gray-300">自动审计</td><td class="text-center text-gray-600">—</td><td class="text-center text-gray-300">每周</td><td class="text-center text-gray-300">每日</td><td class="text-center text-gray-300">每小时</td></tr>
+            <tr><td class="py-2.5 text-gray-300">审计历史</td><td class="text-center text-gray-600">—</td><td class="text-center text-gray-300">30 天</td><td class="text-center text-gray-300">12 个月</td><td class="text-center text-gray-300">无限</td></tr>
+            <tr><td class="py-2.5 text-gray-300">回归告警</td><td class="text-center text-gray-600">—</td><td class="text-center">✓</td><td class="text-center">✓</td><td class="text-center">✓</td></tr>
+            <tr><td class="py-2.5 text-gray-300">PDF 导出</td><td class="text-center text-gray-600">—</td><td class="text-center">✓</td><td class="text-center">✓</td><td class="text-center">✓</td></tr>
+            <tr><td class="py-2.5 text-gray-300">竞品对比</td><td class="text-center text-gray-600">—</td><td class="text-center text-gray-600">—</td><td class="text-center">✓</td><td class="text-center">✓</td></tr>
+            <tr><td class="py-2.5 text-gray-300">API 访问</td><td class="text-center text-gray-600">—</td><td class="text-center text-gray-600">—</td><td class="text-center">✓</td><td class="text-center">✓</td></tr>
+            <tr><td class="py-2.5 text-gray-300">团队工作区</td><td class="text-center text-gray-600">—</td><td class="text-center text-gray-600">—</td><td class="text-center text-gray-600">—</td><td class="text-center">✓</td></tr>
+            <tr><td class="py-2.5 text-gray-300">白标报告</td><td class="text-center text-gray-600">—</td><td class="text-center text-gray-600">—</td><td class="text-center text-gray-600">—</td><td class="text-center">✓</td></tr>
+            <tr class="font-semibold"><td class="py-2.5 text-white">域名数</td><td class="text-center text-gray-300">1</td><td class="text-center text-brand-400">1</td><td class="text-center text-geo-400">15</td><td class="text-center text-gray-300">50</td></tr>
+            <tr class="font-semibold"><td class="py-2.5 text-white">价格</td><td class="text-center text-gray-300">¥0</td><td class="text-center text-brand-400">$19/月</td><td class="text-center text-geo-400">$49/月</td><td class="text-center text-gray-300">$89/月</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- FAQ -->
+    <div class="max-w-2xl mx-auto">
+      <h2 class="text-2xl font-bold text-center mb-6">定价常见问题</h2>
+      <div class="space-y-4">
+        <div class="card p-5">
+          <h3 class="font-semibold mb-2">GeoScore 真的免费吗？</h3>
+          <p class="text-sm text-gray-400">是的。单 URL 审计、CLI 和 MCP Server 永久免费，无需注册。源代码以 MIT 协议开源在 GitHub。</p>
+        </div>
+        <div class="card p-5">
+          <h3 class="font-semibold mb-2">需要信用卡吗？</h3>
+          <p class="text-sm text-gray-400">Free 计划无需信用卡。Pro、Studio 和 Agency 计划包含 7 天免费试用，试用期结束后才会扣费。</p>
+        </div>
+        <div class="card p-5">
+          <h3 class="font-semibold mb-2">可以随时取消吗？</h3>
+          <p class="text-sm text-gray-400">可以。在客户门户中随时取消，当前计费周期结束前保持访问权限。</p>
+        </div>
+        <div class="card p-5">
+          <h3 class="font-semibold mb-2">GeoScore 和 GeoReady 有什么不同？</h3>
+          <p class="text-sm text-gray-400">GeoScore 是开源的（MIT），支持中文，内置 CLI 和 MCP Server，包含提示注入检测——全部免费。GeoReady 对类似监控功能收费 $19-89/月。</p>
+        </div>
+        <div class="card p-5">
+          <h3 class="font-semibold mb-2">你们处理 VAT 和税务吗？</h3>
+          <p class="text-sm text-gray-400">是的。我们的支付合作伙伴 Creem 作为记录商户（MoR），自动处理 190+ 个国家的 VAT、GST 和销售税合规。您无需操心税务表格。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</LayoutZh>
+
+<script>
+  document.querySelectorAll('[id^="upgrade-"]').forEach(btn => {
+    btn.addEventListener('click', function() {
+      alert('支付集成即将上线！Free 计划已完全可用——现在就开始审计吧。');
+    });
+  });
+</script>
