@@ -132,9 +132,13 @@
                         {
                             "url":  "https://geoscore.help/blog/auditing-1200-websites/",
                             "title":  "Auditing 1,200 Websites"
+                        },
+                        {
+                            "url":  "https://geoscore.help/blog/geo-maturity-model-2026/",
+                            "title":  "GEO Maturity Model 2026"
                         }
                     ],
-    "last_updated":  "2026-08-08",
+    "last_updated":  "2026-08-14",
     "endpoints":  {
                       "llms_txt":  "https://geoscore.help/llms.txt",
                       "ai_txt":  "https://geoscore.help/.well-known/ai.txt",

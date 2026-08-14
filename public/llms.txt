@@ -22,6 +22,7 @@
 - [GEO Tracking Guide 2026](https://geoscore.help/blog/geo-tracking-ai-visibility/): How to monitor your AI search visibility — citation rate, mention frequency, and sentiment tracking.
 - [GEO Metrics That Matter 2026](https://geoscore.help/blog/geo-metrics-2026/): The 5 core GEO metrics — citation rate, mention frequency, sentiment accuracy, share of voice, and zero-click reach — with measurement methods and targets.
 - [GEO Citation Optimization 2026](https://geoscore.help/blog/geo-citation-optimization/): How to get cited by ChatGPT, Perplexity, and Google AI Overviews — the 5 pillars of citation optimization, common mistakes, and a 10-step actionable checklist.
+- [GEO Maturity Model 2026](https://geoscore.help/blog/geo-maturity-model-2026/): The five-stage GEO maturity model — Experiment, Validate, Standardize, Scale, Optimize — with the AAES framework, enterprise implementation paths, and budget allocation guidance.
 
 ## Case Studies
 
