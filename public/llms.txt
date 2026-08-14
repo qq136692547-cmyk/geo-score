@@ -4,10 +4,13 @@
 
 ## Core Tools
 
-- [Run a GEO Audit](https://geoscore.help/): Enter any URL, get a 0-100 score with radar chart and 60+ individual checks
+- [Run a GEO Audit](https://geoscore.help/): Enter any URL, get a 0-100 score with radar chart and 75+ individual checks
 - [llms.txt Checker](https://geoscore.help/tools/llms-txt-checker/): Validate the format, structure, and content of your llms.txt file
 - [Robots.txt AI Checker](https://geoscore.help/tools/robots-txt-ai-checker/): See if your robots.txt blocks GPTBot, ClaudeBot, PerplexityBot, or Google-Extended
 - [AI Readiness Score](https://geoscore.help/tools/ai-readiness-score/): The full 12-dimension audit with fix recommendations
+- [Demo Report](https://geoscore.help/report/demo/): Example audit report showing all 11 dimensions and recommendations
+- CLI: `npx geoscore <url>` — zero-dependency command-line tool (--json, --html, --fix, --quiet)
+- MCP Server: `geoscore-mcp` — Model Context Protocol server for AI agent integration (audit_url, generate_fixes tools)
 
 ## Learn GEO
 
