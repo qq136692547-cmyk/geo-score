@@ -6,7 +6,7 @@ compatibility_date = "2024-09-25"
 [[d1_databases]]
 binding = "DB"
 database_name = "geoscore-db"
-database_id = "YOUR_D1_DATABASE_ID"  # Replace after `wrangler d1 create geoscore-db`
+database_id = "372d4f13-35da-4878-b9d2-916b90fc11ad"
 
 # Secrets (set via `wrangler secret put`):
 # CREEM_WEBHOOK_SECRET  - webhook signing secret from Creem dashboard

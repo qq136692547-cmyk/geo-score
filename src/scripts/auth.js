@@ -1,10 +1,10 @@
-﻿/**
+/**
  * GeoScore Auth Client
  * Handles Google OAuth + Email verification code login.
  * Auto-injected into all pages via Layout.astro.
  */
 
-const API_BASE = 'https://geoscore-payments.gstorch.workers.dev';
+const API_BASE = 'https://geoscore-payments.geo-score.workers.dev';
 
 (function() {
   // Google Identity Services script
