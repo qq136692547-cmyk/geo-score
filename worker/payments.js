@@ -20,16 +20,13 @@
  */
 
 // Plan mapping: Creem product ID -> plan name
+// v1.5.0: Only Pro is offered for now. Studio/Agency are visible on pricing page as "Coming Soon".
 const PLAN_MAP = {
-  'prod_pro': 'pro',
-  'prod_studio': 'studio',
-  'prod_agency': 'agency',
+  'prod_3hLh24EkJOL0jS0Jrf9zq5': 'pro',
 };
 
 const PLAN_PRICES = {
-  pro: 900,      // $9.00
-  studio: 2900,  // $29.00
-  agency: 5900,  // $59.00
+  pro: 900,  // $9.00
 };
 
 export default {
@@ -585,8 +582,6 @@ function inferPlanFromPrice(price) {
   if (!price) return null;
   const amount = typeof price === 'number' ? price : parseInt(price, 10);
   if (amount === 900) return 'pro';
-  if (amount === 2900) return 'studio';
-  if (amount === 5900) return 'agency';
   return null;
 }
 
