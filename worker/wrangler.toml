@@ -1,4 +1,4 @@
-name = "geoscore-payments"
+﻿name = "geoscore-payments"
 main = "payments.js"
 compatibility_date = "2024-09-25"
 
@@ -9,9 +9,12 @@ database_name = "geoscore-db"
 database_id = "YOUR_D1_DATABASE_ID"  # Replace after `wrangler d1 create geoscore-db`
 
 # Secrets (set via `wrangler secret put`):
-# CREEM_WEBHOOK_SECRET - webhook signing secret from Creem dashboard
-# CREEM_API_KEY        - Creem API key
-# GEOSCORE_API_TOKEN   - token for protecting the status API
+# CREEM_WEBHOOK_SECRET  - webhook signing secret from Creem dashboard
+# CREEM_API_KEY         - Creem API key
+# GEOSCORE_API_TOKEN    - token for protecting the legacy status API
+# RESEND_API_KEY        - Resend API key for sending verification emails
+# JWT_SECRET            - HMAC secret for signing JWT session tokens
+# GOOGLE_CLIENT_ID      - Google OAuth Client ID
 
 # Routes
 # After deploying, set up a custom domain or use the workers.dev subdomain:
