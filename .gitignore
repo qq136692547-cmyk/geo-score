@@ -17,6 +17,7 @@ screenshots/
 geoscore_*.md
 ga4_config_*.md
 google_search_console_*.md
+PROJECT_HANDOVER.md
 
 # Deploy config (contains token)
 deploy_root.py

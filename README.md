@@ -11,7 +11,7 @@
 
 ## 🚀 Try It
 
-**[👉 deng.zh.kg](https://deng.zh.kg)**
+**[👉 geoscore.help](https://geoscore.help)**
 
 Enter any URL and get a comprehensive GEO readiness score across 12 dimensions.
 
