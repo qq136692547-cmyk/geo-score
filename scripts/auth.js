@@ -39,6 +39,7 @@ const API_BASE = 'https://geoscore-payments.geo-score.workers.dev';
       }
     }
     setupLoginModal();
+    updateUI();
   }
 
   function setupLoginModal() {
