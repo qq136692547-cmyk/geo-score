@@ -392,6 +392,9 @@ async function handleWebhook(request, env, corsHeaders) {
         const email = customer?.email;
         const plan = PLAN_MAP[product?.id] || inferPlanFromPrice(product?.price);
         if (!email || !plan) break;
+        const now = Math.floor(Date.now() / 1000);
+        // Subscription ID: Creem checkout may have subscription_id or id
+        const subId = object?.subscription_id || object?.subscription || object?.id || '';
 
         await env.DB.prepare(
           `INSERT INTO subscriptions (email, plan, status, customer_id, subscription_id, current_period_end, updated_at)
@@ -400,14 +403,13 @@ async function handleWebhook(request, env, corsHeaders) {
              plan=excluded.plan, status=excluded.status, customer_id=excluded.customer_id,
              subscription_id=excluded.subscription_id, current_period_end=excluded.current_period_end,
              updated_at=excluded.updated_at`
-        ).bind(email, plan, customer?.id || '', object?.subscription_id || '',
-          object?.current_period_end || Math.floor(Date.now() / 1000) + 30 * 86400,
-          Math.floor(Date.now() / 1000)).run();
+        ).bind(email, plan, customer?.id || '', subId,
+          object?.current_period_end || now + 30 * 86400, now).run();
 
         // Also update users table plan
         await env.DB.prepare(
           `UPDATE users SET plan=?, subscription_id=?, updated_at=? WHERE email=?`
-        ).bind(plan, object?.subscription_id || '', Math.floor(Date.now() / 1000), email).run();
+        ).bind(plan, subId, now, email).run();
         break;
       }
 
@@ -417,15 +419,22 @@ async function handleWebhook(request, env, corsHeaders) {
         const email = object?.customer?.email;
         const plan = PLAN_MAP[object?.product?.id] || inferPlanFromPrice(object?.product?.price);
         if (!email) break;
+        const now = Math.floor(Date.now() / 1000);
 
+        // Use upsert (INSERT ... ON CONFLICT) instead of UPDATE to handle missing rows
         await env.DB.prepare(
-          `UPDATE subscriptions SET plan=?, status='active', current_period_end=?, updated_at=? WHERE email=?`
-        ).bind(plan || 'pro', object?.current_period_end || Math.floor(Date.now() / 1000) + 30 * 86400,
-          Math.floor(Date.now() / 1000), email).run();
+          `INSERT INTO subscriptions (email, plan, status, customer_id, subscription_id, current_period_end, updated_at)
+           VALUES (?, ?, 'active', ?, ?, ?, ?)
+           ON CONFLICT(email) DO UPDATE SET
+             plan=excluded.plan, status='active', customer_id=excluded.customer_id,
+             subscription_id=excluded.subscription_id, current_period_end=excluded.current_period_end,
+             updated_at=excluded.updated_at`
+        ).bind(email, plan || 'pro', object?.customer?.id || '', object?.id || '',
+          object?.current_period_end || now + 30 * 86400, now).run();
 
         await env.DB.prepare(
           `UPDATE users SET plan=?, updated_at=? WHERE email=?`
-        ).bind(plan || 'pro', Math.floor(Date.now() / 1000), email).run();
+        ).bind(plan || 'pro', now, email).run();
         break;
       }
 
@@ -433,12 +442,14 @@ async function handleWebhook(request, env, corsHeaders) {
       case 'subscription.expired': {
         const email = object?.customer?.email;
         if (!email) break;
+        const now = Math.floor(Date.now() / 1000);
         await env.DB.prepare(
           `UPDATE subscriptions SET status='canceled', updated_at=? WHERE email=?`
-        ).bind(Math.floor(Date.now() / 1000), email).run();
+        ).bind(now, email).run();
+        // Clear plan and subscription_id on users table
         await env.DB.prepare(
-          `UPDATE users SET plan='free', updated_at=? WHERE email=?`
-        ).bind(Math.floor(Date.now() / 1000), email).run();
+          `UPDATE users SET plan='free', subscription_id=null, updated_at=? WHERE email=?`
+        ).bind(now, email).run();
         break;
       }
 
@@ -521,7 +532,11 @@ function isValidEmail(email) {
 }
 
 function generateId() {
-  return 'u_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 10);
+  // Cryptographically secure random ID
+  const arr = new Uint8Array(8);
+  crypto.getRandomValues(arr);
+  const hex = Array.from(arr).map(b => b.toString(16).padStart(2, '0')).join('');
+  return 'u_' + hex;
 }
 
 function json(data, status, corsHeaders) {
