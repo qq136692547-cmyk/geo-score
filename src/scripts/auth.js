@@ -20,11 +20,25 @@ const API_BASE = 'https://geoscore-payments.geo-score.workers.dev';
   // Init on DOM ready
   document.addEventListener('DOMContentLoaded', initAuth);
 
+  // Fetch with timeout (5s) to avoid hanging on unreachable Worker
+  async function fetchWithTimeout(url, options = {}, timeoutMs = 5000) {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+    try {
+      const resp = await fetch(url, { ...options, signal: controller.signal });
+      clearTimeout(timeoutId);
+      return resp;
+    } catch (e) {
+      clearTimeout(timeoutId);
+      throw e;
+    }
+  }
+
   async function initAuth() {
     const token = localStorage.getItem('geoscore_token');
     if (token) {
       try {
-        const resp = await fetch(`${API_BASE}/auth/me`, {
+        const resp = await fetchWithTimeout(`${API_BASE}/auth/me`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         if (resp.ok) {
@@ -33,9 +47,11 @@ const API_BASE = 'https://geoscore-payments.geo-score.workers.dev';
           updateUI();
         } else {
           localStorage.removeItem('geoscore_token');
+          updateUI();
         }
       } catch (e) {
-        // Network error, keep token for later
+        // Network error (Worker unreachable), keep token for later retry
+        updateUI();
       }
     }
     setupLoginModal();
@@ -117,7 +133,7 @@ const API_BASE = 'https://geoscore-payments.geo-score.workers.dev';
       sendBtn.textContent = 'Sending...';
       hideError();
       try {
-        const resp = await fetch(`${API_BASE}/auth/send-code`, {
+        const resp = await fetchWithTimeout(`${API_BASE}/auth/send-code`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email })
@@ -134,7 +150,7 @@ const API_BASE = 'https://geoscore-payments.geo-score.workers.dev';
           sendBtn.textContent = 'Send Verification Code';
         }
       } catch (e) {
-        showError('Network error');
+        showError('Network error. Please check your connection and try again.');
         sendBtn.disabled = false;
         sendBtn.textContent = 'Send Verification Code';
       }
@@ -149,7 +165,7 @@ const API_BASE = 'https://geoscore-payments.geo-score.workers.dev';
       verifyBtn.textContent = 'Verifying...';
       hideError();
       try {
-        const resp = await fetch(`${API_BASE}/auth/verify`, {
+        const resp = await fetchWithTimeout(`${API_BASE}/auth/verify`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email, code })
@@ -167,7 +183,7 @@ const API_BASE = 'https://geoscore-payments.geo-score.workers.dev';
           verifyBtn.textContent = 'Verify & Sign In';
         }
       } catch (e) {
-        showError('Network error');
+        showError('Network error. Please check your connection and try again.');
         verifyBtn.disabled = false;
         verifyBtn.textContent = 'Verify & Sign In';
       }
@@ -192,8 +208,12 @@ const API_BASE = 'https://geoscore-payments.geo-score.workers.dev';
   }
 
   async function handleGoogleCallback(response) {
+    const errorEl = document.querySelector('#auth-error');
+    const infoEl = document.querySelector('#auth-info');
+    if (infoEl) { infoEl.textContent = 'Signing in with Google...'; infoEl.classList.remove('hidden'); }
+    if (errorEl) { errorEl.classList.add('hidden'); }
     try {
-      const resp = await fetch(`${API_BASE}/auth/google`, {
+      const resp = await fetchWithTimeout(`${API_BASE}/auth/google`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ idToken: response.credential })
@@ -206,10 +226,12 @@ const API_BASE = 'https://geoscore-payments.geo-score.workers.dev';
         updateUI();
         location.reload();
       } else {
-        alert(data.error || 'Google login failed');
+        if (errorEl) { errorEl.textContent = data.error || 'Google login failed'; errorEl.classList.remove('hidden'); }
+        if (infoEl) { infoEl.classList.add('hidden'); }
       }
     } catch (e) {
-      alert('Network error during Google login');
+      if (errorEl) { errorEl.textContent = 'Network error during Google login'; errorEl.classList.remove('hidden'); }
+      if (infoEl) { infoEl.classList.add('hidden'); }
     }
   }
 
@@ -244,19 +266,23 @@ const API_BASE = 'https://geoscore-payments.geo-score.workers.dev';
       const planLabel = currentUser.plan !== 'free' 
         ? `<span class="px-2 py-0.5 rounded text-xs font-semibold bg-brand-500/20 text-brand-400">${currentUser.plan.toUpperCase()}</span>` 
         : '';
+      // Escape user data to prevent XSS
+      const safeName = escapeHtml(currentUser.name || currentUser.email.split('@')[0]);
+      const safeEmail = escapeHtml(currentUser.email);
+      const safeAvatar = currentUser.avatar ? escapeHtml(currentUser.avatar) : '';
       navAuth.innerHTML = `
         <div class="relative" id="user-menu-wrapper">
           <button id="user-menu-btn" class="flex items-center gap-2 text-sm text-gray-300 hover:text-white transition">
-            ${currentUser.avatar 
-              ? `<img src="${currentUser.avatar}" class="w-7 h-7 rounded-full" alt="avatar" />`
-              : `<div class="w-7 h-7 rounded-full bg-gradient-to-r from-geo-600 to-brand-600 flex items-center justify-center text-xs font-bold">${initial}</div>`
+            ${safeAvatar
+              ? `<img src="${safeAvatar}" class="w-7 h-7 rounded-full" alt="avatar" />`
+              : `<div class="w-7 h-7 rounded-full bg-gradient-to-r from-geo-600 to-brand-600 flex items-center justify-center text-xs font-bold">${escapeHtml(initial)}</div>`
             }
-            <span class="hidden sm:inline">${currentUser.name || currentUser.email.split('@')[0]}</span>
+            <span class="hidden sm:inline">${safeName}</span>
             ${planLabel}
           </button>
           <div id="user-dropdown" class="hidden absolute right-0 mt-2 w-48 card p-2 z-50">
             <div class="px-3 py-2 border-b border-gray-700 text-xs text-gray-400">
-              ${currentUser.email}
+              ${safeEmail}
             </div>
             <a href="/pricing/" class="block px-3 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-800/50 rounded transition">Upgrade Plan</a>
             <button id="logout-btn" class="w-full text-left px-3 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-gray-800/50 rounded transition">Sign Out</button>
@@ -281,4 +307,10 @@ const API_BASE = 'https://geoscore-payments.geo-score.workers.dev';
 
   // Expose for inline buttons
   window.geoscoreAuth = { openAuthModal, logout, getCurrentUser: () => currentUser };
+
+  function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
 })();

@@ -104,8 +104,15 @@ async function handleSendCode(request, env, corsHeaders) {
       return json({ error: 'Please wait 60 seconds before requesting another code.' }, 429, corsHeaders);
     }
 
-    // Generate 6-digit code
-    const code = String(Math.floor(100000 + Math.random() * 900000));
+    // Clean up expired codes for this email
+    await env.DB.prepare(
+      `DELETE FROM verify_codes WHERE email=? AND expires_at < ?`
+    ).bind(email, Math.floor(Date.now() / 1000)).run();
+
+    // Generate 6-digit code (cryptographically secure)
+    const randArr = new Uint32Array(1);
+    crypto.getRandomValues(randArr);
+    const code = String(randArr[0] % 900000 + 100000);
     const now = Math.floor(Date.now() / 1000);
     const expiresAt = now + 600; // 10 minutes
 
@@ -164,12 +171,30 @@ async function handleVerifyCode(request, env, corsHeaders) {
 
     const now = Math.floor(Date.now() / 1000);
 
-    // Check code
+    // Check code (with attempts limit)
     const record = await env.DB.prepare(
       `SELECT * FROM verify_codes WHERE email=? AND code=? AND expires_at > ? ORDER BY created_at DESC LIMIT 1`
     ).bind(email, code, now).first();
 
     if (!record) {
+      // Increment attempts on the most recent valid code for this email
+      const recentCode = await env.DB.prepare(
+        `SELECT * FROM verify_codes WHERE email=? AND expires_at > ? ORDER BY created_at DESC LIMIT 1`
+      ).bind(email, now).first();
+      if (recentCode) {
+        const attempts = (recentCode.attempts || 0) + 1;
+        if (attempts >= 5) {
+          // Max attempts reached, delete the code
+          await env.DB.prepare(
+            `DELETE FROM verify_codes WHERE email=? AND code=?`
+          ).bind(email, recentCode.code).run();
+          return json({ error: 'Too many failed attempts. Please request a new code.' }, 429, corsHeaders);
+        }
+        // Update attempts count
+        await env.DB.prepare(
+          `UPDATE verify_codes SET attempts=? WHERE email=? AND code=?`
+        ).bind(attempts, email, recentCode.code).run();
+      }
       return json({ error: 'Invalid or expired code' }, 401, corsHeaders);
     }
 
@@ -195,7 +220,7 @@ async function handleVerifyCode(request, env, corsHeaders) {
     const sub = await env.DB.prepare(
       `SELECT plan, status, current_period_end FROM subscriptions WHERE email=?`
     ).bind(email).first();
-    if (sub && sub.status === 'active' || sub?.status === 'trialing') {
+    if (sub && (sub.status === 'active' || sub.status === 'trialing')) {
       user.plan = sub.plan;
     }
 
@@ -354,7 +379,7 @@ async function handleWebhook(request, env, corsHeaders) {
     }
 
     const expectedSignature = await hmacSha256(rawBody, env.CREEM_WEBHOOK_SECRET);
-    if (signature !== expectedSignature) {
+  if (!constantTimeEqual(signature, expectedSignature)) {
       return new Response('Invalid signature', { status: 401, headers: corsHeaders });
     }
 
@@ -526,10 +551,10 @@ async function verifyJWT(token, secret) {
 
   const [header, payload, signature] = parts;
   const expectedSignature = await hmacSha256(`${header}.${payload}`, secret);
-  if (signature !== expectedSignature) return null;
+  if (!constantTimeEqual(signature, expectedSignature)) return null;
 
   try {
-    const decoded = JSON.parse(atob(payload));
+    const decoded = JSON.parse(base64UrlDecode(payload));
     if (decoded.exp && decoded.exp < Math.floor(Date.now() / 1000)) {
       return null;
     }
@@ -541,6 +566,19 @@ async function verifyJWT(token, secret) {
 
 function base64Url(str) {
   return btoa(str).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
+function base64UrlDecode(str) {
+  str = str.replace(/-/g, '+').replace(/_/g, '/');
+  while (str.length % 4) str += '=';
+  return atob(str);
+}
+
+function constantTimeEqual(a, b) {
+  if (a.length !== b.length) return false;
+  let result = 0;
+  for (let i = 0; i < a.length; i++) result |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  return result === 0;
 }
 
 function inferPlanFromPrice(price) {

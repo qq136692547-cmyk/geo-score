@@ -36,6 +36,7 @@ CREATE TABLE IF NOT EXISTS verify_codes (
   email TEXT NOT NULL,
   code TEXT NOT NULL,
   expires_at INTEGER NOT NULL,
+  attempts INTEGER NOT NULL DEFAULT 0,
   created_at INTEGER DEFAULT (strftime('%s','now'))
 );
 
