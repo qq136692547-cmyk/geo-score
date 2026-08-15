@@ -381,7 +381,9 @@ async function handleWebhook(request, env, corsHeaders) {
     }
 
     const event = JSON.parse(rawBody);
-    const { eventType, object } = event;
+    // Creem uses event_type (snake_case); also accept eventType for forward-compat
+    const eventType = event.event_type || event.eventType;
+    const object = event.data?.object || event.data || event.object;
 
     switch (eventType) {
       case 'checkout.completed': {
