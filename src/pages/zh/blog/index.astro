@@ -15,7 +15,6 @@ const posts = [
   { slug: 'geo-citation-optimization', title: 'GEO 引用优化：如何在 2026 年被 AI 引擎引用', tag: '指南 · 12 分钟', excerpt: 'AI 引用优化的 5 大支柱——结构化数据、语义清晰度、来源权威性、内容独特性和多模态覆盖——含 10 步清单。' },
   { slug: 'auditing-1200-websites', title: '审计 1200 个网站的 AI 就绪度：我们学到了什么', tag: '分析 · 10 分钟', excerpt: '大规模 GEO 审计的关键发现——常见差距、模式和快速修复。' },
   { slug: 'how-to-write-llms-txt', title: '如何编写 llms.txt（已重定向）', tag: '重定向', excerpt: '此文章已合并到 llms.txt 完全指南中。' },
-  { slug: 'local-geo-2026', title: '本地 GEO 2026', tag: '指南 · 10 分钟', excerpt: '本地商家的生成式引擎优化策略和实践。' },
 ];
 ---
 <LayoutZh title="GEO 博客与指南 | GeoScore"
@@ -39,7 +38,7 @@ const posts = [
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
       {posts.filter(p => p.tag !== '重定向').map((post) => (
-        <a href={`/zh/blog/${post.slug}`} class="card card-hover card-lift p-6 block">
+        <a href={`/blog/${post.slug}`} class="card card-hover card-lift p-6 block">
           <div class="text-xs text-gray-500 mb-2">{post.tag}</div>
           <h2 class="text-lg font-bold mb-2">{post.title}</h2>
           <p class="text-gray-400 text-sm">{post.excerpt}</p>
