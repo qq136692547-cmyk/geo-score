@@ -1,4 +1,4 @@
-﻿/**
+/**
  * GeoScore boot script - Vite entry point
  * Astro will bundle all imported modules into a single file
  */
@@ -18,6 +18,8 @@ import { renderShareButtons } from '../components/shareButtons.js';
 import { renderHistoryList } from '../components/historyList.js';
 import { renderTrendContainer, initTrendChart } from '../components/trendChart.js';
 import { renderComparisonPanel } from '../components/comparisonPanel.js';
+import { initSitesPanel } from '../components/sitesPanel.js';
+import { saveAuditToCloud } from '../components/auditHistory.js';
 
 var radarChartInstance = null;
 var trendChartInstance = null;
@@ -171,6 +173,7 @@ window.startAudit = async function () {
       reportEl.style.transition = "opacity 0.3s ease";
       reportEl.style.opacity = "1";
       renderHistory();
+      maybeShowSaveCloud(result);
     }, 200);
     var history = getHistory();
     if (history.length >= 2) {
@@ -214,7 +217,8 @@ function geoHide(el) {
     renderFixFilesPanel(r),
     renderFixesPanel(r.recommendations),
     renderExportButtons(),
-    renderShareButtons(r)
+    renderShareButtons(r),
+    '<div id="save-cloud-root"></div>'
   ];
   root.innerHTML = "<div>" + parts.join("") + "</div>";
 
@@ -367,6 +371,9 @@ document.addEventListener("DOMContentLoaded", function() {
   var cb = document.getElementById("compare-btn");
   if (cb) cb.addEventListener("click", function() { window.runComparison(); });
 
+  // --- Pro monitoring panel ---
+  initProMonitor();
+
   // --- URL parameter: auto-start audit from ?audit=url ---
   var params = new URLSearchParams(window.location.search);
   var auditParam = params.get('audit');
@@ -379,5 +386,52 @@ document.addEventListener("DOMContentLoaded", function() {
   }
 });
 
+// --- Pro monitoring panel (pages with #pro-monitor-root) ---
+function initProMonitor() {
+  var monitorRoot = document.getElementById('pro-monitor-root');
+  if (!monitorRoot) return;
+  var auth = window.geoscoreAuth;
+  if (!auth || !auth.onAuthChange) return;
+  auth.onAuthChange(function(user) {
+    var teaser = document.getElementById('pro-upgrade-teaser');
+    var panel = document.getElementById('pro-monitor-panel');
+    if (user && user.plan === 'pro') {
+      monitorRoot.classList.remove('hidden');
+      if (teaser) teaser.classList.add('hidden');
+      if (panel) {
+        panel.classList.remove('hidden');
+        if (!panel.getAttribute('data-initialized')) {
+          panel.setAttribute('data-initialized', '1');
+          initSitesPanel(auth);
+        }
+      }
+    } else if (user) {
+      monitorRoot.classList.remove('hidden');
+      if (teaser) teaser.classList.remove('hidden');
+      if (panel) panel.classList.add('hidden');
+    } else {
+      monitorRoot.classList.add('hidden');
+    }
+  });
+}
+
+// --- Save the finished audit to the cloud (Pro only) ---
+function maybeShowSaveCloud(result) {
+  var root = document.getElementById('save-cloud-root');
+  var auth = window.geoscoreAuth;
+  if (!root || !auth || !auth.getCurrentUser || !auth.api) return;
+  var user = auth.getCurrentUser();
+  if (!user || user.plan !== 'pro') return;
+  var zh = (document.documentElement.lang || 'en').toLowerCase().indexOf('zh') === 0;
+  root.innerHTML = '<div class="card p-4 mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">' +
+    '<div><div class="text-sm font-semibold mb-1">' + (zh ? '保存到云端' : 'Save to cloud') + '</div>' +
+    '<p class="text-xs text-gray-500">' + (zh ? '将此审计保存到你的 30 天云端历史，并可用于 PDF 导出。' : 'Store this audit in your 30-day cloud history and export it as PDF.') + '</p></div>' +
+    '<button id="save-cloud-btn" class="px-4 py-2 rounded-lg text-sm font-semibold text-white bg-gradient-to-r from-geo-600 to-brand-600 hover:from-geo-500 hover:to-brand-500 transition whitespace-nowrap">' + (zh ? '保存' : 'Save') + '</button></div>';
+  document.getElementById('save-cloud-btn').addEventListener('click', function() {
+    saveAuditToCloud(auth, result, this);
+  });
+}
+
 // Flush any queued clicks made before boot.js loaded
 if (window.__geoFlush) window.__geoFlush();
+

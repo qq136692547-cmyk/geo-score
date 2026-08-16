@@ -40,7 +40,7 @@ import LayoutZh from '../../layouts/LayoutZh.astro';
           <li class="flex gap-2"><span class="text-brand-500">✓</span> 30 天审计历史</li>
           <li class="flex gap-2"><span class="text-brand-500">✓</span> 回归告警</li>
           <li class="flex gap-2"><span class="text-brand-500">✓</span> PDF 导出</li>
-          <li class="flex gap-2"><span class="text-brand-500">✓</span> 1 个域名</li>
+          <li class="flex gap-2"><span class="text-brand-500">✓</span> 5 个域名</li>
         </ul>
         <button id="upgrade-pro" data-checkout="https://www.creem.io/payment/prod_3hLh24EkJOL0jS0Jrf9zq5" class="block w-full text-center py-2.5 rounded-lg font-semibold text-sm text-white bg-gradient-to-r from-geo-600 to-brand-600 hover:from-geo-500 hover:to-brand-500 transition cursor-pointer">开始免费试用</button>
       </div>
@@ -107,7 +107,7 @@ import LayoutZh from '../../layouts/LayoutZh.astro';
             <tr><td class="py-2.5 text-gray-300">API 访问</td><td class="text-center text-gray-600">—</td><td class="text-center text-gray-600">—</td><td class="text-center text-gray-500">✓</td><td class="text-center text-gray-500">✓</td></tr>
             <tr><td class="py-2.5 text-gray-300">团队工作区</td><td class="text-center text-gray-600">—</td><td class="text-center text-gray-600">—</td><td class="text-center text-gray-600">—</td><td class="text-center text-gray-500">✓</td></tr>
             <tr><td class="py-2.5 text-gray-300">白标报告</td><td class="text-center text-gray-600">—</td><td class="text-center text-gray-600">—</td><td class="text-center text-gray-600">—</td><td class="text-center text-gray-500">✓</td></tr>
-            <tr class="font-semibold"><td class="py-2.5 text-white">域名数</td><td class="text-center text-gray-300">1</td><td class="text-center text-brand-400">1</td><td class="text-center text-gray-500">15</td><td class="text-center text-gray-500">50</td></tr>
+            <tr class="font-semibold"><td class="py-2.5 text-white">域名数</td><td class="text-center text-gray-300">1</td><td class="text-center text-brand-400">5</td><td class="text-center text-gray-500">15</td><td class="text-center text-gray-500">50</td></tr>
             <tr class="font-semibold"><td class="py-2.5 text-white">价格</td><td class="text-center text-gray-300">¥0</td><td class="text-center text-brand-400">$9/月</td><td class="text-center text-gray-500">$29/月</td><td class="text-center text-gray-500">$59/月</td></tr>
           </tbody>
         </table>
@@ -150,7 +150,7 @@ import LayoutZh from '../../layouts/LayoutZh.astro';
     // Pro 结账：已登录用户跳转 Creem，否则提示登录
     const proBtn = document.getElementById('upgrade-pro');
     if (proBtn) {
-      proBtn.addEventListener('click', function() {
+      proBtn.addEventListener('click', async function() {
         const token = localStorage.getItem('geoscore_token');
         if (!token) {
           if (window.geoscoreAuth) {
@@ -160,6 +160,26 @@ import LayoutZh from '../../layouts/LayoutZh.astro';
           }
           return;
         }
+        // 为已登录用户创建绑定邮箱的 Creem 结账会话；
+        // Worker API 不可用时回退到静态结账链接。
+        if (window.geoscoreAuth && window.geoscoreAuth.api) {
+          const btn = this;
+          const original = btn.textContent;
+          btn.disabled = true;
+          btn.textContent = '正在创建结账...';
+          try {
+            const res = await window.geoscoreAuth.api('/api/checkout', { method: 'POST', body: {} });
+            if (res.ok && res.data && res.data.checkout_url) {
+              window.location.href = res.data.checkout_url;
+              return;
+            }
+          } catch (e) {
+            // Worker 不可达或超时；回退到静态链接
+          }
+          btn.disabled = false;
+          btn.textContent = original;
+        }
+        // 回退：跳转静态 Creem 结账链接
         const checkoutUrl = proBtn.getAttribute('data-checkout');
         if (checkoutUrl) {
           window.location.href = checkoutUrl;

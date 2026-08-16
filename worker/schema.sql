@@ -42,3 +42,48 @@ CREATE TABLE IF NOT EXISTS verify_codes (
 
 CREATE INDEX IF NOT EXISTS idx_verify_codes_email ON verify_codes(email);
 CREATE INDEX IF NOT EXISTS idx_verify_codes_expires ON verify_codes(expires_at);
+-- ============ PRO MONITORING (v1.6) ============
+
+-- Monitored sites (Pro: max 5 per user)
+CREATE TABLE IF NOT EXISTS sites (
+  id TEXT PRIMARY KEY,
+  user_id TEXT NOT NULL,
+  email TEXT NOT NULL,
+  host TEXT NOT NULL,
+  url TEXT NOT NULL,
+  status TEXT NOT NULL DEFAULT 'active',
+  last_audit_at INTEGER,
+  last_score INTEGER,
+  last_success_at INTEGER,
+  consecutive_failures INTEGER NOT NULL DEFAULT 0,
+  created_at INTEGER DEFAULT (strftime('%s','now'))
+);
+
+CREATE UNIQUE INDEX IF NOT EXISTS idx_sites_user_host ON sites(user_id, host);
+CREATE INDEX IF NOT EXISTS idx_sites_user ON sites(user_id);
+
+-- Cloud audit history (30-day retention)
+CREATE TABLE IF NOT EXISTS audits (
+  id TEXT PRIMARY KEY,
+  user_id TEXT NOT NULL,
+  email TEXT NOT NULL,
+  site_id TEXT,
+  url TEXT NOT NULL,
+  host TEXT NOT NULL,
+  score INTEGER NOT NULL,
+  level TEXT,
+  summary TEXT,
+  dimensions TEXT,
+  negative_signals TEXT,
+  prompt_injection TEXT,
+  recommendations TEXT,
+  raw TEXT,
+  source TEXT NOT NULL DEFAULT 'manual',
+  status TEXT NOT NULL DEFAULT 'ok',
+  error TEXT,
+  created_at INTEGER DEFAULT (strftime('%s','now'))
+);
+
+CREATE INDEX IF NOT EXISTS idx_audits_user_created ON audits(user_id, created_at);
+CREATE INDEX IF NOT EXISTS idx_audits_site_created ON audits(site_id, created_at);
+CREATE INDEX IF NOT EXISTS idx_audits_created ON audits(created_at);

@@ -1,4 +1,4 @@
-﻿/**
+/**
  * GeoScore Payment + Auth Worker
  * 
  * Features:
@@ -7,6 +7,7 @@
  *  - Google OAuth login (ID token verification via Google JWKS)
  *  - JWT session token signing/verification
  *  - Subscription status API
+ *  - Pro monitoring API + weekly scheduled audits (see pro.js)
  * 
  * Deploy: wrangler deploy
  * 
@@ -18,6 +19,7 @@
  *   JWT_SECRET            - HMAC secret for signing JWTs
  *   GOOGLE_CLIENT_ID      - Google OAuth Client ID
  */
+import { verifyJWT, resolvePlan, hmacSha256, base64Url, constantTimeEqual, handleProRoutes, runScheduledAudits } from './pro.js';
 
 // Plan mapping: Creem product ID -> plan name
 // v1.5.0: Only Pro is offered for now. Studio/Agency are visible on pricing page as "Coming Soon".
@@ -36,7 +38,7 @@ export default {
 
     const corsHeaders = {
       'Access-Control-Allow-Origin': 'https://geoscore.help',
-      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+      'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type, Authorization',
     };
 
@@ -68,6 +70,11 @@ export default {
       return handleSubscriptionCheck(request, env, corsHeaders, url);
     }
 
+    // --- Pro monitoring API (sites, audits, PDF) ---
+    if (path.startsWith('/api/')) {
+      return handleProRoutes(request, env, corsHeaders, url, path);
+    }
+
     // --- Health ---
     if (path === '/health') {
       return new Response(JSON.stringify({ status: 'ok', time: Date.now() }), {
@@ -76,6 +83,16 @@ export default {
     }
 
     return new Response('Not Found', { status: 404, headers: corsHeaders });
+  },
+
+  // Weekly scheduled audits (cron "0 3 * * 1")
+  async scheduled(event, env, ctx) {
+    try {
+      const summary = await runScheduledAudits(env);
+      console.log('scheduled complete:', JSON.stringify(summary));
+    } catch (err) {
+      console.error('scheduled error:', err);
+    }
   },
 };
 
@@ -213,13 +230,8 @@ async function handleVerifyCode(request, env, corsHeaders) {
       user = { id: userId, email, name: null, avatar: null, provider: 'email', plan: 'free' };
     }
 
-    // Check subscription status
-    const sub = await env.DB.prepare(
-      `SELECT plan, status, current_period_end FROM subscriptions WHERE email=?`
-    ).bind(email).first();
-    if (sub && (sub.status === 'active' || sub.status === 'trialing')) {
-      user.plan = sub.plan;
-    }
+    // Resolve effective plan (subscription may have changed)
+    user.plan = await resolvePlan(user, env);
 
     // Sign JWT
     const token = await signJWT({ uid: user.id, email: user.email }, env.JWT_SECRET);
@@ -297,13 +309,8 @@ async function handleGoogleLogin(request, env, corsHeaders) {
       user.avatar = avatar;
     }
 
-    // Check subscription
-    const sub = await env.DB.prepare(
-      `SELECT plan, status FROM subscriptions WHERE email=?`
-    ).bind(email).first();
-    if (sub && (sub.status === 'active' || sub.status === 'trialing')) {
-      user.plan = sub.plan;
-    }
+    // Resolve effective plan
+    user.plan = await resolvePlan(user, env);
 
     const token = await signJWT({ uid: user.id, email: user.email }, env.JWT_SECRET);
 
@@ -350,13 +357,8 @@ async function handleMe(request, env, corsHeaders) {
       return json({ error: 'User not found' }, 404, corsHeaders);
     }
 
-    // Check subscription
-    const sub = await env.DB.prepare(
-      `SELECT plan, status, current_period_end FROM subscriptions WHERE email=?`
-    ).bind(user.email).first();
-    if (sub && (sub.status === 'active' || sub.status === 'trialing')) {
-      user.plan = sub.plan;
-    }
+    // Resolve effective plan (checks subscription expiry too)
+    user.plan = await resolvePlan(user, env);
 
     return json({ user }, 200, corsHeaders);
   } catch (err) {
@@ -376,7 +378,7 @@ async function handleWebhook(request, env, corsHeaders) {
     }
 
     const expectedSignature = await hmacSha256(rawBody, env.CREEM_WEBHOOK_SECRET);
-  if (!constantTimeEqual(signature, expectedSignature)) {
+    if (!constantTimeEqual(signature, expectedSignature)) {
       return new Response('Invalid signature', { status: 401, headers: corsHeaders });
     }
 
@@ -559,42 +561,6 @@ async function signJWT(payload, secret) {
   return `${data}.${signature}`;
 }
 
-async function verifyJWT(token, secret) {
-  const parts = token.split('.');
-  if (parts.length !== 3) return null;
-
-  const [header, payload, signature] = parts;
-  const expectedSignature = await hmacSha256(`${header}.${payload}`, secret);
-  if (!constantTimeEqual(signature, expectedSignature)) return null;
-
-  try {
-    const decoded = JSON.parse(base64UrlDecode(payload));
-    if (decoded.exp && decoded.exp < Math.floor(Date.now() / 1000)) {
-      return null;
-    }
-    return decoded;
-  } catch {
-    return null;
-  }
-}
-
-function base64Url(str) {
-  return btoa(str).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-}
-
-function base64UrlDecode(str) {
-  str = str.replace(/-/g, '+').replace(/_/g, '/');
-  while (str.length % 4) str += '=';
-  return atob(str);
-}
-
-function constantTimeEqual(a, b) {
-  if (a.length !== b.length) return false;
-  let result = 0;
-  for (let i = 0; i < a.length; i++) result |= a.charCodeAt(i) ^ b.charCodeAt(i);
-  return result === 0;
-}
-
 function inferPlanFromPrice(price) {
   if (!price) return null;
   const amount = typeof price === 'number' ? price : parseInt(price, 10);
@@ -602,15 +568,4 @@ function inferPlanFromPrice(price) {
   return null;
 }
 
-async function hmacSha256(message, secret) {
-  const encoder = new TextEncoder();
-  const key = await crypto.subtle.importKey(
-    'raw', encoder.encode(secret),
-    { name: 'HMAC', hash: 'SHA-256' },
-    false, ['sign']
-  );
-  const signature = await crypto.subtle.sign('HMAC', key, encoder.encode(message));
-  return Array.from(new Uint8Array(signature))
-    .map(b => b.toString(16).padStart(2, '0'))
-    .join('');
-}
+

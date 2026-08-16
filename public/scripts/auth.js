@@ -16,6 +16,11 @@ const API_BASE = 'https://geoscore-payments.geo-score.workers.dev';
 
   // State
   let currentUser = null;
+  const authListeners = [];
+
+  function notifyAuth() {
+    authListeners.forEach(function(fn) { try { fn(currentUser); } catch (e) {} });
+  }
 
   // Init on DOM ready
   document.addEventListener('DOMContentLoaded', initAuth);
@@ -32,6 +37,31 @@ const API_BASE = 'https://geoscore-payments.geo-score.workers.dev';
       clearTimeout(timeoutId);
       throw e;
     }
+  }
+
+  // JSON API wrapper for Pro features: attaches Bearer token, parses JSON,
+  // clears the session on 401. Pass { raw: true } to get the Response itself.
+  async function api(path, options) {
+    options = options || {};
+    var token = localStorage.getItem('geoscore_token');
+    var headers = Object.assign({}, options.headers || {});
+    if (token) headers['Authorization'] = 'Bearer ' + token;
+    var body = options.body;
+    if (body !== undefined && typeof body !== 'string') {
+      headers['Content-Type'] = 'application/json';
+      body = JSON.stringify(body);
+    }
+    var resp = await fetchWithTimeout(API_BASE + path, Object.assign({}, options, { headers: headers, body: body }), options.timeoutMs || 15000);
+    if (resp.status === 401) {
+      localStorage.removeItem('geoscore_token');
+      currentUser = null;
+      updateUI();
+      notifyAuth();
+    }
+    if (options.raw) return resp;
+    var data = null;
+    try { data = await resp.json(); } catch (e) {}
+    return { ok: resp.ok, status: resp.status, data: data };
   }
 
   async function initAuth() {
@@ -56,6 +86,7 @@ const API_BASE = 'https://geoscore-payments.geo-score.workers.dev';
     }
     setupLoginModal();
     updateUI();
+    notifyAuth();
   }
 
   function setupLoginModal() {
@@ -306,7 +337,7 @@ const API_BASE = 'https://geoscore-payments.geo-score.workers.dev';
   }
 
   // Expose for inline buttons
-  window.geoscoreAuth = { openAuthModal, logout, getCurrentUser: () => currentUser };
+  window.geoscoreAuth = { openAuthModal, logout, getCurrentUser: () => currentUser, api, onAuthChange: (fn) => { authListeners.push(fn); fn(currentUser); } };
 
   function escapeHtml(str) {
     const div = document.createElement('div');

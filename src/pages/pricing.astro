@@ -65,7 +65,7 @@ import Layout from '../layouts/Layout.astro';
           <li class="flex gap-2"><span class="text-brand-500">✓</span> 30-day audit history</li>
           <li class="flex gap-2"><span class="text-brand-500">✓</span> Regression alerts</li>
           <li class="flex gap-2"><span class="text-brand-500">✓</span> PDF export</li>
-          <li class="flex gap-2"><span class="text-brand-500">✓</span> 1 domain</li>
+          <li class="flex gap-2"><span class="text-brand-500">✓</span> 5 domains</li>
         </ul>
         <button id="upgrade-pro" data-checkout="https://www.creem.io/payment/prod_3hLh24EkJOL0jS0Jrf9zq5" class="block w-full text-center py-2.5 rounded-lg font-semibold text-sm text-white bg-gradient-to-r from-geo-600 to-brand-600 hover:from-geo-500 hover:to-brand-500 transition cursor-pointer">Start Free Trial</button>
       </div>
@@ -132,7 +132,7 @@ import Layout from '../layouts/Layout.astro';
             <tr><td class="py-2.5 text-gray-300">API access</td><td class="text-center text-gray-600">—</td><td class="text-center text-gray-600">—</td><td class="text-center text-gray-500">✓</td><td class="text-center text-gray-500">✓</td></tr>
             <tr><td class="py-2.5 text-gray-300">Team workspace</td><td class="text-center text-gray-600">—</td><td class="text-center text-gray-600">—</td><td class="text-center text-gray-600">—</td><td class="text-center text-gray-500">✓</td></tr>
             <tr><td class="py-2.5 text-gray-300">White-label reports</td><td class="text-center text-gray-600">—</td><td class="text-center text-gray-600">—</td><td class="text-center text-gray-600">—</td><td class="text-center text-gray-500">✓</td></tr>
-            <tr class="font-semibold"><td class="py-2.5 text-white">Domains</td><td class="text-center text-gray-300">1</td><td class="text-center text-brand-400">1</td><td class="text-center text-gray-500">15</td><td class="text-center text-gray-500">50</td></tr>
+            <tr class="font-semibold"><td class="py-2.5 text-white">Domains</td><td class="text-center text-gray-300">1</td><td class="text-center text-brand-400">5</td><td class="text-center text-gray-500">15</td><td class="text-center text-gray-500">50</td></tr>
             <tr class="font-semibold"><td class="py-2.5 text-white">Price</td><td class="text-center text-gray-300">$0</td><td class="text-center text-brand-400">$9/mo</td><td class="text-center text-gray-500">$29/mo</td><td class="text-center text-gray-500">$59/mo</td></tr>
           </tbody>
         </table>
@@ -188,7 +188,7 @@ import Layout from '../layouts/Layout.astro';
   // Pro checkout: redirect signed-in users to Creem, prompt login otherwise
   const proBtn = document.getElementById('upgrade-pro');
   if (proBtn) {
-    proBtn.addEventListener('click', function() {
+    proBtn.addEventListener('click', async function() {
       const token = localStorage.getItem('geoscore_token');
       if (!token) {
         if (window.geoscoreAuth) {
@@ -198,7 +198,26 @@ import Layout from '../layouts/Layout.astro';
         }
         return;
       }
-      // Redirect to Creem Checkout (Pro product)
+      // Create a Creem checkout session bound to this account via the Worker;
+      // fall back to the static checkout link if the API is unavailable.
+      if (window.geoscoreAuth && window.geoscoreAuth.api) {
+        const btn = this;
+        const original = btn.textContent;
+        btn.disabled = true;
+        btn.textContent = 'Preparing checkout...';
+        try {
+          const res = await window.geoscoreAuth.api('/api/checkout', { method: 'POST', body: {} });
+          if (res.ok && res.data && res.data.checkout_url) {
+            window.location.href = res.data.checkout_url;
+            return;
+          }
+        } catch (e) {
+          // Worker unreachable or timeout; fall through to the static link
+        }
+        btn.disabled = false;
+        btn.textContent = original;
+      }
+      // Fallback: redirect to the static Creem checkout link
       const checkoutUrl = proBtn.getAttribute('data-checkout');
       if (checkoutUrl) {
         window.location.href = checkoutUrl;

@@ -1,4 +1,4 @@
-﻿name = "geoscore-payments"
+name = "geoscore-payments"
 main = "payments.js"
 compatibility_date = "2024-09-25"
 
@@ -22,3 +22,7 @@ database_id = "372d4f13-35da-4878-b9d2-916b90fc11ad"
 
 # Webhook URL to register in Creem dashboard:
 # https://geoscore-payments.<your-subdomain>.workers.dev/webhook
+
+# Weekly Pro monitoring audits (Monday 03:00 UTC)
+[triggers]
+crons = ["0 3 * * 1"]
