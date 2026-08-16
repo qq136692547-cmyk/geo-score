@@ -5,6 +5,7 @@
 import ICONS from '../lib/icons.js';
 
 var IS_ZH = (document.documentElement.lang || 'en').toLowerCase().indexOf('zh') === 0;
+var LEVEL_ZH = { Excellent: "优秀", Good: "良好", Basic: "基础", Critical: "较差" };
 function t(en, zh) { return IS_ZH ? zh : en; }
 
 export function renderShareButtons(result) {
@@ -13,7 +14,7 @@ export function renderShareButtons(result) {
   var level = result.level;
   var shareUrl = encodeURIComponent('https://geoscore.help/?audit=' + url);
   var shareText = encodeURIComponent(IS_ZH
-    ? '我的网站在 GeoScore 上得分 ' + score + '/100（' + level + '）。快检查你的 GEO 就绪度：'
+    ? '我的网站在 GeoScore 上得分 ' + score + '/100（' + (LEVEL_ZH[level] || level) + '）。快检查你的 GEO 就绪度：'
     : 'My site scored ' + score + '/100 (' + level + ') on GeoScore — the GEO readiness audit. Check yours:');
 
   return '<div class="stagger-section fade-in-delay-8 card p-6 mb-8">' +
