@@ -336,6 +336,7 @@ async function handleAuditPdf(request, env, corsHeaders, id) {
 }
 
 const CREEM_CHECKOUT_API = env => (env.CREEM_API_BASE || 'https://api.creem.io') + '/v1/checkouts';
+const CREEM_CHECKOUT_KEY = env => (env.CREEM_API_BASE || '').includes('test-api') ? (env.CREEM_API_KEY_TEST || env.CREEM_API_KEY) : env.CREEM_API_KEY;
 const CREEM_PRODUCT_ID = 'prod_3hLh24EkJOL0jS0Jrf9zq5';
 const CREEM_SUCCESS_URL = 'https://geoscore.help/pricing/?checkout=success';
 
@@ -355,7 +356,7 @@ export async function handleCreateCheckout(request, env, corsHeaders) {
   const checkoutRes = await fetch(CREEM_CHECKOUT_API(env), {
     method: 'POST',
     headers: {
-      'x-api-key': env.CREEM_API_KEY,
+      'x-api-key': CREEM_CHECKOUT_KEY(env),
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
