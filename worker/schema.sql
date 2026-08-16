@@ -87,3 +87,11 @@ CREATE TABLE IF NOT EXISTS audits (
 CREATE INDEX IF NOT EXISTS idx_audits_user_created ON audits(user_id, created_at);
 CREATE INDEX IF NOT EXISTS idx_audits_site_created ON audits(site_id, created_at);
 CREATE INDEX IF NOT EXISTS idx_audits_created ON audits(created_at);
+
+-- Processed webhook events (idempotency: Creem retries each event up to 5 times)
+CREATE TABLE IF NOT EXISTS webhook_events (
+  event_id TEXT PRIMARY KEY,
+  event_type TEXT,
+  received_at INTEGER,
+  processed_at INTEGER
+);

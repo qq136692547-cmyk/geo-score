@@ -6,7 +6,7 @@
  * then WHERE placeholders).
  */
 export function createMockDb(seed = {}) {
-  const tables = { sites: [], audits: [], subscriptions: [], users: [], verify_codes: [] };
+  const tables = { sites: [], audits: [], subscriptions: [], users: [], verify_codes: [], webhook_events: [] };
   for (const [name, rows] of Object.entries(seed)) {
     if (!tables[name]) tables[name] = [];
     tables[name].push(...rows.map(r => ({ ...r })));
@@ -108,6 +108,10 @@ export function createMockDb(seed = {}) {
                 const v = vals[i];
                 row[col] = v === '?' ? params[pi++] : literalValue(v);
               });
+              const conflict = sql.match(/ON CONFLICT\(([a-z_]+)\)\s+DO NOTHING/i);
+              if (conflict && rows.some(r => r[conflict[1]] === row[conflict[1]])) {
+                return { meta: { changes: 0 } };
+              }
               rows.push(row);
             }
             return { meta: { changes: 1 } };

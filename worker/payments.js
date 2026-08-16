@@ -369,7 +369,21 @@ async function handleMe(request, env, corsHeaders) {
 
 // ============ WEBHOOK ============
 
+// Creem real payloads use *_date ISO strings; tests/legacy mocks use unix seconds.
+// Returns unix seconds for the subscription period end (or the fallback).
+function periodEndSeconds(object, fallback) {
+  const raw = object?.current_period_end_date ?? object?.current_period_end
+    ?? object?.trial_end_date ?? object?.trial_end ?? object?.next_transaction_date;
+  if (typeof raw === 'number') return Math.floor(raw);
+  if (typeof raw === 'string') {
+    const ms = Date.parse(raw);
+    if (!Number.isNaN(ms)) return Math.floor(ms / 1000);
+  }
+  return fallback;
+}
+
 async function handleWebhook(request, env, corsHeaders) {
+  let eventId = '';
   try {
     const rawBody = await request.text();
     const signature = request.headers.get('creem-signature');
@@ -377,8 +391,13 @@ async function handleWebhook(request, env, corsHeaders) {
       return new Response('Missing signature', { status: 401, headers: corsHeaders });
     }
 
-    const expectedSignature = await hmacSha256(rawBody, env.CREEM_WEBHOOK_SECRET);
-    if (!constantTimeEqual(signature, expectedSignature)) {
+    // Accept the production secret and, when set, the test-mode secret
+    let signatureValid = false;
+    for (const secret of [env.CREEM_WEBHOOK_SECRET, env.CREEM_WEBHOOK_SECRET_TEST]) {
+      if (!secret) continue;
+      if (constantTimeEqual(signature, await hmacSha256(rawBody, secret))) { signatureValid = true; break; }
+    }
+    if (!signatureValid) {
       return new Response('Invalid signature', { status: 401, headers: corsHeaders });
     }
 
@@ -386,6 +405,20 @@ async function handleWebhook(request, env, corsHeaders) {
     // Creem uses event_type (snake_case); also accept eventType for forward-compat
     const eventType = event.event_type || event.eventType;
     const object = event.data?.object || event.data || event.object;
+
+    // Idempotency: Creem retries each event up to 5 times; dedupe by event id.
+    eventId = event.id || event.event_id || '';
+    const now = Math.floor(Date.now() / 1000);
+    if (eventId) {
+      const dedup = await env.DB.prepare(
+        `INSERT INTO webhook_events (event_id, event_type, received_at, processed_at)
+         VALUES (?, ?, ?, ?)
+         ON CONFLICT(event_id) DO NOTHING`
+      ).bind(eventId, eventType || '', now, now).run();
+      if (dedup.meta && dedup.meta.changes === 0) {
+        return new Response('OK', { status: 200, headers: corsHeaders });
+      }
+    }
 
     switch (eventType) {
       case 'checkout.completed': {
@@ -395,8 +428,8 @@ async function handleWebhook(request, env, corsHeaders) {
         const plan = PLAN_MAP[product?.id] || inferPlanFromPrice(product?.price);
         if (!email || !plan) break;
         const now = Math.floor(Date.now() / 1000);
-        // Subscription ID: Creem checkout may have subscription_id or id
-        const subId = object?.subscription_id || object?.subscription || object?.id || '';
+        // Creem checkout payload nests the subscription object; legacy mocks use subscription_id
+        const subId = object?.subscription?.id || object?.subscription_id || '';
 
         await env.DB.prepare(
           `INSERT INTO subscriptions (email, plan, status, customer_id, subscription_id, current_period_end, updated_at)
@@ -406,7 +439,7 @@ async function handleWebhook(request, env, corsHeaders) {
              subscription_id=excluded.subscription_id, current_period_end=excluded.current_period_end,
              updated_at=excluded.updated_at`
         ).bind(email, plan, customer?.id || '', subId,
-          object?.current_period_end || now + 30 * 86400, now).run();
+          periodEndSeconds(object, now + 30 * 86400), now).run();
 
         // Also update users table plan
         await env.DB.prepare(
@@ -432,7 +465,7 @@ async function handleWebhook(request, env, corsHeaders) {
              subscription_id=excluded.subscription_id, current_period_end=excluded.current_period_end,
              updated_at=excluded.updated_at`
         ).bind(email, plan || 'pro', object?.customer?.id || '', object?.id || '',
-          object?.current_period_end || now + 30 * 86400, now).run();
+          periodEndSeconds(object, now + 30 * 86400), now).run();
 
         await env.DB.prepare(
           `UPDATE users SET plan=?, updated_at=? WHERE email=?`
@@ -475,7 +508,7 @@ async function handleWebhook(request, env, corsHeaders) {
            ON CONFLICT(email) DO UPDATE SET
              plan=excluded.plan, status=excluded.status, updated_at=excluded.updated_at`
         ).bind(email, plan, object?.customer?.id || '', object?.id || '',
-          object?.trial_end || Math.floor(Date.now() / 1000) + 7 * 86400,
+          periodEndSeconds(object, Math.floor(Date.now() / 1000) + 7 * 86400),
           Math.floor(Date.now() / 1000)).run();
         break;
       }
@@ -487,6 +520,12 @@ async function handleWebhook(request, env, corsHeaders) {
     return new Response('OK', { status: 200, headers: corsHeaders });
   } catch (err) {
     console.error('Webhook error:', err);
+    // Roll back the dedup marker so Creem's retry can reprocess the event.
+    if (eventId && env && env.DB) {
+      try {
+        await env.DB.prepare('DELETE FROM webhook_events WHERE event_id=?').bind(eventId).run();
+      } catch (_) { /* best-effort */ }
+    }
     return new Response('Internal Error', { status: 500, headers: corsHeaders });
   }
 }
