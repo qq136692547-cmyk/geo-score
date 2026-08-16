@@ -1,0 +1,54 @@
+name: Build & Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build static site
+        run: npm run build
+
+      - name: Deploy dist to gh-pages
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          REPO_URL="https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          rm -rf /tmp/gh-pages-deploy
+          if git ls-remote --exit-code --heads "$REPO_URL" gh-pages >/dev/null 2>&1; then
+            git clone --quiet --depth 1 --branch gh-pages "$REPO_URL" /tmp/gh-pages-deploy
+            cd /tmp/gh-pages-deploy
+            find . -mindepth 1 -maxdepth 1 -not -name ".git" -exec rm -rf -- {} +
+          else
+            git init --quiet /tmp/gh-pages-deploy
+            cd /tmp/gh-pages-deploy
+            git checkout --quiet -b gh-pages
+          fi
+          cp -a "${GITHUB_WORKSPACE}/dist/." .
+          git add -A
+          git -c user.name="GitHub Actions" -c user.email="actions@github.com" commit --quiet -m "deploy: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          git push --force --quiet "$REPO_URL" gh-pages
