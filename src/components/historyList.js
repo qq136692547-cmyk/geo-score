@@ -1,8 +1,11 @@
-﻿const LEVEL_CLR = { Excellent: "text-geo-500", Good: "text-brand-500", Basic: "text-warn-500", Critical: "text-danger-500" };
+var IS_ZH = (document.documentElement.lang || 'en').toLowerCase().indexOf('zh') === 0;
+function t(en, zh) { return IS_ZH ? zh : en; }
+
+const LEVEL_CLR = { Excellent: "text-geo-500", Good: "text-brand-500", Basic: "text-warn-500", Critical: "text-danger-500" };
 
 export function renderHistoryList(history) {
   if (!history || history.length === 0) return "";
-  return '<div class="card p-4 text-sm"><div class="text-gray-400 mb-2 text-xs uppercase tracking-wider font-semibold">Recent Audits</div>' +
+  return '<div class="card p-4 text-sm"><div class="text-gray-400 mb-2 text-xs uppercase tracking-wider font-semibold">' + t('Recent Audits', '最近审计') + '</div>' +
     history.slice(0, 5).map(function(e) {
       var levelCls = LEVEL_CLR[e.level] || "text-gray-400";
       var safeUrl = e.url.replace(/"/g, "&quot;");

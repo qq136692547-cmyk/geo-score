@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Main scanner — orchestrates fetching and analysis across all 12 dimensions.
  */
 import { fetchResource } from './fetcher.js';
@@ -81,7 +81,10 @@ async function auditUrl(url) {
   const passedDims = Object.values(scoring.dimensions).filter(d => d.percentage >= 60).length;
   const totalDims = Object.keys(scoring.dimensions).length;
   const piFlags = promptInjectionResult.flags.length;
-  const summary = `Score ${scoring.total}/100 (${scoring.level}). ${passedDims}/${totalDims} dimensions above 60%. ${negativeResult.deductions.length} negative signal(s) detected. ${piFlags} prompt injection flag(s).`;
+  const isZh = typeof document !== 'undefined' && (document.documentElement.lang || 'en').toLowerCase().indexOf('zh') === 0;
+  const summary = isZh
+    ? `得分 ${scoring.total}/100（${scoring.level}）。${passedDims}/${totalDims} 个维度高于 60%。检测到 ${negativeResult.deductions.length} 个负面信号和 ${piFlags} 个提示注入标记。`
+    : `Score ${scoring.total}/100 (${scoring.level}). ${passedDims}/${totalDims} dimensions above 60%. ${negativeResult.deductions.length} negative signal(s) detected. ${piFlags} prompt injection flag(s).`;
 
   return {
     url: normalized,

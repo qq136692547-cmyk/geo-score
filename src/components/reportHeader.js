@@ -1,5 +1,11 @@
 import ICONS from '../lib/icons.js';
 
+var IS_ZH = (document.documentElement.lang || 'en').toLowerCase().indexOf('zh') === 0;
+function t(en, zh) { return IS_ZH ? zh : en; }
+
+const LEVEL_ZH = { Excellent: "优秀", Good: "良好", Basic: "基础", Critical: "较差" };
+
+
 const BG_CLR = { Excellent: "bg-geo-500", Good: "bg-brand-500", Basic: "bg-warn-500", Critical: "bg-danger-500" };
 
 export function renderScoreHeader(r) {
@@ -13,10 +19,10 @@ export function renderScoreHeader(r) {
       '<div class="absolute inset-0 flex items-center justify-center"><span class="text-4xl font-extrabold gradient-text">' + r.score + '</span></div>' +
     '</div>' +
     '<div class="flex-1 text-center lg:text-left">' +
-      '<h1 class="text-2xl font-bold mb-1">GEO Audit Report</h1>' +
+      '<h1 class="text-2xl font-bold mb-1">' + t('GEO Audit Report', 'GEO 审计报告') + '</h1>' +
       '<a href="' + r.url + '" target="_blank" class="text-brand-500 hover:underline text-sm font-mono break-all">' + r.url + '</a>' +
       '<div class="mt-3 flex flex-wrap gap-2 justify-center lg:justify-start">' +
-        '<span class="px-3 py-1 rounded-full text-xs font-bold text-white ' + BG_CLR[r.level] + '">' + r.level + '</span>' +
+        '<span class="px-3 py-1 rounded-full text-xs font-bold text-white ' + BG_CLR[r.level] + '">' + (IS_ZH ? (LEVEL_ZH[r.level] || r.level) : r.level) + '</span>' +
         '<span class="px-3 py-1 rounded-full text-xs bg-white/5 text-gray-400">' + r.timestamp + '</span>' +
       '</div>' +
       '<p class="mt-3 text-sm text-gray-400">' + r.summary + '</p>' +

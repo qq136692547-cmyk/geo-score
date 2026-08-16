@@ -25,6 +25,9 @@ var radarChartInstance = null;
 var trendChartInstance = null;
 var scanTimer = null;
 
+var IS_ZH = (document.documentElement.lang || 'en').toLowerCase().indexOf('zh') === 0;
+function t(en, zh) { return IS_ZH ? zh : en; }
+
 window.showBatchInput = function() {
   var el = document.getElementById("batch-section");
   if (el) el.classList.toggle("hidden");
@@ -290,9 +293,9 @@ document.addEventListener("DOMContentLoaded", function() { renderHistory(); });
 window.doExport = function(format) {
   if (typeof window.geoTrack === 'function') window.geoTrack('export_clicked', { format: format });
   var raw = localStorage.getItem("geoscope_last_result");
-  if (!raw) { alert("No audit result to export. Run an audit first."); return; }
+  if (!raw) { alert(t("No audit result to export. Run an audit first.", "没有可导出的审计结果，请先运行一次审计。")); return; }
   var r;
-  try { r = JSON.parse(raw); } catch(e) { alert("Failed to parse stored result."); return; }
+  try { r = JSON.parse(raw); } catch(e) { alert(t("Failed to parse stored result.", "解析已保存的结果失败。")); return; }
   var content, mime, ext;
   if (format === "md") {
     content = exportMarkdown(r); mime = "text/markdown"; ext = "md";
@@ -316,9 +319,9 @@ window.doExport = function(format) {
 // --- Fix file download & preview ---
 window.downloadFixFile = function(fileKey) {
   var raw = localStorage.getItem("geoscope_last_result");
-  if (!raw) { alert("No audit result found."); return; }
+  if (!raw) { alert(t("No audit result found.", "未找到审计结果。")); return; }
   var r;
-  try { r = JSON.parse(raw); } catch(e) { alert("Failed to parse stored result."); return; }
+  try { r = JSON.parse(raw); } catch(e) { alert(t("Failed to parse stored result.", "解析已保存的结果失败。")); return; }
   var files = generateFixFiles(r);
   var f = files[fileKey];
   if (!f) return;
@@ -335,9 +338,9 @@ window.downloadFixFile = function(fileKey) {
 
 window.previewFixFile = function(fileKey) {
   var raw = localStorage.getItem("geoscope_last_result");
-  if (!raw) { alert("No audit result found."); return; }
+  if (!raw) { alert(t("No audit result found.", "未找到审计结果。")); return; }
   var r;
-  try { r = JSON.parse(raw); } catch(e) { alert("Failed to parse stored result."); return; }
+  try { r = JSON.parse(raw); } catch(e) { alert(t("Failed to parse stored result.", "解析已保存的结果失败。")); return; }
   var files = generateFixFiles(r);
   var f = files[fileKey];
   if (!f) return;

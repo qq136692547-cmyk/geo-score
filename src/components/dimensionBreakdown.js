@@ -1,15 +1,21 @@
 import ICONS from '../lib/icons.js';
 
+var IS_ZH = (document.documentElement.lang || 'en').toLowerCase().indexOf('zh') === 0;
+function t(en, zh) { return IS_ZH ? zh : en; }
+
+const LABELS_ZH = { aiCrawlability: "AI 可爬取性", aiGuidance: "AI 引导", structuredData: "结构化数据", metaSocial: "Meta 与社交", contentQuality: "内容质量", eeat: "E-E-A-T", brandEntity: "品牌与实体", citationReadiness: "引用就绪度", discoveryEndpoints: "发现端点", agentFriendliness: "Agent 友好度", freshness: "内容新鲜度" };
+
+
 const LABELS = { aiCrawlability: "AI Crawlability", aiGuidance: "AI Guidance", structuredData: "Structured Data", metaSocial: "Meta & Social", contentQuality: "Content Quality", eeat: "E-E-A-T", brandEntity: "Brand & Entity", citationReadiness: "Citation Readiness", discoveryEndpoints: "Discovery", agentFriendliness: "Agent Friendly", freshness: "Freshness" };
 
 export function renderDimensionBreakdown(dimensions) {
   const dimKeys = Object.keys(dimensions);
   return '<div class="stagger-section fade-in-delay-3 card p-6 mb-8">' +
-    '<h2 class="text-lg font-bold mb-5">Dimension Breakdown</h2>' +
+    '<h2 class="text-lg font-bold mb-5">' + t('Dimension Breakdown', '维度分解') + '</h2>' +
     '<div class="space-y-4">' +
     dimKeys.map(function(k) {
       var d = dimensions[k];
-      var label = LABELS[k] || k;
+      var label = IS_ZH ? (LABELS_ZH[k] || k) : (LABELS[k] || k);
       var pct = d.percentage || 0;
       var barColor = pct >= 80 ? 'bg-geo-500' : pct >= 60 ? 'bg-brand-500' : pct >= 40 ? 'bg-warn-500' : 'bg-danger-500';
       var checkCount = (d.passed || 0) + "/" + (d.total || d.checks || 0);
