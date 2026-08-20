@@ -5,6 +5,7 @@
  * window.geoscoreAuth.api() wrapper (see auth.js).
  */
 import { openSiteHistory } from './auditHistory.js';
+import { openVisibility } from './visibilityPanel.js';
 
 var IS_ZH = (document.documentElement.lang || 'en').toLowerCase().indexOf('zh') === 0;
 function t(en, zh) { return IS_ZH ? zh : en; }
@@ -67,6 +68,11 @@ export function initSitesPanel(auth) {
         .catch(function() { del.disabled = false; alert(t('Failed to delete the domain.', '删除域名失败。')); });
       return;
     }
+    var vis = e.target.closest('[data-visibility]');
+    if (vis) {
+      openVisibility(auth, { id: vis.getAttribute('data-visibility'), host: vis.getAttribute('data-host'), url: vis.getAttribute('data-url') });
+      return;
+    }
     var hist = e.target.closest('[data-history]');
     if (hist) {
       openSiteHistory(auth, hist.getAttribute('data-history'), hist.getAttribute('data-host'));
@@ -103,6 +109,7 @@ async function refreshSites(auth, list, count) {
       '<span class="flex-1 text-gray-300 text-sm truncate">' + escapeHtml(s.host) + '</span>' +
       scoreCell +
       statusCell +
+      '<button class="text-xs text-brand-400 hover:text-brand-300 transition" data-visibility="' + s.id + '" data-host="' + escapeHtml(s.host) + '" data-url="' + escapeHtml(s.url) + '">AI</button>' +
       '<button class="text-xs text-brand-400 hover:text-brand-300 transition" data-history="' + s.id + '" data-host="' + escapeHtml(s.host) + '">' + t('History', '历史') + '</button>' +
       '<button class="text-xs text-danger-400 hover:text-danger-300 transition" data-delete="' + s.id + '">' + t('Remove', '移除') + '</button>' +
       '</div>';

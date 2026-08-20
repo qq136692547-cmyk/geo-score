@@ -8,6 +8,7 @@
  */
 import { auditUrl } from './lib/node-scanner.js';
 import { renderAuditPdf } from './lib/pdf.js';
+import { runVisibilityCheck, getLatestVisibility } from './visibility.js';
 
 const MAX_SITES = 5;
 const ALERT_THRESHOLD = 10;        // score drop >= 10 triggers email
@@ -139,6 +140,8 @@ export async function handleProRoutes(request, env, corsHeaders, url, path) {
   if (path === '/api/audits' && request.method === 'POST') return handleSaveAudit(request, env, corsHeaders);
   const pdfMatch = path.match(/^\/api\/audits\/([^/]+)\/pdf$/);
   if (pdfMatch && request.method === 'GET') return handleAuditPdf(request, env, corsHeaders, pdfMatch[1]);
+  if (path === '/api/visibility/check' && request.method === 'POST') return handleVisibilityCheck(request, env, corsHeaders);
+  if (path === '/api/visibility' && request.method === 'GET') return handleListVisibility(request, env, corsHeaders, url);
   return json({ error: 'Not Found' }, 404, corsHeaders);
 }
 
@@ -335,6 +338,55 @@ async function handleAuditPdf(request, env, corsHeaders, id) {
   });
 }
 
+
+// ============ AI VISIBILITY (Pro, v1.8) ============
+
+/**
+ * POST /api/visibility/check
+ * Body: { host } (or { url }) - must match one of the user's monitored sites.
+ * Runs an AI recommendation simulation across 4 engines and stores the batch.
+ */
+async function handleVisibilityCheck(request, env, corsHeaders) {
+  const guard = await assertProUser(request, env, corsHeaders);
+  if (guard.error) return guard.error;
+  const user = guard.user;
+  if (!env.TOKENRHYTHM_API_KEY) {
+    return json({ error: 'AI visibility check unavailable' }, 503, corsHeaders);
+  }
+  let body = {};
+  try { body = await request.json(); } catch (e) {}
+  const raw = String(body.host || body.url || '').trim().toLowerCase().replace(/^www\./, '');
+  if (!raw) return json({ error: 'Missing host' }, 400, corsHeaders);
+  const site = await env.DB.prepare(
+    "SELECT * FROM sites WHERE user_id=? AND host=? AND status='active' LIMIT 1"
+  ).bind(user.id, raw).first();
+  if (!site) return json({ error: 'Domain not monitored' }, 404, corsHeaders);
+  try {
+    const result = await runVisibilityCheck(env, site);
+    return json(result, 200, corsHeaders);
+  } catch (err) {
+    return json({ error: String(err && err.message ? err.message : err).slice(0, 300) }, 500, corsHeaders);
+  }
+}
+
+/**
+ * GET /api/visibility?host=example.com
+ * Latest per-engine visibility batch for a monitored site.
+ */
+async function handleListVisibility(request, env, corsHeaders, url) {
+  const guard = await assertProUser(request, env, corsHeaders);
+  if (guard.error) return guard.error;
+  const user = guard.user;
+  const host = String(url.searchParams.get('host') || '').trim().toLowerCase().replace(/^www\./, '');
+  if (!host) return json({ error: 'Missing host' }, 400, corsHeaders);
+  const site = await env.DB.prepare(
+    "SELECT id FROM sites WHERE user_id=? AND host=? AND status='active' LIMIT 1"
+  ).bind(user.id, host).first();
+  if (!site) return json({ error: 'Domain not monitored' }, 404, corsHeaders);
+  const result = await getLatestVisibility(env, user, host);
+  return json(result, 200, corsHeaders);
+}
+
 const CREEM_CHECKOUT_API = env => (env.CREEM_API_BASE || 'https://api.creem.io') + '/v1/checkouts';
 const CREEM_CHECKOUT_KEY = env => (env.CREEM_API_BASE || '').includes('test-api') ? (env.CREEM_API_KEY_TEST || env.CREEM_API_KEY) : env.CREEM_API_KEY;
 const CREEM_PRODUCT_ID = 'prod_3hLh24EkJOL0jS0Jrf9zq5';
@@ -519,15 +571,32 @@ export async function runScheduledAudits(env) {
     });
   }
 
+  // 4) AI visibility simulation for each active site (best-effort, isolated)
+  let visSuccess = 0, visFailed = 0, visSkipped = false;
+  if (!env.TOKENRHYTHM_API_KEY) {
+    visSkipped = true;
+    console.log('cron: visibility skipped (TOKENRHYTHM_API_KEY missing)');
+  } else {
+    for (let i = 0; i < sites.length; i += SITE_CONCURRENCY) {
+      const batch = sites.slice(i, i + SITE_CONCURRENCY);
+      const visResults = await Promise.allSettled(batch.map(site => runVisibilityCheck(env, site)));
+      visResults.forEach(r => {
+        if (r.status === 'fulfilled' && r.value && r.value.ok) visSuccess++;
+        else visFailed++;
+      });
+    }
+  }
+
   console.log(JSON.stringify({
     cron: 'geo-score-pro',
     sites: sites.length,
     success,
     failed,
     alerts,
+    visibility: visSkipped ? 'skipped' : { success: visSuccess, failed: visFailed },
     at: now,
   }));
-  return { sites: sites.length, success, failed, alerts };
+  return { sites: sites.length, success, failed, alerts, visibility: visSkipped ? null : { success: visSuccess, failed: visFailed } };
 }
 
 

@@ -17,6 +17,7 @@ database_id = "372d4f13-35da-4878-b9d2-916b90fc11ad"
 # GEOSCORE_API_TOKEN    - token for protecting the legacy status API
 # RESEND_API_KEY        - Resend API key for sending verification emails
 # JWT_SECRET            - HMAC secret for signing JWT session tokens
+# TOKENRHYTHM_API_KEY    - LLM API key for AI visibility simulation (v1.8)
 # GOOGLE_CLIENT_ID      - Google OAuth Client ID
 
 # Routes

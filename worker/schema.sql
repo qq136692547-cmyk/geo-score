@@ -95,3 +95,28 @@ CREATE TABLE IF NOT EXISTS webhook_events (
   received_at INTEGER,
   processed_at INTEGER
 );
+
+-- ============ AI VISIBILITY (v1.8) ============
+
+-- Per-engine AI recommendation simulation results (one row per engine per check batch)
+CREATE TABLE IF NOT EXISTS ai_visibility (
+  id TEXT PRIMARY KEY,
+  user_id TEXT NOT NULL,
+  email TEXT NOT NULL,
+  site_id TEXT,
+  host TEXT NOT NULL,
+  url TEXT NOT NULL,
+  engine TEXT NOT NULL,
+  query TEXT,
+  mentioned INTEGER NOT NULL DEFAULT 0,
+  cited INTEGER NOT NULL DEFAULT 0,
+  sentiment TEXT,
+  snippet TEXT,
+  raw TEXT,
+  error TEXT,
+  checked_at INTEGER NOT NULL,
+  created_at INTEGER DEFAULT (strftime('%s','now'))
+);
+
+CREATE INDEX IF NOT EXISTS idx_ai_visibility_host_time ON ai_visibility(host, checked_at);
+CREATE INDEX IF NOT EXISTS idx_ai_visibility_site_time ON ai_visibility(site_id, checked_at);
