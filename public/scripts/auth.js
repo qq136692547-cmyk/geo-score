@@ -21,6 +21,28 @@ const API_BASE = 'https://geoscore-payments.geo-score.workers.dev';
   let currentUser = null;
   const authListeners = [];
 
+  function authSource() {
+    try {
+      const params = new URLSearchParams(location.search);
+      const source = (params.get('utm_source') || '').toLowerCase();
+      const medium = (params.get('utm_medium') || '').toLowerCase();
+      if (source === 'ttcalc' && medium === 'site') return 'cross_site';
+      if (source) return 'external';
+      if (!document.referrer) return 'direct';
+      const host = new URL(document.referrer).hostname.toLowerCase();
+      if (/(^|\.)(google|bing|baidu|duckduckgo|yandex|ecosia|startpage|brave)\.[a-z.]+$/.test(host)) return 'search';
+      return 'external';
+    } catch (e) {
+      return 'other';
+    }
+  }
+
+  function trackSignIn(method, state) {
+    if (typeof window.geoTrack === 'function') {
+      window.geoTrack('sign_in', { method, state, source_type: authSource() });
+    }
+  }
+
   function notifyAuth() {
     authListeners.forEach(function(fn) { try { fn(currentUser); } catch (e) {} });
   }
@@ -208,6 +230,7 @@ const API_BASE = 'https://geoscore-payments.geo-score.workers.dev';
         if (resp.ok && data.token) {
           localStorage.setItem('geoscore_token', data.token);
           currentUser = data.user;
+          trackSignIn('email', 'completed');
           closeAuthModal();
           updateUI();
           location.reload();
@@ -256,6 +279,7 @@ const API_BASE = 'https://geoscore-payments.geo-score.workers.dev';
       if (resp.ok && data.token) {
         localStorage.setItem('geoscore_token', data.token);
         currentUser = data.user;
+        trackSignIn('google', 'completed');
         closeAuthModal();
         updateUI();
         location.reload();
