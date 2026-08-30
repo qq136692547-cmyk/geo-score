@@ -72,8 +72,8 @@ function getFixSuggestion(dimension, checkId) {
       'perplexity': 'Add `User-agent: PerplexityBot` with `Allow: /` to robots.txt',
       'claudebot': 'Add `User-agent: ClaudeBot` with `Allow: /` to robots.txt',
       'google-extended': 'Add `User-agent: Google-Extended` with `Allow: /` to robots.txt',
-      'gptbot': 'Add `User-agent: GPTBot` with `Disallow: /` to robots.txt to prevent training',
-      'anthropic-ai': 'Add `User-agent: anthropic-ai` with `Disallow: /` to robots.txt to prevent training',
+      'gptbot': 'Add `User-agent: GPTBot` with `Allow: /` to robots.txt',
+      'anthropic-ai': 'Add `User-agent: anthropic-ai` with `Allow: /` to robots.txt',
     },
     aiGuidance: {
       'exists': 'Create an llms.txt file at your site root following the llms.txt standard',

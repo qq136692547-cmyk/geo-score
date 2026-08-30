@@ -15,16 +15,16 @@ import Layout from '../layouts/Layout.astro';
       <section>
         <h2 class="text-xl font-bold text-white mb-3">1. Overview</h2>
         <p>
-          GeoScore is a free, open-source audit tool. This policy explains what data we collect, what we don't, and why. The short version: we collect almost nothing, we never sell anything, and the audit tool runs entirely in your browser.
+          GeoScore is an open-source GEO audit tool with free single-browser audits and optional Pro monitoring. This policy explains what data each mode collects and why.
         </p>
       </section>
 
       <section>
         <h2 class="text-xl font-bold text-white mb-3">2. Data We Do NOT Collect</h2>
-        <p>The GeoScore audit runs 100% client-side. When you enter a URL to audit:</p>
+        <p>A single browser audit runs client-side. When you enter a URL to audit:</p>
         <ul class="list-disc list-inside space-y-1 mt-2">
           <li>The URL is fetched directly from your browser to public proxies and the target site.</li>
-          <li>The URL is <strong>never sent to our servers</strong> (we don't have any application servers).</li>
+          <li>The URL is not sent to GeoScore servers as part of the browser audit; the browser requests public resources directly or through a CORS proxy.</li>
           <li>The URL is <strong>never logged</strong>, <strong>never stored</strong>, and <strong>never shared</strong> with third parties.</li>
         </ul>
       </section>

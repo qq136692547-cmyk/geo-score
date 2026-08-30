@@ -15,7 +15,7 @@ import LayoutZh from '../../layouts/LayoutZh.astro';
       <section>
         <h2 class="text-xl font-bold text-white mb-3">1. 概述</h2>
         <p>
-          GeoScore 是一个免费开源审计工具。本政策解释我们收集哪些数据、不收集哪些数据以及原因。简短版本：我们几乎不收集任何数据，从不出售任何东西，审计工具完全在你的浏览器中运行。
+          GeoScore 是一个开源 GEO 审计工具，提供免费单次浏览器审计和可选 Pro 监控。本政策解释不同模式分别收集哪些数据以及原因。
         </p>
       </section>
 
@@ -24,7 +24,7 @@ import LayoutZh from '../../layouts/LayoutZh.astro';
         <p>GeoScore 审计 100% 在客户端运行。当你输入 URL 进行审计时：</p>
         <ul class="list-disc list-inside space-y-1 mt-2">
           <li>URL 直接从你的浏览器获取到公共代理和目标站点。</li>
-          <li>URL <strong>绝不会发送到我们的服务器</strong>（我们没有任何应用服务器）。</li>
+          <li>单次浏览器审计不会把 URL 发送给 GeoScore 存储；浏览器会直接或通过 CORS 代理请求公开资源。</li>
           <li>URL <strong>绝不会被记录</strong>、<strong>绝不会被存储</strong>，也<strong>绝不会被分享</strong>给第三方。</li>
         </ul>
       </section>

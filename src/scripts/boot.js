@@ -28,6 +28,35 @@ var scanTimer = null;
 var IS_ZH = (document.documentElement.lang || 'en').toLowerCase().indexOf('zh') === 0;
 function t(en, zh) { return IS_ZH ? zh : en; }
 
+function getGeoSource() {
+  try {
+    var params = new URLSearchParams(location.search);
+    var source = (params.get('utm_source') || '').toLowerCase();
+    var medium = (params.get('utm_medium') || '').toLowerCase();
+    if (source === 'ttcalc' && medium === 'site') return 'cross_site';
+    if (source) return 'external';
+    var ref = document.referrer;
+    if (!ref) return 'direct';
+    var refHost = new URL(ref).hostname.toLowerCase();
+    if (/(^|\.)(google|bing|baidu|duckduckgo|yandex|ecosia|startpage|brave)\.[a-z.]+$/.test(refHost)) return 'search';
+    return 'external';
+  } catch (e) { return 'other'; }
+}
+
+function geoUrlDomain(value) {
+  try { return new URL(value).hostname; } catch (e) { return ''; }
+}
+
+function geoErrorCode(error) {
+  var message = String(error && error.message || '').toLowerCase();
+  if (message.includes('abort') || message.includes('timeout')) return 'timeout';
+  if (message.includes('fetch') || message.includes('network')) return 'fetch_failed';
+  if (message.includes('parse') || message.includes('json')) return 'parse_error';
+  if (message.includes('rate limit') || message.includes('429')) return 'rate_limited';
+  if (message.includes('server') || message.includes('500')) return 'server_error';
+  return 'unknown';
+}
+
 window.showBatchInput = function() {
   var el = document.getElementById("batch-section");
   if (el) el.classList.toggle("hidden");
@@ -154,10 +183,11 @@ window.startAudit = async function () {
   try {
     var targetUrl = url;
     if (!/^https?:\/\//i.test(targetUrl)) targetUrl = "https://" + targetUrl;
+    if (typeof window.geoTrack === 'function') window.geoTrack('audit_started', { url_domain: geoUrlDomain(targetUrl), source_type: getGeoSource() });
     var result = await auditUrl(targetUrl);
     addToHistory(result);
     localStorage.setItem("geoscope_last_result", JSON.stringify(result));
-    if (typeof window.geoTrack === 'function') window.geoTrack('audit_completed', { url: targetUrl, score: result.score, level: result.level });
+    if (typeof window.geoTrack === 'function') window.geoTrack('audit_completed', { url_domain: geoUrlDomain(targetUrl), score: result.score, level: result.level, source_type: getGeoSource() });
     clearInterval(scanTimer);
     var reportEl = document.getElementById("report-section");
     var loadEl = document.getElementById("loading-section");
@@ -184,7 +214,7 @@ window.startAudit = async function () {
     }
   } catch (err) {
     clearInterval(scanTimer);
-    if (typeof window.geoTrack === 'function') window.geoTrack('audit_failed', { url: url, error: err.message });
+    if (typeof window.geoTrack === 'function') window.geoTrack('audit_failed', { url_domain: geoUrlDomain(url), error_code: geoErrorCode(err), source_type: getGeoSource() });
     document.getElementById("loading-section").innerHTML = '<div class="card p-8 text-center"><div class="text-danger-500 text-lg font-semibold mb-2">Audit Failed</div><p class="text-gray-400 text-sm">' + err.message + '</p><button onclick="location.reload()" class="mt-4 px-4 py-2 rounded-lg text-sm bg-white/10 hover:bg-white/20 transition">Try Again</button></div>';
   }
   btn.disabled = false;
@@ -291,7 +321,7 @@ document.addEventListener("DOMContentLoaded", function() { renderHistory(); });
 
 // --- Export functionality ---
 window.doExport = function(format) {
-  if (typeof window.geoTrack === 'function') window.geoTrack('export_clicked', { format: format });
+  if (typeof window.geoTrack === 'function') window.geoTrack('tool_complete', { tool_name: 'report_export', format: format, source_type: getGeoSource() });
   var raw = localStorage.getItem("geoscope_last_result");
   if (!raw) { alert(t("No audit result to export. Run an audit first.", "没有可导出的审计结果，请先运行一次审计。")); return; }
   var r;
@@ -333,7 +363,7 @@ window.downloadFixFile = function(fileKey) {
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(a.href);
-  if (typeof window.geoTrack === 'function') window.geoTrack('fix_file_downloaded', { file: fileKey });
+  if (typeof window.geoTrack === 'function') window.geoTrack('tool_complete', { tool_name: 'fix_file_download', file: fileKey, source_type: getGeoSource() });
 };
 
 window.previewFixFile = function(fileKey) {

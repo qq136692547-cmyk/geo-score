@@ -1,4 +1,4 @@
-﻿{
+{
     "$schema":  "https://geoscore.help/ai/schema/faq.v1.json",
     "site":  "GeoScore",
     "url":  "https://geoscore.help",
@@ -25,13 +25,13 @@
                  {
                      "id":  "how-does-geoscore-work",
                      "question":  "How does GeoScore work?",
-                     "answer":  "GeoScore audits any public URL across 12 dimensions of GEO readiness (AI crawlability, llms.txt presence, structured data, meta tags, content quality, E-E-A-T signals, brand entity, citation readiness, discovery, agent-friendliness, AI guidance markers, and freshness), producing a 0-100 score plus a prioritized list of fixes. The audit runs entirely in your browser; your URLs are not stored on any server. The source code is MIT-licensed and available on GitHub.",
+                     "answer":  "GeoScore audits any public URL across 12 dimensions of GEO readiness (AI crawlability, llms.txt presence, structured data, meta tags, content quality, E-E-A-T signals, brand entity, citation readiness, discovery, agent-friendliness, AI guidance markers, and freshness), producing a 0-100 score plus a prioritized list of fixes. A single browser audit is free; optional Pro monitoring uses a Cloudflare Worker and D1. The source code is MIT-licensed and available on GitHub.",
                      "category":  "tool"
                  },
                  {
                      "id":  "is-geoscore-free",
                      "question":  "Is GeoScore free?",
-                     "answer":  "Yes. GeoScore is 100% free and open-source under the MIT License. There is no signup, no paywall, and no per-audit limit. The source code is available on GitHub at github.com/qq136692547-cmyk/geo-score. You can also self-host the entire tool on your own domain.",
+                     "answer":  "The open-source single browser audit, CLI, and MCP Server are free. Optional Pro plans add paid cloud monitoring and history. The source code is available on GitHub at github.com/qq136692547-cmyk/geo-score. You can also self-host the open-source browser audit on your own domain.",
                      "category":  "tool"
                  },
                  {

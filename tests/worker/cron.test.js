@@ -57,7 +57,7 @@ describe('weekly scheduled audits', () => {
     vi.mocked(auditUrl).mockResolvedValue(okResult(71));
     const env = makeEnv([site()]);
     const summary = await runScheduledAudits(env);
-    expect(summary).toEqual({ sites: 1, success: 1, failed: 0, alerts: 0 });
+    expect(summary).toEqual({ sites: 1, success: 1, failed: 0, alerts: 0, visibility: null });
     const s = env.DB._tables.sites[0];
     expect(s.last_score).toBe(71);
     expect(s.last_success_at).toBeTruthy();
@@ -129,6 +129,6 @@ describe('weekly scheduled audits', () => {
       url: 'https://site' + i + '.example.com',
     })));
     const summary = await runScheduledAudits(env);
-    expect(summary).toEqual({ sites: 5, success: 0, failed: 5, alerts: 0 });
+    expect(summary).toEqual({ sites: 5, success: 0, failed: 5, alerts: 0, visibility: null });
   });
 });

@@ -1,6 +1,6 @@
 # GeoScore
 
-> GeoScore is a free, open-source GEO (Generative Engine Optimization) audit tool. It scores any website 0-100 across 12 dimensions of AI search visibility, then generates fix files (llms.txt, robots.txt, JSON-LD schema) you can deploy immediately. Used to diagnose why some sites get cited by ChatGPT, Perplexity, and Claude while others don't.
+> GeoScore is an open-source GEO (Generative Engine Optimization) audit tool with free single-browser audits and optional paid Pro monitoring. It scores any website 0-100 across 12 dimensions of AI search visibility, then generates fix files (llms.txt, robots.txt, JSON-LD schema) you can deploy immediately. Used to diagnose why some sites get cited by ChatGPT, Perplexity, and Claude while others don't.
 
 ## Core Tools
 

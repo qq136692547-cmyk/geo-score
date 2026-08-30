@@ -34,7 +34,7 @@ import Layout from '../layouts/Layout.astro';
       name: 'How does GeoScore work?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'GeoScore audits any public URL across 12 dimensions of GEO readiness (AI crawlability, llms.txt presence, structured data, meta tags, content quality, E-E-A-T signals, brand entity, citation readiness, discovery, agent-friendliness, and freshness), producing a 0-100 score plus a prioritized list of fixes. The audit runs entirely in your browser; your URLs are not stored.'
+        text: 'GeoScore audits any public URL across 12 dimensions of GEO readiness (AI crawlability, llms.txt presence, structured data, meta tags, content quality, E-E-A-T signals, brand entity, citation readiness, discovery, agent-friendliness, and freshness), producing a 0-100 score plus a prioritized list of fixes. A single browser audit is free; the browser does not send the audited URL to GeoScore for storage.'
       }
     },
     {
@@ -42,7 +42,7 @@ import Layout from '../layouts/Layout.astro';
       name: 'Is GeoScore free?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes. GeoScore is 100% free and open-source under the MIT License. Single URL audits, CLI, and MCP Server are free forever with no signup required. Optional Pro, Studio, and Agency plans with automated monitoring start at $9/month — see our pricing page for details. The source code is available on GitHub at github.com/qq136692547-cmyk/geo-score.'
+        text: 'The open-source browser audit, CLI, and MCP Server are free. Optional Pro, Studio, and Agency plans with automated monitoring start at $9/month — see our pricing page for details. The source code is available on GitHub at github.com/qq136692547-cmyk/geo-score.'
       }
     },
     {
@@ -181,7 +181,7 @@ import Layout from '../layouts/Layout.astro';
           GeoScore measures 12 dimensions of this readiness: AI crawlability (which crawlers can access your site), AI guidance (whether you provide a curated llms.txt), structured data (JSON-LD coverage and quality), meta and social signals, content quality and depth, E-E-A-T signals (author bylines, trust pages, reviews), brand and entity presence, citation readiness (external sources, expert quotes, .edu/.gov links), discovery (sitemap, AI-specific endpoints like /ai/summary.json), agent-friendliness (API documentation, structured outputs), and content freshness.
         </p>
         <p class="mb-4">
-          Each audit produces a 0&ndash;100 score, a radar chart of the 12 dimensions, and a prioritized list of fixes. The tool also auto-generates three fix files you can deploy immediately: a production-ready llms.txt, an AI-crawler-friendly robots.txt, and a JSON-LD snippet for Organization, Article, FAQ, and HowTo schema. The audit runs entirely client-side and your URLs are not stored.
+          Each audit produces a 0&ndash;100 score, a radar chart of the 12 dimensions, and a prioritized list of fixes. The tool also auto-generates three fix files you can deploy immediately: a production-ready llms.txt, an AI-crawler-friendly robots.txt, and a JSON-LD snippet for Organization, Article, FAQ, and HowTo schema. A single browser audit is client-side, while optional Pro monitoring uses cloud storage.
         </p>
         <p>
           If your site scores below 60, the most common cause is robots.txt blocking AI crawlers by default. Adding GPTBot, ClaudeBot, PerplexityBot, and Google-Extended to the allow list, and shipping an llms.txt, typically raises the score by 20&ndash;30 points in a single deployment. The highest-scoring sites combine technical compliance with content depth, source citations, and structured data that AI models can parse in one pass.
@@ -288,7 +288,7 @@ import Layout from '../layouts/Layout.astro';
         </div>
         <div class="text-left">
           <div class="text-geo-500 text-3xl font-extrabold mb-2">100%</div>
-          <p class="text-gray-400 text-sm">Free and open-source — no signup, single audits free forever</p>
+          <p class="text-gray-400 text-sm">Free single browser audits — open-source, with optional Pro monitoring</p>
         </div>
       </div>
     </div>

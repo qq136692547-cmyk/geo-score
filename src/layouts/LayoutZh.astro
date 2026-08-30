@@ -38,6 +38,31 @@ const path = Astro.url.pathname;
     gtag('js', new Date());
     gtag('config', 'G-98LLHZ0GDM');
   </script>
+  <script is:inline>
+    window.geoTrack = function(action, params) {
+      if (typeof gtag === 'function') gtag('event', action, params || {});
+    };
+    function geoCrossSource() {
+      try {
+        const params = new URLSearchParams(location.search);
+        const source = (params.get('utm_source') || '').toLowerCase();
+        const medium = (params.get('utm_medium') || '').toLowerCase();
+        if (source === 'ttcalc' && medium === 'site') return 'cross_site';
+        if (source) return 'external';
+        if (!document.referrer) return 'direct';
+        const host = new URL(document.referrer).hostname.toLowerCase();
+        if (/(^|\.)(google|bing|baidu|duckduckgo|yandex|ecosia|startpage|brave)\.[a-z.]+$/.test(host)) return 'search';
+        return 'external';
+      } catch (e) {
+        return 'other';
+      }
+    }
+    document.addEventListener('click', function(event) {
+      const link = event.target.closest('a[data-cross-site]');
+      if (!link || typeof window.geoTrack !== 'function') return;
+      window.geoTrack('cross_site_click', { target_site: link.getAttribute('data-cross-site'), source_type: geoCrossSource() });
+    });
+  </script>
 
   <!-- JSON-LD: Organization (全站实体) -->
   <script is:inline type="application/ld+json" set:html={JSON.stringify({
@@ -169,6 +194,7 @@ const path = Astro.url.pathname;
         <a href="/zh/terms" class="hover:text-gray-300 transition">使用条款</a>
         <a href="/zh/about" class="hover:text-gray-300 transition">关于</a>
         <a href="https://github.com/qq136692547-cmyk/geo-score" target="_blank" rel="noopener" class="hover:text-gray-300 transition">GitHub</a>
+        <a href="https://ttcalc.shop/?utm_source=geoscore&amp;utm_medium=site&amp;utm_campaign=ttcalc-funnel" data-cross-site="ttcalc" target="_blank" rel="noopener" class="hover:text-gray-300 transition">TTCalc 工具</a>
         <a href="mailto:qq136692547@gmail.com" class="hover:text-gray-300 transition">联系支持</a>
       </div>
     </div>
