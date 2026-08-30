@@ -29,18 +29,7 @@ var IS_ZH = (document.documentElement.lang || 'en').toLowerCase().indexOf('zh') 
 function t(en, zh) { return IS_ZH ? zh : en; }
 
 function getGeoSource() {
-  try {
-    var params = new URLSearchParams(location.search);
-    var source = (params.get('utm_source') || '').toLowerCase();
-    var medium = (params.get('utm_medium') || '').toLowerCase();
-    if (source === 'ttcalc' && medium === 'site') return 'cross_site';
-    if (source) return 'external';
-    var ref = document.referrer;
-    if (!ref) return 'direct';
-    var refHost = new URL(ref).hostname.toLowerCase();
-    if (/(^|\.)(google|bing|baidu|duckduckgo|yandex|ecosia|startpage|brave)\.[a-z.]+$/.test(refHost)) return 'search';
-    return 'external';
-  } catch (e) { return 'other'; }
+  return typeof window.geoSource === 'function' ? window.geoSource() : 'other';
 }
 
 function geoUrlDomain(value) {

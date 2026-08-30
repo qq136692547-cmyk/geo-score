@@ -191,12 +191,7 @@ import Layout from '../layouts/Layout.astro';
   if (proBtn) {
     proBtn.addEventListener('click', async function() {
       if (window.geoTrack) {
-        const params = new URLSearchParams(location.search);
-        const source = (params.get('utm_source') || '').toLowerCase();
-        const medium = (params.get('utm_medium') || '').toLowerCase();
-        const sourceType = source === 'ttcalc' && medium === 'site'
-          ? 'cross_site'
-          : source ? 'external' : document.referrer ? 'external' : 'direct';
+        const sourceType = window.geoSource ? window.geoSource() : 'other';
         window.geoTrack('paid_intent_click', { target: 'pro', source_type: sourceType });
       }
       const token = localStorage.getItem('geoscore_token');

@@ -58,6 +58,7 @@ const path = Astro.url.pathname;
         return 'other';
       }
     }
+    window.geoSource = geoCrossSource;
     document.addEventListener('click', function(event) {
       const link = event.target.closest('a[data-cross-site]');
       if (!link || typeof window.geoTrack !== 'function') return;
@@ -96,7 +97,7 @@ const path = Astro.url.pathname;
     '@id': 'https://geoscore.help/#website',
     url: 'https://geoscore.help',
     name: 'GeoScore',
-    description: 'Free GEO audit tool — check your website visibility to AI search engines.',
+    description: 'GEO audit tool with free single browser audits and optional Pro monitoring.',
     publisher: { '@id': 'https://geoscore.help/#organization' },
     inLanguage: 'en'
   })} />
@@ -127,7 +128,7 @@ const path = Astro.url.pathname;
     url: 'https://geoscore.help',
     applicationCategory: 'SEO Tool',
     operatingSystem: 'Any',
-    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+    offers: { '@type': 'AggregateOffer', lowPrice: '0', highPrice: '9', priceCurrency: 'USD', offerCount: 2 },
     features: ['12-dimension GEO scoring', 'AI search visibility audit', 'llms.txt checker', 'robots.txt AI crawler analysis', 'structured data audit', 'E-E-A-T signals'],
     author: { '@type': 'Person', name: 'GeoScore Team', url: 'https://geoscore.help/about' },
     publisher: { '@type': 'Organization', name: 'GeoScore', url: 'https://geoscore.help' },
@@ -138,11 +139,11 @@ const path = Astro.url.pathname;
     '@context': 'https://schema.org',
     '@type': 'WebApplication',
     name: 'GeoScore',
-    description: 'Free GEO audit tool — check your website visibility to AI search engines.',
+    description: 'GEO audit tool with free single browser audits and optional Pro monitoring.',
     url: 'https://geoscore.help',
     applicationCategory: 'SEO Tool',
     operatingSystem: 'Any',
-    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+    offers: { '@type': 'AggregateOffer', lowPrice: '0', highPrice: '9', priceCurrency: 'USD', offerCount: 2 },
     features: ['12-dimension GEO scoring', 'AI search visibility audit', 'llms.txt checker', 'robots.txt AI crawler analysis', 'structured data audit', 'E-E-A-T signals'],
     author: { '@type': 'Person', name: 'GeoScore Team', url: 'https://geoscore.help/about' },
     publisher: { '@type': 'Organization', name: 'GeoScore', url: 'https://geoscore.help' },

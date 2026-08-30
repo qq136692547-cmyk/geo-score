@@ -22,19 +22,7 @@ const API_BASE = 'https://geoscore-payments.geo-score.workers.dev';
   const authListeners = [];
 
   function authSource() {
-    try {
-      const params = new URLSearchParams(location.search);
-      const source = (params.get('utm_source') || '').toLowerCase();
-      const medium = (params.get('utm_medium') || '').toLowerCase();
-      if (source === 'ttcalc' && medium === 'site') return 'cross_site';
-      if (source) return 'external';
-      if (!document.referrer) return 'direct';
-      const host = new URL(document.referrer).hostname.toLowerCase();
-      if (/(^|\.)(google|bing|baidu|duckduckgo|yandex|ecosia|startpage|brave)\.[a-z.]+$/.test(host)) return 'search';
-      return 'external';
-    } catch (e) {
-      return 'other';
-    }
+    return typeof window.geoSource === 'function' ? window.geoSource() : 'other';
   }
 
   function trackSignIn(method, state) {

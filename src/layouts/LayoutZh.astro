@@ -57,6 +57,7 @@ const path = Astro.url.pathname;
         return 'other';
       }
     }
+    window.geoSource = geoCrossSource;
     document.addEventListener('click', function(event) {
       const link = event.target.closest('a[data-cross-site]');
       if (!link || typeof window.geoTrack !== 'function') return;
@@ -123,11 +124,11 @@ const path = Astro.url.pathname;
       '@context': 'https://schema.org',
       '@type': 'WebApplication',
       name: 'GeoScore',
-      description: '免费 GEO 审计工具 —— 检测你的网站对 AI 搜索引擎的可见性。',
+      description: 'GEO 审计工具：单次浏览器审计免费，可选 Pro 监控付费。',
       url: 'https://geoscore.help/zh/',
       applicationCategory: 'SEO Tool',
       operatingSystem: 'Any',
-      offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+      offers: { '@type': 'AggregateOffer', lowPrice: '0', highPrice: '9', priceCurrency: 'USD', offerCount: 2 },
       features: ['12 维度 GEO 评分', 'AI 搜索可见性审计', 'llms.txt 检测', 'robots.txt AI 爬虫分析', '结构化数据审计', 'E-E-A-T 信号'],
       author: { '@type': 'Person', name: 'GeoScore Team', url: 'https://geoscore.help/zh/about' },
       publisher: { '@type': 'Organization', name: 'GeoScore', url: 'https://geoscore.help' },
@@ -139,11 +140,11 @@ const path = Astro.url.pathname;
       '@context': 'https://schema.org',
       '@type': 'WebApplication',
       name: 'GeoScore',
-      description: '免费 GEO 审计工具 —— 检测你的网站对 AI 搜索引擎的可见性。',
+      description: 'GEO 审计工具：单次浏览器审计免费，可选 Pro 监控付费。',
       url: 'https://geoscore.help/zh/',
       applicationCategory: 'SEO Tool',
       operatingSystem: 'Any',
-      offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+      offers: { '@type': 'AggregateOffer', lowPrice: '0', highPrice: '9', priceCurrency: 'USD', offerCount: 2 },
       features: ['12 维度 GEO 评分', 'AI 搜索可见性审计', 'llms.txt 检测', 'robots.txt AI 爬虫分析', '结构化数据审计', 'E-E-A-T 信号'],
       author: { '@type': 'Person', name: 'GeoScore Team', url: 'https://geoscore.help/zh/about' },
       publisher: { '@type': 'Organization', name: 'GeoScore', url: 'https://geoscore.help' },
