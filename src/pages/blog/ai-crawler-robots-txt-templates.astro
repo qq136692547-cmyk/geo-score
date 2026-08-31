@@ -1,0 +1,216 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+<Layout
+  title="AI Crawler Robots.txt Templates for ChatGPT, Claude & Perplexity | GeoScore"
+  description="Ready-to-copy robots.txt templates for GPTBot, ClaudeBot, PerplexityBot, Google-Extended, and other AI crawlers. Includes safe, selective, and strict policies."
+  schema={{
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: 'AI Crawler Robots.txt Templates for ChatGPT, Claude & Perplexity',
+    description: 'Ready-to-copy robots.txt templates for GPTBot, ClaudeBot, PerplexityBot, Google-Extended, and other AI crawlers.',
+    url: 'https://geoscore.help/blog/ai-crawler-robots-txt-templates/',
+    datePublished: '2026-08-31',
+    dateModified: '2026-08-31',
+    author: { '@type': 'Organization', name: 'GeoScore' },
+    publisher: { '@type': 'Organization', name: 'GeoScore', url: 'https://geoscore.help' }
+  }}
+>
+  <section class="max-w-3xl mx-auto">
+    <article class="prose prose-invert max-w-none">
+      <div class="text-center mb-10">
+        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-geo-500/10 text-geo-400 border border-geo-500/20 mb-4">
+          GEO Checklist
+        </div>
+        <h1 class="text-4xl font-extrabold mb-3">AI Crawler Robots.txt Templates</h1>
+        <p class="text-gray-400">Updated August 31, 2026 · 8 min read</p>
+      </div>
+
+      <div class="card p-8 mb-6">
+        <p class="text-gray-300 text-lg mb-4">
+          If AI crawlers cannot fetch your pages, AI search engines cannot cite them. These templates give you a starting point for four common policies: full access, selective access, search-only, and strict protection.
+        </p>
+        <p class="text-gray-400">
+          Use the template that matches your business and privacy posture, then verify the live file with the <a href="/tools/robots-txt-ai-checker" class="text-brand-500 hover:underline">robots.txt AI checker</a>. Do not paste a policy you cannot explain to your legal, marketing, or engineering teams.
+        </p>
+      </div>
+
+      <div class="card p-8 mb-6">
+        <h2 class="text-xl font-bold mb-4">1. Full-access policy</h2>
+        <p class="text-gray-400 mb-4">
+          Use this when your content is public, non-personal, and you want maximum discoverability in AI search.
+        </p>
+        <div class="bg-gray-900/50 rounded-xl p-4 font-mono text-sm text-gray-300 mb-4 overflow-x-auto">
+<pre>User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+User-agent: *
+Allow: /
+
+Sitemap: https://example.com/sitemap.xml</pre>
+        </div>
+        <p class="text-gray-400 text-sm">
+          Replace <code class="text-geo-400">example.com</code> with your domain. This is often the right default for blogs, documentation, public research, and marketing pages.
+        </p>
+      </div>
+
+      <div class="card p-8 mb-6">
+        <h2 class="text-xl font-bold mb-4">2. Selective-access policy</h2>
+        <p class="text-gray-400 mb-4">
+          Use this when you want AI assistants to read public marketing pages, but not internal tools or account areas.
+        </p>
+        <div class="bg-gray-900/50 rounded-xl p-4 font-mono text-sm text-gray-300 mb-4 overflow-x-auto">
+<pre>User-agent: GPTBot
+Allow: /
+Disallow: /admin/
+Disallow: /account/
+Disallow: /cart/
+Disallow: /checkout/
+
+User-agent: ClaudeBot
+Allow: /
+Disallow: /admin/
+Disallow: /account/
+Disallow: /cart/
+Disallow: /checkout/
+
+User-agent: PerplexityBot
+Allow: /
+Disallow: /admin/
+Disallow: /account/
+Disallow: /cart/
+Disallow: /checkout/
+
+User-agent: Google-Extended
+Allow: /
+Disallow: /admin/
+Disallow: /account/
+Disallow: /cart/
+Disallow: /checkout/
+
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /account/
+Disallow: /cart/
+Disallow: /checkout/
+
+Sitemap: https://example.com/sitemap.xml</pre>
+        </div>
+        <p class="text-gray-400 text-sm">
+          Keep blocked paths honest. If a URL returns 200 but has no public value, exclude it from your sitemap too.
+        </p>
+      </div>
+
+      <div class="card p-8 mb-6">
+        <h2 class="text-xl font-bold mb-4">3. Search-but-not-training policy</h2>
+        <p class="text-gray-400 mb-4">
+          Use this when you want AI assistants to answer questions with your public content, but you prefer not to contribute to bulk model-training datasets.
+        </p>
+        <div class="bg-gray-900/50 rounded-xl p-4 font-mono text-sm text-gray-300 mb-4 overflow-x-auto">
+<pre>User-agent: GPTBot
+Disallow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: *
+Allow: /
+
+Sitemap: https://example.com/sitemap.xml</pre>
+        </div>
+        <p class="text-gray-400 text-sm">
+          This policy is intentionally simple. Commercial AI crawlers evolve, so review their documented agent names before you treat any single file as permanent.
+        </p>
+      </div>
+
+      <div class="card p-8 mb-6">
+        <h2 class="text-xl font-bold mb-4">4. Strict-protection policy</h2>
+        <p class="text-gray-400 mb-4">
+          Use this only when AI citations are not useful or when the site contains sensitive, confidential, or high-liability content. For most public businesses, it removes too much discoverability.
+        </p>
+        <div class="bg-gray-900/50 rounded-xl p-4 font-mono text-sm text-gray-300 mb-4 overflow-x-auto">
+<pre>User-agent: GPTBot
+Disallow: /
+
+User-agent: OAI-SearchBot
+Disallow: /
+
+User-agent: ClaudeBot
+Disallow: /
+
+User-agent: PerplexityBot
+Disallow: /
+
+User-agent: Google-Extended
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: *
+Allow: /
+
+Sitemap: https://example.com/sitemap.xml</pre>
+        </div>
+        <p class="text-gray-400 text-sm">
+          This does not replace authentication, encryption, access control, or a real security review. It only communicates crawler policy.
+        </p>
+      </div>
+
+      <div class="card p-8 mb-6">
+        <h2 class="text-xl font-bold mb-4">Deployment checklist</h2>
+        <ol class="space-y-3 text-gray-400">
+          <li><strong class="text-white">1.</strong> Put the file at <code class="text-geo-400">https://your-domain.com/robots.txt</code>.</li>
+          <li><strong class="text-white">2.</strong> Keep your sitemap URL accurate.</li>
+          <li><strong class="text-white">3.</strong> Do not disallow pages you actually want cited.</li>
+          <li><strong class="text-white">4.</strong> Verify with the <a href="/tools/robots-txt-ai-checker" class="text-brand-500 hover:underline">AI crawler checker</a>.</li>
+          <li><strong class="text-white">5.</strong> Re-check after launching new tools, member areas, or international versions.</li>
+        </ol>
+      </div>
+
+      <div class="card p-8 mb-6 bg-gradient-to-r from-geo-500/10 to-brand-500/10 border border-brand-500/20">
+        <h2 class="text-xl font-bold mb-4">Check your current policy</h2>
+        <p class="text-gray-400 mb-4">See which AI crawlers can reach your site and where your robots.txt conflicts with your business goals.</p>
+        <a href="/" class="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-geo-600 to-brand-600 hover:from-geo-500 hover:to-brand-500 transition">
+          Run Free GEO Audit →
+        </a>
+      </div>
+
+      <div class="flex flex-wrap gap-3 mt-8">
+        <a href="/blog/ai-search-engine-list" class="px-4 py-2 rounded-lg text-sm bg-white/5 hover:bg-white/10 transition">← AI Search Engine List</a>
+        <a href="/blog/llms-txt-ultimate-guide" class="px-4 py-2 rounded-lg text-sm bg-white/5 hover:bg-white/10 transition">llms.txt Guide →</a>
+      </div>
+    </article>
+  </section>
+</Layout>

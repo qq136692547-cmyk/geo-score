@@ -86,6 +86,10 @@
                   ],
     "blog_topics":  [
                         {
+                            "url":  "https://geoscore.help/blog/ai-crawler-robots-txt-templates/",
+                            "title":  "AI Crawler Robots.txt Templates"
+                        },
+                        {
                             "url":  "https://geoscore.help/blog/what-is-geo/",
                             "title":  "What is GEO? Complete Guide"
                         },
@@ -138,7 +142,7 @@
                             "title":  "GEO Maturity Model 2026"
                         }
                     ],
-    "last_updated":  "2026-08-14",
+    "last_updated":  "2026-08-31",
     "endpoints":  {
                       "llms_txt":  "https://geoscore.help/llms.txt",
                       "ai_txt":  "https://geoscore.help/.well-known/ai.txt",

@@ -2,9 +2,10 @@
 import '../styles/global.css';
 export interface Props {
   title?: string;
+  description?: string;
   schema?: object;
 }
-const { title = 'GeoScore - GEO Audit Tool', schema } = Astro.props;
+const { title = 'GeoScore - GEO Audit Tool', description = 'Check your website visibility to AI search engines. Free GEO audit tool.', schema } = Astro.props;
 const path = Astro.url.pathname;
 ---
 <!DOCTYPE html>
@@ -12,11 +13,11 @@ const path = Astro.url.pathname;
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Check your website visibility to AI search engines. Free GEO audit tool." />
+  <meta name="description" content={description} />
   <meta name="author" content="GeoScore Team" />
   <link rel="author" href="https://geoscore.help/about" />
   <meta property="og:title" content={title} />
-  <meta property="og:description" content="Check your website GEO readiness score for AI search engines like ChatGPT, Perplexity, and Gemini." />
+  <meta property="og:description" content={description} />
   <meta property="og:type" content="website" />
   <meta property="og:image" content="https://geoscore.help/og-image.png" />
   <meta property="og:image:width" content="1200" />
