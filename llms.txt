@@ -1,6 +1,6 @@
 # GeoScore
 
-> GeoScore is a free, open-source GEO (Generative Engine Optimization) audit tool. It scores any website 0-100 across 12 dimensions of AI search visibility, then generates fix files (llms.txt, robots.txt, JSON-LD schema) you can deploy immediately. Used to diagnose why some sites get cited by ChatGPT, Perplexity, and Claude while others don't.
+> GeoScore is an open-source GEO (Generative Engine Optimization) audit tool with free single-browser audits and optional paid Pro monitoring. It scores any website 0-100 across 12 dimensions of AI search visibility, then generates fix files (llms.txt, robots.txt, JSON-LD schema) you can deploy immediately. Used to diagnose why some sites get cited by ChatGPT, Perplexity, and Claude while others don't.
 
 ## Core Tools
 
@@ -18,6 +18,7 @@
 - [GEO vs SEO](https://geoscore.help/blog/geo-vs-seo/): How AI search differs from traditional search and where they overlap
 - [The Ultimate llms.txt Guide](https://geoscore.help/blog/llms-txt-ultimate-guide/): The complete spec, 5 real-world examples, and 10 common mistakes
 - [AI Search Engine List](https://geoscore.help/blog/ai-search-engine-list/): Every major AI crawler and how to configure them
+- [AI Crawler Robots.txt Templates](https://geoscore.help/blog/ai-crawler-robots-txt-templates/): Ready-to-copy policies for full access, selective access, search-only, and strict protection
 - [Why Doesn't ChatGPT Cite My Website?](https://geoscore.help/blog/why-doesnt-chatgpt-cite-my-website/): 7 common reasons your site is invisible to AI search engines and how to fix each one
 - [JSON-LD Structured Data for AI Search](https://geoscore.help/blog/json-ld-structured-data-ai-search/): Complete guide to schema markup that helps ChatGPT, Perplexity, and Claude cite your content
 - [E-E-A-T Signals for AI Search](https://geoscore.help/blog/eeat-signals-ai-search/): How to build trust signals that get your content cited by AI search engines

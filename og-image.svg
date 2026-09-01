@@ -74,15 +74,15 @@
 
   <!-- Subtitle -->
   <text x="480" y="400" font-family="system-ui,sans-serif" font-size="18" fill="#64748b">
-    ChatGPT &middot; Perplexity &middot; Claude &middot; Gemini &middot; Google AIO
+    ChatGPT &#183; Perplexity &#183; Claude &#183; Gemini &#183; Google AIO
   </text>
 
   <!-- URL -->
-  <text x="480" y="445" font-family="ui-monospace,monospace" font-size="14" fill="#3b82f6">deng.zh.kg</text>
+  <text x="480" y="445" font-family="ui-monospace,monospace" font-size="14" fill="#3b82f6">geoscore.help</text>
 
   <!-- Footer line -->
   <line x1="80" y1="540" x2="1120" y2="540" stroke="rgba(148,163,184,0.08)" stroke-width="1"/>
-  <text x="80" y="570" font-family="system-ui,sans-serif" font-size="13" fill="#475569">Open-source GEO audit tool &middot; MIT Licensed</text>
+  <text x="80" y="570" font-family="system-ui,sans-serif" font-size="13" fill="#475569">Open-source GEO audit tool &#183; MIT Licensed</text>
 
   <!-- Mini radar chart decorative (bottom right) -->
   <polygon points="1020,540 970,540 990,520" fill="none" stroke="rgba(59,130,246,0.2)" stroke-width="1.5"/>

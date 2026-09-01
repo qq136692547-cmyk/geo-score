@@ -3,8 +3,8 @@
     "site":  {
                  "name":  "GeoScore",
                  "url":  "https://geoscore.help",
-                 "tagline":  "Free GEO (Generative Engine Optimization) audit tool",
-                 "description":  "GeoScore is a free, open-source tool that scores any website 0-100 across 12 dimensions of AI search visibility. It audits your site for AI crawler access (robots.txt), machine-readable content (llms.txt, JSON-LD schema), and authority signals (E-E-A-T), then generates fix files you can deploy immediately. Used by developers, SEO specialists, and content teams to diagnose why some sites get cited by ChatGPT, Perplexity, and Claude while others don\u0027t.",
+                 "tagline":  "GEO (Generative Engine Optimization) audit tool with free browser audits",
+                 "description":  "GeoScore is an open-source tool that scores any website 0-100 across 12 dimensions of AI search visibility. It audits your site for AI crawler access (robots.txt), machine-readable content (llms.txt, JSON-LD schema), and authority signals (E-E-A-T), then generates fix files you can deploy immediately. Free browser audits are available; optional Pro monitoring is paid. Used by developers, SEO specialists, and content teams to diagnose why some sites get cited by ChatGPT, Perplexity, and Claude while others don\u0027t.",
                  "category":  "SEO Tool / Developer Tool",
                  "audience":  "Web developers, SEO professionals, content marketers, SaaS founders, publishers",
                  "language":  "en",
@@ -86,6 +86,10 @@
                   ],
     "blog_topics":  [
                         {
+                            "url":  "https://geoscore.help/blog/ai-crawler-robots-txt-templates/",
+                            "title":  "AI Crawler Robots.txt Templates"
+                        },
+                        {
                             "url":  "https://geoscore.help/blog/what-is-geo/",
                             "title":  "What is GEO? Complete Guide"
                         },
@@ -138,7 +142,7 @@
                             "title":  "GEO Maturity Model 2026"
                         }
                     ],
-    "last_updated":  "2026-08-14",
+    "last_updated":  "2026-08-31",
     "endpoints":  {
                       "llms_txt":  "https://geoscore.help/llms.txt",
                       "ai_txt":  "https://geoscore.help/.well-known/ai.txt",
