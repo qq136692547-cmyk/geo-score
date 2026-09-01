@@ -13,18 +13,19 @@
 
 **[👉 geoscore.help](https://geoscore.help)**
 
-Enter any URL and get a comprehensive GEO readiness score across 12 dimensions.
+Enter any URL and get a comprehensive GEO readiness score across 11 dimensions.
 
 ## 📖 What is GeoScore?
 
 GeoScore is a **free, open-source, web-based GEO (Generative Engine Optimization) audit tool** that:
 
 1. **Scans** your website for AI-search signals (robots.txt, llms.txt, JSON-LD, meta tags, content quality, E-E-A-T, and more)
-2. **Scores** 0–100 across 12 weighted dimensions
-3. **Recommends** prioritized fixes to improve your AI search visibility
+2. **Scores** 0–100 across 11 weighted dimensions + negative signals deduction + prompt injection detection
+3. **Recommends** prioritized fixes with ready-to-paste code snippets
 4. **Exports** reports as Markdown, JSON, or CSV
+5. **Monitors** your AI visibility over time with scheduled re-audits (Pro)
 
-No installation required. Just enter a URL.
+No installation required. Just enter a URL. Available in [English](https://geoscore.help) and [Chinese](https://geoscore.help/zh/).
 
 ## 🧠 Scoring System
 
@@ -44,6 +45,7 @@ GeoScore synthesizes frameworks from the leading GEO/AEO open-source projects:
 | Agent-Friendliness | 4% | ax-score, agentscore |
 | Freshness & Maintenance | 4% | evolv3ai |
 | Negative Signals | Deduction | handbook + UC Berkeley EMNLP 2024 |
+| Prompt Injection Detection | Deduction | Handbook + OWASP LLM Top 10 |
 
 **Score Levels:**
 - **86–100** ⭐ Excellent — Fully GEO-optimized
@@ -64,7 +66,7 @@ GeoScore synthesizes frameworks from the leading GEO/AEO open-source projects:
 │       │           │                  │
 │  ┌────▼───────────▼──────────────┐   │
 │  │     Scoring Engine (JS)        │   │
-│  │  12 analyzers → scoring.js    │   │
+│  │  13 analyzers → scoring.js    │   │
 │  └──────────┬────────────────────┘   │
 │             │                        │
 │  ┌──────────▼────────────────────┐   │
@@ -92,9 +94,9 @@ GeoScore synthesizes frameworks from the leading GEO/AEO open-source projects:
 geo-score/
 ├── src/
 │   ├── pages/           # Astro pages (index, audit/[url], about)
-│   ├── components/      # (planned: Astro components)
+│   ├── components/      # UI components (radar chart, export, history)
 │   ├── lib/             # Core library
-│   │   ├── analyzers/   # 12 dimension analyzers
+│   │   ├── analyzers/   # 13 dimension analyzers
 │   │   ├── scanner.js   # Main orchestrator
 │   │   ├── fetcher.js   # Resource fetching
 │   │   ├── scoring.js   # Score computation
@@ -140,6 +142,15 @@ npm run preview
 ```bash
 npm test
 ```
+
+
+### CLI Audit (No Installation)
+
+```bash
+npx geoscore audit https://example.com
+```
+
+Run a GEO audit from your terminal. Zero dependencies, outputs Markdown report.
 
 ### Deploying the Worker
 
@@ -230,4 +241,4 @@ GeoScore synthesizes methodologies from these **30+ open-source GEO/AEO projects
 - [ ] AI-powered fix suggestions
 - [ ] Deep SEO supplement (Core Web Vitals)
 - [ ] WordPress plugin version
-- [ ] MCP server for AI agent integration
+- [x] MCP server for AI agent integration
