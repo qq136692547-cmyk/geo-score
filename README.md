@@ -9,6 +9,8 @@
 [![Awesome GEO](https://awesome.re/badge.svg)](https://github.com/amplifying-ai/awesome-generative-engine-optimization)
 [![Website](https://img.shields.io/badge/🌐-geoscore.help-blue)](https://geoscore.help/)
 
+> **⚡ Try it live — [GeoScore](https://geoscore.help)**: a free, open-source GEO audit tool built on this handbook. Enter any URL and get a 0–100 readiness score across 12 weighted dimensions, with prioritized fixes.
+
 ---
 
 ## 📖 What is GEO?
