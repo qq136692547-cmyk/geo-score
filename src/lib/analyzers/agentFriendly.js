@@ -1,4 +1,4 @@
-﻿function analyzeAgentFriendly(html, robotsTxt, llmsTxt) {
+﻿function analyzeAgentFriendly(html, robotsTxt, llmsTxt, sitemapXml) {
   const checks = [];
   let score = 0;
   const maxScore = 4;
@@ -24,7 +24,9 @@
   checks.push({ id: 'rate-limits', label: 'Rate limiting headers', passed: hasRateLimit, weight: 1 });
   if (hasRateLimit) score += 1;
 
-  const hasSitemap = /sitemap/i.test(html);
+  const hasSitemap = sitemapXml
+    ? /<urlset|<sitemapindex/i.test(sitemapXml)
+    : /sitemap/i.test(html);
   checks.push({ id: 'sitemap', label: 'Sitemap.xml available', passed: hasSitemap, weight: 1 });
   if (hasSitemap) score += 1;
 

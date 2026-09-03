@@ -18,18 +18,22 @@
 
   // H1
   const h1Match = html.match(/<h1[^>]*>([^<]+)<\/h1>/i);
-  const hasH1 = h1Match && h1Match[1].trim().length > 5;
+  const h1Text = h1Match ? h1Match[1].trim() : '';
+  const effectiveLen = h1Text.replace(/[\u4e00-\u9fff]/g, 'xxx').length;
+  const hasH1 = h1Match && effectiveLen > 5;
   checks.push({ id: 'h1', label: 'H1 present and descriptive', passed: hasH1, weight: 2 });
   if (hasH1) score += 2;
 
   // Word count
-  const words = text.split(/\s+/).filter(Boolean).length;
+  const cjkChars = (text.match(/[\u4e00-\u9fff\u3400-\u4dbf]/g) || []).length;
+  const englishWords = text.split(/\s+/).filter(Boolean).length;
+  const words = Math.max(englishWords, Math.round(cjkChars * 0.6));
   const wordOk = words >= 600;
   checks.push({ id: 'wordcount', label: `Content ${words} words` + (words >= 600 ? '' : ' (need 600+)'), passed: wordOk, weight: 2 });
   if (wordOk) score += 2;
 
   // Statistics
-  const hasStats = /\d+%|\d+\.\d+|\$\d+|\d+ million|\d+ billion/i.test(text);
+  const hasStats = /\d+%|\d+\.\d+|\$\d+|\d+ million|\d+ billion|\d+亿|\d+万/i.test(text);
   checks.push({ id: 'stats', label: 'Statistics cited with sources', passed: hasStats, weight: 2 });
   if (hasStats) score += 2;
 

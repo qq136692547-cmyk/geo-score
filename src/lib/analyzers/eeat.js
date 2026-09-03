@@ -13,7 +13,7 @@
     ], passed: 0, total: 5 };
   }
 
-  const hasAuthor = /rel=["\']author["\']|<meta[^>]+name=["\']author["\']/i.test(html);
+  const hasAuthor = /rel=["\']author["\']|<meta[^>]+name=["\']author["\']|作者[：:]|撰稿/i.test(html);
   checks.push({ id: 'author', label: 'Author bylines on content', passed: hasAuthor, weight: 2 });
   if (hasAuthor) score += 2;
 
@@ -23,14 +23,14 @@
   checks.push({ id: 'author-schema', label: 'Person schema with credentials', passed: hasPersonSchema, weight: 2 });
   if (hasPersonSchema) score += 2;
 
-  const hasAbout = /about/i.test(html);
-  const hasPrivacy = /privacy/i.test(html);
-  const hasTerms = /terms/i.test(html);
+  const hasAbout = /about|关于/i.test(html);
+  const hasPrivacy = /privacy|隐私/i.test(html);
+  const hasTerms = /terms|协议|条款/i.test(html);
   const trustCount = [hasAbout, hasPrivacy, hasTerms].filter(Boolean).length;
   checks.push({ id: 'trust-pages', label: `Trust pages: ${trustCount}/3 (About, Privacy, Terms)`, passed: trustCount >= 2, weight: 2 });
   if (trustCount >= 2) score += 2;
 
-  const hasReviews = /reviews?|testimonials?|trustpilot|g2\.com|\.com\/review/i.test(html);
+  const hasReviews = /reviews?|testimonials?|trustpilot|g2\.com|\.com\/review|评价|口碑|反馈|好评/i.test(html);
   checks.push({ id: 'reviews', label: 'Reviews or testimonials', passed: hasReviews, weight: 1 });
   if (hasReviews) score += 1;
 

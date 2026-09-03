@@ -39,7 +39,7 @@ async function auditUrl(url) {
   }
 
   // Optional AI discovery endpoints: failure here should NOT abort the audit
-  const [aiTxt, aiSummary, aiFaq] = await Promise.allSettled([
+  const [aiTxt, aiSummary, aiFaq, sitemapXml, aboutHtml] = await Promise.allSettled([
     fetchResource(origin + '/.well-known/ai.txt'),
     fetchResource(origin + '/ai/summary.json', 'json'),
     fetchResource(origin + '/ai/faq.json', 'json'),
@@ -49,14 +49,15 @@ async function auditUrl(url) {
 
   const robotsResult = analyzeRobots(robotsTxt);
   const llmsResult = analyzeLlmstxt(llmsTxt);
-  const schemaResult = analyzeSchema(pageHtml);
+  const combinedHtml = pageHtml + (aboutHtml || '');
+  const schemaResult = analyzeSchema(combinedHtml);
   const metaResult = analyzeMeta(pageHtml);
   const contentResult = analyzeContent(pageHtml);
-  const eeatResult = analyzeEeat(pageHtml, schemaResult);
+  const eeatResult = analyzeEeat(combinedHtml, schemaResult);
   const brandResult = analyzeBrand(pageHtml, schemaResult);
   const citationsResult = analyzeCitations(pageHtml);
   const discoveryResult = analyzeDiscovery(aiTxt, aiSummary, aiFaq);
-  const agentResult = analyzeAgentFriendly(pageHtml, robotsTxt, llmsTxt);
+  const agentResult = analyzeAgentFriendly(pageHtml, robotsTxt, llmsTxt, sitemapXml);
   const freshnessResult = analyzeFreshness(pageHtml);
   const negativeResult = analyzeNegativeSignals(pageHtml);
   const promptInjectionResult = analyzePromptInjection(pageHtml);
