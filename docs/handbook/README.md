@@ -4,8 +4,8 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
-[![GitHub Stars](https://img.shields.io/github/stars/qq136692547-cmyk/geo-optimization-handbook?style=social)](https://github.com/qq136692547-cmyk/geo-optimization-handbook)
-[![Last Updated](https://img.shields.io/github/last-commit/qq136692547-cmyk/geo-optimization-handbook)](https://github.com/qq136692547-cmyk/geo-optimization-handbook/commits/main)
+[![GitHub Stars](https://img.shields.io/github/stars/qq136692547-cmyk/geo-score?style=social)](https://github.com/qq136692547-cmyk/geo-score)
+[![Last Updated](https://img.shields.io/github/last-commit/qq136692547-cmyk/geo-score)](https://github.com/qq136692547-cmyk/geo-score/commits/main)
 [![Awesome GEO](https://awesome.re/badge.svg)](https://github.com/amplifying-ai/awesome-generative-engine-optimization)
 [![Website](https://img.shields.io/badge/🌐-geoscore.help-blue)](https://geoscore.help/)
 
