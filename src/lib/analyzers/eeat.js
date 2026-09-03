@@ -1,4 +1,4 @@
-﻿function analyzeEeat(html, schemaResult) {
+﻿function analyzeEeat(html, schemaResult, responseHeaders) {
   const checks = [];
   let score = 0;
   const maxScore = 8;
@@ -34,7 +34,13 @@
   checks.push({ id: 'reviews', label: 'Reviews or testimonials', passed: hasReviews, weight: 1 });
   if (hasReviews) score += 1;
 
-  const hasHttps = /Strict-Transport-Security|<meta[^>]+http-equiv=["\']Content-Security-Policy["\']/i.test(html);
+  let hasHttps = false;
+  if (responseHeaders && typeof responseHeaders === 'object') {
+    hasHttps = 'strict-transport-security' in responseHeaders || 'content-security-policy' in responseHeaders;
+  }
+  if (!hasHttps) {
+    hasHttps = /<meta[^>]+http-equiv=["']Content-Security-Policy["']/i.test(html);
+  }
   checks.push({ id: 'https-eeat', label: 'HTTPS & security headers', passed: hasHttps, weight: 1 });
   if (hasHttps) score += 1;
 

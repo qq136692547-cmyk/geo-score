@@ -2,7 +2,7 @@
  * Node.js scanner — orchestrates fetching and analysis using node-fetcher.
  * Same logic as scanner.js but with Node-compatible fetcher.
  */
-import { fetchResource } from './node-fetcher.js';
+import { fetchResource, fetchPageWithHeaders } from './node-fetcher.js';
 import { analyzeRobots } from './analyzers/robots.js';
 import { analyzeLlmstxt } from './analyzers/llmstxt.js';
 import { analyzeSchema } from './analyzers/schema.js';
@@ -25,13 +25,16 @@ async function auditUrl(url) {
   const origin = base.origin;
 
   // Core resources: if these fail, the audit cannot proceed
-  const [robotsTxt, llmsTxt, pageHtml] = await Promise.all([
+  const [robotsTxt, llmsTxt, pageResult] = await Promise.all([
     fetchResource(origin + '/robots.txt'),
     fetchResource(origin + '/llms.txt'),
-    fetchResource(normalized),
+    fetchPageWithHeaders(normalized),
   ]);
 
   // If the page HTML itself couldn't be fetched, we can't audit
+  const pageHtml = pageResult ? pageResult.body : null;
+  const responseHeaders = pageResult ? pageResult.headers : {};
+
   if (!pageHtml) {
     throw new Error(
       'Could not fetch ' + normalized + '. The site may be blocking requests or is offline.'
@@ -39,7 +42,7 @@ async function auditUrl(url) {
   }
 
   // Optional AI discovery endpoints: failure here should NOT abort the audit
-  const [aiTxt, aiSummary, aiFaq, sitemapXml, aboutHtml] = await Promise.allSettled([
+  const [aiTxt, aiSummary, aiFaq, sitemapXml, aboutHtml, contentHtml] = await Promise.allSettled([
     fetchResource(origin + '/.well-known/ai.txt'),
     fetchResource(origin + '/ai/summary.json', 'json'),
     fetchResource(origin + '/ai/faq.json', 'json'),
@@ -49,11 +52,11 @@ async function auditUrl(url) {
 
   const robotsResult = analyzeRobots(robotsTxt);
   const llmsResult = analyzeLlmstxt(llmsTxt);
-  const combinedHtml = pageHtml + (aboutHtml || '');
+  const combinedHtml = pageHtml + (aboutHtml || '') + (contentHtml || '');
   const schemaResult = analyzeSchema(combinedHtml);
   const metaResult = analyzeMeta(pageHtml);
   const contentResult = analyzeContent(pageHtml);
-  const eeatResult = analyzeEeat(combinedHtml, schemaResult);
+  const eeatResult = analyzeEeat(combinedHtml, schemaResult, responseHeaders);
   const brandResult = analyzeBrand(pageHtml, schemaResult);
   const citationsResult = analyzeCitations(pageHtml);
   const discoveryResult = analyzeDiscovery(aiTxt, aiSummary, aiFaq);
@@ -122,6 +125,24 @@ function extractSeoSupplement(html, url) {
   const viewportMatch = html.match(/<meta[^>]+name=["']viewport["'][^>]*>/i);
   results.responsive = !!viewportMatch;
   return results;
+}
+
+
+function extractContentPageUrl(html, origin) {
+  if (!html) return origin + '/about';
+  var patterns = [
+    /href=["'](\/[^"']*(?:blog|review|article|post|news|guide)\/[^"']*)["']/i,
+    /href=["'](\/[^"']*(?:blog|review|article|post|news|guide)["'])/i,
+  ];
+  for (var i = 0; i < patterns.length; i++) {
+    var match = html.match(patterns[i]);
+    if (match && match[1]) {
+      var href = match[1];
+      if (href.startsWith('/')) return origin + href;
+      if (href.startsWith('http') && href.includes(origin)) return href;
+    }
+  }
+  return origin + '/about';
 }
 
 export { auditUrl, normalizeUrl };

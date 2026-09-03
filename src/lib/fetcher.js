@@ -74,4 +74,21 @@ async function fetchResource(url, type) {
   return firstSuccess;
 }
 
-export { fetchResource, PROXIES };
+
+async function fetchPageWithHeaders(url) {
+  // Try direct fetch first (gives us response headers)
+  try {
+    var res = await fetch(url, { signal: AbortSignal.timeout(10000), redirect: "follow" });
+    if (res.ok) {
+      var hdrs = {};
+      res.headers.forEach(function(v, k) { hdrs[k] = v; });
+      return { body: await res.text(), headers: hdrs };
+    }
+    if (res.status >= 400 && res.status < 500) return { body: null, headers: {} };
+  } catch (_) {}
+  // Fall through to proxies (no origin headers available)
+  var body = await fetchResource(url);
+  return { body: body, headers: {} };
+}
+
+export { fetchResource, fetchPageWithHeaders, PROXIES };

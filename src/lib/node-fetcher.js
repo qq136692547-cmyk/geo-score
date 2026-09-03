@@ -71,4 +71,27 @@ async function fetchResource(url, type) {
   return null;
 }
 
-export { fetchResource, PROXIES };
+
+async function fetchPageWithHeaders(url) {
+  // Direct fetch gives us response headers in Node
+  try {
+    var res = await fetch(url, {
+      signal: AbortSignal.timeout(15000),
+      redirect: 'follow',
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (compatible; GeoScore-Auditer/1.0; +https://geoscore.help)',
+        'Accept': 'text/html,application/json,text/plain,*/*',
+      },
+    });
+    if (res.ok) {
+      var hdrs = {};
+      res.headers.forEach(function(v, k) { hdrs[k] = v; });
+      return { body: await res.text(), headers: hdrs };
+    }
+    if (res.status >= 400 && res.status < 500) return { body: null, headers: {} };
+  } catch (_) {}
+  var body = await fetchResource(url);
+  return { body: body, headers: {} };
+}
+
+export { fetchResource, fetchPageWithHeaders, PROXIES };
