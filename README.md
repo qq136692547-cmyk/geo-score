@@ -110,6 +110,18 @@ geo-score/
 └── public/              # Static assets
 ```
 
+## Included Handbook
+
+This repository includes the complete **[GEO Optimization Handbook](docs/handbook/)** — a comprehensive guide to Generative Engine Optimization:
+
+- **7 methodology chapters** — core concepts, AI search platforms, citation strategies, structured data, trust stack, negative signals, academic research
+- **4 practical guides** — static-site GEO, FAQ/HowTo schema, blogger GEO, small-business GEO
+- **2 checklists** — pre-publish and audit scoring
+- Templates and promotion materials
+
+Previously a standalone repository, now consolidated under `docs/handbook/`.
+
+
 ## 🚦 Getting Started
 
 ### Prerequisites
@@ -165,7 +177,7 @@ npx wrangler deploy
 GeoScore couldn'\''t exist without the incredible open-source GEO/AEO community:
 
 ### Scoring Frameworks
-- **[qq136692547-cmyk/geo-optimization-handbook](https://github.com/qq136692547-cmyk/geo-optimization-handbook)** — Core 8-dimension scoring system and comprehensive GEO reference
+- **[GEO Optimization Handbook](docs/handbook/)** — Core 8-dimension scoring system and comprehensive GEO reference
 - **[Auriti-Labs/geo-optimizer-skill](https://github.com/Auriti-Labs/geo-optimizer-skill)** — 8-dimension scoring, 47 strategies, 16 CLI commands (⭐594)
 - **[zubair-trabzada/geo-seo-claude](https://github.com/zubair-trabzada/geo-seo-claude)** — GEO-first SEO skill with pdf reporting (⭐9011)
 - **[metawhisp/best-aeo-skill](https://github.com/metawhisp/best-aeo-skill)** — 4-vector composite GEO score with 33 evidence collectors
@@ -206,7 +218,7 @@ GeoScore synthesizes methodologies from these **30+ open-source GEO/AEO projects
 
 | Project | Stars | What we learned |
 |---------|-------|-----------------|
-| [qq136692547-cmyk/geo-optimization-handbook](https://github.com/qq136692547-cmyk/geo-optimization-handbook) | — | Core GEO handbook, 8-dimension 100-point scoring |
+| [GEO Optimization Handbook](docs/handbook/) | — | Core GEO handbook, 8-dimension 100-point scoring |
 | [Auriti-Labs/geo-optimizer-skill](https://github.com/Auriti-Labs/geo-optimizer-skill) | ⭐594 | 8-dimension scoring, 47 strategies, multi-format output |
 | [zubair-trabzada/geo-seo-claude](https://github.com/zubair-trabzada/geo-seo-claude) | ⭐9011 | GEO-first SEO skill, parallel sub-agent auditing |
 | [metawhisp/best-aeo-skill](https://github.com/metawhisp/best-aeo-skill) | ⭐1 | 4-vector composite score, 33 evidence collectors, confidence labels |
