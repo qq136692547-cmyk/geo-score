@@ -1,0 +1,85 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+<Layout
+  title="GeoScore Engine Update: Multi-Page Scanning, Real HTTP Security Headers, and Global CJK Support | GeoScore"
+  description="Learn about the latest GeoScore analyzer upgrades — multi-page crawling for schema completeness, HTTP header verification for HSTS/CSP, and full CJK content scoring."
+  schema={{
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: 'GeoScore Engine Update: Multi-Page Scanning, Real HTTP Security Headers, and Global CJK Support',
+    description: 'Overview of the September 2026 engine updates to GeoScore: multi-page scanning, HTTP security headers, and Chinese/CJK language audits.',
+    url: 'https://geoscore.help/blog/geoscore-update-multi-page-security/',
+    datePublished: '2026-09-08',
+    dateModified: '2026-09-08',
+    author: { '@type': 'Organization', name: 'GeoScore' },
+    publisher: { '@type': 'Organization', name: 'GeoScore', url: 'https://geoscore.help' }
+  }}
+>
+  <section class="max-w-3xl mx-auto">
+    <article class="prose prose-invert max-w-none">
+      <div class="text-center mb-10">
+        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-geo-500/10 text-geo-400 border border-geo-500/20 mb-4">
+          Product Update
+        </div>
+        <h1 class="text-4xl font-extrabold mb-3">GeoScore Engine Update: Multi-Page Scanning & CJK Support</h1>
+        <p class="text-gray-400">Published September 8, 2026 · 7 min read</p>
+      </div>
+
+      <div class="card p-8 mb-6">
+        <p class="text-gray-300 text-lg mb-4">
+          Auditing AI readiness requires seeing your website the same way modern AI crawlers do. Today we deployed three major upgrades to our core scanning engine: <strong class="text-white">multi-page structured data aggregation</strong>, <strong class="text-white">direct HTTP security header inspection</strong>, and <strong class="text-white">full CJK language accuracy</strong>.
+        </p>
+        <p class="text-gray-400">
+          These improvements eliminate false negatives on modern Single Page Applications (SPAs) and international websites, giving you a significantly more accurate audit score.
+        </p>
+      </div>
+
+      <div class="card p-8 mb-6">
+        <h2 class="text-xl font-bold mb-4">1. Multi-Page Discovery & Unified Schema Aggregation</h2>
+        <p class="text-gray-400 mb-3">
+          Previously, scanning an origin only analyzed the specific root HTML payload. However, modern sites frequently distribute their JSON-LD schemas across specialized sub-routes:
+        </p>
+        <ul class="space-y-2 text-gray-300 mb-4">
+          <li>• <code class="text-geo-400">/about</code>: Hosts <code class="text-brand-400">Person</code>, <code class="text-brand-400">Organization</code>, and editorial byline credentials.</li>
+          <li>• <code class="text-geo-400">/review/</code> or <code class="text-geo-400">/blog/</code>: Contains <code class="text-brand-400">Article</code> and customer review schema.</li>
+          <li>• <code class="text-geo-400">/sitemap.xml</code>: Verified with real status 200 HTTP checks.</li>
+        </ul>
+        <p class="text-gray-400 text-sm">
+          The scanner now proactively checks linked trust routes and combines the metadata before computing your E-E-A-T and Structured Data sub-scores.
+        </p>
+      </div>
+
+      <div class="card p-8 mb-6">
+        <h2 class="text-xl font-bold mb-4">2. Real HTTP Security Header Inspection</h2>
+        <p class="text-gray-400 mb-3">
+          Security is a foundational signal for search engine trust. Transport security directives like <code class="text-geo-400">Strict-Transport-Security</code> (HSTS) and <code class="text-geo-400">Content-Security-Policy</code> (CSP) are delivered as HTTP response headers rather than raw HTML strings.
+        </p>
+        <p class="text-gray-400">
+          Our fetch pipeline now captures the live HTTP response headers from origin servers and edge proxies, ensuring that valid server configurations receive full credit under the E-E-A-T security check.
+        </p>
+      </div>
+
+      <div class="card p-8 mb-6">
+        <h2 class="text-xl font-bold mb-4">3. Accurate Multi-Lingual & CJK Scoring</h2>
+        <p class="text-gray-400 mb-3">
+          Non-Latin languages require customized tokenization and semantic heuristics. We have fine-tuned 8 analyzer behaviors for Chinese and CJK web properties:
+        </p>
+        <ul class="space-y-2 text-gray-300 mb-4">
+          <li>• <strong>CJK Word Count:</strong> Calculates information density with CJK character weighting (~0.6 equivalent English words per character) instead of relying solely on whitespace splitting.</li>
+          <li>• <strong>Concise H1 Evaluation:</strong> Gives appropriate weight to compact, highly informative headings.</li>
+          <li>• <strong>Localized Trust Signals:</strong> Accurately identifies author bylines (作者, 撰稿), trust pages (关于, 隐私, 协议), and testimonials (评价, 口碑, 反馈).</li>
+          <li>• <strong>Localized Numerical Units:</strong> Recognizes stats cited with 万 and 亿 scales.</li>
+        </ul>
+      </div>
+
+      <div class="card p-8 mb-6 bg-gradient-to-r from-geo-500/10 to-brand-500/10 border border-brand-500/20">
+        <h2 class="text-xl font-bold mb-4">Test Your Site with the Updated Engine</h2>
+        <p class="text-gray-400 mb-4">Run an instant audit across all 12 dimensions to check your AI search visibility with our latest heuristics.</p>
+        <a href="/" class="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-geo-600 to-brand-600 hover:from-geo-500 hover:to-brand-500 transition">
+          Run Free Audit
+        </a>
+      </div>
+    </article>
+  </section>
+</Layout>
