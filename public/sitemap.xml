@@ -37,4 +37,10 @@
   <url><loc>https://geoscore.help/zh/blog/</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://geoscore.help/zh/privacy/</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
   <url><loc>https://geoscore.help/zh/terms/</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
+  <url>
+    <loc>https://geoscore.help/zh/blog/geoscore-update-multi-page-security/</loc>
+    <lastmod>2026-09-14</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
 </urlset>

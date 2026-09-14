@@ -1,0 +1,86 @@
+---
+import LayoutZh from '../../../layouts/LayoutZh.astro';
+---
+<LayoutZh
+  title="GeoScore 引擎升级：多页面扫描、HTTP 安全响应头检测与全方位 CJK 适配 | GeoScore"
+  schema={{
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: 'GeoScore 引擎升级：多页面扫描、HTTP 安全响应头检测与全方位 CJK 适配',
+    description: '深入了解 GeoScore 分析器最新升级：多页面抓取聚合 Schema 结构化数据、直接校验 HTTP HSTS/CSP 安全头，以及专为中文和 CJK 内容定制的 8 项评分规则。',
+    url: 'https://geoscore.help/zh/blog/geoscore-update-multi-page-security/',
+    datePublished: '2026-09-08',
+    dateModified: '2026-09-08',
+    author: { '@type': 'Organization', name: 'GeoScore' },
+    publisher: { '@type': 'Organization', name: 'GeoScore', url: 'https://geoscore.help' }
+  }}
+>
+  <section class="max-w-3xl mx-auto py-8">
+    <article class="prose prose-invert max-w-none">
+      <div class="text-center mb-10">
+        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-geo-500/10 text-geo-400 border border-geo-500/20 mb-4">
+          产品更新公告
+        </div>
+        <h1 class="text-3xl sm:text-4xl font-extrabold mb-3 text-white">GeoScore 引擎重大升级：多页面扫描与中文深度优化</h1>
+        <p class="text-gray-400">发布于 2026 年 9 月 8 日 · 阅读时间约 6 分钟</p>
+      </div>
+
+      <div class="card p-6 sm:p-8 mb-6">
+        <p class="text-gray-200 text-lg mb-4 leading-relaxed">
+          要想让网站在 AI 搜索（ChatGPT、Perplexity、Claude 等）中获得精准引用，审计引擎必须像现代 AI 爬虫一样完整理解你的站点架构。今天，我们正式上线了核心扫描引擎的三大重磅升级：<strong class="text-white">多页面结构化数据深度聚合</strong>、<strong class="text-white">原生 HTTP 安全响应头实时检测</strong>，以及针对出海与中文独立站的 <strong class="text-white">全套 CJK 语义与排版评分适配</strong>。
+        </p>
+        <p class="text-gray-400">
+          本次更新大幅降低了现代单页应用（SPA）与非全英文站点的误判率，为你呈现更为真实、权威的 GEO（生成式引擎优化）体检得分。
+        </p>
+      </div>
+
+      <div class="card p-6 sm:p-8 mb-6">
+        <h2 class="text-xl font-bold mb-4 text-white">1. 多页面链路发现与统一 Schema 聚合</h2>
+        <p class="text-gray-400 mb-3">
+          以往的审计工具通常仅针对根路径的单次 HTML 响应进行解析。但现代独立站往往将 JSON-LD 结构化数据分散在不同子路由中：
+        </p>
+        <ul class="space-y-2.5 text-gray-300 mb-4">
+          <li>• <code class="text-geo-400">/about</code> 或 <code class="text-geo-400">/关于我们</code>：承载 <code class="text-brand-400">Person</code>（团队创作者）、<code class="text-brand-400">Organization</code>（企业主体资质）与 E-E-A-T 背书。</li>
+          <li>• <code class="text-geo-400">/review/</code>、<code class="text-geo-400">/blog/</code>：承载真实买家评价（AggregateRating）与行业权威文章。</li>
+          <li>• <code class="text-geo-400">/sitemap.xml</code>：验证真实的 HTTP 200 返回状态与站点地图覆盖度。</li>
+        </ul>
+        <p class="text-gray-400 text-sm">
+          升级后，引擎在扫描主站时会自动探测并联通核心信任路由，将全站分散的元数据汇聚后再综合计算 E-E-A-T 与结构化数据（Structured Data）得分。
+        </p>
+      </div>
+
+      <div class="card p-6 sm:p-8 mb-6">
+        <h2 class="text-xl font-bold mb-4 text-white">2. 真实 HTTP 安全响应头校验</h2>
+        <p class="text-gray-400 mb-3">
+          传输安全是 AI 搜索引擎评估网站可信度的关键基石。<code class="text-geo-400">Strict-Transport-Security</code>（HSTS）和 <code class="text-geo-400">Content-Security-Policy</code>（CSP）等强制安全指令并不存在于 HTML 字符串内，而是依赖服务器返回的 HTTP 响应头。
+        </p>
+        <p class="text-gray-400">
+          我们的底层请求链路现已能够完整捕获源站及 CDN 边缘节点的实时响应头，确保标准配置的 HTTPS 安全站点能够在 E-E-A-T 安全维度拿到满分。
+        </p>
+      </div>
+
+      <div class="card p-6 sm:p-8 mb-6">
+        <h2 class="text-xl font-bold mb-4 text-white">3. 中文与 CJK 站点的 8 项专属评分调优</h2>
+        <p class="text-gray-400 mb-3">
+          中文等 CJK 语言没有英文以空格分词的天然特性，直接套用英文算法会导致字数统计失真与标题评分偏颇。我们专项重构了 8 项评估规则：
+        </p>
+        <ul class="space-y-2.5 text-gray-300 mb-4">
+          <li>• <strong>CJK 字符信息密度折算：</strong> 引入科学权重（单个中文字符等效约 0.6 个英文单词），杜绝因缺少空格导致的内容体量严重低估。</li>
+          <li>• <strong>紧凑型 H1 标题评价：</strong> 适应中文精炼传达信息的语法习惯，短小而立意的标题不再被误判为“信息量不足”。</li>
+          <li>• <strong>本地化信任信号识别：</strong> 精准提取“作者”、“撰稿人”、“编辑审校”等创作署名，以及“关于我们”、“隐私政策”、“服务条款”、“买家评价”、“客户反馈”等信任背书。</li>
+          <li>• <strong>中文量词与数据解析：</strong> 全面支持“万”、“亿”等大数级统计指标识别，更准确地捕获正文中的事实数据密度。</li>
+        </ul>
+      </div>
+
+      <div class="card p-6 sm:p-8 mb-6 bg-gradient-to-r from-geo-500/10 to-brand-500/10 border border-brand-500/20">
+        <h2 class="text-xl font-bold mb-4 text-white">使用全新引擎立即体检</h2>
+        <p class="text-gray-300 mb-5">
+          想知道你的独立站在 ChatGPT、Perplexity 和 Claude 眼中能打多少分？立即输入网址，免费获取 12 个维度的深度诊断报告。
+        </p>
+        <a href="/zh" class="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-geo-600 to-brand-600 hover:from-geo-500 hover:to-brand-500 transition shadow-lg shadow-geo-600/20">
+          免费体检你的网站 →
+        </a>
+      </div>
+    </article>
+  </section>
+</LayoutZh>
