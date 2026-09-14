@@ -40,6 +40,8 @@
 
 ## 中文版 (Chinese)
 
+- [GeoScore 引擎升级公告（中文）](https://geoscore.help/zh/blog/geoscore-update-multi-page-security/): 多页面扫描、真实 HTTP 安全响应头检测与全方位 CJK 中文适配
+
 - [GeoScore 中文版](https://geoscore.help/zh/): 免费开源的 GEO 审计工具 — 12 维度评分、20 个 AI 爬虫检测、一键生成修复文件
 - [评分方法论](https://geoscore.help/zh/about/): 12 维度评分体系与权重
 - [llms.txt 检测器](https://geoscore.help/zh/tools/llms-txt-checker/): 验证 llms.txt 格式、结构和内容
