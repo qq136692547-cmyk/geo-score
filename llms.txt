@@ -14,6 +14,7 @@
 
 ## Learn GEO
 
+- [GeoScore Engine Update 2026](https://geoscore.help/blog/geoscore-update-multi-page-security/): Multi-page schema scanning, HTTP security headers, and CJK language optimization
 - [What is GEO? Complete Guide](https://geoscore.help/blog/what-is-geo/): Introduction to Generative Engine Optimization and the 12 dimensions
 - [GEO vs SEO](https://geoscore.help/blog/geo-vs-seo/): How AI search differs from traditional search and where they overlap
 - [The Ultimate llms.txt Guide](https://geoscore.help/blog/llms-txt-ultimate-guide/): The complete spec, 5 real-world examples, and 10 common mistakes
