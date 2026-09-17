@@ -25,7 +25,7 @@
                  {
                      "id":  "how-does-geoscore-work",
                      "question":  "How does GeoScore work?",
-                     "answer":  "GeoScore audits any public URL across 12 dimensions of GEO readiness (AI crawlability, llms.txt presence, structured data, meta tags, content quality, E-E-A-T signals, brand entity, citation readiness, discovery, agent-friendliness, AI guidance markers, and freshness), producing a 0-100 score plus a prioritized list of fixes. A single browser audit is free; optional Pro monitoring uses a Cloudflare Worker and D1. The source code is MIT-licensed and available on GitHub.",
+                     "answer":  "GeoScore audits any public URL across 11 dimensions of GEO readiness (AI crawlability, llms.txt presence, structured data, meta tags, content quality, E-E-A-T signals, brand entity, citation readiness, discovery, agent-friendliness, AI guidance markers, and freshness), producing a 0-100 score plus a prioritized list of fixes. A single browser audit is free; optional Pro monitoring uses a Cloudflare Worker and D1. The source code is MIT-licensed and available on GitHub.",
                      "category":  "tool"
                  },
                  {

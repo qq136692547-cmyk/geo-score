@@ -4,7 +4,7 @@
                  "name":  "GeoScore",
                  "url":  "https://geoscore.help",
                  "tagline":  "GEO (Generative Engine Optimization) audit tool with free browser audits",
-                 "description":  "GeoScore is an open-source tool that scores any website 0-100 across 12 dimensions of AI search visibility. It audits your site for AI crawler access (robots.txt), machine-readable content (llms.txt, JSON-LD schema), and authority signals (E-E-A-T), then generates fix files you can deploy immediately. Free browser audits are available; optional Pro monitoring is paid. Used by developers, SEO specialists, and content teams to diagnose why some sites get cited by ChatGPT, Perplexity, and Claude while others don\u0027t.",
+                 "description":  "GeoScore is an open-source tool that scores any website 0-100 across 11 dimensions of AI search visibility. It audits your site for AI crawler access (robots.txt), machine-readable content (llms.txt, JSON-LD schema), and authority signals (E-E-A-T), then generates fix files you can deploy immediately. Free browser audits are available; optional Pro monitoring is paid. Used by developers, SEO specialists, and content teams to diagnose why some sites get cited by ChatGPT, Perplexity, and Claude while others don\u0027t.",
                  "category":  "SEO Tool / Developer Tool",
                  "audience":  "Web developers, SEO professionals, content marketers, SaaS founders, publishers",
                  "language":  "en",
@@ -19,7 +19,7 @@
     "what_we_offer":  [
                           {
                               "name":  "GEO Audit",
-                              "description":  "Score any URL 0-100 across 12 dimensions of AI search readiness",
+                              "description":  "Score any URL 0-100 across 11 dimensions of AI search readiness",
                               "url":  "https://geoscore.help/"
                           },
                           {
@@ -34,7 +34,7 @@
                           },
                           {
                               "name":  "AI Readiness Score",
-                              "description":  "Get a 0-100 score across 12 dimensions of AI search visibility with actionable fixes",
+                              "description":  "Get a 0-100 score across 11 dimensions of AI search visibility with actionable fixes",
                               "url":  "https://geoscore.help/tools/ai-readiness-score"
                           }
                       ],

@@ -64,7 +64,7 @@
 
   <!-- Feature tags -->
   <rect x="480" y="340" width="110" height="28" rx="14" fill="rgba(59,130,246,0.12)"/>
-  <text x="535" y="359" text-anchor="middle" font-family="system-ui,sans-serif" font-size="12" fill="#60a5fa">12 Dimensions</text>
+  <text x="535" y="359" text-anchor="middle" font-family="system-ui,sans-serif" font-size="12" fill="#60a5fa">11 Dimensions</text>
 
   <rect x="600" y="340" width="100" height="28" rx="14" fill="rgba(34,197,94,0.12)"/>
   <text x="650" y="359" text-anchor="middle" font-family="system-ui,sans-serif" font-size="12" fill="#4ade80">100-Point</text>
