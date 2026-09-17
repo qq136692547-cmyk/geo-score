@@ -120,9 +120,9 @@ import Layout from '../../layouts/Layout.astro';
       </div>
 
       <div class="card p-8 mb-6">
-        <h2 class="text-xl font-bold mb-4">12 Dimensions of GEO Readiness</h2>
+        <h2 class="text-xl font-bold mb-4">11 Weighted Dimensions of GEO Readiness</h2>
         <p class="text-gray-400 mb-4">
-          At GeoScore, we evaluate websites across 12 dimensions of AI readiness. Each dimension measures a different aspect of how well your site can be discovered, understood, and cited by AI engines.
+          At GeoScore, we evaluate websites across 11 weighted dimensions of AI readiness, with additional deductions for negative signals and prompt-injection risks. Each dimension measures a different aspect of how well your site can be discovered, understood, and cited by AI engines.
         </p>
         <ol class="space-y-3 text-gray-400">
           <li><strong class="text-white">AI Crawlability</strong> — Is your robots.txt allowing all major AI crawlers? Many sites explicitly block GPTBot or ClaudeBot without realizing it. This is the #1 reason sites are invisible to AI search. Check with our <a href="/tools/robots-txt-ai-checker" class="text-brand-500 hover:underline">robots.txt AI checker</a>.</li>
@@ -136,8 +136,10 @@ import Layout from '../../layouts/Layout.astro';
           <li><strong class="text-white">Discovery Endpoints</strong> — Do you have AI-specific endpoints like llms.txt, llms-full.txt, or an API? These make it easy for AI engines to discover and consume your content efficiently.</li>
           <li><strong class="text-white">Agent-Friendliness</strong> — Can AI agents interact with your site? Clean HTML, minimal JavaScript dependencies, and fast load times ensure crawlers can access your content without rendering issues.</li>
           <li><strong class="text-white">Freshness</strong> — Is your content up to date? AI engines favor recent, updated content. Stale pages with outdated information are less likely to be cited, especially for time-sensitive queries.</li>
-          <li><strong class="text-white">Negative Signals</strong> — Any factors that hurt your AI visibility? These include blocking AI crawlers, serving different content to bots, having thin or duplicate content, or accumulating spam signals.</li>
         </ol>
+        <p class="text-gray-400 mt-4">
+          <strong class="text-white">Additional deductions:</strong> negative signals and prompt-injection risks reduce the final score.
+        </p>
       </div>
 
       <div class="card p-8 mb-6">
@@ -149,7 +151,7 @@ import Layout from '../../layouts/Layout.astro';
           </div>
           <div class="bg-white/5 rounded-xl p-4">
             <p class="text-gray-300 mb-2"><strong class="text-white">❌ "I just need an llms.txt file and I'm done"</strong></p>
-            <p class="text-gray-400 text-sm">llms.txt is important — it's one of the 12 dimensions — but it's only one piece. Without crawlable content, structured data, E-E-A-T signals, and citation-ready formatting, llms.txt alone won't get you cited. Think of it as a map: it helps AI find your content, but the content itself still needs to be worth citing.</p>
+            <p class="text-gray-400 text-sm">llms.txt is important — it's one of the 11 dimensions — but it's only one piece. Without crawlable content, structured data, E-E-A-T signals, and citation-ready formatting, llms.txt alone won't get you cited. Think of it as a map: it helps AI find your content, but the content itself still needs to be worth citing.</p>
           </div>
           <div class="bg-white/5 rounded-xl p-4">
             <p class="text-gray-300 mb-2"><strong class="text-white">❌ "GEO doesn't need content quality — AI just needs to crawl it"</strong></p>
@@ -161,7 +163,7 @@ import Layout from '../../layouts/Layout.astro';
       <div class="card p-8 mb-6">
         <h2 class="text-xl font-bold mb-4">How to Get Started</h2>
         <ol class="space-y-3 text-gray-400">
-          <li><strong class="text-geo-500">1.</strong> Run a free <a href="/" class="text-brand-500 hover:underline">GEO audit</a> to get your baseline score across all 12 dimensions</li>
+          <li><strong class="text-geo-500">1.</strong> Run a free <a href="/" class="text-brand-500 hover:underline">GEO audit</a> to get your baseline score across all 11 dimensions</li>
           <li><strong class="text-geo-500">2.</strong> Check your <a href="/tools/robots-txt-ai-checker" class="text-brand-500 hover:underline">robots.txt</a> isn't blocking AI crawlers</li>
           <li><strong class="text-geo-500">3.</strong> Create an <a href="/tools/llms-txt-checker" class="text-brand-500 hover:underline">llms.txt file</a> for your site</li>
           <li><strong class="text-geo-500">4.</strong> Add structured data (JSON-LD) to key pages</li>
@@ -192,7 +194,7 @@ import Layout from '../../layouts/Layout.astro';
 
       <div class="card p-8 mb-6 bg-gradient-to-r from-geo-500/10 to-brand-500/10 border border-brand-500/20">
         <h2 class="text-xl font-bold mb-4">Ready to Check Your GEO Score?</h2>
-        <p class="text-gray-400 mb-4">Get a free 12-dimension audit with actionable recommendations.</p>
+        <p class="text-gray-400 mb-4">Get a free 11-dimension audit with actionable recommendations.</p>
         <a href="/" class="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-geo-600 to-brand-600 hover:from-geo-500 hover:to-brand-500 transition">
           Start Free GEO Audit →
         </a>

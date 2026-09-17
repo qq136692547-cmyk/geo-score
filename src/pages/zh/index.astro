@@ -34,7 +34,7 @@ import LayoutZh from '../../layouts/LayoutZh.astro';
       name: 'GeoScore 如何工作？',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'GeoScore 从 12 个维度审计任何公开 URL 的 GEO 就绪度（AI 可爬性、llms.txt 存在性、结构化数据、meta 标签、内容质量、E-E-A-T 信号、品牌实体、引用就绪度、发现端点、Agent 友好性和新鲜度），生成 0-100 分和优先修复列表。单次浏览器审计免费；浏览器审计不会把 URL 发送给 GeoScore 存储。'
+        text: 'GeoScore 从 11 个维度审计任何公开 URL 的 GEO 就绪度（AI 可爬性、llms.txt 存在性、结构化数据、meta 标签、内容质量、E-E-A-T 信号、品牌实体、引用就绪度、发现端点、Agent 友好性和新鲜度），生成 0-100 分和优先修复列表。单次浏览器审计免费；浏览器审计不会把 URL 发送给 GeoScore 存储。'
       }
     },
     {
@@ -80,7 +80,7 @@ import LayoutZh from '../../layouts/LayoutZh.astro';
         为你的网站进行 AI 搜索可见性评分 — ChatGPT、Perplexity、Claude、Gemini、Google AI Overviews。
       </p>
       <p class="text-sm text-gray-500 mb-10">
-        12 个维度 · 20 个 AI 爬虫 · 100 分制评分 · 免费开源
+        11 个维度 · 20 个 AI 爬虫 · 100 分制评分 · 免费开源
       </p>
 
       <div class="max-w-xl mx-auto mb-6 px-1">
@@ -176,10 +176,10 @@ import LayoutZh from '../../layouts/LayoutZh.astro';
           这一转变是根本性的。2026 年，Google 上超过 40% 的搜索会话以零点击结束，越来越多的查询根本不到达 Google——用户直接去 ChatGPT 或 Perplexity。对内容创作者、SaaS 创始人和出版商来说，这意味着需要一门新学科。你的网站需要对 AI 爬虫可读（robots.txt、llms.txt）、机器可解析（JSON-LD schema）、且具有权威性（E-E-A-T 信号、第三方引用）。
         </p>
         <p class="mb-4">
-          GeoScore 衡量这种就绪度的 12 个维度：AI 可爬性（哪些爬虫可以访问你的网站）、AI 引导（是否提供了结构化的 llms.txt）、结构化数据（JSON-LD 覆盖率和质量）、meta 和社交信号、内容质量和深度、E-E-A-T 信号（作者署名、信任页面、评论）、品牌和实体存在、引用就绪度（外部来源、专家引用、.edu/.gov 链接）、发现（sitemap、AI 专用端点如 /ai/summary.json）、Agent 友好性（API 文档、结构化输出）以及内容新鲜度。
+          GeoScore 衡量这种就绪度的 11 个维度：AI 可爬性（哪些爬虫可以访问你的网站）、AI 引导（是否提供了结构化的 llms.txt）、结构化数据（JSON-LD 覆盖率和质量）、meta 和社交信号、内容质量和深度、E-E-A-T 信号（作者署名、信任页面、评论）、品牌和实体存在、引用就绪度（外部来源、专家引用、.edu/.gov 链接）、发现（sitemap、AI 专用端点如 /ai/summary.json）、Agent 友好性（API 文档、结构化输出）以及内容新鲜度。
         </p>
         <p class="mb-4">
-          每次审计生成一个 0–100 分、12 维度的雷达图和优先修复列表。工具还自动生成三个可立即部署的修复文件：生产级 llms.txt、AI 爬虫友好的 robots.txt 和 Organization、Article、FAQ、HowTo schema 的 JSON-LD 代码片段。审计完全在客户端运行，你的 URL 不会被存储。
+          每次审计生成一个 0–100 分、11 维度的雷达图和优先修复列表。工具还自动生成三个可立即部署的修复文件：生产级 llms.txt、AI 爬虫友好的 robots.txt 和 Organization、Article、FAQ、HowTo schema 的 JSON-LD 代码片段。审计完全在客户端运行，你的 URL 不会被存储。
         </p>
         <p>
           如果你的网站得分低于 60，最常见的原因是 robots.txt 默认阻止了 AI 爬虫。将 GPTBot、ClaudeBot、PerplexityBot 和 Google-Extended 加入允许列表，并发布 llms.txt，通常可以在一次部署中将分数提高 20–30 分。最高分的网站将技术合规性与内容深度、来源引用和 AI 模型可一次性解析的结构化数据相结合。
@@ -202,7 +202,7 @@ import LayoutZh from '../../layouts/LayoutZh.astro';
       <a href="/zh/tools/ai-readiness-score" class="card card-hover card-lift p-6 block">
         <div class="text-brand-400 text-sm font-mono mb-2">/tools/ai-readiness-score</div>
         <h3 class="text-lg font-bold mb-2">AI 就绪评分</h3>
-        <p class="text-gray-400 text-sm">获取 12 个维度 AI 搜索可见性的 0-100 评分和可操作的修复建议。</p>
+        <p class="text-gray-400 text-sm">获取 11 个维度 AI 搜索可见性的 0-100 评分和可操作的修复建议。</p>
       </a>
     </div>
 
@@ -216,7 +216,7 @@ import LayoutZh from '../../layouts/LayoutZh.astro';
       <a href="/zh/blog/what-is-geo" class="card card-hover card-lift p-6 block">
         <div class="text-xs text-gray-500 mb-2">指南 · 8 分钟</div>
         <h3 class="text-base font-bold mb-2">什么是 GEO？</h3>
-        <p class="text-gray-400 text-sm">生成式引擎优化的完整介绍和 12 个就绪维度。</p>
+        <p class="text-gray-400 text-sm">生成式引擎优化的完整介绍和 11 个就绪维度。</p>
       </a>
       <a href="/zh/blog/geo-vs-seo" class="card card-hover card-lift p-6 block">
         <div class="text-xs text-gray-500 mb-2">指南 · 10 分钟</div>
@@ -264,9 +264,9 @@ import LayoutZh from '../../layouts/LayoutZh.astro';
       <a href="/zh/about" class="card card-hover card-lift p-6 block">
         <div class="text-xs text-gray-500 mb-2">参考</div>
         <h3 class="text-lg font-bold mb-2">评分方法论</h3>
-        <p class="text-gray-400 text-sm">GeoScore 如何计算 12 个维度的 0-100 分的详细说明。</p>
+        <p class="text-gray-400 text-sm">GeoScore 如何计算 11 个维度的 0-100 分的详细说明。</p>
       </a>
-      <a href="https://github.com/qq136692547-cmyk/geo-optimization-handbook" target="_blank" rel="noopener" class="card card-hover card-lift p-6 block">
+      <a href="https://github.com/qq136692547-cmyk/geo-score/tree/main/docs/handbook" target="_blank" rel="noopener" class="card card-hover card-lift p-6 block">
         <div class="text-xs text-gray-500 mb-2">外部资源</div>
         <h3 class="text-lg font-bold mb-2">GEO 优化手册</h3>
         <p class="text-gray-400 text-sm">涵盖高级 GEO 策略和最佳实践的综合手册。</p>

@@ -1,5 +1,5 @@
 /**
- * Main scanner — orchestrates fetching and analysis across all 12 dimensions.
+ * Main scanner — orchestrates fetching and analysis across 11 weighted dimensions plus deduction checks.
  */
 import { fetchResource, fetchPageWithHeaders } from './fetcher.js';
 import { analyzeRobots } from './analyzers/robots.js';

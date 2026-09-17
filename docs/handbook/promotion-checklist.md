@@ -1,6 +1,6 @@
 # 推广发布清单（Promotion Launch Checklist）
 
-> 用途：手动把 geo-optimization-handbook 推广到 Reddit / Hacker News 时的操作步骤。
+> 用途：手动把 GeoScore 仓库内的 GEO Optimization Handbook（`docs/handbook`）推广到 Reddit / Hacker News 时的操作步骤。
 > 文案见 [promotion-drafts.md](./promotion-drafts.md)。所有发布动作需用**你自己的账号**完成。
 
 ## 0. 发布前自检（账号层面）

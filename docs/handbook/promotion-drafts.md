@@ -28,7 +28,7 @@ What's inside:
 
 Happy to take feedback or questions — GEO moves fast and I'd love help keeping it accurate.
 
-https://github.com/qq136692547-cmyk/geo-optimization-handbook
+https://github.com/qq136692547-cmyk/geo-score/tree/main/docs/handbook
 
 ---
 
@@ -51,7 +51,7 @@ I turned what I learned into a free, open-source handbook. It covers:
 
 There's a dedicated guide for optimizing GitHub Pages / static sites for AI citation.
 
-https://github.com/qq136692547-cmyk/geo-optimization-handbook
+https://github.com/qq136692547-cmyk/geo-score/tree/main/docs/handbook
 
 ---
 
@@ -75,7 +75,7 @@ I put together a free, open-source guide aimed at small business owners. The 5-s
 
 No technical SEO experience required.
 
-https://github.com/qq136692547-cmyk/geo-optimization-handbook/blob/main/practical-guides/04-small-business-geo.md
+https://github.com/qq136692547-cmyk/geo-score/blob/main/docs/handbook/practical-guides/04-small-business-geo.md
 
 ---
 
@@ -98,7 +98,7 @@ What got me into it: after reading the KDD 2024 GEO paper, I saw Ahrefs data sho
 
 It includes recent 2025–2026 research (C-SEO Bench / NeurIPS 2025, IF-GEO, AutoGEO / ICLR 2026). MIT licensed, PRs welcome.
 
-https://github.com/qq136692547-cmyk/geo-optimization-handbook
+https://github.com/qq136692547-cmyk/geo-score/tree/main/docs/handbook
 
 **注意（HN 铁律）：**
 - 正文必须是你**本人手写**，不要用 AI 生成/AI 润色文本贴上去（HN 指南明确禁止 posted generated text）。

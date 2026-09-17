@@ -96,7 +96,7 @@ geo-score/
 │   ├── pages/           # Astro pages (index, audit/[url], about)
 │   ├── components/      # UI components (radar chart, export, history)
 │   ├── lib/             # Core library
-│   │   ├── analyzers/   # 13 dimension analyzers
+│   │   ├── analyzers/   # 11 dimension analyzers + 2 deduction checks
 │   │   ├── scanner.js   # Main orchestrator
 │   │   ├── fetcher.js   # Resource fetching
 │   │   ├── scoring.js   # Score computation

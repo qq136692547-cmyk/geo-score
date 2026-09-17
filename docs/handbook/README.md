@@ -9,7 +9,7 @@
 [![Awesome GEO](https://awesome.re/badge.svg)](https://github.com/amplifying-ai/awesome-generative-engine-optimization)
 [![Website](https://img.shields.io/badge/🌐-geoscore.help-blue)](https://geoscore.help/)
 
-> **⚡ Try it live — [GeoScore](https://geoscore.help)**: a free, open-source GEO audit tool built on this handbook. Enter any URL and get a 0–100 readiness score across 12 weighted dimensions, with prioritized fixes.
+> **⚡ Try it live — [GeoScore](https://geoscore.help)**: a free, open-source GEO audit tool built on this handbook. Enter any URL and get a 0–100 readiness score across 11 weighted dimensions, with deductions for negative signals and prompt injection, plus prioritized fixes.
 
 ---
 
@@ -73,7 +73,7 @@ Coined in the paper [*GEO: Generative Engine Optimization*](https://arxiv.org/ab
 | Resource | What It Does |
 |----------|-------------|
 | [Pre-Publish Checklist](./checklists/pre-publish-checklist.md) | 8-item self-check before publishing any content |
-| [Audit Scoring](./checklists/audit-scoring.md) | 8-dimension scoring system (0-100) |
+| [Audit Scoring](./checklists/audit-scoring.md) | Standalone 8-dimension rubric from Auriti-Labs; separate from GeoScore's 11-dimension implementation |
 | [Robots.txt Template](./templates/robots-template.md) | Allow AI citation, block AI training |
 | [Promotion Launch Checklist](./promotion-checklist.md) | Step-by-step launch plan for Reddit / Hacker News (account rules, post types, do/don't) |
 
@@ -111,7 +111,7 @@ cat practical-guides/01-static-site-geo.md
 ## 🏗️ Project Structure
 
 ```
-geo-optimization-handbook/
+docs/handbook/
 ├── README.md
 ├── LICENSE
 ├── CONTRIBUTING.md
@@ -161,7 +161,7 @@ geo-optimization-handbook/
 
 | Project | Description |
 |---------|-------------|
-| [GeoScore](https://geoscore.help/) 🏠 **Official Site** | Free GEO audit tool — scores your site 0–100 across 12 dimensions, generates llms.txt, robots.txt, and JSON-LD fixes. Built from this handbook's methodology. |
+| [GeoScore](https://geoscore.help/) 🏠 **Official Site** | Free GEO audit tool — scores your site 0–100 across 11 weighted dimensions plus deductions, generates llms.txt, robots.txt, and JSON-LD fixes. Built from this handbook's methodology. |
 
 ## 🤝 Contributing
 

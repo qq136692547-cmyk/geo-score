@@ -1,6 +1,6 @@
 # GEO Audit Scoring (0–100)
 
-> 8-dimension scoring system for AI search engine visibility. Based on the Auriti-Labs GEO Optimizer framework.
+> Standalone 8-dimension scoring rubric for AI search engine visibility, based on the Auriti-Labs GEO Optimizer framework. This is a general handbook rubric, not the same as GeoScore's 11 weighted dimensions plus deductions.
 
 ---
 
