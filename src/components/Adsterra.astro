@@ -1,0 +1,28 @@
+---
+interface Props {
+  format: 'native' | '728x90' | '300x250';
+}
+
+const { format } = Astro.props;
+---
+
+{format === 'native' && (
+  <div class="w-full max-w-3xl mx-auto my-8 text-center">
+    <script is:inline async data-cfasync="false" src="https://pl31399123.profitableratecpmnetwork.com/817fcedcc7910b47268adaf373773c40/invoke.js"></script>
+    <div id="container-817fcedcc7910b47268adaf373773c40"></div>
+  </div>
+)}
+
+{format === '728x90' && (
+  <div class="w-full max-w-full my-8 text-center overflow-x-auto">
+    <script is:inline>atOptions = {'key':'b8dfc1107cd9c153d23c9537113287da','format':'iframe','height':90,'width':728,'params':{}};</script>
+    <script is:inline src="https://www.highrevenueformat.com/b8dfc1107cd9c153d23c9537113287da/invoke.js"></script>
+  </div>
+)}
+
+{format === '300x250' && (
+  <div class="w-full max-w-full my-8 text-center">
+    <script is:inline>atOptions = {'key':'7f63a1b3caa7bbd886919afc569c198b','format':'iframe','height':250,'width':300,'params':{}};</script>
+    <script is:inline src="https://www.highrevenueformat.com/7f63a1b3caa7bbd886919afc569c198b/invoke.js"></script>
+  </div>
+)}

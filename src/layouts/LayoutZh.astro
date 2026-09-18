@@ -1,11 +1,13 @@
 ---
 import '../styles/global.css';
+import Adsterra from '../components/Adsterra.astro';
 export interface Props {
   title?: string;
   schema?: object;
 }
 const { title = 'GeoScore - GEO 审计工具', schema } = Astro.props;
 const path = Astro.url.pathname;
+const isBlog = path === '/zh/blog' || path.startsWith('/zh/blog/');
 ---
 <!DOCTYPE html>
 <html lang="zh-CN" class="dark">
@@ -183,7 +185,10 @@ const path = Astro.url.pathname;
   </header>
 
   <main class="pb-20">
+    {isBlog && <Adsterra format="728x90" />}
     <slot />
+    <Adsterra format="300x250" />
+    <Adsterra format="native" />
   </main>
 
   <footer class="border-t border-gray-800/50 py-8 px-4">
