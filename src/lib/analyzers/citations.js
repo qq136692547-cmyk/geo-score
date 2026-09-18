@@ -135,8 +135,8 @@ function analyzeCitations(html) {
   if (blockquoteCount >= 1) score += 1;
 
   // 17. Authoritative links (.org, .ac., well-known domains) (weight 1)
-  const authoritativeDomains = /\.(org|ac\.[a-z]{2,3}|edu)\b/i;
-  const knownDomains = /w3\.org|mozilla\.org|eff\.org|ieee\.org|who\.int|nature\.com|science\.org|wikipedia\.org|wikidata\.org|github\.com/i;
+  const authoritativeDomains = /\.(org|ac\.[a-z]{2,3}|edu|gov\.cn|edu\.cn|org\.cn)\b/i;
+  const knownDomains = /w3\.org|mozilla\.org|eff\.org|ieee\.org|who\.int|nature\.com|science\.org|wikipedia\.org|wikidata\.org|github\.com|sse\.com\.cn|szse\.cn|csrc\.gov\.cn|pbc\.gov\.cn|stats\.gov\.cn|cninfo\.com\.cn/i;
   const authoritativeLinks = externalLinks.filter(l => authoritativeDomains.test(l) || knownDomains.test(l)).length;
   checks.push({ id: 'authoritative-links', label: `${authoritativeLinks} authoritative source link(s)`, passed: authoritativeLinks >= 2, weight: 1 });
   if (authoritativeLinks >= 2) score += 1;

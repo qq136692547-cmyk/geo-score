@@ -135,6 +135,12 @@ describe('analyzeCitations', () => {
     expect(check.passed).toBe(true);
   });
 
+  it('should detect Chinese official data sources', () => {
+    const result = analyzeCitations('<a href="https://www.sse.com.cn/">上海证券交易所</a><a href="https://www.csrc.gov.cn/">中国证监会</a>');
+    const check = result.checks.find(c => c.id === 'authoritative-links');
+    expect(check.passed).toBe(true);
+  });
+
   it('should detect logical connectives', () => {
     const result = analyzeCitations('<p>However, this is true. Moreover, the data supports it. Therefore, we conclude.</p>');
     const check = result.checks.find(c => c.id === 'connective-words');
