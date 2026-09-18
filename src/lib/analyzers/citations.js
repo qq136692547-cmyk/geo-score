@@ -1,3 +1,5 @@
+import { countWords } from '../text-utils.js';
+
 function analyzeCitations(html) {
   const checks = [];
   let score = 0;
@@ -146,19 +148,19 @@ function analyzeCitations(html) {
 
   // 19. Passage density (weight 1) — GeoReady "Passage Density"
   const paragraphs = (html.match(/<p[^>]*>[\s\S]*?<\/p>/gi) || []).map(p => stripHtmlSimple(p));
-  const denseParagraphs = paragraphs.filter(p => p.split(/\s+/).filter(Boolean).length >= 150).length;
+  const denseParagraphs = paragraphs.filter(p => countWords(p) >= 150).length;
   const denseRatio = paragraphs.length > 0 ? denseParagraphs / paragraphs.length : 0;
   checks.push({ id: 'passage-density', label: `${denseParagraphs} dense paragraph(s) (${(denseRatio * 100).toFixed(0)}% of ${paragraphs.length})`, passed: denseParagraphs >= 1, weight: 1 });
   if (denseParagraphs >= 1) score += 1;
 
   // 20. Logical connectives (weight 1) — GeoReady "Fluency Optimization"
-  const connectiveMatches = text.match(/\b(however|moreover|therefore|furthermore|consequently|nevertheless|thus|hence|accordingly|additionally|in addition|on the other hand|in contrast)\b/gi) || [];
+  const connectiveMatches = text.match(/\b(however|moreover|therefore|furthermore|consequently|nevertheless|thus|hence|accordingly|additionally|in addition|on the other hand|in contrast)\b|但是|不过|因此|所以|此外|而且|然而|同时|另外|总体来看/gi) || [];
   checks.push({ id: 'connective-words', label: `${connectiveMatches.length} logical connective(s)`, passed: connectiveMatches.length >= 2, weight: 1 });
   if (connectiveMatches.length >= 2) score += 1;
 
   // 21. Question-format headings (weight 1) — GeoReady "Voice Search Ready"
   const headings = html.match(/<h[1-6][^>]*>[\s\S]*?<\/h[1-6]>/gi) || [];
-  const questionHeadings = headings.filter(h => /\?\s*$/.test(stripHtmlSimple(h))).length;
+  const questionHeadings = headings.filter(h => /[?？]\s*$/.test(stripHtmlSimple(h))).length;
   checks.push({ id: 'question-headings', label: `${questionHeadings} question-format heading(s)`, passed: questionHeadings >= 1, weight: 1 });
   if (questionHeadings >= 1) score += 1;
 
@@ -170,7 +172,7 @@ function analyzeCitations(html) {
   if (hasReferenceSection) score += 1;
 
   // 23. Nuance/honesty signals (weight 1) — GeoReady "Nuance/Honesty Signals"
-  const nuanceMatches = text.match(/\b(however|on the other hand|limitation|caveat|drawback|trade-off|tradeoff|while .{0,30}(?:may|might|can|could)|it should be noted|important to note|with the caveat|despite this|nonetheless|importantly)\b/gi) || [];
+  const nuanceMatches = text.match(/\b(however|on the other hand|limitation|caveat|drawback|trade-off|tradeoff|while .{0,30}(?:may|might|can|could)|it should be noted|important to note|with the caveat|despite this|nonetheless|importantly)\b|需要注意|仅供参考|存在风险|局限性|不代表|不能保证|可能受|受限于/gi) || [];
   checks.push({ id: 'nuance-signals', label: `${nuanceMatches.length} nuance signal(s)`, passed: nuanceMatches.length >= 1, weight: 1 });
   if (nuanceMatches.length >= 1) score += 1;
 

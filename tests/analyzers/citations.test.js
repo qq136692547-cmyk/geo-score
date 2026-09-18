@@ -99,6 +99,12 @@ describe('analyzeCitations', () => {
     expect(check.passed).toBe(true);
   });
 
+  it('should detect Chinese question-format headings', () => {
+    const result = analyzeCitations('<h2>今日涨停板怎么看？</h2><p>结合成交额和板块持续性判断。</p>');
+    const check = result.checks.find(c => c.id === 'question-headings');
+    expect(check.passed).toBe(true);
+  });
+
   it('should detect reference section', () => {
     const result = analyzeCitations('<section id="references"><h2>References</h2></section>');
     const check = result.checks.find(c => c.id === 'reference-section');

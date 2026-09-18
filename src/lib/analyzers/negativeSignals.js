@@ -1,4 +1,6 @@
-﻿function analyzeNegativeSignals(html) {
+import { countWords, hasAuthorSignal, tokenizeWords } from '../text-utils.js';
+
+function analyzeNegativeSignals(html) {
   const checks = [];
   const deductions = [];
 
@@ -16,7 +18,7 @@
   }
 
   const text = html.replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '').replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
-  const words = text.split(/\s+/).filter(Boolean).length;
+  const words = countWords(text);
 
   // Excessive CTA
   const ctaCount = (html.match(/(buy now|sign up|subscribe|get started|shop now|free trial|contact us)/gi) || []).length;
@@ -47,20 +49,22 @@
   if (brokenCount > 3) deductions.push({ id: 'broken-links', label: 'Broken or empty links', deduction: 2, severity: 'medium' });
 
   // Keyword stuffing (rough check)
-  const commonStopwords = ['the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by', 'your', 'this', 'that', 'from', 'is', 'are', 'was', 'be', 'it', 'as', 'we', 'you', 'our', 'their', 'they', 'have', 'has', 'will', 'can'];
+  const commonStopwords = new Set(['the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by', 'your', 'this', 'that', 'from', 'is', 'are', 'was', 'be', 'it', 'as', 'we', 'you', 'our', 'their', 'they', 'have', 'has', 'will', 'can', '的', '了', '和', '是', '在', '与', '及', '为', '对', '从', '将', '也', '都', '一个', '我们', '可以', '这个', '其中']);
   const wordFreq = {};
-  text.toLowerCase().split(/\s+/).filter(Boolean).forEach(w => {
-    if (!commonStopwords.includes(w) && w.length > 3) wordFreq[w] = (wordFreq[w] || 0) + 1;
+  const tokens = tokenizeWords(text).map(w => w.toLowerCase()).filter(w => {
+    const isCjk = /[\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff]/.test(w);
+    return !commonStopwords.has(w) && (isCjk ? w.length > 1 : w.length > 3);
   });
+  tokens.forEach(w => { wordFreq[w] = (wordFreq[w] || 0) + 1; });
   const maxFreq = Math.max(...Object.values(wordFreq), 0);
-  const wordTotal = Object.keys(wordFreq).length || 1;
+  const wordTotal = tokens.length || 1;
   const maxDensity = maxFreq / wordTotal;
-  const stuffingFlag = maxDensity > 0.045 && maxFreq > 10;
+  const stuffingFlag = maxDensity > 0.10 && maxFreq >= 8;
   checks.push({ id: 'keyword-stuffing', label: `Top keyword density: ${(maxDensity * 100).toFixed(1)}%`, passed: !stuffingFlag, severity: 'medium' });
   if (stuffingFlag) deductions.push({ id: 'keyword-stuffing', label: 'Keyword stuffing', deduction: 2, severity: 'medium' });
 
   // Missing author
-  const hasAuthor = /rel=["\']author["\']|<meta[^>]+name=["\']author["\']/i.test(html);
+  const hasAuthor = hasAuthorSignal(html);
   checks.push({ id: 'missing-author', label: 'Author signal found', passed: hasAuthor, severity: 'low' });
   if (!hasAuthor) deductions.push({ id: 'missing-author', label: 'Missing author signal', deduction: 1, severity: 'low' });
 

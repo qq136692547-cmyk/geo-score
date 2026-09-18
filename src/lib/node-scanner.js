@@ -46,6 +46,9 @@ async function auditUrl(url) {
     fetchResource(origin + '/.well-known/ai.txt'),
     fetchResource(origin + '/ai/summary.json', 'json'),
     fetchResource(origin + '/ai/faq.json', 'json'),
+    fetchResource(origin + '/sitemap.xml'),
+    fetchResource(origin + '/about'),
+    fetchResource(extractContentPageUrl(pageHtml, origin)),
   ]).then(function (results) {
     return results.map(function (r) { return r.status === 'fulfilled' ? r.value : null; });
   });

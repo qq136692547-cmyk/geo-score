@@ -1,4 +1,6 @@
-﻿function analyzeEeat(html, schemaResult, responseHeaders) {
+import { hasAuthorSignal } from '../text-utils.js';
+
+function analyzeEeat(html, schemaResult, responseHeaders) {
   const checks = [];
   let score = 0;
   const maxScore = 8;
@@ -13,7 +15,7 @@
     ], passed: 0, total: 5 };
   }
 
-  const hasAuthor = /rel=["\']author["\']|<meta[^>]+name=["\']author["\']|作者[：:]|撰稿/i.test(html);
+  const hasAuthor = hasAuthorSignal(html);
   checks.push({ id: 'author', label: 'Author bylines on content', passed: hasAuthor, weight: 2 });
   if (hasAuthor) score += 2;
 

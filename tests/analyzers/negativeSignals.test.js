@@ -1,4 +1,4 @@
-﻿import { describe, it, expect } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { analyzeNegativeSignals } from '../../src/lib/analyzers/negativeSignals.js';
 
 const cleanHtml = `<!DOCTYPE html>
@@ -34,6 +34,19 @@ const spammyHtml = `<!DOCTYPE html>
   <a href="#">too many</a>
 </body></html>`;
 
+const chineseTableHtml = `<!DOCTYPE html>
+<html lang="zh-CN"><head>
+  <meta name="author" content="爱看盘团队">
+  <title>今日涨停板复盘</title>
+</head><body>
+  <h1>今日涨停板复盘</h1>
+  <main><article>
+    <p>今日A股涨停数量明显增加，市场情绪回暖。投资者需要结合成交额、板块持续性和个股位置判断行情强弱，不能只看单一指标。</p>
+    <p>半导体、通信设备和医疗服务方向表现活跃。市场热度上升时仍需注意分化风险，尤其是高位股的成交变化和资金承接情况。</p>
+    <table><tr><th>股票</th><th>涨跌幅</th></tr><tr><td>示例科技</td><td>10.00%</td></tr><tr><td>示例通信</td><td>9.98%</td></tr></table>
+  </article></main>
+</body></html>`;
+
 describe('analyzeNegativeSignals', () => {
   it('should find no negative signals for clean page', () => {
     const result = analyzeNegativeSignals(cleanHtml);
@@ -51,5 +64,11 @@ describe('analyzeNegativeSignals', () => {
     const result = analyzeNegativeSignals(null);
     expect(result.score).toBe(0);
     expect(result.total).toBe(8);
+  });
+
+  it('should not flag normal Chinese table content as keyword stuffing', () => {
+    const result = analyzeNegativeSignals(chineseTableHtml);
+    const stuffing = result.checks.find((check) => check.id === 'keyword-stuffing');
+    expect(stuffing.passed).toBe(true);
   });
 });

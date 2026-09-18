@@ -1,4 +1,6 @@
-﻿function analyzeContent(html) {
+import { countWords } from '../text-utils.js';
+
+function analyzeContent(html) {
   const checks = [];
   let score = 0;
   const maxScore = 12;
@@ -25,9 +27,7 @@
   if (hasH1) score += 2;
 
   // Word count
-  const cjkChars = (text.match(/[\u4e00-\u9fff\u3400-\u4dbf]/g) || []).length;
-  const englishWords = text.split(/\s+/).filter(Boolean).length;
-  const words = Math.max(englishWords, Math.round(cjkChars * 0.6));
+  const words = countWords(text);
   const wordOk = words >= 600;
   checks.push({ id: 'wordcount', label: `Content ${words} words` + (words >= 600 ? '' : ' (need 600+)'), passed: wordOk, weight: 2 });
   if (wordOk) score += 2;
