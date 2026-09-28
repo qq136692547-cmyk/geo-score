@@ -215,9 +215,12 @@ import Layout from '../layouts/Layout.astro';
       }
       return;
     }
+    const successUrl = location.origin + '/pricing/?checkout=success';
     const leave = function (url) {
       if (window.geoTrack) {
-        window.geoTrack('trial_started', { cta_id: 'pricing_pro', billing_period: period, source_type: sourceType });
+        // transport_type beacon: the page unloads right after this, so the event
+        // must survive on sendBeacon instead of a normal gtag round trip.
+        window.geoTrack('trial_started', { cta_id: 'pricing_pro', billing_period: period, source_type: sourceType, transport_type: 'beacon' });
       }
       window.location.href = url;
     };
@@ -229,7 +232,7 @@ import Layout from '../layouts/Layout.astro';
       btn.disabled = true;
       btn.textContent = 'Preparing checkout...';
       try {
-        const res = await window.geoscoreAuth.api('/api/checkout', { method: 'POST', body: { billing_period: period } });
+        const res = await window.geoscoreAuth.api('/api/checkout', { method: 'POST', body: { billing_period: period, success_url: successUrl } });
         if (res.ok && res.data && res.data.checkout_url) {
           leave(res.data.checkout_url);
           return;
@@ -245,5 +248,21 @@ import Layout from '../layouts/Layout.astro';
   const planButtons = document.querySelectorAll('[data-billing]');
   for (let i = 0; i < planButtons.length; i++) {
     planButtons[i].addEventListener('click', function () { startCheckout(this); });
+  }
+
+  // Creem sends the buyer back here with ?checkout=success. Report it once per
+  // session: a refresh must not re-report the same conversion.
+  if (new URLSearchParams(location.search).get('checkout') === 'success') {
+    let alreadyReported = false;
+    try {
+      alreadyReported = sessionStorage.getItem('geoscore_checkout_returned') === '1';
+      if (!alreadyReported) sessionStorage.setItem('geoscore_checkout_returned', '1');
+    } catch (e) { /* storage unavailable: report anyway rather than lose the event */ }
+    if (!alreadyReported && window.geoTrack) {
+      window.geoTrack('checkout_returned', {
+        source_type: window.geoSource ? window.geoSource() : 'other',
+        transport_type: 'beacon',
+      });
+    }
   }
 </script>

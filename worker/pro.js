@@ -466,6 +466,26 @@ function creemProductId(env, period) {
 }
 
 const CREEM_SUCCESS_URL = 'https://geoscore.help/pricing/?checkout=success';
+const CREEM_SUCCESS_ORIGIN = 'https://geoscore.help';
+const CREEM_SUCCESS_PATHS = ['/pricing/', '/zh/pricing/'];
+
+/**
+ * Only our own pricing pages may be used as the post-payment redirect: an
+ * unvalidated success_url would bounce a paying buyer to an arbitrary site.
+ * Anything else silently falls back to the default rather than failing the
+ * checkout.
+ */
+function resolveSuccessUrl(raw) {
+  if (raw) {
+    try {
+      const u = new URL(String(raw));
+      if (u.origin === CREEM_SUCCESS_ORIGIN && CREEM_SUCCESS_PATHS.indexOf(u.pathname) !== -1) {
+        return u.toString();
+      }
+    } catch (e) { /* fall through to the default */ }
+  }
+  return CREEM_SUCCESS_URL;
+}
 
 /**
  * POST /api/checkout
@@ -490,7 +510,7 @@ export async function handleCreateCheckout(request, env, corsHeaders) {
     // the page shows.
     return json({ error: 'Annual billing is not configured', code: 'annual_unavailable' }, 503, corsHeaders);
   }
-  const successUrl = String(body.success_url || CREEM_SUCCESS_URL).slice(0, 2048);
+  const successUrl = resolveSuccessUrl(body.success_url);
   const checkoutRes = await fetch(CREEM_CHECKOUT_API(env), {
     method: 'POST',
     headers: {

@@ -259,6 +259,21 @@ describe('checkout session', () => {
     expect(resp.status).toBe(200);
     expect(sentBody.product_id).toBe('prod_monthly_test');
   });
+
+  it('keeps the buyer on our own pricing pages and rejects an off-site success_url', async () => {
+    let sentBody = null;
+    vi.stubGlobal('fetch', vi.fn(async (url, init) => {
+      sentBody = JSON.parse(init.body);
+      return new Response(JSON.stringify({ checkout_url: 'https://checkout.creem.io/ch_1' }), { status: 200 });
+    }));
+    const e = makeEnv('free');
+    e.env.CREEM_API_KEY = 'test-creem-key';
+    await call('POST', '/api/checkout', e, { success_url: 'https://evil.example/phish' });
+    expect(sentBody.success_url).toBe('https://geoscore.help/pricing/?checkout=success');
+
+    await call('POST', '/api/checkout', e, { success_url: 'https://geoscore.help/zh/pricing/?checkout=success' });
+    expect(sentBody.success_url).toBe('https://geoscore.help/zh/pricing/?checkout=success');
+  });
 });});
 
 describe('leads capture', () => {

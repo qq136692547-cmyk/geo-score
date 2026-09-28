@@ -175,9 +175,11 @@ import LayoutZh from '../../layouts/LayoutZh.astro';
         }
         return;
       }
+      const successUrl = location.origin + '/zh/pricing/?checkout=success';
       const leave = function (url) {
         if (window.geoTrack) {
-          window.geoTrack('trial_started', { cta_id: 'pricing_pro', billing_period: period, source_type: sourceType });
+          // transport_type beacon：紧接着页面就卸载了，必须用 sendBeacon 送出去。
+          window.geoTrack('trial_started', { cta_id: 'pricing_pro', billing_period: period, source_type: sourceType, transport_type: 'beacon' });
         }
         window.location.href = url;
       };
@@ -189,7 +191,7 @@ import LayoutZh from '../../layouts/LayoutZh.astro';
         btn.disabled = true;
         btn.textContent = '正在创建结账...';
         try {
-          const res = await window.geoscoreAuth.api('/api/checkout', { method: 'POST', body: { billing_period: period } });
+          const res = await window.geoscoreAuth.api('/api/checkout', { method: 'POST', body: { billing_period: period, success_url: successUrl } });
           if (res.ok && res.data && res.data.checkout_url) {
             leave(res.data.checkout_url);
             return;
@@ -205,5 +207,21 @@ import LayoutZh from '../../layouts/LayoutZh.astro';
     const planButtons = document.querySelectorAll('[data-billing]');
     for (let i = 0; i < planButtons.length; i++) {
       planButtons[i].addEventListener('click', function () { startCheckout(this); });
+    }
+
+    // Creem 付款后带 ?checkout=success 回到本页。每个会话只上报一次，
+    // 刷新不得重复计入转化。
+    if (new URLSearchParams(location.search).get('checkout') === 'success') {
+      let alreadyReported = false;
+      try {
+        alreadyReported = sessionStorage.getItem('geoscore_checkout_returned') === '1';
+        if (!alreadyReported) sessionStorage.setItem('geoscore_checkout_returned', '1');
+      } catch (e) { /* storage 不可用：宁可上报也不要丢事件 */ }
+      if (!alreadyReported && window.geoTrack) {
+        window.geoTrack('checkout_returned', {
+          source_type: window.geoSource ? window.geoSource() : 'other',
+          transport_type: 'beacon',
+        });
+      }
     }
   </script>
