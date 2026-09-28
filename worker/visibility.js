@@ -184,31 +184,35 @@ function visibilityInsert(env, site, engine, query, row, errMsg, now) {
     row.mentioned ? 1 : 0, row.cited ? 1 : 0, row.sentiment, row.snippet, row.raw, now, now);
 }
 
-async function storeFetchErrorBatch(env, site, errMsg, now) {
-  const stmts = ENGINES.map(engine => visibilityInsert(env, site, engine, '', null, errMsg, now));
+async function storeFetchErrorBatch(env, site, errMsg, now, engineList) {
+  const stmts = (engineList || ENGINES).map(engine => visibilityInsert(env, site, engine, '', null, errMsg, now));
   await env.DB.batch(stmts);
 }
 
 /**
  * Run one AI visibility check batch for a monitored site.
+ * options.engines narrows the engine set; the free tier runs a single engine (PRD §12.7).
  * Returns { ok, host, url, query, checked_at, engines[], summary{} }.
  */
-export async function runVisibilityCheck(env, site) {
+export async function runVisibilityCheck(env, site, options) {
+  const engineList = options && Array.isArray(options.engines) && options.engines.length
+    ? options.engines
+    : ENGINES;
   const now = Math.floor(Date.now() / 1000);
   let profile;
   try {
     profile = await fetchSiteProfile(site.url);
   } catch (err) {
     const errMsg = 'fetch: ' + String(err && err.message ? err.message : err).slice(0, 300);
-    try { await storeFetchErrorBatch(env, site, errMsg, now); } catch (dbErr) {}
+    try { await storeFetchErrorBatch(env, site, errMsg, now, engineList); } catch (dbErr) {}
     return { ok: false, host: site.host, url: site.url, error: errMsg, checked_at: now };
   }
   const query = buildQuery(profile);
-  const settled = await Promise.allSettled(ENGINES.map(engine => askEngine(engine, profile, query, env)));
+  const settled = await Promise.allSettled(engineList.map(engine => askEngine(engine, profile, query, env)));
   const engines = [];
   const stmts = [];
-  for (let i = 0; i < ENGINES.length; i++) {
-    const engine = ENGINES[i];
+  for (let i = 0; i < engineList.length; i++) {
+    const engine = engineList[i];
     const r = settled[i];
     if (r.status === 'fulfilled') {
       engines.push({ engine, mentioned: r.value.mentioned, cited: r.value.cited, sentiment: r.value.sentiment, snippet: r.value.snippet, error: null });

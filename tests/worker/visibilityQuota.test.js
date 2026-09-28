@@ -12,7 +12,6 @@ import {
   freeVisibilityAllowance,
   consumeFreeCheck,
   cooldownScopeKey,
-  normalizeHost,
 } from '../../worker/visibilityQuota.js';
 
 const SEPT = Date.UTC(2026, 8, 15, 12, 0, 0) / 1000;
@@ -242,12 +241,5 @@ describe('consumeFreeCheck (optimistic lock)', () => {
     expect((await consumeFreeCheck(env, { id: 'u_1' }, SEPT)).ok).toBe(false);
     expect(db._tables.users[0].free_vis_used).toBe(0);
     expect((await consumeFreeCheck(env, { id: 'u_1' }, SEPT)).ok).toBe(true);
-  });
-});
-
-describe('normalizeHost', () => {
-  it('reduces URLs, www prefixes and paths to a bare host', () => {
-    expect(normalizeHost('https://WWW.Example.com/path?a=1')).toBe('example.com');
-    expect(normalizeHost('example.com/')).toBe('example.com');
   });
 });

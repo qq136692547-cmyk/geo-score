@@ -262,8 +262,3 @@ export async function consumeFreeCheck(env, user, now) {
 export function cooldownScopeKey(user) {
   return normalizeEmailForAbuse(user.email);
 }
-
-/** Normalised host for cooldown + storage, mirroring the Pro path. */
-export function normalizeHost(rawInput) {
-  return String(rawInput || '').trim().toLowerCase().replace(/^https?:\/\//, '').replace(/^www\./, '').replace(/\/.*$/, '');
-}
