@@ -30,6 +30,10 @@ globalThis.fetch = async (url, opts) => {
 
 // ---- Fake D1 (captures inserts) ----
 const inserts = [];
+// INSERTs now come from two tables: the ai_visibility batch and the per-call
+// llm_counters guardrail UPSERT. Assertions below must not conflate them.
+const visInserts = () => inserts.filter(i => i.sql.includes('ai_visibility'));
+const counterInserts = () => inserts.filter(i => i.sql.includes('llm_counters'));
 function makeDb() {
   return {
     prepare(sql) {
@@ -56,13 +60,14 @@ assert.equal(result.engines.length, 4, '4 engines');
 assert.equal(result.summary.mentioned, 3, '3 engines mentioned (claude not)');
 assert.equal(result.summary.cited, 3, '3 engines cited');
 assert.equal(result.summary.failed, 0, 'no failures');
-assert.equal(inserts.length, 4, 'one insert per engine');
-assert.ok(inserts.every(i => i.sql.includes('ai_visibility')), 'all inserts target ai_visibility');
-const times = new Set(inserts.map(i => i.args[14]));
+assert.equal(visInserts().length, 4, 'one insert per engine');
+assert.ok(inserts.every(i => i.sql.includes('ai_visibility') || i.sql.includes('llm_counters')), 'nothing writes an unexpected table');
+assert.equal(counterInserts().length, 4, 'one llm call counted per engine, not one per batch');
+const times = new Set(visInserts().map(i => i.args[14]));
 assert.equal(times.size, 1, 'same batch checked_at');
 assert.ok(fetchCalls.includes('https://example.com'), 'homepage fetched');
 assert.equal(fetchCalls.filter(u => u.startsWith('https://tokenrhythm.studio/')).length, 4, '4 LLM calls');
-console.log('runVisibilityCheck OK: engines=4, mentioned=3, inserts=' + inserts.length);
+console.log('runVisibilityCheck OK: engines=4, mentioned=3, inserts=' + visInserts().length);
 
 // ---- getLatestVisibility ----
 const latestRows = [
@@ -92,6 +97,6 @@ globalThis.fetch = async (url) => { throw new Error('network down'); };
 const failResult = await runVisibilityCheck(env3, site);
 assert.equal(failResult.ok, false);
 assert.ok(String(failResult.error).includes('network down'));
-assert.equal(inserts.length, 8, 'fetch failure still records 4 error rows');
+assert.equal(visInserts().length, 8, 'fetch failure still records 4 error rows');
 console.log('fetch failure path OK: error rows recorded');
 console.log('ALL VISIBILITY TESTS PASSED');
