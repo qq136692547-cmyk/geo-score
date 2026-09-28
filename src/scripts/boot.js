@@ -152,11 +152,19 @@ window.startAudit = async function (entryPoint) {
   var btn = document.getElementById("audit-btn");
   var url = (input.value || "").trim();
   if (!url) { input.focus(); return; }
+  var loadEl = document.getElementById("loading-section");
+  var reportEl = document.getElementById("report-section");
+  if (!loadEl || !reportEl) {
+    // Pages without the audit containers (e.g. /tools/*) bounce to the homepage
+    // audit flow, which owns the loading + report UI. entry_point is preserved via &src=.
+    var base = /^\/zh(\/|$)/.test(window.location.pathname) ? '/zh/' : '/';
+    window.location.href = base + '?audit=' + encodeURIComponent(url) + '&src=tool_page';
+    return;
+  }
   btn.disabled = true;
   btn.textContent = "Scanning\u2026";
   geoHide(document.getElementById("hero-section"));
-  var loadEl = document.getElementById("loading-section");
-  document.getElementById("report-section").classList.add("hidden");
+  reportEl.classList.add("hidden");
   loadEl.classList.remove("hidden");
   loadEl.style.opacity = "0";
   loadEl.style.transition = "none";
@@ -514,7 +522,7 @@ document.addEventListener("DOMContentLoaded", function() {
     if (!/^https?:\/\//i.test(cleanUrl)) cleanUrl = 'https://' + cleanUrl;
     var urlInput = document.getElementById('url-input');
     if (urlInput) urlInput.value = cleanUrl.replace(/^https?:\/\//, '');
-    setTimeout(function() { window.startAudit('share_link'); }, 300);
+    setTimeout(function() { window.startAudit(params.get('src') || 'share_link'); }, 300);
   }
 });
 
