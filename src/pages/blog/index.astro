@@ -17,7 +17,6 @@ const posts = [
   { slug: 'geo-citation-optimization', title: 'GEO Citation Optimization: How to Get Cited by AI Engines in 2026', tag: 'Guide · 12 min', excerpt: 'The 5 pillars of AI citation optimization — structured data, semantic clarity, source authority, content uniqueness, and multimodal coverage — with a 10-step checklist.' },
   { slug: 'geo-maturity-model-2026', title: 'GEO Maturity Model 2026: From Experiment to Scale', tag: 'Guide · 14 min', excerpt: 'The five-stage GEO maturity model — Experiment, Validate, Standardize, Scale, Optimize — with the AAES framework, key metrics per stage, and enterprise implementation paths.' },
   { slug: 'auditing-1200-websites', title: 'Auditing 1,200 Websites for AI Readiness: What We Learned', tag: 'Analysis · 10 min', excerpt: 'Key findings from large-scale GEO audits — common gaps, patterns, and quick wins.' },
-  { slug: 'how-to-write-llms-txt', title: 'How to Write llms.txt (Redirected)', tag: 'Redirect', excerpt: 'This post has been merged into the llms.txt Ultimate Guide.' },
 ];
 ---
 <Layout title="GEO Blog & Guides | GeoScore"
@@ -41,7 +40,7 @@ const posts = [
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
       {posts.filter(p => p.tag !== 'Redirect').map((post) => (
-        <a href={`/blog/${post.slug}`} class="card card-hover card-lift p-6 block">
+        <a href={`/blog/${post.slug}/`} class="card card-hover card-lift p-6 block">
           <div class="text-xs text-gray-500 mb-2">{post.tag}</div>
           <h2 class="text-lg font-bold mb-2">{post.title}</h2>
           <p class="text-gray-400 text-sm">{post.excerpt}</p>
