@@ -10,6 +10,7 @@ import { auditUrl } from './lib/node-scanner.js';
 import { renderAuditPdf } from './lib/pdf.js';
 import { runVisibilityCheck, getLatestVisibility } from './visibility.js';
 import { readLlmCalls, llmMonthlyCallBudget, evaluateLlmBudget } from './guardrails.js';
+import { runFreeVisibilityCheck } from './freeVisibility.js';
 
 const MAX_SITES = 5;
 const ALERT_THRESHOLD = 10;        // score drop >= 10 triggers email
@@ -389,29 +390,34 @@ async function handleAuditPdf(request, env, corsHeaders, id) {
 
 /**
  * POST /api/visibility/check
- * Body: { host } (or { url }) - must match one of the user's monitored sites.
- * Runs an AI recommendation simulation across 4 engines and stores the batch.
+ * Body: { host } (or { url })
+ * - Pro: host must match one of the user's monitored sites; multi-engine batch.
+ * - Free: one engine on any public URL, single check per UTC month (§12.5/§12.6).
  */
 async function handleVisibilityCheck(request, env, corsHeaders) {
-  const guard = await assertProUser(request, env, corsHeaders);
-  if (guard.error) return guard.error;
-  const user = guard.user;
+  // PRD §12.5 steps 1-2: authenticate, then resolve the effective plan.
+  const user = await requireAuth(request, env);
+  if (!user) return json({ error: 'Unauthorized' }, 401, corsHeaders);
   if (!env.TOKENRHYTHM_API_KEY) {
     return json({ error: 'AI visibility check unavailable' }, 503, corsHeaders);
+  }
+  let body = {};
+  try { body = await request.json(); } catch (e) {}
+  // Steps 3-11 for non-Pro callers live in freeVisibility.js.
+  if (user.plan !== 'pro') {
+    return runFreeVisibilityCheck(env, request, user, body, corsHeaders);
   }
   // Global monthly budget circuit breaker (PRD §12.5 step 8). Checked before any
   // fetch or LLM call so a blocked request costs nothing.
   const budget = evaluateLlmBudget(
     await readLlmCalls(env, Math.floor(Date.now() / 1000)),
     llmMonthlyCallBudget(env),
-    user.plan === 'pro'
+    true
   );
   if (budget.level === 'warn') console.log('llm budget warning: ' + JSON.stringify(budget));
   if (!budget.ok) {
     return json({ error: 'LLM budget exhausted', code: budget.code, budget }, 429, corsHeaders);
   }
-  let body = {};
-  try { body = await request.json(); } catch (e) {}
   const raw = String(body.host || body.url || '').trim().toLowerCase().replace(/^www\./, '');
   if (!raw) return json({ error: 'Missing host' }, 400, corsHeaders);
   const site = await env.DB.prepare(

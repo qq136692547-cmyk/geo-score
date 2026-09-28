@@ -26,6 +26,9 @@ database_id = "372d4f13-35da-4878-b9d2-916b90fc11ad"
 #                           TOKENRHYTHM prices, do not guess.
 # COOLDOWN_SALT           - salt for hashing IP cooldown keys; falls back to
 #                           JWT_SECRET when unset.
+# DISPOSABLE_EMAIL_DOMAINS - extra comma-separated mailbox domains to refuse on
+#                           the free path, on top of the built-in list
+#                           (worker/visibilityQuota.js).
 
 # Routes
 # After deploying, set up a custom domain or use the workers.dev subdomain:

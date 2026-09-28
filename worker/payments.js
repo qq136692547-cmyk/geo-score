@@ -20,6 +20,7 @@
  *   GOOGLE_CLIENT_ID      - Google OAuth Client ID
  */
 import { verifyJWT, resolvePlan, hmacSha256, base64Url, constantTimeEqual, handleProRoutes, runScheduledAudits } from './pro.js';
+import { freeVisibilityAllowance } from './visibilityQuota.js';
 
 // Plan mapping: Creem product ID -> plan name
 // v1.5.0: Only Pro is offered for now. Studio/Agency are visible on pricing page as "Coming Soon".
@@ -359,6 +360,10 @@ async function handleMe(request, env, corsHeaders) {
 
     // Resolve effective plan (checks subscription expiry too)
     user.plan = await resolvePlan(user, env);
+
+    // Free-tier AI visibility allowance (PRD §12.5). Read-only: the quota is only
+    // claimed by POST /api/visibility/check, so a page view can never spend it.
+    user.visibility_allowance = await freeVisibilityAllowance(env, user, Math.floor(Date.now() / 1000), user.plan);
 
     return json({ user }, 200, corsHeaders);
   } catch (err) {

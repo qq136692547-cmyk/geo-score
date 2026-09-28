@@ -4,9 +4,16 @@
  * COUNT(*) AS c, ORDER BY col ASC|DESC, LIMIT n, AND conditions.
  * UPDATE parameters are consumed in SQL text order (SET placeholders first,
  * then WHERE placeholders).
+ *
+ * Every table the worker writes to must be listed here: an unknown table name
+ * silently swallows the INSERT (rows go into a throwaway array), so a missing
+ * entry turns a persistence assertion into a false pass.
  */
 export function createMockDb(seed = {}) {
-  const tables = { sites: [], audits: [], subscriptions: [], users: [], verify_codes: [], webhook_events: [] };
+  const tables = {
+    sites: [], audits: [], subscriptions: [], users: [], verify_codes: [],
+    webhook_events: [], ai_visibility: [], llm_counters: [], visibility_cooldowns: [], leads: [],
+  };
   for (const [name, rows] of Object.entries(seed)) {
     if (!tables[name]) tables[name] = [];
     tables[name].push(...rows.map(r => ({ ...r })));

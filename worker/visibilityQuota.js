@@ -254,11 +254,3 @@ export async function consumeFreeCheck(env, user, now) {
   }
   return { ok: true, used: usage.used + 1 };
 }
-
-/**
- * PRD §12.5 step 3 (anti-abuse normalisation): a user must not be able to chain
- * free checks by re-registering aliases of the same mailbox.
- */
-export function cooldownScopeKey(user) {
-  return normalizeEmailForAbuse(user.email);
-}

@@ -11,7 +11,6 @@ import {
   evaluateFreeEligibility,
   freeVisibilityAllowance,
   consumeFreeCheck,
-  cooldownScopeKey,
 } from '../../worker/visibilityQuota.js';
 
 const SEPT = Date.UTC(2026, 8, 15, 12, 0, 0) / 1000;
@@ -63,10 +62,6 @@ describe('email abuse normalisation', () => {
   it('accepts extra domains from the environment without a redeploy', () => {
     expect(isDisposableEmail('x@throwaway.dev', {})).toBe(false);
     expect(isDisposableEmail('x@throwaway.dev', { DISPOSABLE_EMAIL_DOMAINS: 'throwaway.dev, junk.io' })).toBe(true);
-  });
-
-  it('scopes the cooldown to the normalised mailbox so aliases share one identity', () => {
-    expect(cooldownScopeKey({ email: 'A+1@Gmail.com' })).toBe(cooldownScopeKey({ email: 'a+2@gmail.com' }));
   });
 });
 
