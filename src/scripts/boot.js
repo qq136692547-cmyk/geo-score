@@ -20,6 +20,7 @@ import { renderTrendContainer, initTrendChart } from '../components/trendChart.j
 import { renderComparisonPanel } from '../components/comparisonPanel.js';
 import { initSitesPanel } from '../components/sitesPanel.js';
 import { saveAuditToCloud } from '../components/auditHistory.js';
+import { renderUpgradeCta } from '../components/upgradeCta.js';
 
 var radarChartInstance = null;
 var trendChartInstance = null;
@@ -34,6 +35,13 @@ function getGeoSource() {
 
 function geoUrlDomain(value) {
   try { return new URL(value).hostname; } catch (e) { return ''; }
+}
+
+// Unified score buckets: <60 low / 60-67 mid / >=68 high (no overlap with 68)
+function scoreBucket(score) {
+  if (score < 60) return 'low';
+  if (score < 68) return 'mid';
+  return 'high';
 }
 
 function geoErrorCode(error) {
@@ -139,7 +147,7 @@ function extractUrlsFromSitemap(xml) {
   return urls;
 }
 
-window.startAudit = async function () {
+window.startAudit = async function (entryPoint) {
   var input = document.getElementById("url-input");
   var btn = document.getElementById("audit-btn");
   var url = (input.value || "").trim();
@@ -172,11 +180,12 @@ window.startAudit = async function () {
   try {
     var targetUrl = url;
     if (!/^https?:\/\//i.test(targetUrl)) targetUrl = "https://" + targetUrl;
-    if (typeof window.geoTrack === 'function') window.geoTrack('audit_started', { url_domain: geoUrlDomain(targetUrl), source_type: getGeoSource() });
+    var t0 = performance.now();
+    if (typeof window.geoTrack === 'function') window.geoTrack('audit_started', { url_domain: geoUrlDomain(targetUrl), source_type: getGeoSource(), entry_point: entryPoint || 'home' });
     var result = await auditUrl(targetUrl);
     addToHistory(result);
     localStorage.setItem("geoscope_last_result", JSON.stringify(result));
-    if (typeof window.geoTrack === 'function') window.geoTrack('audit_completed', { url_domain: geoUrlDomain(targetUrl), score: result.score, level: result.level, source_type: getGeoSource() });
+    if (typeof window.geoTrack === 'function') window.geoTrack('audit_completed', { url_domain: geoUrlDomain(targetUrl), score: result.score, level: result.level, score_bucket: scoreBucket(result.score), duration_ms: Math.round(performance.now() - t0), source_type: getGeoSource() });
     clearInterval(scanTimer);
     var reportEl = document.getElementById("report-section");
     var loadEl = document.getElementById("loading-section");
@@ -226,7 +235,43 @@ function geoHide(el) {
   el.style.transition = "opacity 0.2s ease";
   el.style.opacity = "0";
   setTimeout(function() { el.classList.add("hidden"); }, 200);
-}function renderReport(r) {
+}
+
+var resultViewedTimer = null;
+// Fire result_viewed once the score header is actually seen (not just rendered),
+// to avoid systematically inflating the denominator on long reports.
+function setupResultViewed(root, r) {
+  var header = root.querySelector('.stagger-section');
+  if (!header) return;
+  var fired = false;
+  var observer = null;
+  function fire() {
+    if (fired) return;
+    fired = true;
+    if (typeof window.geoTrack === 'function') {
+      window.geoTrack('result_viewed', {
+        score: r.score,
+        score_bucket: scoreBucket(r.score),
+        level: r.level,
+        source_type: getGeoSource()
+      });
+    }
+    if (observer) observer.disconnect();
+  }
+  if ('IntersectionObserver' in window) {
+    observer = new IntersectionObserver(function(entries) {
+      for (var i = 0; i < entries.length; i++) {
+        if (entries[i].isIntersecting && entries[i].intersectionRatio >= 0.5) { fire(); break; }
+      }
+    }, { threshold: 0.5 });
+    observer.observe(header);
+  }
+  // 3s fallback to prevent coverage collapse if IO never fires
+  if (resultViewedTimer) clearTimeout(resultViewedTimer);
+  resultViewedTimer = setTimeout(fire, 3000);
+}
+
+function renderReport(r) {
   if (radarChartInstance) { radarChartInstance.destroy(); radarChartInstance = null; }
   if (trendChartInstance) { trendChartInstance.destroy(); trendChartInstance = null; }
   var root = document.getElementById("report-section");
@@ -235,8 +280,10 @@ function geoHide(el) {
     renderRadarContainer(),
     renderDimensionBreakdown(r.dimensions),
     renderNegativeSignals(r.negativeSignals),
+    renderUpgradeCta(r, 'primary'),
     renderSeoSupplement(r.seoSupplement),
     renderFixFilesPanel(r),
+    renderUpgradeCta(r, 'lead'),
     renderFixesPanel(r.recommendations),
     renderExportButtons(),
     renderShareButtons(r),
@@ -286,6 +333,7 @@ function geoHide(el) {
       initTrendChart(urlHistory).then(function(chart) { trendChartInstance = chart; });
     }
   }
+  setupResultViewed(root, r);
 }
 
 function renderHistory() {
@@ -301,7 +349,7 @@ function renderHistory() {
     if (item) {
       var url = item.getAttribute("data-url");
       document.getElementById("url-input").value = url;
-      window.startAudit();
+      window.startAudit('history');
     }
   });
 }
@@ -382,16 +430,78 @@ window.copyShareLink = function(auditUrl) {
   }).catch(function() {});
 };
 
+// --- Result-page CTA handlers (delegated: report-section innerHTML is rebuilt per audit) ---
+function handleReportCtaClick(e) {
+  var cta = e.target.closest('[data-cta-id]');
+  if (!cta) return;
+  var ctaId = cta.getAttribute('data-cta-id');
+  var action = cta.getAttribute('data-cta-action');
+  var r = null;
+  try { r = JSON.parse(localStorage.getItem('geoscope_last_result') || 'null'); } catch (err) { r = null; }
+  var params = { cta_id: ctaId, source_type: getGeoSource() };
+  if (r && typeof r.score === 'number') { params.score = r.score; params.score_bucket = scoreBucket(r.score); }
+  if (typeof window.geoTrack === 'function') window.geoTrack('upgrade_cta_clicked', params);
+  if (action === 'lead-toggle') {
+    e.preventDefault();
+    var form = document.getElementById('lead-entry-form');
+    if (form) form.classList.toggle('hidden');
+  } else if (action === 'lead-submit') {
+    e.preventDefault();
+    submitLead(ctaId, r);
+  }
+  // primary CTA has no data-cta-action → default anchor navigation proceeds
+}
+
+function setLeadStatus(el, msg, isError) {
+  if (!el) return;
+  el.textContent = msg;
+  el.className = 'text-xs mt-3 ' + (isError ? 'text-danger-500' : 'text-geo-500');
+}
+
+async function submitLead(ctaId, r) {
+  var emailEl = document.getElementById('lead-email');
+  var consentEl = document.getElementById('lead-consent');
+  var statusEl = document.getElementById('lead-status');
+  var email = (emailEl && emailEl.value ? emailEl.value : '').trim();
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { setLeadStatus(statusEl, t('Enter a valid email.', '请输入有效的邮箱。'), true); return; }
+  if (!consentEl || !consentEl.checked) { setLeadStatus(statusEl, t('Please check the consent box.', '请勾选同意。'), true); return; }
+  if (!window.geoscoreAuth || typeof window.geoscoreAuth.api !== 'function') { setLeadStatus(statusEl, t('Temporarily unavailable, please retry.', '暂时无法提交，请稍后重试。'), true); return; }
+  var payload = {
+    email: email,
+    consent: true,
+    cta_id: ctaId,
+    host: r ? geoUrlDomain(r.url) : '',
+    url: r ? r.url : '',
+    score: r && typeof r.score === 'number' ? r.score : null,
+    score_bucket: r && typeof r.score === 'number' ? scoreBucket(r.score) : '',
+    source_type: getGeoSource()
+  };
+  setLeadStatus(statusEl, t('Sending\u2026', '发送中\u2026'), false);
+  try {
+    var res = await window.geoscoreAuth.api('/api/leads', { method: 'POST', body: payload });
+    if (res && res.ok) {
+      setLeadStatus(statusEl, t('Received. anan will contact you at the email you left about this check.', '已收到。anan 会用你留下的邮箱就本次检测联系你。'), false);
+      if (typeof window.geoTrack === 'function') window.geoTrack('lead_submitted', { cta_id: ctaId, score_bucket: payload.score_bucket, source_type: payload.source_type });
+    } else {
+      setLeadStatus(statusEl, t('Could not submit, please retry.', '提交失败，请重试。'), true);
+    }
+  } catch (err) {
+    setLeadStatus(statusEl, t('Could not submit, please retry.', '提交失败，请重试。'), true);
+  }
+}
+
 // --- Bootstrap: attach click listeners (replaces onclick) ---
 document.addEventListener("DOMContentLoaded", function() {
   var ab = document.getElementById("audit-btn");
-  if (ab) ab.addEventListener("click", function() { window.startAudit(); });
+  if (ab) ab.addEventListener("click", function() { window.startAudit('home'); });
   var bl = document.getElementById("batch-link");
   if (bl) bl.addEventListener("click", function() { window.showBatchInput(); });
   var bb = document.getElementById("batch-btn");
   if (bb) bb.addEventListener("click", function() { window.startBatchAudit(); });
   var cb = document.getElementById("compare-btn");
   if (cb) cb.addEventListener("click", function() { window.runComparison(); });
+  var reportCtaRoot = document.getElementById("report-section");
+  if (reportCtaRoot) reportCtaRoot.addEventListener("click", handleReportCtaClick);
 
   // --- Pro monitoring panel ---
   initProMonitor();
@@ -404,7 +514,7 @@ document.addEventListener("DOMContentLoaded", function() {
     if (!/^https?:\/\//i.test(cleanUrl)) cleanUrl = 'https://' + cleanUrl;
     var urlInput = document.getElementById('url-input');
     if (urlInput) urlInput.value = cleanUrl.replace(/^https?:\/\//, '');
-    setTimeout(function() { window.startAudit(); }, 300);
+    setTimeout(function() { window.startAudit('share_link'); }, 300);
   }
 });
 

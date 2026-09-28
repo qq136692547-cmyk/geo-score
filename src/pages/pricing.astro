@@ -192,7 +192,7 @@ import Layout from '../layouts/Layout.astro';
     proBtn.addEventListener('click', async function() {
       if (window.geoTrack) {
         const sourceType = window.geoSource ? window.geoSource() : 'other';
-        window.geoTrack('paid_intent_click', { target: 'pro', source_type: sourceType });
+        window.geoTrack('upgrade_cta_clicked', { cta_id: 'pricing_pro', target: 'pro', source_type: sourceType });
       }
       const token = localStorage.getItem('geoscore_token');
       if (!token) {

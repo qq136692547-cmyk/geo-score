@@ -120,3 +120,41 @@ CREATE TABLE IF NOT EXISTS ai_visibility (
 
 CREATE INDEX IF NOT EXISTS idx_ai_visibility_host_time ON ai_visibility(host, checked_at);
 CREATE INDEX IF NOT EXISTS idx_ai_visibility_site_time ON ai_visibility(site_id, checked_at);
+
+-- ============ CONVERSION TRACKING (v1.9) ============
+
+-- Email leads captured from the audit result page ("I'll fix it for you")
+CREATE TABLE IF NOT EXISTS leads (
+  id TEXT PRIMARY KEY,
+  email TEXT NOT NULL,
+  host TEXT,
+  score INTEGER,
+  score_bucket TEXT,
+  source_type TEXT,
+  cta_id TEXT,
+  url TEXT,
+  user_id TEXT,
+  converted_at INTEGER,
+  created_at INTEGER DEFAULT (strftime('%s','now'))
+);
+
+CREATE INDEX IF NOT EXISTS idx_leads_email ON leads(email);
+CREATE INDEX IF NOT EXISTS idx_leads_created ON leads(created_at);
+CREATE INDEX IF NOT EXISTS idx_leads_bucket ON leads(score_bucket);
+
+-- Global LLM spend counter for AI visibility simulation (monthly budget circuit breaker)
+CREATE TABLE IF NOT EXISTS llm_counters (
+  month TEXT PRIMARY KEY,          -- 'YYYY-MM' in UTC
+  calls INTEGER NOT NULL DEFAULT 0,
+  updated_at INTEGER DEFAULT (strftime('%s','now'))
+);
+
+-- Abuse cooldowns for free AI visibility checks (IP is stored only as a salted hash)
+CREATE TABLE IF NOT EXISTS visibility_cooldowns (
+  scope TEXT NOT NULL,             -- 'ip' | 'host'
+  value TEXT NOT NULL,
+  last_at INTEGER NOT NULL,
+  PRIMARY KEY (scope, value)
+);
+
+CREATE INDEX IF NOT EXISTS idx_visibility_cooldowns_last ON visibility_cooldowns(last_at);

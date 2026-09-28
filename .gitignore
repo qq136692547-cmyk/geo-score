@@ -22,6 +22,9 @@ PROJECT_HANDOVER.md
 # Deploy config (contains token)
 deploy_root.py
 
+# API keys dropped in by hand (never commit)
+.secrets/
+
 # Upload scripts
 upload-image.ps1
 

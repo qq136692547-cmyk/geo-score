@@ -142,7 +142,52 @@ export async function handleProRoutes(request, env, corsHeaders, url, path) {
   if (pdfMatch && request.method === 'GET') return handleAuditPdf(request, env, corsHeaders, pdfMatch[1]);
   if (path === '/api/visibility/check' && request.method === 'POST') return handleVisibilityCheck(request, env, corsHeaders);
   if (path === '/api/visibility' && request.method === 'GET') return handleListVisibility(request, env, corsHeaders, url);
+  if (path === '/api/leads' && request.method === 'POST') return handleCreateLead(request, env, corsHeaders);
   return json({ error: 'Not Found' }, 404, corsHeaders);
+}
+
+const LEAD_CTA_IDS = ['result_lead', 'result_visibility', 'result_monitor'];
+const LEAD_BUCKETS = ['low', 'mid', 'high'];
+
+// POST /api/leads — capture an email lead from the audit result page (R-03)
+async function handleCreateLead(request, env, corsHeaders) {
+  let body;
+  try { body = await request.json(); } catch { return json({ error: 'Invalid JSON' }, 400, corsHeaders); }
+
+  const email = String(body.email || '').trim().toLowerCase();
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return json({ error: 'Invalid email' }, 400, corsHeaders);
+  if (body.consent !== true) return json({ error: 'Consent required' }, 400, corsHeaders);
+
+  const ctaId = String(body.cta_id || '');
+  if (LEAD_CTA_IDS.indexOf(ctaId) === -1) return json({ error: 'Unknown cta_id' }, 400, corsHeaders);
+
+  let score = null;
+  if (body.score !== null && body.score !== undefined && body.score !== '') {
+    score = Number(body.score);
+    if (!Number.isInteger(score) || score < 0 || score > 100) return json({ error: 'Invalid score' }, 400, corsHeaders);
+  }
+
+  const bucket = body.score_bucket ? String(body.score_bucket) : '';
+  if (bucket && LEAD_BUCKETS.indexOf(bucket) === -1) return json({ error: 'Invalid score_bucket' }, 400, corsHeaders);
+
+  const host = body.host ? String(body.host).slice(0, 253) : null;
+  const url = body.url ? String(body.url).slice(0, 2048) : null;
+  const sourceType = body.source_type ? String(body.source_type).slice(0, 32) : null;
+
+  // Backfill user_id when a valid session is present; anonymous leads are allowed.
+  let userId = null;
+  try {
+    const authUser = await requireAuth(request, env);
+    if (authUser) userId = authUser.id;
+  } catch (e) { /* anonymous lead */ }
+
+  const id = generateId('lead_');
+  await env.DB.prepare(
+    `INSERT INTO leads (id, email, host, score, score_bucket, source_type, cta_id, url, user_id, created_at)
+     VALUES (?,?,?,?,?,?,?,?,?,?)`
+  ).bind(id, email, host, score, bucket || null, sourceType, ctaId, url, userId, Math.floor(Date.now() / 1000)).run();
+
+  return json({ ok: true }, 200, corsHeaders);
 }
 
 async function assertProUser(request, env, corsHeaders) {

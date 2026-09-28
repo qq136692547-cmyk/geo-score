@@ -202,4 +202,60 @@ describe('checkout session', () => {
   });
 });});
 
+describe('leads capture', () => {
+  function leadEnv() {
+    const db = createMockDb({ leads: [], users: [{ id: 'u_1', email: 'pro@example.com', name: 'Pro', plan: 'free' }] });
+    return { env: { DB: db, JWT_SECRET }, db, user: { id: 'u_1' } };
+  }
+
+  it('accepts a valid lead and inserts a row (200)', async () => {
+    const e = leadEnv();
+    const resp = await call('POST', '/api/leads', e, {
+      email: 'qa@example.com', host: 'example.com', score: 67,
+      score_bucket: 'mid', source_type: 'direct', cta_id: 'result_lead', consent: true,
+    });
+    expect(resp.status).toBe(200);
+    expect(e.db._tables.leads).toHaveLength(1);
+    expect(e.db._tables.leads[0].email).toBe('qa@example.com');
+    expect(e.db._tables.leads[0].user_id).toBe('u_1');
+  });
+
+  it('accepts an anonymous lead without a token (200, user_id null)', async () => {
+    const e = leadEnv();
+    const url = new URL('https://worker.test/api/leads');
+    const init = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: 'anon@example.com', cta_id: 'result_lead', consent: true }),
+    };
+    const resp = await handleProRoutes(new Request(url, init), e.env, {}, url, '/api/leads');
+    expect(resp.status).toBe(200);
+    expect(e.db._tables.leads[0].user_id).toBe(null);
+  });
+
+  it('rejects missing consent (400)', async () => {
+    const e = leadEnv();
+    const resp = await call('POST', '/api/leads', e, { email: 'qa@example.com', cta_id: 'result_lead', consent: false });
+    expect(resp.status).toBe(400);
+  });
+
+  it('rejects an invalid email (400)', async () => {
+    const e = leadEnv();
+    const resp = await call('POST', '/api/leads', e, { email: 'nope', cta_id: 'result_lead', consent: true });
+    expect(resp.status).toBe(400);
+  });
+
+  it('rejects an unknown cta_id (400)', async () => {
+    const e = leadEnv();
+    const resp = await call('POST', '/api/leads', e, { email: 'qa@example.com', cta_id: 'bogus', consent: true });
+    expect(resp.status).toBe(400);
+  });
+
+  it('rejects an out-of-range score (400)', async () => {
+    const e = leadEnv();
+    const resp = await call('POST', '/api/leads', e, { email: 'qa@example.com', cta_id: 'result_lead', consent: true, score: 101 });
+    expect(resp.status).toBe(400);
+  });
+});
+
 
