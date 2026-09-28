@@ -12,13 +12,18 @@
  * recommended?" and lets users track that estimate over time.
  */
 
+import { incrLlmCalls } from './guardrails.js';
+
 const ENGINES = ['chatgpt', 'perplexity', 'claude', 'gemini'];
 
 const LLM_URL = 'https://tokenrhythm.studio/v1/chat/completions';
 const LLM_MODEL = 'deepseek-v4-flash-0731';
 const LLM_TIMEOUT_MS = 25000;
 const FETCH_TIMEOUT_MS = 15000;
-const MAX_HTML_BYTES = 160000;
+// Only the first 60KB is scanned for title/description/body sample (PRD §12.7).
+// This is a Worker CPU/memory guard, not a token-cost guard: the LLM only ever
+// sees the ~1.7KB profile extracted below, never the raw HTML.
+const MAX_HTML_BYTES = 60000;
 const SNIPPET_MAX = 500;
 const REASONING_MAX = 400;
 
@@ -112,7 +117,7 @@ async function callLlm(system, user, env) {
       { role: 'user', content: user },
     ],
     temperature: 0.1,
-    max_tokens: 800,
+    max_tokens: 500,
     response_format: { type: 'json_object' },
   });
   let res = await fetch(LLM_URL, {
@@ -142,6 +147,9 @@ async function askEngine(engine, profile, query, env) {
   const user = 'User question: "' + query + '"\n\nWebsite homepage:\nTitle: ' + (profile.title || '(none)')
     + '\nDescription: ' + (profile.description || '(none)')
     + '\nSample content: ' + (profile.bodySample || '(none)');
+  // Count the call before it is issued (PRD §12.5 step 8). Failing closed here
+  // is intentional: if the counter cannot be written we do not spend money.
+  await incrLlmCalls(env, Math.floor(Date.now() / 1000), 1);
   const text = await callLlm(system, user, env);
   let data;
   try { data = JSON.parse(text); } catch (e) { throw new Error('LLM invalid response'); }

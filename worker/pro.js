@@ -9,6 +9,7 @@
 import { auditUrl } from './lib/node-scanner.js';
 import { renderAuditPdf } from './lib/pdf.js';
 import { runVisibilityCheck, getLatestVisibility } from './visibility.js';
+import { readLlmCalls, llmMonthlyCallBudget, evaluateLlmBudget } from './guardrails.js';
 
 const MAX_SITES = 5;
 const ALERT_THRESHOLD = 10;        // score drop >= 10 triggers email
@@ -397,6 +398,17 @@ async function handleVisibilityCheck(request, env, corsHeaders) {
   const user = guard.user;
   if (!env.TOKENRHYTHM_API_KEY) {
     return json({ error: 'AI visibility check unavailable' }, 503, corsHeaders);
+  }
+  // Global monthly budget circuit breaker (PRD §12.5 step 8). Checked before any
+  // fetch or LLM call so a blocked request costs nothing.
+  const budget = evaluateLlmBudget(
+    await readLlmCalls(env, Math.floor(Date.now() / 1000)),
+    llmMonthlyCallBudget(env),
+    user.plan === 'pro'
+  );
+  if (budget.level === 'warn') console.log('llm budget warning: ' + JSON.stringify(budget));
+  if (!budget.ok) {
+    return json({ error: 'LLM budget exhausted', code: budget.code, budget }, 429, corsHeaders);
   }
   let body = {};
   try { body = await request.json(); } catch (e) {}

@@ -108,9 +108,33 @@ export function createMockDb(seed = {}) {
                 const v = vals[i];
                 row[col] = v === '?' ? params[pi++] : literalValue(v);
               });
-              const conflict = sql.match(/ON CONFLICT\(([a-z_]+)\)\s+DO NOTHING/i);
-              if (conflict && rows.some(r => r[conflict[1]] === row[conflict[1]])) {
-                return { meta: { changes: 0 } };
+              // ON CONFLICT(<keys>) DO NOTHING | DO UPDATE SET col = col + ? | col = ? | col = excluded.col
+              // DO UPDATE placeholders follow the VALUES placeholders in param order.
+              const conflict = sql.match(/ON CONFLICT\s*\(([^)]+)\)\s*DO\s+(NOTHING|UPDATE\s+SET\s+([\s\S]+?))\s*$/i);
+              if (conflict) {
+                const keys = conflict[1].split(',').map(k => k.trim());
+                const existing = rows.find(r => keys.every(k => r[k] === row[k]));
+                if (existing) {
+                  if (/^NOTHING/i.test(conflict[2])) {
+                    return { meta: { changes: 0 } };
+                  }
+                  for (const set of conflict[3].split(',').map(s => s.trim())) {
+                    const setMatch = set.match(/^([a-z_]+)\s*=\s*(.+)$/i);
+                    if (!setMatch) continue;
+                    const [, col, expr] = setMatch;
+                    if (new RegExp('^' + col + '\\s*\\+\\s*\\?$', 'i').test(expr)) {
+                      const add = params[pi++];
+                      existing[col] = (Number(existing[col]) || 0) + (Number(add) || 0);
+                    } else if (/\?$/.test(expr)) {
+                      existing[col] = params[pi++];
+                    } else if (/^excluded\./i.test(expr)) {
+                      existing[col] = row[expr.slice(expr.indexOf('.') + 1)];
+                    } else {
+                      existing[col] = literalValue(expr);
+                    }
+                  }
+                  return { meta: { changes: 1 } };
+                }
               }
               rows.push(row);
             }
