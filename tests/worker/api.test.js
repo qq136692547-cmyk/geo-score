@@ -200,6 +200,65 @@ describe('checkout session', () => {
     const resp = await handleProRoutes(new Request(url, { method: 'POST' }), env, {}, url, '/api/checkout');
     expect(resp.status).toBe(401);
   });
+
+  it('sells the configured annual product when billing_period=annual', async () => {
+    let sentBody = null;
+    vi.stubGlobal('fetch', vi.fn(async (url, init) => {
+      sentBody = JSON.parse(init.body);
+      return new Response(JSON.stringify({ checkout_url: 'https://checkout.creem.io/ch_annual' }), { status: 200 });
+    }));
+    const e = makeEnv('free');
+    e.env.CREEM_API_KEY = 'test-creem-key';
+    e.env.CREEM_PRODUCT_ID_ANNUAL = 'prod_annual_test';
+    const resp = await call('POST', '/api/checkout', e, { billing_period: 'annual' });
+    expect(resp.status).toBe(200);
+    expect((await resp.json()).checkout_url).toBe('https://checkout.creem.io/ch_annual');
+    expect(sentBody.product_id).toBe('prod_annual_test');
+    expect(sentBody.customer.email).toBe('pro@example.com');
+  });
+
+  it('degrades explicitly instead of charging monthly when annual is unconfigured (503)', async () => {
+    const e = makeEnv('free');
+    e.env.CREEM_API_KEY = 'test-creem-key';
+    const resp = await call('POST', '/api/checkout', e, { billing_period: 'annual' });
+    expect(resp.status).toBe(503);
+    expect((await resp.json()).code).toBe('annual_unavailable');
+  });
+
+  it('rejects an unknown billing period instead of defaulting (400)', async () => {
+    const e = makeEnv('free');
+    e.env.CREEM_API_KEY = 'test-creem-key';
+    const resp = await call('POST', '/api/checkout', e, { billing_period: 'lifetime' });
+    expect(resp.status).toBe(400);
+    expect((await resp.json()).code).toBe('invalid_billing_period');
+  });
+
+  it('ignores a client-supplied product_id', async () => {
+    let sentBody = null;
+    vi.stubGlobal('fetch', vi.fn(async (url, init) => {
+      sentBody = JSON.parse(init.body);
+      return new Response(JSON.stringify({ checkout_url: 'https://checkout.creem.io/ch_1' }), { status: 200 });
+    }));
+    const e = makeEnv('free');
+    e.env.CREEM_API_KEY = 'test-creem-key';
+    const resp = await call('POST', '/api/checkout', e, { product_id: 'prod_attacker' });
+    expect(resp.status).toBe(200);
+    expect(sentBody.product_id).toBe('prod_3hLh24EkJOL0jS0Jrf9zq5');
+  });
+
+  it('honours a monthly product override from the environment', async () => {
+    let sentBody = null;
+    vi.stubGlobal('fetch', vi.fn(async (url, init) => {
+      sentBody = JSON.parse(init.body);
+      return new Response(JSON.stringify({ checkout_url: 'https://checkout.creem.io/ch_1' }), { status: 200 });
+    }));
+    const e = makeEnv('free');
+    e.env.CREEM_API_KEY = 'test-creem-key';
+    e.env.CREEM_PRODUCT_ID_MONTHLY = 'prod_monthly_test';
+    const resp = await call('POST', '/api/checkout', e, {});
+    expect(resp.status).toBe(200);
+    expect(sentBody.product_id).toBe('prod_monthly_test');
+  });
 });});
 
 describe('leads capture', () => {

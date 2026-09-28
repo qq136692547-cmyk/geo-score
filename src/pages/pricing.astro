@@ -57,8 +57,7 @@ import Layout from '../layouts/Layout.astro';
       <div class="card p-6 flex flex-col ring-2 ring-brand-500/50 relative">
         <div class="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full text-xs font-semibold bg-brand-500 text-white">Popular</div>
         <div class="text-sm font-semibold text-brand-400 mb-2">Pro</div>
-        <div class="text-3xl font-extrabold mb-1">$9<span class="text-base font-normal text-gray-500">/mo</span></div>
-        <div class="text-xs text-gray-500 mb-6">7-day free trial &middot; taxes included</div>
+        <div class="text-xs text-gray-500 mb-6">Taxes included</div>
         <ul class="text-sm text-gray-400 space-y-2 mb-6 flex-1">
           <li class="flex gap-2"><span class="text-brand-500">✓</span> Everything in Free</li>
           <li class="flex gap-2"><span class="text-brand-500">✓</span> Weekly automated audits</li>
@@ -68,7 +67,17 @@ import Layout from '../layouts/Layout.astro';
           <li class="flex gap-2"><span class="text-brand-500">✓</span> AI visibility simulation (ChatGPT · Perplexity · Claude · Gemini)</li>
           <li class="flex gap-2"><span class="text-brand-500">✓</span> 5 domains</li>
         </ul>
-        <button id="upgrade-pro" data-checkout="https://www.creem.io/payment/prod_3hLh24EkJOL0jS0Jrf9zq5" class="block w-full text-center py-2.5 rounded-lg font-semibold text-sm text-white bg-gradient-to-r from-geo-600 to-brand-600 hover:from-geo-500 hover:to-brand-500 transition cursor-pointer">Start Free Trial</button>
+        <!-- Monthly and annual side by side; each option starts its own checkout -->
+        <div class="grid grid-cols-2 gap-2">
+          <button id="upgrade-pro" type="button" data-billing="monthly" data-checkout="https://www.creem.io/payment/prod_3hLh24EkJOL0jS0Jrf9zq5" class="rounded-lg border border-gray-700 hover:border-brand-500 p-2 text-left transition cursor-pointer">
+            <span class="block text-lg font-extrabold">$9/mo</span>
+            <span class="block text-xs text-gray-500">7-day free trial</span>
+          </button>
+          <button id="upgrade-annual" type="button" data-billing="annual" data-checkout="https://www.creem.io/payment/prod_2OZLydXjeAKD3HyVY20eEN" class="rounded-lg border border-gray-700 hover:border-brand-500 p-2 text-left transition cursor-pointer">
+            <span class="block text-lg font-extrabold">$79/yr</span>
+            <span class="block text-xs font-semibold text-brand-400">Save $29</span>
+          </button>
+        </div>
       </div>
 
       <!-- Studio (Coming Soon) -->
@@ -150,7 +159,7 @@ import Layout from '../layouts/Layout.astro';
         </div>
         <div class="card p-5">
           <h3 class="font-semibold mb-2">Do I need a credit card to start?</h3>
-          <p class="text-sm text-gray-400">No credit card required for the Free plan. The Pro plan includes a 7-day free trial — your card is only charged after the trial ends.</p>
+          <p class="text-sm text-gray-400">No credit card required for the Free plan. Pro monthly includes a 7-day free trial — your card is only charged after the trial ends. Pro annual is paid upfront for $79 and does not include a trial.</p>
         </div>
         <div class="card p-5">
           <h3 class="font-semibold mb-2">Can I cancel anytime?</h3>
@@ -180,53 +189,61 @@ import Layout from '../layouts/Layout.astro';
     brand: { '@type': 'Brand', name: 'GeoScore' },
     offers: [
       { '@type': 'Offer', price: '0', priceCurrency: 'USD', name: 'Free', availability: 'https://schema.org/InStock' },
-      { '@type': 'Offer', price: '9', priceCurrency: 'USD', name: 'Pro', availability: 'https://schema.org/InStock', url: 'https://www.creem.io/payment/prod_3hLh24EkJOL0jS0Jrf9zq5' }
+      { '@type': 'Offer', price: '9', priceCurrency: 'USD', name: 'Pro monthly', availability: 'https://schema.org/InStock', url: 'https://www.creem.io/payment/prod_3hLh24EkJOL0jS0Jrf9zq5' },
+      { '@type': 'Offer', price: '79', priceCurrency: 'USD', name: 'Pro annual', availability: 'https://schema.org/InStock', url: 'https://www.creem.io/payment/prod_2OZLydXjeAKD3HyVY20eEN' }
     ]
   })} />
 </Layout>
 
 <script>
-  // Pro checkout: redirect signed-in users to Creem, prompt login otherwise
-  const proBtn = document.getElementById('upgrade-pro');
-  if (proBtn) {
-    proBtn.addEventListener('click', async function() {
+  // Pro checkout: monthly and annual are separate Creem products, so the button
+  // carries the period and the Worker maps it to a product id. The trial_started
+  // beacon fires right before navigation (API path and static fallback alike) so
+  // the CTA -> checkout step is not lost when the browser leaves the page.
+  async function startCheckout(btn) {
+    const period = btn.getAttribute('data-billing') || 'monthly';
+    const sourceType = window.geoSource ? window.geoSource() : 'other';
+    if (window.geoTrack) {
+      window.geoTrack('upgrade_cta_clicked', { cta_id: 'pricing_pro', billing_period: period, source_type: sourceType });
+    }
+    const token = localStorage.getItem('geoscore_token');
+    if (!token) {
+      if (window.geoscoreAuth) {
+        window.geoscoreAuth.openAuthModal();
+      } else {
+        alert('Please sign in first to start your free trial.');
+      }
+      return;
+    }
+    const leave = function (url) {
       if (window.geoTrack) {
-        const sourceType = window.geoSource ? window.geoSource() : 'other';
-        window.geoTrack('upgrade_cta_clicked', { cta_id: 'pricing_pro', target: 'pro', source_type: sourceType });
+        window.geoTrack('trial_started', { cta_id: 'pricing_pro', billing_period: period, source_type: sourceType });
       }
-      const token = localStorage.getItem('geoscore_token');
-      if (!token) {
-        if (window.geoscoreAuth) {
-          window.geoscoreAuth.openAuthModal();
-        } else {
-          alert('Please sign in first to start your free trial.');
+      window.location.href = url;
+    };
+    const fallbackUrl = btn.getAttribute('data-checkout');
+    // Create a Creem checkout session bound to this account via the Worker;
+    // fall back to the static checkout link if the API is unavailable.
+    if (window.geoscoreAuth && window.geoscoreAuth.api) {
+      const original = btn.innerHTML;
+      btn.disabled = true;
+      btn.textContent = 'Preparing checkout...';
+      try {
+        const res = await window.geoscoreAuth.api('/api/checkout', { method: 'POST', body: { billing_period: period } });
+        if (res.ok && res.data && res.data.checkout_url) {
+          leave(res.data.checkout_url);
+          return;
         }
-        return;
+      } catch (e) {
+        // Worker unreachable or timeout; fall through to the static link
       }
-      // Create a Creem checkout session bound to this account via the Worker;
-      // fall back to the static checkout link if the API is unavailable.
-      if (window.geoscoreAuth && window.geoscoreAuth.api) {
-        const btn = this;
-        const original = btn.textContent;
-        btn.disabled = true;
-        btn.textContent = 'Preparing checkout...';
-        try {
-          const res = await window.geoscoreAuth.api('/api/checkout', { method: 'POST', body: {} });
-          if (res.ok && res.data && res.data.checkout_url) {
-            window.location.href = res.data.checkout_url;
-            return;
-          }
-        } catch (e) {
-          // Worker unreachable or timeout; fall through to the static link
-        }
-        btn.disabled = false;
-        btn.textContent = original;
-      }
-      // Fallback: redirect to the static Creem checkout link
-      const checkoutUrl = proBtn.getAttribute('data-checkout');
-      if (checkoutUrl) {
-        window.location.href = checkoutUrl;
-      }
-    });
+      btn.disabled = false;
+      btn.innerHTML = original;
+    }
+    if (fallbackUrl) leave(fallbackUrl);
+  }
+  const planButtons = document.querySelectorAll('[data-billing]');
+  for (let i = 0; i < planButtons.length; i++) {
+    planButtons[i].addEventListener('click', function () { startCheckout(this); });
   }
 </script>

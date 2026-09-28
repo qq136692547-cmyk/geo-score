@@ -452,13 +452,27 @@ async function handleListVisibility(request, env, corsHeaders, url) {
 
 const CREEM_CHECKOUT_API = env => (env.CREEM_API_BASE || 'https://api.creem.io') + '/v1/checkouts';
 const CREEM_CHECKOUT_KEY = env => (env.CREEM_API_BASE || '').includes('test-api') ? (env.CREEM_API_KEY_TEST || env.CREEM_API_KEY) : env.CREEM_API_KEY;
-const CREEM_PRODUCT_ID = 'prod_3hLh24EkJOL0jS0Jrf9zq5';
+// R-06: the product id is configuration, not code (PRD §15). Set
+// CREEM_PRODUCT_ID_MONTHLY / CREEM_PRODUCT_ID_ANNUAL as Worker secrets.
+// The monthly default keeps the pre-existing live product working; there is
+// deliberately no annual default, because falling back to the monthly product
+// would charge $9/mo for a page that advertises $79/yr.
+const CREEM_PRODUCT_MONTHLY_DEFAULT = 'prod_3hLh24EkJOL0jS0Jrf9zq5';
+const BILLING_PERIODS = ['monthly', 'annual'];
+
+function creemProductId(env, period) {
+  if (period === 'annual') return env.CREEM_PRODUCT_ID_ANNUAL || null;
+  return env.CREEM_PRODUCT_ID_MONTHLY || CREEM_PRODUCT_MONTHLY_DEFAULT;
+}
+
 const CREEM_SUCCESS_URL = 'https://geoscore.help/pricing/?checkout=success';
 
 /**
  * POST /api/checkout
+ * Body: { billing_period?: 'monthly' | 'annual' } - defaults to monthly.
  * Creates a Creem checkout session bound to the signed-in user's email so the
  * checkout.completed webhook can activate the correct account.
+ * The client picks a period, never a product id.
  */
 export async function handleCreateCheckout(request, env, corsHeaders) {
   const user = await requireAuth(request, env);
@@ -466,7 +480,16 @@ export async function handleCreateCheckout(request, env, corsHeaders) {
   if (!env.CREEM_API_KEY) return json({ error: 'Checkout unavailable' }, 503, corsHeaders);
   let body = {};
   try { body = await request.json(); } catch (e) {}
-  const productId = String(body.product_id || CREEM_PRODUCT_ID);
+  const period = String(body.billing_period || 'monthly').toLowerCase();
+  if (BILLING_PERIODS.indexOf(period) === -1) {
+    return json({ error: 'Invalid billing_period', code: 'invalid_billing_period' }, 400, corsHeaders);
+  }
+  const productId = creemProductId(env, period);
+  if (!productId) {
+    // Explicit degradation (PRD §15): never sell a different product than the one
+    // the page shows.
+    return json({ error: 'Annual billing is not configured', code: 'annual_unavailable' }, 503, corsHeaders);
+  }
   const successUrl = String(body.success_url || CREEM_SUCCESS_URL).slice(0, 2048);
   const checkoutRes = await fetch(CREEM_CHECKOUT_API(env), {
     method: 'POST',

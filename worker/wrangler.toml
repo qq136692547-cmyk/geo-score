@@ -19,6 +19,11 @@ database_id = "372d4f13-35da-4878-b9d2-916b90fc11ad"
 # JWT_SECRET            - HMAC secret for signing JWT session tokens
 # TOKENRHYTHM_API_KEY    - LLM API key for AI visibility simulation (v1.8)
 # GOOGLE_CLIENT_ID      - Google OAuth Client ID
+# CREEM_PRODUCT_ID_MONTHLY - Creem product id for Pro monthly; falls back to the
+#                           existing live product when unset.
+# CREEM_PRODUCT_ID_ANNUAL  - Creem product id for Pro annual; no fallback on
+#                           purpose (see worker/pro.js), so an unset value
+#                           returns 503 instead of charging the monthly price.
 
 # Optional non-secret vars for the cost guardrails (worker/guardrails.js):
 # LLM_MONTHLY_CALL_BUDGET - monthly LLM call ceiling for the circuit breaker;
