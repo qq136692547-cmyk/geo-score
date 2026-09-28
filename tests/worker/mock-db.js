@@ -148,11 +148,19 @@ export function createMockDb(seed = {}) {
             const matched = rows.filter(pred);
             for (const row of matched) {
               for (const set of setClause.split(',').map(s => s.trim())) {
-                const sm = set.match(/^([a-z_]+)\s*=\s*(\?|'[^']*'|null|\d+)/i);
+                const sm = set.match(/^([a-z_]+)\s*=\s*(.+)$/i);
                 if (!sm) continue;
-                const [, col, val] = sm;
-                if (val === '?') row[col] = setParams.shift();
-                else row[col] = literalValue(val);
+                const [, col, rawExpr] = sm;
+                const expr = rawExpr.trim();
+                // col = col + N / col = col + ?  (atomic counter style increment)
+                const inc = expr.match(new RegExp('^' + col + '\\s*\\+\\s*(\\?|\\d+)$', 'i'));
+                if (inc) {
+                  const add = inc[1] === '?' ? setParams.shift() : Number(inc[1]);
+                  row[col] = (Number(row[col]) || 0) + (Number(add) || 0);
+                  continue;
+                }
+                if (expr === '?') row[col] = setParams.shift();
+                else row[col] = literalValue(expr);
               }
             }
             return { meta: { changes: matched.length } };
