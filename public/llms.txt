@@ -36,6 +36,7 @@
 ## Reference
 
 - [Scoring Methodology](https://geoscore.help/methodology/): How the 0-100 score is calculated across 11 dimensions
+- [About GeoScore](https://geoscore.help/methodology/#about): The project, the author, and how to contribute
 
 ## 中文版 (Chinese)
 
