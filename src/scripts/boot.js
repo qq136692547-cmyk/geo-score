@@ -19,12 +19,14 @@ import { renderHistoryList } from '../components/historyList.js';
 import { renderTrendContainer, initTrendChart } from '../components/trendChart.js';
 import { renderComparisonPanel } from '../components/comparisonPanel.js';
 import { initSitesPanel } from '../components/sitesPanel.js';
+import { showToast } from './toast.js';
 import { saveAuditToCloud } from '../components/auditHistory.js';
 import { renderUpgradeCta } from '../components/upgradeCta.js';
 
 var radarChartInstance = null;
 var trendChartInstance = null;
 var scanTimer = null;
+var loadingHtml = null;
 
 var IS_ZH = (document.documentElement.lang || 'en').toLowerCase().indexOf('zh') === 0;
 function t(en, zh) { return IS_ZH ? zh : en; }
@@ -161,6 +163,9 @@ window.startAudit = async function (entryPoint) {
     window.location.href = base + '?audit=' + encodeURIComponent(url) + '&src=tool_page';
     return;
   }
+  // Keep (or restore) the pristine loading markup so "Try Again" can re-run in place.
+  if (loadingHtml === null) loadingHtml = loadEl.innerHTML;
+  else loadEl.innerHTML = loadingHtml;
   btn.disabled = true;
   btn.textContent = t("Scanning\u2026", "扫描中\u2026");
   geoHide(document.getElementById("hero-section"));
@@ -221,7 +226,9 @@ window.startAudit = async function (entryPoint) {
   } catch (err) {
     clearInterval(scanTimer);
     if (typeof window.geoTrack === 'function') window.geoTrack('audit_failed', { url_domain: geoUrlDomain(url), error_code: geoErrorCode(err), source_type: getGeoSource() });
-    document.getElementById("loading-section").innerHTML = '<div class="card p-8 text-center"><div class="text-danger-500 text-lg font-semibold mb-2">' + t("Audit Failed", "审计失败") + '</div><p class="text-gray-400 text-sm">' + err.message + '</p><button onclick="location.reload()" class="mt-4 px-4 py-2 rounded-lg text-sm bg-white/10 hover:bg-white/20 transition">' + t("Try Again", "重试") + '</button></div>';
+    document.getElementById("loading-section").innerHTML = '<div class="card p-8 text-center"><div class="text-danger-500 text-lg font-semibold mb-2">' + t("Audit Failed", "审计失败") + '</div><p class="text-gray-400 text-sm">' + err.message + '</p><button id="audit-retry" class="mt-4 px-4 py-2 rounded-lg text-sm bg-white/10 hover:bg-white/20 transition">' + t("Try Again", "重试") + '</button></div>';
+    var retryBtn = document.getElementById("audit-retry");
+    if (retryBtn) retryBtn.addEventListener("click", function() { window.startAudit(entryPoint); });
   }
   btn.disabled = false;
   btn.textContent = t("Start Audit", "开始审计");
@@ -368,9 +375,9 @@ document.addEventListener("DOMContentLoaded", function() { renderHistory(); });
 window.doExport = function(format) {
   if (typeof window.geoTrack === 'function') window.geoTrack('tool_complete', { tool_name: 'report_export', format: format, source_type: getGeoSource() });
   var raw = localStorage.getItem("geoscope_last_result");
-  if (!raw) { alert(t("No audit result to export. Run an audit first.", "没有可导出的审计结果，请先运行一次审计。")); return; }
+  if (!raw) { showToast(t("No audit result to export. Run an audit first.", "没有可导出的审计结果，请先运行一次审计。"), 'info'); return; }
   var r;
-  try { r = JSON.parse(raw); } catch(e) { alert(t("Failed to parse stored result.", "解析已保存的结果失败。")); return; }
+  try { r = JSON.parse(raw); } catch(e) { showToast(t("Failed to parse stored result.", "解析已保存的结果失败。"), 'error'); return; }
   var content, mime, ext;
   if (format === "md") {
     content = exportMarkdown(r); mime = "text/markdown"; ext = "md";
@@ -394,9 +401,9 @@ window.doExport = function(format) {
 // --- Fix file download & preview ---
 window.downloadFixFile = function(fileKey) {
   var raw = localStorage.getItem("geoscope_last_result");
-  if (!raw) { alert(t("No audit result found.", "未找到审计结果。")); return; }
+  if (!raw) { showToast(t("No audit result found.", "未找到审计结果。"), 'info'); return; }
   var r;
-  try { r = JSON.parse(raw); } catch(e) { alert(t("Failed to parse stored result.", "解析已保存的结果失败。")); return; }
+  try { r = JSON.parse(raw); } catch(e) { showToast(t("Failed to parse stored result.", "解析已保存的结果失败。"), 'error'); return; }
   var files = generateFixFiles(r);
   var f = files[fileKey];
   if (!f) return;
@@ -413,9 +420,9 @@ window.downloadFixFile = function(fileKey) {
 
 window.previewFixFile = function(fileKey) {
   var raw = localStorage.getItem("geoscope_last_result");
-  if (!raw) { alert(t("No audit result found.", "未找到审计结果。")); return; }
+  if (!raw) { showToast(t("No audit result found.", "未找到审计结果。"), 'info'); return; }
   var r;
-  try { r = JSON.parse(raw); } catch(e) { alert(t("Failed to parse stored result.", "解析已保存的结果失败。")); return; }
+  try { r = JSON.parse(raw); } catch(e) { showToast(t("Failed to parse stored result.", "解析已保存的结果失败。"), 'error'); return; }
   var files = generateFixFiles(r);
   var f = files[fileKey];
   if (!f) return;

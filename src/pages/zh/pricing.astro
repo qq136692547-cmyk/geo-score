@@ -25,7 +25,7 @@ import LayoutZh from '../../layouts/LayoutZh.astro';
           <li class="flex gap-2"><span class="text-geo-500">✓</span> CLI & MCP Server</li>
           <li class="flex gap-2"><span class="text-geo-500">✓</span> 登录可选</li>
         </ul>
-        <a href="/zh/" class="block text-center py-2.5 rounded-lg font-semibold text-sm border border-gray-600 text-gray-300 hover:border-brand-500 hover:text-white transition">开始使用</a>
+        <a href="/zh/#url-input" class="block text-center py-2.5 rounded-lg font-semibold text-sm border border-gray-600 text-gray-300 hover:border-brand-500 hover:text-white transition">开始使用</a>
       </div>
 
       <!-- Pro -->
@@ -157,6 +157,7 @@ import LayoutZh from '../../layouts/LayoutZh.astro';
   </section>
 
   <script>
+    import { showToast } from '../../scripts/toast.js';
     // Pro 结账：月付与年付是两个独立的 Creem 产品，按钮只带周期，
     // 由 Worker 映射成产品 ID。trial_started beacon 在跳转前触发
     // （API 与静态链接两条路径都覆盖），避免页面卸载丢掉「点击→结账」这一步。
@@ -171,7 +172,7 @@ import LayoutZh from '../../layouts/LayoutZh.astro';
         if (window.geoscoreAuth) {
           window.geoscoreAuth.openAuthModal();
         } else {
-          alert('请先登录后再开始试用');
+          showToast('请先登录后再开始试用', 'info');
         }
         return;
       }

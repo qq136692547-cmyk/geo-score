@@ -5,6 +5,8 @@
  * - downloadAuditPdf(auth, auditId): fetch the PDF via Bearer auth and download
  * - saveAuditToCloud(auth, result, btn): save the current audit to the cloud
  */
+import { showToast } from '../scripts/toast.js';
+
 var IS_ZH = (document.documentElement.lang || 'en').toLowerCase().indexOf('zh') === 0;
 function t(en, zh) { return IS_ZH ? zh : en; }
 
@@ -141,11 +143,11 @@ export async function downloadAuditPdf(auth, auditId) {
   try {
     resp = await auth.api('/api/audits/' + encodeURIComponent(auditId) + '/pdf', { raw: true });
   } catch (e) {
-    alert(t('Network error while exporting PDF.', '导出 PDF 时网络错误。'));
+    showToast(t('Network error while exporting PDF.', '导出 PDF 时网络错误。'), 'error');
     return;
   }
   if (!resp.ok) {
-    alert(t('Failed to export PDF.', 'PDF 导出失败。'));
+    showToast(t('Failed to export PDF.', 'PDF 导出失败。'), 'error');
     return;
   }
   var blob = await resp.blob();

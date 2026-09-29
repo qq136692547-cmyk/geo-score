@@ -5,6 +5,8 @@
  * - "Run AI check" triggers POST /api/visibility/check (Pro only).
  * Requires window.geoscoreAuth.api() (see auth.js).
  */
+import { showToast } from '../scripts/toast.js';
+
 var IS_ZH = (document.documentElement.lang || 'en').toLowerCase().indexOf('zh') === 0;
 function t(en, zh) { return IS_ZH ? zh : en; }
 
@@ -141,10 +143,10 @@ function wireRun(root, auth, site) {
         root.innerHTML = renderFrame(site, res.data);
         wireRun(root, auth, site);
       } else {
-        alert((res.data && res.data.error) ? res.data.error : t('AI check failed.', 'AI 检查失败。'));
+        showToast((res.data && res.data.error) ? res.data.error : t('AI check failed.', 'AI 检查失败。'), 'error');
       }
     } catch (err) {
-      alert(t('Network error while running the AI check.', '运行 AI 检查时网络错误。'));
+      showToast(t('Network error while running the AI check.', '运行 AI 检查时网络错误。'), 'error');
     }
     runBtn.disabled = false;
     runBtn.textContent = t('Run AI Check', '运行 AI 检查');

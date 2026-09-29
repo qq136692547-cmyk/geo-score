@@ -50,7 +50,7 @@ import Layout from '../layouts/Layout.astro';
           <li class="flex gap-2"><span class="text-geo-500">✓</span> CLI & MCP Server</li>
           <li class="flex gap-2"><span class="text-geo-500">✓</span> Sign-in optional</li>
         </ul>
-        <a href="/" class="block text-center py-2.5 rounded-lg font-semibold text-sm border border-gray-600 text-gray-300 hover:border-brand-500 hover:text-white transition">Start Free</a>
+        <a href="/#url-input" class="block text-center py-2.5 rounded-lg font-semibold text-sm border border-gray-600 text-gray-300 hover:border-brand-500 hover:text-white transition">Start Free</a>
       </div>
 
       <!-- Pro -->
@@ -196,6 +196,7 @@ import Layout from '../layouts/Layout.astro';
 </Layout>
 
 <script>
+  import { showToast } from '../scripts/toast.js';
   // Pro checkout: monthly and annual are separate Creem products, so the button
   // carries the period and the Worker maps it to a product id. The trial_started
   // beacon fires right before navigation (API path and static fallback alike) so
@@ -211,7 +212,7 @@ import Layout from '../layouts/Layout.astro';
       if (window.geoscoreAuth) {
         window.geoscoreAuth.openAuthModal();
       } else {
-        alert('Please sign in first to start your free trial.');
+        showToast('Please sign in first to start your free trial.', 'info');
       }
       return;
     }

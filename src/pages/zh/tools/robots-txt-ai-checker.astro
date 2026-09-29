@@ -20,8 +20,21 @@ import LayoutZh from '../../../layouts/LayoutZh.astro';
         免费工具
       </div>
       <h1 class="text-4xl font-extrabold mb-3">Robots.txt AI 检测器</h1>
-      <p class="text-gray-400 max-w-2xl mx-auto">检测你的 robots.txt 是否阻止了 3 个层级共 20 个 AI 爬虫 — ChatGPT、Claude、Perplexity、Gemini、Meta AI、Apple Intelligence、xAI 等。</p>
     </div>
+
+    <div class="card p-8 mb-8">
+      <h2 class="text-xl font-bold mb-4">检测你的 Robots.txt</h2>
+      <p class="text-gray-400 mb-6">输入你的 URL，运行完整审计，包括 robots.txt AI 爬虫分析：</p>
+      <div class="flex flex-col sm:flex-row gap-3 max-w-xl">
+        <div class="flex-1 relative">
+          <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+          <input id="url-input" type="url" placeholder="输入网址，如 example.com" aria-label="请输入网站网址" onkeydown="if(event.key==='Enter'){document.getElementById('audit-btn').click();}" class="w-full pl-12 pr-5 py-3.5 rounded-xl bg-white/5 text-white placeholder-gray-500 border border-gray-600 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 text-lg transition" />
+        </div>
+        <button id="audit-btn" class="px-8 py-3.5 rounded-xl font-semibold text-white bg-gradient-to-r from-geo-600 to-brand-600 hover:from-geo-500 hover:to-brand-500 transition shadow-lg shadow-brand-500/20 whitespace-nowrap">检测</button>
+      </div>
+    </div>
+
+      <p class="text-gray-400 max-w-2xl mx-auto mb-10 text-center">检测你的 robots.txt 是否阻止了 3 个层级共 20 个 AI 爬虫 — ChatGPT、Claude、Perplexity、Gemini、Meta AI、Apple Intelligence、xAI 等。</p>
 
     <div class="card p-8 mb-8">
       <h2 class="text-xl font-bold mb-4">为什么 AI 爬虫访问很重要</h2>
@@ -66,18 +79,6 @@ import LayoutZh from '../../../layouts/LayoutZh.astro';
         <div class="p-3 rounded-lg bg-white/5"><code class="text-gray-300 text-sm">Perplexity-User</code><p class="text-gray-500 text-xs mt-1">Perplexity（用户发起）</p></div>
         <div class="p-3 rounded-lg bg-white/5"><code class="text-gray-300 text-sm">YouBot</code><p class="text-gray-500 text-xs mt-1">You.com AI</p></div>
         <div class="p-3 rounded-lg bg-white/5"><code class="text-gray-300 text-sm">PetalBot</code><p class="text-gray-500 text-xs mt-1">华为 AI</p></div>
-      </div>
-    </div>
-
-    <div class="card p-8 mb-8">
-      <h2 class="text-xl font-bold mb-4">检测你的 Robots.txt</h2>
-      <p class="text-gray-400 mb-6">输入你的 URL，运行完整审计，包括 robots.txt AI 爬虫分析：</p>
-      <div class="flex flex-col sm:flex-row gap-3 max-w-xl">
-        <div class="flex-1 relative">
-          <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
-          <input id="url-input" type="url" placeholder="输入网址，如 example.com" aria-label="请输入网站网址" onkeydown="if(event.key==='Enter'){document.getElementById('audit-btn').click();}" class="w-full pl-12 pr-5 py-3.5 rounded-xl bg-white/5 text-white placeholder-gray-500 border border-gray-600 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 text-lg transition" />
-        </div>
-        <button id="audit-btn" class="px-8 py-3.5 rounded-xl font-semibold text-white bg-gradient-to-r from-geo-600 to-brand-600 hover:from-geo-500 hover:to-brand-500 transition shadow-lg shadow-brand-500/20 whitespace-nowrap">检测</button>
       </div>
     </div>
 

@@ -6,6 +6,7 @@
  */
 import { openSiteHistory } from './auditHistory.js';
 import { openVisibility } from './visibilityPanel.js';
+import { showToast } from '../scripts/toast.js';
 
 var IS_ZH = (document.documentElement.lang || 'en').toLowerCase().indexOf('zh') === 0;
 function t(en, zh) { return IS_ZH ? zh : en; }
@@ -50,10 +51,10 @@ export function initSitesPanel(auth) {
         input.value = '';
         await refreshSites(auth, list, count);
       } else {
-        alert((res.data && res.data.error) ? res.data.error : t('Failed to add domain.', '添加域名失败。'));
+        showToast((res.data && res.data.error) ? res.data.error : t('Failed to add domain.', '添加域名失败。'), 'error');
       }
     } catch (err) {
-      alert(t('Network error while adding the domain.', '添加域名时网络错误。'));
+      showToast(t('Network error while adding the domain.', '添加域名时网络错误。'), 'error');
     }
     btn.disabled = false;
   });
@@ -65,7 +66,7 @@ export function initSitesPanel(auth) {
       del.disabled = true;
       auth.api('/api/sites?id=' + encodeURIComponent(id), { method: 'DELETE' })
         .then(function() { return refreshSites(auth, list, count); })
-        .catch(function() { del.disabled = false; alert(t('Failed to delete the domain.', '删除域名失败。')); });
+        .catch(function() { del.disabled = false; showToast(t('Failed to delete the domain.', '删除域名失败。'), 'error'); });
       return;
     }
     var vis = e.target.closest('[data-visibility]');
