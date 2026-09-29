@@ -286,6 +286,11 @@ function setupResultViewed(root, r) {
   resultViewedTimer = setTimeout(fire, 3000);
 }
 
+// Queried at call time so a mid-session preference change is honoured.
+function prefersReducedMotion() {
+  return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+}
+
 function renderReport(r) {
   if (radarChartInstance) { radarChartInstance.destroy(); radarChartInstance = null; }
   if (trendChartInstance) { trendChartInstance.destroy(); trendChartInstance = null; }
@@ -308,19 +313,25 @@ function renderReport(r) {
 
   // Animate report sections with Web Animations API (reliable for dynamically inserted content)
   var animEls = root.querySelectorAll(".stagger-section");
-  animEls.forEach(function(el, i) {
-    var delay = Math.min(i, 7) * 80;
-    el.style.opacity = "0";
-    el.animate([
-      { opacity: 0, transform: "translateY(10px)" },
-      { opacity: 1, transform: "translateY(0)" }
-    ], {
-      duration: 500,
-      delay: delay,
-      fill: "both",
-      easing: "cubic-bezier(0.16, 1, 0.3, 1)"
+  if (prefersReducedMotion()) {
+    // Skip the entrance animation outright: running it at 0 duration would still
+    // flash, and leaving opacity at 0 would hide the whole report.
+    animEls.forEach(function(el) { el.style.opacity = "1"; });
+  } else {
+    animEls.forEach(function(el, i) {
+      var delay = Math.min(i, 7) * 80;
+      el.style.opacity = "0";
+      el.animate([
+        { opacity: 0, transform: "translateY(10px)" },
+        { opacity: 1, transform: "translateY(0)" }
+      ], {
+        duration: 500,
+        delay: delay,
+        fill: "both",
+        easing: "cubic-bezier(0.16, 1, 0.3, 1)"
+      });
     });
-  });
+  }
 
   initRadarChart(r.dimensions).then(function(chart) { radarChartInstance = chart; });
   var urlHistory = getUrlHistory(r.url);
@@ -334,16 +345,20 @@ function renderReport(r) {
       var trendEl = root.querySelector("#trend-section");
       if (trendEl) {
         trendEl.style.display = "block";
-        trendEl.style.opacity = "0";
-        trendEl.animate([
-          { opacity: 0, transform: "translateY(10px)" },
-          { opacity: 1, transform: "translateY(0)" }
-        ], {
-          duration: 500,
-          delay: 320,
-          fill: "both",
-          easing: "cubic-bezier(0.16, 1, 0.3, 1)"
-        });
+        if (prefersReducedMotion()) {
+          trendEl.style.opacity = "1";
+        } else {
+          trendEl.style.opacity = "0";
+          trendEl.animate([
+            { opacity: 0, transform: "translateY(10px)" },
+            { opacity: 1, transform: "translateY(0)" }
+          ], {
+            duration: 500,
+            delay: 320,
+            fill: "both",
+            easing: "cubic-bezier(0.16, 1, 0.3, 1)"
+          });
+        }
       }
       initTrendChart(urlHistory).then(function(chart) { trendChartInstance = chart; });
     }

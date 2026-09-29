@@ -32,7 +32,7 @@ export function renderFixFilesPanel(result) {
         '<button onclick="window.downloadFixFile(\'' + key + '\')" class="flex-1 px-3 py-2 rounded-lg text-xs font-semibold text-white bg-gradient-to-r from-geo-600 to-brand-600 hover:from-geo-500 hover:to-brand-500 transition">' + t('Download', '下载') + '</button>' +
         '<button onclick="window.previewFixFile(\'' + key + '\')" class="px-3 py-2 rounded-lg text-xs font-semibold bg-white/10 hover:bg-white/20 transition">' + t('Preview', '预览') + '</button>' +
       '</div>' +
-      '<p class="text-xs text-gray-600 mt-2 font-mono">' + f.path + '</p>' +
+      '<p class="text-xs text-gray-400 mt-2 font-mono">' + f.path + '</p>' +
     '</div>';
   });
 

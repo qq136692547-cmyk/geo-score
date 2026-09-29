@@ -88,7 +88,7 @@ function renderSummary(result) {
   parts.push('<span class="text-gray-400">' + t('AI engines checked', '已检查引擎') + ': <span class="text-gray-200 font-semibold">' + checked + '/4</span></span>');
   parts.push('<span class="text-gray-400">' + t('Mentioned by', '会被提及') + ': <span class="text-geo-500 font-bold">' + mentioned + '/4</span></span>');
   parts.push('<span class="text-gray-400">' + t('Cited by', '会被引用') + ': <span class="text-geo-500 font-bold">' + cited + '/4</span></span>');
-  if (result.checked_at) parts.push('<span class="text-gray-600 text-xs">' + fmtDateTime(result.checked_at) + '</span>');
+  if (result.checked_at) parts.push('<span class="text-gray-400 text-xs">' + fmtDateTime(result.checked_at) + '</span>');
   parts.push('</div>');
   return parts.join('');
 }

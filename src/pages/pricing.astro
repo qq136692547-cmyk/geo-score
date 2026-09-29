@@ -122,11 +122,11 @@ import Layout from '../layouts/Layout.astro';
         <table class="w-full text-sm">
           <thead>
             <tr class="border-b border-gray-700">
-              <th class="text-left py-3 text-gray-400 font-medium">Feature</th>
-              <th class="text-center py-3 text-gray-400 font-medium">Free</th>
-              <th class="text-center py-3 text-brand-400 font-medium">Pro</th>
-              <th class="text-center py-3 text-gray-500 font-medium">Studio <span class="text-xs">(soon)</span></th>
-              <th class="text-center py-3 text-gray-500 font-medium">Agency <span class="text-xs">(soon)</span></th>
+              <th scope="col" class="text-left py-3 text-gray-400 font-medium">Feature</th>
+              <th scope="col" class="text-center py-3 text-gray-400 font-medium">Free</th>
+              <th scope="col" class="text-center py-3 text-brand-400 font-medium">Pro</th>
+              <th scope="col" class="text-center py-3 text-gray-500 font-medium">Studio <span class="text-xs">(soon)</span></th>
+              <th scope="col" class="text-center py-3 text-gray-500 font-medium">Agency <span class="text-xs">(soon)</span></th>
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-700/50">
@@ -134,14 +134,14 @@ import Layout from '../layouts/Layout.astro';
             <tr><td class="py-2.5 text-gray-300">11 dimensions, 85+ checks</td><td class="text-center">✓</td><td class="text-center">✓</td><td class="text-center">✓</td><td class="text-center">✓</td></tr>
             <tr><td class="py-2.5 text-gray-300">Fix file generator</td><td class="text-center">✓</td><td class="text-center">✓</td><td class="text-center">✓</td><td class="text-center">✓</td></tr>
             <tr><td class="py-2.5 text-gray-300">CLI & MCP Server</td><td class="text-center">✓</td><td class="text-center">✓</td><td class="text-center">✓</td><td class="text-center">✓</td></tr>
-            <tr><td class="py-2.5 text-gray-300">Automated audits</td><td class="text-center text-gray-600">—</td><td class="text-center text-gray-300">Weekly</td><td class="text-center text-gray-500">Daily</td><td class="text-center text-gray-500">Hourly</td></tr>
-            <tr><td class="py-2.5 text-gray-300">Audit history</td><td class="text-center text-gray-600">—</td><td class="text-center text-gray-300">30 days</td><td class="text-center text-gray-500">12 months</td><td class="text-center text-gray-500">Unlimited</td></tr>
-            <tr><td class="py-2.5 text-gray-300">Regression alerts</td><td class="text-center text-gray-600">—</td><td class="text-center">✓</td><td class="text-center text-gray-500">✓</td><td class="text-center text-gray-500">✓</td></tr>
-            <tr><td class="py-2.5 text-gray-300">PDF export</td><td class="text-center text-gray-600">—</td><td class="text-center">✓</td><td class="text-center text-gray-500">✓</td><td class="text-center text-gray-500">✓</td></tr>
-            <tr><td class="py-2.5 text-gray-300">Competitor comparison</td><td class="text-center text-gray-600">—</td><td class="text-center text-gray-600">—</td><td class="text-center text-gray-500">✓</td><td class="text-center text-gray-500">✓</td></tr>
-            <tr><td class="py-2.5 text-gray-300">API access</td><td class="text-center text-gray-600">—</td><td class="text-center text-gray-600">—</td><td class="text-center text-gray-500">✓</td><td class="text-center text-gray-500">✓</td></tr>
-            <tr><td class="py-2.5 text-gray-300">Team workspace</td><td class="text-center text-gray-600">—</td><td class="text-center text-gray-600">—</td><td class="text-center text-gray-600">—</td><td class="text-center text-gray-500">✓</td></tr>
-            <tr><td class="py-2.5 text-gray-300">White-label reports</td><td class="text-center text-gray-600">—</td><td class="text-center text-gray-600">—</td><td class="text-center text-gray-600">—</td><td class="text-center text-gray-500">✓</td></tr>
+            <tr><td class="py-2.5 text-gray-300">Automated audits</td><td class="text-center text-gray-400">—</td><td class="text-center text-gray-300">Weekly</td><td class="text-center text-gray-500">Daily</td><td class="text-center text-gray-500">Hourly</td></tr>
+            <tr><td class="py-2.5 text-gray-300">Audit history</td><td class="text-center text-gray-400">—</td><td class="text-center text-gray-300">30 days</td><td class="text-center text-gray-500">12 months</td><td class="text-center text-gray-500">Unlimited</td></tr>
+            <tr><td class="py-2.5 text-gray-300">Regression alerts</td><td class="text-center text-gray-400">—</td><td class="text-center">✓</td><td class="text-center text-gray-500">✓</td><td class="text-center text-gray-500">✓</td></tr>
+            <tr><td class="py-2.5 text-gray-300">PDF export</td><td class="text-center text-gray-400">—</td><td class="text-center">✓</td><td class="text-center text-gray-500">✓</td><td class="text-center text-gray-500">✓</td></tr>
+            <tr><td class="py-2.5 text-gray-300">Competitor comparison</td><td class="text-center text-gray-400">—</td><td class="text-center text-gray-400">—</td><td class="text-center text-gray-500">✓</td><td class="text-center text-gray-500">✓</td></tr>
+            <tr><td class="py-2.5 text-gray-300">API access</td><td class="text-center text-gray-400">—</td><td class="text-center text-gray-400">—</td><td class="text-center text-gray-500">✓</td><td class="text-center text-gray-500">✓</td></tr>
+            <tr><td class="py-2.5 text-gray-300">Team workspace</td><td class="text-center text-gray-400">—</td><td class="text-center text-gray-400">—</td><td class="text-center text-gray-400">—</td><td class="text-center text-gray-500">✓</td></tr>
+            <tr><td class="py-2.5 text-gray-300">White-label reports</td><td class="text-center text-gray-400">—</td><td class="text-center text-gray-400">—</td><td class="text-center text-gray-400">—</td><td class="text-center text-gray-500">✓</td></tr>
             <tr class="font-semibold"><td class="py-2.5 text-white">Domains</td><td class="text-center text-gray-300">1</td><td class="text-center text-brand-400">5</td><td class="text-center text-gray-500">15</td><td class="text-center text-gray-500">50</td></tr>
             <tr class="font-semibold"><td class="py-2.5 text-white">Price</td><td class="text-center text-gray-300">$0</td><td class="text-center text-brand-400">$9/mo</td><td class="text-center text-gray-500">$29/mo</td><td class="text-center text-gray-500">$59/mo</td></tr>
           </tbody>

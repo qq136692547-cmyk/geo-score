@@ -102,10 +102,10 @@ async function refreshSites(auth, list, count) {
   list.innerHTML = sites.map(function(s) {
     var scoreCell = s.last_score != null
       ? '<span class="font-bold ' + scoreClass(s.last_score) + '">' + s.last_score + '</span>'
-      : '<span class="text-gray-600">&mdash;</span>';
+      : '<span class="text-gray-400">&mdash;</span>';
     var statusCell = s.consecutive_failures >= 3
       ? '<span class="text-danger-500 text-xs">' + t('failed', '失败') + '</span>'
-      : '<span class="text-xs text-gray-600">' + fmtDate(s.last_audit_at) + '</span>';
+      : '<span class="text-xs text-gray-400">' + fmtDate(s.last_audit_at) + '</span>';
     return '<div class="flex items-center gap-3 py-2 px-3 card-hover rounded-lg">' +
       '<span class="flex-1 text-gray-300 text-sm truncate">' + escapeHtml(s.host) + '</span>' +
       scoreCell +

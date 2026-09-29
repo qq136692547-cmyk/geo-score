@@ -173,3 +173,32 @@ body {
 /* Navigation active */
 .nav-active { color: var(--color-brand-500) !important; }
 /* .hidden is provided by Tailwind v4 utilities; no custom override needed */
+
+/* ===== Reduced motion =====
+   Honour prefers-reduced-motion: kill the looping decorative animations, the
+   scroll smoothing and all transitions, and drop non-essential hover motion.
+   The JS entrance animation (WAAPI, in scripts/boot.js) is skipped separately
+   because CSS media queries do not reach Web Animations API calls. */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+
+  .gradient-text { animation: none; }
+  .loading-dot,
+  .scan-bar,
+  .scan-step.active .scan-step-dot { animation: none; }
+  .fade-in,
+  .scale-in,
+  .slide-up { animation: none; }
+
+  .card-lift:hover { transform: none; }
+  .scan-step.active { transform: none; }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

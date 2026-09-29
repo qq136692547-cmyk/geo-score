@@ -64,7 +64,7 @@ import LayoutZh from '../../../layouts/LayoutZh.astro';
           <div>
             <div class="flex items-center justify-between text-sm mb-1">
               <span class="text-gray-300">{d.name}</span>
-              <span class="text-gray-500 font-mono">{d.score}% <span class="text-gray-600">({d.weight})</span></span>
+              <span class="text-gray-500 font-mono">{d.score}% <span class="text-gray-400">({d.weight})</span></span>
             </div>
             <div class="w-full h-2 rounded-full bg-gray-700/50 overflow-hidden">
               <div class={`h-full rounded-full ${d.color}`} style={`width:${d.score}%`}></div>
@@ -110,7 +110,7 @@ import LayoutZh from '../../../layouts/LayoutZh.astro';
           <div class={`flex items-center gap-2 p-2 rounded-lg text-sm ${c.status ? 'bg-geo-500/5' : 'bg-danger-500/5'}`}>
             <span class={`w-2 h-2 rounded-full ${c.status ? 'bg-geo-500' : 'bg-danger-500'}`}></span>
             <span class="font-mono text-gray-300">{c.bot}</span>
-            <span class="text-gray-600 text-xs ml-auto">{c.tier}</span>
+            <span class="text-gray-400 text-xs ml-auto">{c.tier}</span>
             <span class={`text-xs font-semibold ${c.status ? 'text-geo-400' : 'text-danger-400'}`}>{c.status ? '已允许' : '已阻止'}</span>
           </div>
         ))}

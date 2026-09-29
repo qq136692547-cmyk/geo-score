@@ -99,10 +99,10 @@ import Layout from '../../layouts/Layout.astro';
       <table class="w-full text-sm text-gray-300 border border-gray-700/50 rounded-lg overflow-hidden">
         <thead class="bg-white/5">
           <tr>
-            <th class="text-left p-3 font-semibold text-white">Schema Type</th>
-            <th class="text-left p-3 font-semibold text-white">Priority</th>
-            <th class="text-left p-3 font-semibold text-white">Where to Use</th>
-            <th class="text-left p-3 font-semibold text-white">AI Search Impact</th>
+            <th scope="col" class="text-left p-3 font-semibold text-white">Schema Type</th>
+            <th scope="col" class="text-left p-3 font-semibold text-white">Priority</th>
+            <th scope="col" class="text-left p-3 font-semibold text-white">Where to Use</th>
+            <th scope="col" class="text-left p-3 font-semibold text-white">AI Search Impact</th>
           </tr>
         </thead>
         <tbody class="divide-y divide-gray-700/30">
@@ -458,6 +458,6 @@ const { schema } = Astro.props;
       </ul>
     </div>
 
-    <p class="mt-8 text-xs text-gray-600">Last updated: 2026-09-18. GeoScore is a free, open-source GEO audit tool. <a href="https://github.com/qq136692547-cmyk/geo-score" class="text-gray-500 hover:text-brand-400">View on GitHub</a>.</p>
+    <p class="mt-8 text-xs text-gray-400">Last updated: 2026-09-18. GeoScore is a free, open-source GEO audit tool. <a href="https://github.com/qq136692547-cmyk/geo-score" class="text-gray-500 hover:text-brand-400">View on GitHub</a>.</p>
   </article>
 </Layout>

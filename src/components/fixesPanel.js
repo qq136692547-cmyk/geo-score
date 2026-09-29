@@ -11,7 +11,7 @@ export function renderFixesPanel(recommendations) {
         var priLabel = rec.priority === "high" ? t("high", "高") : (rec.priority === "medium" ? t("medium", "中") : t("low", "低"));
         return '<div class="flex items-start gap-3 text-sm p-4 rounded-xl bg-white/5 border-l-2 ' + priCls + '">' +
           '<span class="mt-0.5 flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold bg-gray-500/20 text-gray-400">' + (i + 1) + '</span>' +
-          '<div class="flex-1"><div class="text-gray-200 font-medium">' + rec.issue + '</div><div class="text-gray-500 mt-0.5">' + rec.fix + '</div><div class="text-xs text-gray-600 mt-1">' + rec.dimension + ' &middot; ' + priLabel + '</div></div></div>';
+          '<div class="flex-1"><div class="text-gray-200 font-medium">' + rec.issue + '</div><div class="text-gray-500 mt-0.5">' + rec.fix + '</div><div class="text-xs text-gray-400 mt-1">' + rec.dimension + ' &middot; ' + priLabel + '</div></div></div>';
       }).join("") +
       '</div>';
   } else { html += '<p class="text-gray-400">' + t('No issues found!', '未发现问题！') + '</p>'; }

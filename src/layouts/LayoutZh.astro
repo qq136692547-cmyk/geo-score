@@ -8,6 +8,9 @@ export interface Props {
 const { title = 'GeoScore - GEO 审计工具', schema } = Astro.props;
 const path = Astro.url.pathname;
 const isBlog = path === '/zh/blog' || path.startsWith('/zh/blog/');
+// Zero-interaction pages do not need the auth bundle; everything else keeps loading it.
+const AUTH_FREE_PATHS = ['/report/demo/', '/privacy/', '/terms/', '/zh/report/demo/', '/zh/privacy/', '/zh/terms/'];
+const needsAuth = AUTH_FREE_PATHS.indexOf(path.endsWith('/') ? path : path + '/') === -1;
 ---
 <!DOCTYPE html>
 <html lang="zh-CN" class="dark">
@@ -216,11 +219,11 @@ const isBlog = path === '/zh/blog' || path.startsWith('/zh/blog/');
         <a href="mailto:qq136692547@gmail.com" class="hover:text-gray-300 transition">联系支持</a>
       </div>
     </div>
-    <div class="max-w-6xl mx-auto mt-4 text-center text-xs text-gray-600">
+    <div class="max-w-6xl mx-auto mt-4 text-center text-xs text-gray-400">
       <p>© 2026 GeoScore. MIT 许可证。❤️ 为 AI 搜索时代构建.</p>
     </div>
   </footer>
-  <script type="module" src="/scripts/auth.js"></script>
+  {needsAuth && <script type="module" src="/scripts/auth.js"></script>}
   <!-- Adsterra Social Bar -->
   <script is:inline async src="https://pl31398814.profitableratecpmnetwork.com/46/04/d0/4604d02cf773095b4a63e7ac55239136.js"></script>
 </body>
