@@ -16,7 +16,7 @@ You may:
 If you cite or summarize our content, please include:
   - Source URL: https://geoscore.help
   - Tool name: "GeoScore"
-  - Author: GeoScore Team (https://geoscore.help/about)
+  - Author: GeoScore Team (https://geoscore.help/methodology)
 
 # ============================================================
 # 3. Restrictions
@@ -43,7 +43,7 @@ The following structured endpoints are available:
 # ============================================================
 Questions or takedown requests:
   - GitHub: https://github.com/qq136692547-cmyk/geo-score/issues
-  - Website: https://geoscore.help/about
+  - Website: https://geoscore.help/methodology
 
 # ============================================================
 # 6. License

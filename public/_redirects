@@ -2,3 +2,5 @@
 # 背景：/blog/how-to-write-llms-txt/ 原是 meta refresh 软 404（200 + 0 秒跳转 + 两个冲突 canonical），
 # Google 已收录并给它记展示，浪费一个收录位。改为真正的 301，权重并入终极指南。
 /blog/how-to-write-llms-txt/  /blog/llms-txt-ultimate-guide/  301
+/about/  /methodology/  301
+/zh/about/  /zh/methodology/  301

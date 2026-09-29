@@ -47,19 +47,19 @@ function renderPrimary(r) {
   if (b === 'mid') {
     var title2 = t(r.score + ' sits in the "workable basics, no clear edge" range', r.score + ' 分处在“基础能用、差异未拉开”的区间');
     var body2 = t(
-      'When competing with peers, what matters more is whether an AI answer would actually mention your site. Take one content-based simulation first.',
-      '和同行竞争时，更值得验证的是 AI 回答会不会提到你的站。先看 1 次基于网页内容的模拟。'
+      'When competing with peers, what matters more is whether an AI answer would actually mention your site. Pro includes a content-based AI visibility simulation.',
+      '和同行竞争时，更值得验证的是 AI 回答会不会提到你的站。Pro 提供基于网页内容的 AI 可见性模拟。'
     );
-    var btn2 = '<a href="' + pricingHref + '" data-cta-id="result_visibility" data-cta-placement="primary" class="mt-4 ' + BTN_CLS + '">' + t('See one simulation', '看 1 次模拟结果') + '</a>';
+    var btn2 = '<a href="' + pricingHref + '" data-cta-id="result_visibility" data-cta-placement="primary" class="mt-4 ' + BTN_CLS + '">' + t('See what Pro includes', '查看 Pro 包含什么') + '</a>';
     return ctaShell(title2, body2, btn2);
   }
 
   var title3 = t(r.score + ' means the basics have no obvious problems', r.score + ' 分说明基础没有明显问题');
   var body3 = t(
-    'But the score alone cannot prove an AI answer will mention your site. Run one content-based simulation for free?',
-    '但分数本身不能证明 AI 会在回答里提到你的站。免费跑 1 次基于网页内容的模拟？'
+    'The score alone cannot prove an AI answer will mention your site. Pro includes a content-based AI visibility simulation.',
+    '分数本身不能证明 AI 会在回答里提到你的站。Pro 提供基于网页内容的 AI 可见性模拟。'
   );
-  var btn3 = '<a href="' + pricingHref + '" data-cta-id="result_visibility" data-cta-placement="primary" class="mt-4 ' + BTN_CLS + '">' + t('Verify once for free', '免费验证 1 次') + '</a>';
+  var btn3 = '<a href="' + pricingHref + '" data-cta-id="result_visibility" data-cta-placement="primary" class="mt-4 ' + BTN_CLS + '">' + t('See what Pro includes', '查看 Pro 包含什么') + '</a>';
   return ctaShell(title3, body3, btn3);
 }
 
