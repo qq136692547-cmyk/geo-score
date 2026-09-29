@@ -70,7 +70,7 @@ window.showComparison = function() {
 function populateCompareList() {
   var root = document.getElementById("compare-list");
   var history = getHistory();
-  if (history.length < 2) { root.innerHTML = "Audit at least 2 sites first."; return; }
+  if (history.length < 2) { root.innerHTML = t("Audit at least 2 sites first.", "请先审计至少 2 个站点。"); return; }
   root.innerHTML = history.slice(0, 10).map(function(e) {
     var lc = e.level === "Excellent" ? "text-geo-500" : e.level === "Good" ? "text-brand-500" : e.level === "Basic" ? "text-warn-500" : "text-danger-500";
     return '<label class="flex items-center gap-2 py-1 px-2 card-hover rounded cursor-pointer text-sm">' +
@@ -111,17 +111,17 @@ window.startBatchAudit = async function() {
   var status = document.getElementById("batch-status");
   var results = document.getElementById("batch-results");
   progress.classList.remove("hidden");
-  results.innerHTML = "Fetching sitemap...";
+  results.innerHTML = t("Fetching sitemap...", "正在获取 sitemap...");
   try {
     var resp = await fetch(url);
     var text = await resp.text();
     var urls = extractUrlsFromSitemap(text);
-    if (urls.length === 0) { results.innerHTML = "No URLs found in sitemap."; return; }
-    if (urls.length > 20) { results.innerHTML = "Found " + urls.length + " URLs. Auditing first 20."; urls = urls.slice(0, 20); }
+    if (urls.length === 0) { results.innerHTML = t("No URLs found in sitemap.", "sitemap 中未找到 URL。"); return; }
+    if (urls.length > 20) { results.innerHTML = t("Found " + urls.length + " URLs. Auditing first 20.", "找到 " + urls.length + " 个 URL，将审计前 20 个。"); urls = urls.slice(0, 20); }
     results.innerHTML = "";
     var completed = 0;
     for (var i = 0; i < urls.length; i++) {
-      status.textContent = "Scanning " + (i + 1) + "/" + urls.length + ": " + urls[i];
+      status.textContent = t("Scanning ", "正在扫描 ") + (i + 1) + "/" + urls.length + ": " + urls[i];
       bar.style.width = ((i / urls.length) * 100) + "%";
       try {
         var r = await auditUrl(urls[i]);
@@ -129,13 +129,13 @@ window.startBatchAudit = async function() {
         var lc = r.level === "Excellent" ? "text-geo-500" : r.level === "Good" ? "text-brand-500" : r.level === "Basic" ? "text-warn-500" : "text-danger-500";
         results.innerHTML += '<div class="flex justify-between py-1 ' + ((i % 2 === 0) ? "bg-white/5" : "") + ' px-2 rounded"><span class="truncate mr-2 text-gray-300">' + urls[i] + '</span><span class="font-mono text-xs font-bold ' + lc + '">' + r.score + '</span></div>';
       } catch (e) {
-        results.innerHTML += '<div class="flex justify-between py-1 px-2 rounded text-danger-500"><span class="truncate mr-2">' + urls[i] + '</span><span class="text-xs">Error</span></div>';
+        results.innerHTML += '<div class="flex justify-between py-1 px-2 rounded text-danger-500"><span class="truncate mr-2">' + urls[i] + '</span><span class="text-xs">' + t("Error", "错误") + '</span></div>';
       }
     }
     bar.style.width = "100%";
-    status.textContent = "Completed: " + completed + "/" + urls.length + " URLs";
+    status.textContent = t("Completed: ", "已完成：") + completed + "/" + urls.length + t(" URLs", " 个 URL");
   } catch (e) {
-    results.innerHTML = "Error: " + e.message;
+    results.innerHTML = t("Error: ", "错误：") + e.message;
   }
 };
 
@@ -162,7 +162,7 @@ window.startAudit = async function (entryPoint) {
     return;
   }
   btn.disabled = true;
-  btn.textContent = "Scanning\u2026";
+  btn.textContent = t("Scanning\u2026", "扫描中\u2026");
   geoHide(document.getElementById("hero-section"));
   reportEl.classList.add("hidden");
   loadEl.classList.remove("hidden");
@@ -221,10 +221,10 @@ window.startAudit = async function (entryPoint) {
   } catch (err) {
     clearInterval(scanTimer);
     if (typeof window.geoTrack === 'function') window.geoTrack('audit_failed', { url_domain: geoUrlDomain(url), error_code: geoErrorCode(err), source_type: getGeoSource() });
-    document.getElementById("loading-section").innerHTML = '<div class="card p-8 text-center"><div class="text-danger-500 text-lg font-semibold mb-2">Audit Failed</div><p class="text-gray-400 text-sm">' + err.message + '</p><button onclick="location.reload()" class="mt-4 px-4 py-2 rounded-lg text-sm bg-white/10 hover:bg-white/20 transition">Try Again</button></div>';
+    document.getElementById("loading-section").innerHTML = '<div class="card p-8 text-center"><div class="text-danger-500 text-lg font-semibold mb-2">' + t("Audit Failed", "审计失败") + '</div><p class="text-gray-400 text-sm">' + err.message + '</p><button onclick="location.reload()" class="mt-4 px-4 py-2 rounded-lg text-sm bg-white/10 hover:bg-white/20 transition">' + t("Try Again", "重试") + '</button></div>';
   }
   btn.disabled = false;
-  btn.textContent = "Start Audit";
+  btn.textContent = t("Start Audit", "开始审计");
 };
 
 // Smooth show/hide helpers (opacity-based, not display: none)
@@ -434,7 +434,7 @@ window.copyShareLink = function(auditUrl) {
   var link = 'https://geoscore.help/?audit=' + encodeURIComponent(auditUrl);
   navigator.clipboard.writeText(link).then(function() {
     var label = document.getElementById('copy-label');
-    if (label) { label.textContent = 'Copied!'; setTimeout(function() { label.textContent = 'Copy Link'; }, 2000); }
+    if (label) { label.textContent = t('Copied!', '已复制！'); setTimeout(function() { label.textContent = t('Copy Link', '复制链接'); }, 2000); }
   }).catch(function() {});
 };
 

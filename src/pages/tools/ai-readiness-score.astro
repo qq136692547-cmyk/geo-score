@@ -54,10 +54,10 @@ import Layout from '../../layouts/Layout.astro';
     <div class="card p-8 mb-8">
       <h2 class="text-xl font-bold mb-4">Check Your AI Readiness</h2>
       <p class="text-gray-400 mb-6">Enter your URL to get a full 11-dimension audit with actionable recommendations:</p>
-      <div class="flex gap-3 max-w-xl">
+      <div class="flex flex-col sm:flex-row gap-3 max-w-xl">
         <div class="flex-1 relative">
           <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
-          <input id="url-input" type="url" placeholder="e.g. example.com" class="w-full pl-12 pr-5 py-3.5 rounded-xl bg-white/5 text-white placeholder-gray-500 border border-gray-600 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 text-lg transition" />
+          <input id="url-input" type="url" placeholder="e.g. example.com" aria-label="Enter website URL" onkeydown="if(event.key==='Enter'){document.getElementById('audit-btn').click();}" class="w-full pl-12 pr-5 py-3.5 rounded-xl bg-white/5 text-white placeholder-gray-500 border border-gray-600 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 text-lg transition" />
         </div>
         <button id="audit-btn" class="px-8 py-3.5 rounded-xl font-semibold text-white bg-gradient-to-r from-geo-600 to-brand-600 hover:from-geo-500 hover:to-brand-500 transition shadow-lg shadow-brand-500/20 whitespace-nowrap">Score My Site</button>
       </div>
