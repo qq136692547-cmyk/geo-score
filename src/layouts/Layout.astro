@@ -9,9 +9,6 @@ export interface Props {
 const { title = 'GeoScore - GEO Audit Tool', description = 'Check your website visibility to AI search engines. Free GEO audit tool.', schema } = Astro.props;
 const path = Astro.url.pathname;
 const isBlog = path === '/blog' || path.startsWith('/blog/');
-// Zero-interaction pages do not need the auth bundle; everything else keeps loading it.
-const AUTH_FREE_PATHS = ['/report/demo/', '/privacy/', '/terms/', '/zh/report/demo/', '/zh/privacy/', '/zh/terms/'];
-const needsAuth = AUTH_FREE_PATHS.indexOf(path.endsWith('/') ? path : path + '/') === -1;
 ---
 <!DOCTYPE html>
 <html lang="en" class="dark">
@@ -251,7 +248,7 @@ const needsAuth = AUTH_FREE_PATHS.indexOf(path.endsWith('/') ? path : path + '/'
       <p class="text-xs text-gray-500 text-center">&copy; 2026 GeoScore. Powered by <a href="https://github.com/qq136692547-cmyk/geo-score/tree/main/docs/handbook" class="text-brand-500 hover:underline" target="_blank">GEO Optimization Handbook</a></p>
     </div>
   </footer>
-  {needsAuth && <script type="module" src="/scripts/auth.js"></script>}
+  <script type="module" src="/scripts/auth.js"></script>
   <!-- Adsterra Social Bar -->
   <script is:inline async src="https://pl31398814.profitableratecpmnetwork.com/46/04/d0/4604d02cf773095b4a63e7ac55239136.js"></script>
 </body>
