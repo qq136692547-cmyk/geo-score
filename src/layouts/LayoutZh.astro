@@ -32,14 +32,23 @@ const isBlog = path === '/zh/blog' || path.startsWith('/zh/blog/');
   <link rel="dns-prefetch" href="https://github.com" />
   <title>{title}</title>
 
-  <!-- Google Analytics 4 — Measurement ID: G-98LLHZ0GDM -->
-  <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-98LLHZ0GDM"></script>
+  <!-- Consent state. Runs before first paint so the banner never flashes: a
+       parsable stored record = the visitor already decided, banner stays hidden
+       and scripts/consent.js replays the choice. Same predicate as consent.js,
+       so an unreadable record falls back to "undecided" on both sides. -->
   <script is:inline>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-98LLHZ0GDM', { anonymize_ip: true });
+    (function () {
+      var decided = false;
+      try {
+        var raw = localStorage.getItem('geoscore-consent-v1');
+        if (raw) decided = !!JSON.parse(raw);
+      } catch (e) { decided = false; }
+      document.documentElement.setAttribute('data-consent', decided ? 'decided' : 'pending');
+    })();
   </script>
+  <!-- Consent gate. GA4 and both Adsterra loaders are created here on opt-in;
+       no third-party script is requested before that. -->
+  <script src="/scripts/consent.js" defer></script>
   <script is:inline>
     function geoAuthed() {
       try {
@@ -232,6 +241,7 @@ const isBlog = path === '/zh/blog' || path.startsWith('/zh/blog/');
             <li><a href="/zh/privacy/" class="hover:text-brand-500 transition">隐私政策</a></li>
             <li><a href="/zh/terms/" class="hover:text-brand-500 transition">使用条款</a></li>
             <li><a href="mailto:qq136692547@gmail.com" class="hover:text-brand-500 transition">联系支持</a></li>
+            <li><button type="button" id="consent-open" class="cursor-pointer text-left hover:text-brand-500 transition">Cookie 设置</button></li>
             <li><span class="text-gray-500">开源 — MIT 许可证</span></li>
           </ul>
         </div>
@@ -239,8 +249,38 @@ const isBlog = path === '/zh/blog' || path.startsWith('/zh/blog/');
       <p class="text-xs text-gray-500 text-center">© 2026 GeoScore. MIT 许可证。❤️ 为 AI 搜索时代构建.</p>
     </div>
   </footer>
+
+  <!-- Consent panel. Server-rendered so it is on screen at first paint; shown
+       only while <html data-consent="pending">. Deliberately non-modal —
+       role=region, no focus trap — and every control is a native focusable
+       element (checkbox + label, real buttons). -->
+  <div id="geoscore-consent-banner" class="consent-banner fixed bottom-0 left-0 right-0 z-[60] p-3 sm:p-4" role="region" aria-label="Cookie 设置">
+    <div class="max-w-4xl mx-auto card p-4 sm:p-5" style="background:rgba(15,23,42,0.97);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:0 8px 30px rgba(0,0,0,0.35)">
+      <p class="text-sm font-semibold text-white mb-1">GeoScore 的 Cookie 使用</p>
+      <p class="text-xs text-gray-400 mb-3">
+        只有在你允许之后，我们才会加载统计与广告脚本 —— 在此之前不会向任何第三方发起请求。详见
+        <a href="/zh/privacy/" class="text-brand-400 hover:underline">隐私政策</a>。
+      </p>
+      <div class="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
+        <div class="flex flex-col sm:flex-row sm:items-center gap-x-6 gap-y-2 sm:flex-1">
+          <label for="consent-analytics" class="flex items-center gap-2 text-sm text-gray-300 cursor-pointer">
+            <input type="checkbox" id="consent-analytics" class="h-4 w-4 accent-geo-500 cursor-pointer" />
+            分析统计
+          </label>
+          <label for="consent-ads" class="flex items-center gap-2 text-sm text-gray-300 cursor-pointer">
+            <input type="checkbox" id="consent-ads" class="h-4 w-4 accent-geo-500 cursor-pointer" />
+            广告
+          </label>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <button type="button" id="consent-accept-all" class="cursor-pointer px-4 py-2 rounded-lg text-sm font-semibold text-white bg-gradient-to-r from-geo-600 to-brand-600 hover:from-geo-500 hover:to-brand-500 transition">接受全部</button>
+          <button type="button" id="consent-essential" class="cursor-pointer px-4 py-2 rounded-lg text-sm font-semibold bg-white/10 hover:bg-white/20 transition">仅必要</button>
+          <button type="button" id="consent-save" class="cursor-pointer px-4 py-2 rounded-lg text-sm font-semibold bg-white/10 hover:bg-white/20 transition">保存选择</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script type="module" src="/scripts/auth.js"></script>
-  <!-- Adsterra Social Bar -->
-  <script is:inline async src="https://pl31398814.profitableratecpmnetwork.com/46/04/d0/4604d02cf773095b4a63e7ac55239136.js"></script>
 </body>
 </html>

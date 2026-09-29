@@ -33,15 +33,25 @@ const isBlog = path === '/blog' || path.startsWith('/blog/');
   <link rel="dns-prefetch" href="https://github.com" />
   <title>{title}</title>
 
-  <!-- Google Analytics 4 — Measurement ID: G-98LLHZ0GDM -->
-  <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-98LLHZ0GDM"></script>
+  <!-- Consent state. Runs before first paint so the banner never flashes: a
+       parsable stored record = the visitor already decided, banner stays hidden
+       and scripts/consent.js replays the choice. Same predicate as consent.js,
+       so an unreadable record falls back to "undecided" on both sides. -->
   <script is:inline>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-98LLHZ0GDM', { anonymize_ip: true });
+    (function () {
+      var decided = false;
+      try {
+        var raw = localStorage.getItem('geoscore-consent-v1');
+        if (raw) decided = !!JSON.parse(raw);
+      } catch (e) { decided = false; }
+      document.documentElement.setAttribute('data-consent', decided ? 'decided' : 'pending');
+    })();
   </script>
-  <!-- GA4 track custom events -->
+  <!-- Consent gate. GA4 and both Adsterra loaders are created here on opt-in;
+       no third-party script is requested before that. -->
+  <script src="/scripts/consent.js" defer></script>
+  <!-- GA4 track custom events. gtag() only exists after consent, so every
+       geoTrack call is a silent no-op until then. -->
   <script is:inline>
     function geoAuthed() {
       try {
@@ -241,6 +251,7 @@ const isBlog = path === '/blog' || path.startsWith('/blog/');
             <li><a href="/privacy/" class="hover:text-brand-500 transition">Privacy</a></li>
             <li><a href="/terms/" class="hover:text-brand-500 transition">Terms</a></li>
             <li><a href="mailto:qq136692547@gmail.com" class="hover:text-brand-500 transition">Support</a></li>
+            <li><button type="button" id="consent-open" class="cursor-pointer text-left hover:text-brand-500 transition">Cookie settings</button></li>
             <li><span class="text-gray-500">Open-source — MIT Licensed</span></li>
           </ul>
         </div>
@@ -248,8 +259,38 @@ const isBlog = path === '/blog' || path.startsWith('/blog/');
       <p class="text-xs text-gray-500 text-center">&copy; 2026 GeoScore. Powered by <a href="https://github.com/qq136692547-cmyk/geo-score/tree/main/docs/handbook" class="text-brand-500 hover:underline" target="_blank">GEO Optimization Handbook</a></p>
     </div>
   </footer>
+
+  <!-- Consent panel. Server-rendered so it is on screen at first paint; shown
+       only while <html data-consent="pending">. Deliberately non-modal —
+       role=region, no focus trap — and every control is a native focusable
+       element (checkbox + label, real buttons). -->
+  <div id="geoscore-consent-banner" class="consent-banner fixed bottom-0 left-0 right-0 z-[60] p-3 sm:p-4" role="region" aria-label="Cookie settings">
+    <div class="max-w-4xl mx-auto card p-4 sm:p-5" style="background:rgba(15,23,42,0.97);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:0 8px 30px rgba(0,0,0,0.35)">
+      <p class="text-sm font-semibold text-white mb-1">Cookies on GeoScore</p>
+      <p class="text-xs text-gray-400 mb-3">
+        We load analytics and advertising scripts only after you allow them — nothing is requested from a third party before that. See the
+        <a href="/privacy/" class="text-brand-400 hover:underline">Privacy Policy</a>.
+      </p>
+      <div class="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
+        <div class="flex flex-col sm:flex-row sm:items-center gap-x-6 gap-y-2 sm:flex-1">
+          <label for="consent-analytics" class="flex items-center gap-2 text-sm text-gray-300 cursor-pointer">
+            <input type="checkbox" id="consent-analytics" class="h-4 w-4 accent-geo-500 cursor-pointer" />
+            Analytics
+          </label>
+          <label for="consent-ads" class="flex items-center gap-2 text-sm text-gray-300 cursor-pointer">
+            <input type="checkbox" id="consent-ads" class="h-4 w-4 accent-geo-500 cursor-pointer" />
+            Advertising
+          </label>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <button type="button" id="consent-accept-all" class="cursor-pointer px-4 py-2 rounded-lg text-sm font-semibold text-white bg-gradient-to-r from-geo-600 to-brand-600 hover:from-geo-500 hover:to-brand-500 transition">Accept all</button>
+          <button type="button" id="consent-essential" class="cursor-pointer px-4 py-2 rounded-lg text-sm font-semibold bg-white/10 hover:bg-white/20 transition">Essential only</button>
+          <button type="button" id="consent-save" class="cursor-pointer px-4 py-2 rounded-lg text-sm font-semibold bg-white/10 hover:bg-white/20 transition">Save choices</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script type="module" src="/scripts/auth.js"></script>
-  <!-- Adsterra Social Bar -->
-  <script is:inline async src="https://pl31398814.profitableratecpmnetwork.com/46/04/d0/4604d02cf773095b4a63e7ac55239136.js"></script>
 </body>
 </html>

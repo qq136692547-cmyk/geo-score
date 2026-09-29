@@ -189,6 +189,15 @@ body {
 .nav-active { color: var(--color-brand-500) !important; }
 /* .hidden is provided by Tailwind v4 utilities; no custom override needed */
 
+/* ===== Consent panel (M4-b) =====
+   The panel is server-rendered and shown only while <html data-consent="pending">.
+   The inline <head> script sets that attribute before first paint (so the panel
+   never flashes in) and flips it to "decided" once a stored choice exists. With
+   JS disabled the attribute is never set: no panel, and no third-party script
+   either, since the loaders only exist inside scripts/consent.js. */
+.consent-banner { display: none; }
+html[data-consent="pending"] .consent-banner { display: block; }
+
 /* ===== Reduced motion =====
    Honour prefers-reduced-motion: kill the looping decorative animations, the
    scroll smoothing and all transitions, and drop non-essential hover motion.
