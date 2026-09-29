@@ -169,10 +169,10 @@ const isBlog = path === '/zh/blog' || path.startsWith('/zh/blog/');
     }]
   })} />
 </head>
-<body class="min-h-screen bg-gray-950 text-gray-100 antialiased">
-  <header class="sticky top-0 z-50 bg-gray-950/80 backdrop-blur-md border-b border-gray-800/50">
-    <nav class="max-w-6xl mx-auto px-4 py-3">
-      <div class="flex flex-wrap items-center justify-between gap-x-4">
+<body class="min-h-[100dvh] text-gray-100 antialiased">
+  <header class="border-b border-gray-700/50 sticky top-0 z-50" style="background:rgba(15,23,42,0.85);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)">
+    <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-wrap items-center justify-between gap-x-4 min-h-16 py-2">
       <a href="/zh/" class="flex items-center gap-2 text-lg font-bold">
         <span class="text-geo-500">Geo</span><span class="text-brand-500">Score</span>
       </a>
@@ -196,28 +196,47 @@ const isBlog = path === '/zh/blog' || path.startsWith('/zh/blog/');
     </nav>
   </header>
 
-  <main class="pb-20">
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 min-h-[calc(100dvh-8rem)]">
     <slot />
     <Adsterra format="native" />
   </main>
 
-  <footer class="border-t border-gray-800/50 py-8 px-4">
-    <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-500">
-      <div class="flex items-center gap-2">
-        <span class="text-geo-500 font-bold">Geo</span><span class="text-brand-500 font-bold">Score</span>
-        <span class="ml-2">v1.8.0 免费开源 GEO 审计工具</span>
+  <footer class="border-t border-gray-700/50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-6">
+        <div>
+          <h4 class="text-sm font-bold text-white mb-3">工具</h4>
+          <ul class="space-y-2 text-sm text-gray-400">
+            <li><a href="/zh/tools/llms-txt-checker/" class="hover:text-brand-500 transition">llms.txt 检测</a></li>
+            <li><a href="/zh/tools/robots-txt-ai-checker/" class="hover:text-brand-500 transition">Robots.txt AI 检测</a></li>
+            <li><a href="/zh/tools/ai-readiness-score/" class="hover:text-brand-500 transition">AI 就绪评分</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-sm font-bold text-white mb-3">学习</h4>
+          <ul class="space-y-2 text-sm text-gray-400">
+            <li><a href="/zh/blog/" class="hover:text-brand-500 transition">中文博客</a></li>
+            <li><a href="/zh/blog/geoscore-update-multi-page-security/" class="hover:text-brand-500 transition">引擎升级：多页面扫描</a></li>
+            <li><a href="/zh/methodology/" class="hover:text-brand-500 transition">方法论</a></li>
+            <li><a href="/blog/" class="hover:text-brand-500 transition">英文指南全集</a></li>
+            <li><a href="https://github.com/qq136692547-cmyk/geo-score/tree/main/docs/handbook" target="_blank" rel="noopener" class="hover:text-brand-500 transition">GEO 手册</a></li>
+            <li><a href="https://ttcalc.shop/?utm_source=geoscore&amp;utm_medium=site&amp;utm_campaign=ttcalc-funnel" data-cross-site="ttcalc" target="_blank" rel="noopener" class="hover:text-brand-500 transition">TTCalc 卖家工具</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-sm font-bold text-white mb-3">项目</h4>
+          <ul class="space-y-2 text-sm text-gray-400">
+            <li><a href="https://github.com/qq136692547-cmyk/geo-score" target="_blank" rel="noopener" class="hover:text-brand-500 transition">GitHub</a></li>
+            <li><a href="https://geoscore.help/sitemap.xml" class="hover:text-brand-500 transition">Sitemap</a></li>
+            <li><a href="https://geoscore.help/llms.txt" class="hover:text-brand-500 transition">llms.txt</a></li>
+            <li><a href="/zh/privacy/" class="hover:text-brand-500 transition">隐私政策</a></li>
+            <li><a href="/zh/terms/" class="hover:text-brand-500 transition">使用条款</a></li>
+            <li><a href="mailto:qq136692547@gmail.com" class="hover:text-brand-500 transition">联系支持</a></li>
+            <li><span class="text-gray-500">开源 — MIT 许可证</span></li>
+          </ul>
+        </div>
       </div>
-      <div class="flex gap-4">
-        <a href="/zh/privacy/" class="hover:text-gray-300 transition">隐私政策</a>
-        <a href="/zh/terms/" class="hover:text-gray-300 transition">使用条款</a>
-        <a href="/zh/methodology/" class="hover:text-gray-300 transition">方法论</a>
-        <a href="https://github.com/qq136692547-cmyk/geo-score" target="_blank" rel="noopener" class="hover:text-gray-300 transition">GitHub</a>
-        <a href="https://ttcalc.shop/?utm_source=geoscore&amp;utm_medium=site&amp;utm_campaign=ttcalc-funnel" data-cross-site="ttcalc" target="_blank" rel="noopener" class="hover:text-gray-300 transition">TTCalc 工具</a>
-        <a href="mailto:qq136692547@gmail.com" class="hover:text-gray-300 transition">联系支持</a>
-      </div>
-    </div>
-    <div class="max-w-6xl mx-auto mt-4 text-center text-xs text-gray-400">
-      <p>© 2026 GeoScore. MIT 许可证。❤️ 为 AI 搜索时代构建.</p>
+      <p class="text-xs text-gray-500 text-center">© 2026 GeoScore. MIT 许可证。❤️ 为 AI 搜索时代构建.</p>
     </div>
   </footer>
   <script type="module" src="/scripts/auth.js"></script>

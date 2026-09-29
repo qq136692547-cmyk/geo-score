@@ -19,7 +19,10 @@ var ENGINES = [
 
 function engineMeta(id) {
   for (var i = 0; i < ENGINES.length; i++) if (ENGINES[i].id === id) return ENGINES[i];
-  return { id: id, label: id, initial: (id || '?')[0].toUpperCase(), tile: 'bg-gradient-to-br from-gray-500 to-gray-700' };
+  // Unknown engine id -> fallback tile. The white initial sits directly on the
+  // gradient, so the light end must stay dark enough for AA; pin the pre-M4-a
+  // gray-500 hex instead of following the (now brighter) --color-gray-500 token.
+  return { id: id, label: id, initial: (id || '?')[0].toUpperCase(), tile: 'bg-gradient-to-br from-[#6a7282] to-gray-700' };
 }
 
 function fmtDateTime(sec) {
@@ -50,7 +53,9 @@ function badge(ok, textYes, textNo) {
   if (ok === true) {
     return '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs font-semibold bg-geo-500/10 text-geo-500">' + textYes + '</span>';
   }
-  return '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs font-semibold bg-white/5 text-gray-500">' + textNo + '</span>';
+  // text-xs on bg-white/5 over a card composites to #242d3e, where even the
+  // raised gray-500 only reaches 4.19:1 -> use gray-400 (5.32:1) here.
+  return '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs font-semibold bg-white/5 text-gray-400">' + textNo + '</span>';
 }
 
 function renderEngineCard(r) {

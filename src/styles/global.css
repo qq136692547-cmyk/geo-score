@@ -1,4 +1,12 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+/* Tailwind v4 class detection walks the whole project. These two files are
+   build leftovers that are not imported by any page, but their class strings
+   were still being compiled into dist CSS. Paths resolve relative to THIS file
+   (src/styles/global.css). */
+@source not "../inline_bundle.js";
+@source not "../bundle.generated.js";
 
 @theme {
   /* Brand: GEO Green */
@@ -31,6 +39,13 @@
   --color-danger-400: #f87171;
   --color-danger-500: #ef4444;
   --color-danger-600: #dc2626;
+  /* M4-a / E-004b — override the Tailwind default oklch(55.1% .027 264.364).
+     Same chroma + hue, lightness raised 55.1% -> 64.5% so that `text-gray-500`
+     clears WCAG AA (>= 4.5:1) on every surface it is used on:
+     #858e9f => 4.84 on the card (#182234), 4.69 on card hover (#1a2537),
+     5.41 on the page base (#0f172a). Still darker than gray-400 (#99a1af),
+     so the gray hierarchy is preserved. */
+  --color-gray-500: oklch(64.5% 0.027 264.364);
   --color-surface-base: #0f172a;
   --color-surface-elevated: #1e293b;
   --color-surface-card: rgba(30, 41, 59, 0.6);
