@@ -54,8 +54,8 @@ column, not silently dropped.
 | has `llms.txt` | 84 (24.5%) |
 | mean score with `llms.txt` | 48.7 (median 53.5) |
 | mean score without | 25.8 (median 26) |
-| `robots.txt` blocks ≥1 AI crawler | 114 (33.2%) |
-| no `robots.txt` at all | 108 (31.5%) |
+| `robots.txt` blocks ≥1 AI crawler | 7 of the 231 that publish one (3.0%) |
+| no `robots.txt` at all | 106 (31.5%) |
 
 **`llms.txt` correlates with a +22.9 point mean difference (median gap 27.5).** This is an
 association in a convenience sample, not a causal effect: sites that publish an
@@ -75,29 +75,85 @@ audit cannot observe citation. Measuring them needs a multi-engine citation craw
 or the LLM simulation in `worker/visibility.js`, which is itself an estimate, not
 a measurement. **They are not restated and must not be revived without new data.**
 
-## ⚠️ One column in this data must not be published yet
+## ✅ The `aiCrawlability` defect — found, fixed, and re-measured
 
-`aiCrawlability` is scored by `src/lib/analyzers/robots.js`, which marks a bot as
-passing **only if robots.txt contains an explicit `User-agent: <bot>` line with
-`Allow: /`**.
+`aiCrawlability` used to be scored by a rule that marked a bot as passing **only
+if robots.txt contained an explicit `User-agent: <bot>` line with `Allow: /`**.
 
-A robots.txt that never mentions an AI bot is the normal case — the default is
-allow, and only sites that want to block a bot list it. So "not mentioned" is
-currently scored as "blocked".
+That inverts RFC 9309. A robots.txt which never mentions an AI bot is the normal
+case — the default is allow, and only a site that wants to restrict a bot lists
+it. "Not mentioned" was being scored as "blocked".
 
 Verified counter-example: **dev.to** has `User-agent: *` with partial `Disallow`
-rules (`/search?q=*` and similar) and never mentions GPTBot. No rule blocks it.
-The product scores it 0/12 with `gptbot passed=false`.
+rules (`/og/`, `/login`, …) and never mentions GPTBot. No rule blocks it. The
+product scored it 0/12 with `gptbot passed=false`.
 
-Consequence: **323 of 343 sites (94.2%) score 0/12 on that dimension.** That is not
-a plausible measurement of the web, it is the checker being stricter than the
-robots exclusion standard. The gap script is `tools/quantify-robots-gap.mjs`.
+Consequence before the fix: **323 of 343 sites (94.2%) scored 0/12** on a
+dimension carrying 12 of 98 total weight. Not a plausible measurement of the web.
 
-⇒ The `aiCrawlability` column is excluded from publishable findings until that
-logic is decided. The `robotsBlocksAnyAi` figure in `study-report.txt` comes from
-an independent parser (`tools/test-robots-parser.mjs`, 11 assertions with a
-mutation guard) and is the sounder of the two, but it measures "explicitly blocks
-at least one named AI crawler" — a stricter question than "is blocked".
+### What the fix does
+
+`src/lib/analyzers/robots.js` now parses robots.txt into groups and applies
+RFC 9309 directly:
+
+1. consecutive `User-agent` lines form one rule block;
+2. groups naming the bot are **merged**, and the `*` group is ignored entirely
+   when any specific group exists;
+3. within the applicable group, the **longest** matching pattern wins, ties going
+   to the least restrictive rule;
+4. an empty `Disallow:` states no restriction;
+5. no robots.txt, or a file that never mentions the bot, means **allowed**.
+
+The concrete question answered is "can this crawler fetch the site root `/`?" —
+so `Disallow: /admin` restricts part of a site without blocking it.
+
+### Re-measured over the same corpus
+
+`tools/recount-robots.mjs` re-fetches `/robots.txt` for the 343 previously-scored
+hosts and scores all 20 crawlers under both rules. 337 returned a usable file;
+6 timed out (`github.com`, `hackage.haskell.org`, `ollama.com`,
+`awesome-selfhosted.net`, `awesome-go.com`, `opentelemetry.io`) and are excluded
+rather than counted as permissive.
+
+| | old rule | new rule |
+|---|---|---|
+| sites blocking ≥1 AI crawler | 228 (67.7%) | **7 (2.1%)** |
+| median `aiCrawlability` | 0 / 12 | **12 / 12** |
+| sites at 0 / 12 | 225 | **2** |
+| sites at 12 / 12 | 109 | **331** |
+
+Denominator note: 106 of the 337 (31.5%) publish no robots.txt at all. They are
+**allowed** by the default and are not counted as blocked. An earlier draft of this
+file reported "114 (33.2%) block ≥1 AI crawler" — that number came from a helper
+that scored an empty robots.txt as blocked, which is the same defect in a second
+place. The correct figure is **7 of the 231 sites that publish a robots.txt
+(3.0%)**, or 2.1% of all scored sites.
+
+The 7 sites, all verified by reading their actual robots.txt:
+
+| site | crawlers blocked | what the file says |
+|---|---|---|
+| weibo.com | 20/20 | a named group of ~12 AI UAs with `Disallow: /`, plus `User-agent: * / Disallow: /` |
+| kcores.com | 20/20 | `User-agent: * / Disallow: /` |
+| catppuccin.com | 5/20 | `User-agent: * / Allow: /`, then GPTBot, ChatGPT-User, Google-Extended, CCBot, PerplexityBot each `Disallow: /` |
+| hellogithub.com | 1/20 | `User-agent: GPTBot / Disallow: /` |
+| rustdesk.com | 1/20 | `User-agent: CCBot / Disallow: /` |
+| unity.com | 1/20 | `User-Agent: Bytespider / Disallow: /` |
+| maxon.net | 1/20 | single named `Disallow: /` |
+
+Six of the 343 changed verdict. All six were checked against the source file and
+the new answer is correct in every case; the four that lost points really do ban
+those crawlers by name.
+
+⇒ `aiCrawlability` is publishable again, with the caveat that it is near-useless
+as a discriminator on typical sites: 331 of 337 score a perfect 12/12. That is the
+correct outcome, not a broken metric — a site that says nothing about AI crawlers
+should not be penalised for it.
+
+`tools/quantify-robots-gap.mjs` and `tools/test-robots-parser.mjs` quantified the
+gap before the fix and are kept as the record of it. `tests/analyzers/robots.test.js`
+now carries 23 assertions covering the RFC rules, including the merge, the
+wildcard precedence, the longest-match tie-break and the permissive default.
 
 ## Reproducing
 
@@ -106,7 +162,8 @@ node tools/build-corpus.mjs --per-band 100 --max 1200 --out data/geo-corpus.csv
 node tools/run-audit.mjs --in data/geo-corpus.csv --out data/geo-audit.csv --concurrency 5 --timeout 15000
 node tools/test-robots-parser.mjs        # parser assertions + mutation guard
 node tools/analyse-study.mjs             # writes study-report.txt
-node tools/quantify-robots-gap.mjs       # the caveat above, quantified
+node tools/recount-robots.mjs           # old-rule vs new-rule robots verdicts
+node tools/quantify-robots-gap.mjs       # the original defect, quantified
 ```
 
 The sampling rule is a hard-coded constant. Changing it invalidates comparison

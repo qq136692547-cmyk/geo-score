@@ -9,7 +9,7 @@ import Layout from '../../layouts/Layout.astro';
     description: 'A reproducible study of 343 real websites: median GEO score 29/100, 63.8% rate Critical, and every top-20 site publishes an llms.txt. What the data actually shows, and what it cannot show.',
     url: 'https://geoscore.help/blog/auditing-1200-websites/',
     datePublished: '2026-07-21',
-    dateModified: '2026-10-04',
+    dateModified: '2026-10-05',
     author: { '@type': 'Organization', name: 'GeoScore' },
     publisher: { '@type': 'Organization', name: 'GeoScore', url: 'https://geoscore.help' }
   }}
@@ -45,8 +45,8 @@ import Layout from '../../layouts/Layout.astro';
           <li><strong class="text-white">Median score: 29 out of 100.</strong> The typical site is nowhere near "optimized" for AI search.</li>
           <li><strong class="text-white">63.8% rate Critical</strong> (under 40). Only 1.7% reach Good.</li>
           <li><strong class="text-white">All 20 highest-scoring sites publish an <code class="text-geo-400">llms.txt</code>.</strong> Sites with one average 50.5; sites without average 25.7.</li>
-          <li><strong class="text-white">31.5% publish no <code class="text-geo-400">robots.txt</code> at all</strong>, and 33.2% explicitly block at least one named AI crawler.</li>
-          <li>One dimension of the scorer is stricter than the robots standard and <strong>overstates blocking</strong> — I flag it rather than quote it.</li>
+          <li><strong class="text-white">31.5% publish no <code class="text-geo-400">robots.txt</code> at all</strong>, and only 3.0% of the rest block any AI crawler.</li>
+          <li>My own scorer was <strong>wrong about this</strong> and overstated blocking by 25&times; — Finding 4 has the before-and-after.</li>
         </ul>
       </div>
 
@@ -71,6 +71,9 @@ import Layout from '../../layouts/Layout.astro';
         </div>
         <p class="text-gray-400 text-sm mt-4 mb-0">
           A note on what this sample is: these are repositories with visible homepages, so it skews toward developer-facing products. It is not a representative sample of the web, and I am not going to pretend otherwise.
+        </p>
+        <p class="text-gray-400 text-sm mt-4 mb-0">
+          Finding 4 comes from a second pass over the same 343 hosts, re-fetching <code class="text-geo-400">/robots.txt</code> alone and scoring every crawler under both the old and the new rule. 337 of the 343 returned a usable file; 6 timed out and are excluded from that section rather than counted as permissive.
         </p>
       </div>
 
@@ -121,21 +124,22 @@ import Layout from '../../layouts/Layout.astro';
       </div>
 
       <!-- FINDING 3 -->
-      <h2 class="text-2xl font-bold mt-12 mb-4 text-white">Finding 3: robots.txt is a smaller problem than the discourse suggests</h2>
+      <h2 class="text-2xl font-bold mt-12 mb-4 text-white">Finding 3: robots.txt is a very small problem</h2>
       <div class="card p-8 mb-6">
         <p class="text-gray-300 mb-4">
-          I expected this to be the headline problem. The data says something more nuanced:
+          I expected this to be the headline problem. The data says it is close to a non-problem:
         </p>
         <div class="card p-5 mb-4 bg-white/5">
           <ul class="space-y-2 text-sm text-gray-300 list-none">
-            <li class="flex justify-between"><span>Publishes a robots.txt</span><span class="text-white">235 — 68.5%</span></li>
-            <li class="flex justify-between"><span>No robots.txt at all</span><span class="text-white">108 — 31.5%</span></li>
-            <li class="flex justify-between"><span>Blocks at least one named AI crawler</span><span class="text-white">114 — 33.2%</span></li>
-            <li class="flex justify-between"><span>Specifically blocks GPTBot</span><span class="text-white">113 — 32.9%</span></li>
+            <li class="flex justify-between"><span>Scored sites (robots.txt fetched successfully)</span><span class="text-white">337</span></li>
+            <li class="flex justify-between"><span>Publishes a robots.txt</span><span class="text-white">231 — 68.5%</span></li>
+            <li class="flex justify-between"><span>No robots.txt at all</span><span class="text-white">106 — 31.5%</span></li>
+            <li class="flex justify-between"><span>Blocks at least one AI crawler <span class="text-gray-500">(of the 231 that publish one)</span></span><span class="text-white">7 — 3.0%</span></li>
+            <li class="flex justify-between"><span>Specifically blocks GPTBot <span class="text-gray-500">(of the 231)</span></span><span class="text-white">4 — 1.7%</span></li>
           </ul>
         </div>
         <p class="text-gray-300 mb-4">
-          So roughly a third do block AI crawlers, and a third publish no crawl policy at all. The blocking pattern that does appear is the deliberate one:
+          Seven sites out of 231. Every one of them does it deliberately, with an explicit named group:
         </p>
         <pre class="bg-gray-900 p-4 rounded-lg overflow-x-auto text-sm text-gray-200"><code>User-agent: GPTBot
 Disallow: /
@@ -146,27 +150,33 @@ Disallow: /
 User-agent: Googlebot
 Allow: /</code></pre>
         <p class="text-gray-300 mt-4 mb-0">
-          That said, "no robots.txt" is not the same as "blocked." With no file, a crawler falls back to the permissive default. I have kept the two figures separate for exactly that reason.
+          The complete list is <code class="text-geo-400">weibo.com</code> and <code class="text-geo-400">kcores.com</code> (all 20 crawlers blocked), <code class="text-geo-400">catppuccin.com</code> (5), and <code class="text-geo-400">hellogithub.com</code>, <code class="text-geo-400">rustdesk.com</code>, <code class="text-geo-400">unity.com</code>, <code class="text-geo-400">maxon.net</code> (1 each). Note the denominator: the 106 sites with no robots.txt are <em>not</em> counted as blocked. With no file, a crawler falls back to the permissive default, and folding them in would have produced a headline number roughly 25&times; too large.
         </p>
       </div>
 
       <!-- FINDING 4 -->
-      <h2 class="text-2xl font-bold mt-12 mb-4 text-white">Finding 4: one dimension of the scorer is too strict, and I am not quoting it</h2>
+      <h2 class="text-2xl font-bold mt-12 mb-4 text-white">Finding 4: my own scorer was wrong about robots.txt, and I fixed it</h2>
       <div class="card p-8 mb-6">
         <p class="text-gray-300 mb-4">
-          GeoScore's <code class="text-geo-400">AI Crawlability</code> dimension checks each AI crawler by looking for an explicit <code class="text-geo-400">User-agent: &lt;bot&gt;</code> line containing <code class="text-geo-400">Allow: /</code>.
+          The version of this post published earlier reported that GeoScore's <code class="text-geo-400">AI Crawlability</code> dimension scored 323 of 343 sites (94.2%) at 0/12, and I set that column aside instead of quoting it. I have since fixed the dimension, and the fix changes the number so much that the old figure is worth explaining rather than just deleting.
         </p>
         <p class="text-gray-300 mb-4">
-          That misses how robots.txt actually works. A file that <strong class="text-white">never mentions</strong> an AI bot is the normal case — the default is allow, and sites only list a bot when they want to restrict it. A file with <code class="text-geo-400">User-agent: *</code> and <code class="text-geo-400">Disallow: /search?q=*</code> is not blocking GPTBot, but it does not contain the string "GPTBot" either.
+          The old check looked for an explicit <code class="text-geo-400">User-agent: &lt;bot&gt;</code> line containing <code class="text-geo-400">Allow: /</code>. That inverts RFC 9309: a file which <strong class="text-white">never mentions</strong> an AI bot leaves it on the permissive default, and a site only lists a bot when it intends to restrict it. A perfectly ordinary file — <code class="text-geo-400">User-agent: *</code> with <code class="text-geo-400">Disallow: /search?q=*</code> — was scored as a total block. <code class="text-geo-400">dev.to</code>, fully open to GPTBot, scored 0/12.
         </p>
         <p class="text-gray-300 mb-4">
-          I verified this against <code class="text-geo-400">dev.to</code>, which is fully open to GPTBot and currently scores 0/12 on that dimension. Across the sample, <strong class="text-white">323 of 343 sites (94.2%) score 0/12</strong> — a number too large to be a plausible measurement of the web.
+          The check now parses the file into groups, merges every group naming the bot, ignores the <code class="text-geo-400">*</code> group whenever a specific one exists, and asks a single concrete question: can this crawler fetch the site root? Re-fetching all 337 robots.txt files under both rules:
         </p>
-        <div class="rounded-lg bg-orange-500/10 border border-orange-500/20 p-4">
-          <p class="text-orange-300 text-sm mb-0">
-            <strong>So I am excluding that column from this post.</strong> The robots figures in Finding 3 come from a separate parser written for this study, and they ask a narrower question: does this file explicitly name and block an AI crawler. Fixing the dimension means changing what the product scores, which is a decision I am not making quietly inside a blog post. <a href="https://geoscore.help" class="text-geo-400 hover:underline">The tool itself</a> still shows the dimension; treat it as strict-by-definition.
-          </p>
+        <div class="card p-5 mb-4 bg-white/5">
+          <ul class="space-y-2 text-sm text-gray-300 list-none">
+            <li class="flex justify-between"><span>Old rule: sites with at least one crawler blocked</span><span class="text-white">228 — 67.7%</span></li>
+            <li class="flex justify-between"><span>New rule: sites with at least one crawler blocked</span><span class="text-white">7 — 2.1%</span></li>
+            <li class="flex justify-between"><span>Old rule: median AI Crawlability score</span><span class="text-white">0 / 12</span></li>
+            <li class="flex justify-between"><span>New rule: median AI Crawlability score</span><span class="text-white">12 / 12</span></li>
+          </ul>
         </div>
+        <p class="text-gray-300 mb-0">
+          I verified the six sites whose verdict changed by reading their actual robots.txt, and the new answer is right in every case — <code class="text-geo-400">catppuccin.com</code> really does ban GPTBot, ChatGPT-User, Google-Extended, CCBot and PerplexityBot by name; <code class="text-geo-400">rustdesk.com</code> bans CCBot; <code class="text-geo-400">unity.com</code> bans Bytespider. The dimension is no longer a meaningful signal on typical sites, which is the correct outcome: a site that says nothing about AI crawlers is not penalised for it. If you scored your site before this fix, your AI Crawlability number went up, and the change is a correction, not a regression.
+        </p>
       </div>
 
       <!-- WHAT THE DATA CANNOT SHOW -->
@@ -206,7 +216,7 @@ Allow: /</code></pre>
         <div class="mb-6">
           <h3 class="text-lg font-bold text-white mb-2">2. Check what your robots.txt actually says (five minutes)</h3>
           <p class="text-gray-300 mb-2">
-            33.2% explicitly block at least one AI crawler, and 31.5% publish no robots.txt at all. Both are worth a look. The one trap: do not add <code class="text-geo-400">User-agent: * / Disallow: /</code> while trying to fix it.
+            3.0% of sites that publish a robots.txt block at least one AI crawler, and 31.5% publish no robots.txt at all — which is not the same thing, since a crawler with no policy is allowed by default. The one trap: do not add <code class="text-geo-400">User-agent: * / Disallow: /</code> while trying to fix it.
           </p>
         </div>
 
