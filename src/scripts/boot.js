@@ -523,7 +523,16 @@ async function submitLead(ctaId, r) {
 // --- Bootstrap: attach click listeners (replaces onclick) ---
 document.addEventListener("DOMContentLoaded", function() {
   var ab = document.getElementById("audit-btn");
-  if (ab) ab.addEventListener("click", function() { window.startAudit('home'); });
+  // boot.js is shared by the two homepages and all six tool pages, so a
+  // hardcoded entry point here reported every tool-page run as "home" and the
+  // M2 "tool_page share" metric could never move. Derive it from the path
+  // instead. /tools/* and /zh/tools/* are the only non-home paths that render
+  // #audit-btn (there is no /tools/ index page), and the two homepages are
+  // exactly "/" and "/zh/" — so this stays correct if pages are added later.
+  if (ab) ab.addEventListener("click", function() {
+    var here = window.location.pathname;
+    window.startAudit(/\/tools\/[^/]+\/?$/.test(here) ? 'tool_page' : 'home');
+  });
   var bl = document.getElementById("batch-link");
   if (bl) bl.addEventListener("click", function() { window.showBatchInput(); });
   var bb = document.getElementById("batch-btn");
