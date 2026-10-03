@@ -1,0 +1,93 @@
+================================================================
+SAMPLE
+================================================================
+rows in file        : 457
+audited ok          : 343
+failed              : 114
+scored (used below) : 343
+failure rate        : 24.9%
+
+failure reasons:
+   114  empty
+
+================================================================
+SCORE DISTRIBUTION
+================================================================
+n      : 343
+min    : 0
+p25    : 20
+median : 29
+p75    : 43
+max    : 75
+mean   : 31.4
+
+level distribution:
+  Critical    219   63.8%  ##########################
+  Basic       118   34.4%  ##############
+  Good          6    1.7%  #
+
+histogram (10-point buckets):
+    0-  9    32    9.3%  ####
+   10- 19    49   14.3%  ######
+   20- 29    94   27.4%  ###########
+   30- 39    69   20.1%  ########
+   40- 49    39   11.4%  #####
+   50- 59    33    9.6%  ####
+   60- 69    22    6.4%  ###
+   70- 79     5    1.5%  #
+
+================================================================
+ROBOTS / AI CRAWLER ACCESS  (the "82%" claim)
+================================================================
+has robots.txt            : 235 (68.5%)
+no robots.txt at all      : 108 (31.5%)
+robots.txt blocks >=1 AI crawler : 114 (33.2%)
+robots.txt blocks GPTBot  : 113 (32.9%)
+explicitly allow at least one AI crawler : 229 (66.8%)
+
+note: "no robots.txt" is counted as blocked, because a crawler cannot read a
+      permission that does not exist. The two figures are broken out above so
+      the stricter reading (has robots AND blocks an AI crawler) is:
+      114 / 343 = 33.2%
+
+================================================================
+llms.txt PRESENCE  (the "3.4x" claim was about this; presence is measurable)
+================================================================
+has llms.txt : 84 / 343 = 24.5%
+mean score with llms.txt    : 48.7  (n=84)
+mean score without         : 25.8  (n=259)
+difference                 : +22.9 points
+
+This is a correlation in a convenience sample, NOT a causal effect and NOT a
+"citation lift". Sites that add llms.txt may differ in many other ways.
+
+================================================================
+PER-DIMENSION  (share of the max score achieved, scored samples only)
+================================================================
+dimension                  avg   max   n     %of max
+AI Crawlability           0.3    12   343   2%
+AI Guidance               2.3     8   343   29%
+Structured Data           1.6    12   343   13%
+Meta & Social             5.8     8   343   73%
+Content Quality           7.0    12   343   59%
+E-E-A-T                   2.5    10   343   25%
+Brand & Entity            4.4     8   343   56%
+Citation Readiness        6.8    10   343   68%
+Discovery                 0.1     8   343   1%
+Agent Friendly            1.7     8   343   21%
+Freshness                 1.9     4   343   48%
+
+================================================================
+WHAT THIS DATA CANNOT SUPPORT
+================================================================
+The previous post also claimed:
+  - "3.4x citation lift for sites with a valid llms.txt"
+  - "FAQ schema 6.1x more likely to be cited for question queries"
+  - "HowTo schema 3.8x more likely to be cited for step-by-step queries"
+  - "the top 3 fixes deliver ~80% of the score improvement"
+
+All four are claims about whether an AI engine CITED a site. A static
+crawler audit cannot observe citation. Measuring them needs either a
+multi-engine citation crawl or the LLM simulation in worker/visibility.js,
+which is an estimate rather than a measurement. They are therefore NOT
+reproducible from this dataset and are not restated here.
