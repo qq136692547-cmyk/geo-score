@@ -72,6 +72,53 @@
   --pattern-radar: radial-gradient(circle at 50% 0%, rgba(59,130,246,0.08) 0%, transparent 60%);
 }
 
+/* ===== M5 / D1 — one inline <code> look site-wide =====
+   The project's own inline-code style was never a CSS rule. It is the utility
+   set applied inline on 114 <code> elements:
+     class="text-brand-400 bg-white/5 px-1.5 py-0.5 rounded"
+   i.e. a faint background + 2px/6px padding + 4px radius and no backticks.
+   @tailwindcss/typography renders .prose code as bare monospace wrapped in
+   literal "`" pseudo-elements instead, so inside `prose` the same word looked
+   completely different. Re-apply those same utilities to .prose code rather
+   than inventing a new palette, which is what the non-prose posts already
+   render correctly.
+
+   These rules are deliberately unlayered: every Tailwind rule — including the
+   typography plugin's .prose :where(code) — sits inside @layer utilities, and
+   unlayered declarations win over all layered ones. That is why no
+   !important is needed. `.prose code` is (0,1,1) and comes later in the file,
+   and `.prose pre code` is (0,1,2) so the fenced-block reset below wins over
+   the pill above without a single !important. */
+.prose code {
+  @apply bg-white/5 px-1.5 py-0.5 rounded;
+}
+
+/* The plugin injects the backticks through ::before/::after content. */
+.prose code::before,
+.prose code::after {
+  content: none;
+}
+
+/* A code block's own <code> must stay bare: the plugin already resets it to a
+   transparent, unpadded box, and since the rules above are unlayered they
+   would otherwise re-add the inline pill inside every fenced block. */
+.prose pre code {
+  @apply bg-transparent p-0 rounded-none;
+}
+
+/* ===== M5 / D2+D3 root cause — every <pre> scrolls horizontally =====
+   17 <pre> site-wide carry no overflow utility, and 8 of them sit in the three
+   posts that had no `prose` class, so at 375px their content was clipped with
+   no way to reach it (measured: scrollWidth 361 vs clientWidth 277). Scoping
+   this to pre rather than patching individual posts keeps it true for
+   JavaScript-injected blocks as well, and pre is a block box so `max-width:
+   100%` resolves against the containing article. The inline <code> inside a
+   pre stays inline, so it never becomes a second scroll container. */
+pre {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
 html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
 
 body {

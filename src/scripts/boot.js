@@ -226,7 +226,7 @@ window.startAudit = async function (entryPoint) {
   } catch (err) {
     clearInterval(scanTimer);
     if (typeof window.geoTrack === 'function') window.geoTrack('audit_failed', { url_domain: geoUrlDomain(url), error_code: geoErrorCode(err), source_type: getGeoSource() });
-    document.getElementById("loading-section").innerHTML = '<div class="card p-8 text-center"><div class="text-danger-500 text-lg font-semibold mb-2">' + t("Audit Failed", "审计失败") + '</div><p class="text-gray-400 text-sm">' + err.message + '</p><button id="audit-retry" class="mt-4 px-4 py-2 rounded-lg text-sm bg-white/10 hover:bg-white/20 transition">' + t("Try Again", "重试") + '</button></div>';
+    document.getElementById("loading-section").innerHTML = '<div class="card p-8 text-center" role="alert"><div class="text-danger-500 text-lg font-semibold mb-2">' + t("Audit Failed", "审计失败") + '</div><p class="text-gray-400 text-sm">' + err.message + '</p><button id="audit-retry" class="mt-4 px-4 py-2 rounded-lg text-sm bg-white/10 hover:bg-white/20 transition">' + t("Try Again", "重试") + '</button></div>';
     var retryBtn = document.getElementById("audit-retry");
     if (retryBtn) retryBtn.addEventListener("click", function() { window.startAudit(entryPoint); });
   }
