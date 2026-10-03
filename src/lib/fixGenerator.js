@@ -176,7 +176,13 @@ function generateFixFiles(result) {
       filename: 'json-ld-schema.html',
       content: generateJsonLd(result),
       mime: 'text/html',
-      path: 'Add this snippet to your <head> section',
+      // The two path strings above are the only ones containing angle brackets,
+      // and f.path is interpolated into innerHTML by fixFilesPanel.js. An
+      // unescaped <head> there is parsed as a real element and silently
+      // swallowed, so the user never sees the word in the UI. Escaped here so
+      // the panel renders the literal text. The download name (f.filename)
+      // never went through HTML and is deliberately left unescaped.
+      path: 'Add this snippet to your &lt;head&gt; section',
     },
   };
 }

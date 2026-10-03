@@ -546,7 +546,56 @@ document.addEventListener("DOMContentLoaded", function() {
     if (urlInput) urlInput.value = cleanUrl.replace(/^https?:\/\//, '');
     setTimeout(function() { window.startAudit(params.get('src') || 'share_link'); }, 300);
   }
+
+  // --- URL parameter: prefill from ?url=... (D-004 deep link) ---
+  // ?audit= is the "run it now" link (it bounces tool pages to the homepage
+  // audit flow). ?url= is the "look at this before you run it" link: the input
+  // is prefilled but nothing auto-starts, so the user keeps the choice. Absent
+  // or unusable values leave the page exactly as it is today.
+  var urlParam = params.get('url');
+  if (urlParam !== null) {
+    var prefill = sanitizeDeepLinkUrl(urlParam);
+    var deepInput = document.getElementById('url-input');
+    if (deepInput) {
+      if (prefill) {
+        // Assign through .value, never innerHTML: the parameter is untrusted
+        // and must not become markup.
+        deepInput.value = prefill;
+        deepInput.setAttribute('data-deeplink', 'filled');
+      } else {
+        // Unusable value: stay on an empty input and say so without blocking.
+        // showToast, not alert — M2 cleared alert() site-wide.
+        showToast(t('That link had an invalid website URL. Enter one to continue.', '该链接的网址无效，请手动输入后继续。'), 'info');
+        deepInput.setAttribute('data-deeplink', 'invalid');
+      }
+    }
+  }
 });
+
+// --- D-004 deep link: validate ?url= before it reaches the input ---
+// Returns the bare host+path to prefill, or null when the value cannot be used.
+// Deliberately never throws: URL() rejects things the user may plausibly type
+// (spaces, bare words), and a bad ?url= must degrade to "empty input", not a
+// broken page. Mirrors what lib/scanner.js normalizeUrl accepts, minus the throw.
+function sanitizeDeepLinkUrl(raw) {
+  if (typeof raw !== 'string') return null;
+  var v = raw.trim();
+  if (!v) return null;
+  if (v.length > 255) return null;               // longer than any real host+path
+  if (/\s/.test(v)) return null;                 // spaces are never valid here
+  if (/^javascript:/i.test(v) || /^data:/i.test(v) || /^vbscript:/i.test(v)) return null;
+  var withProto = /^https?:\/\//i.test(v) ? v : 'https://' + v;
+  var u;
+  try {
+    u = new URL(withProto);
+  } catch (e) {
+    return null;
+  }
+  if (!/^https?:$/.test(u.protocol)) return null;
+  if (!u.hostname || u.hostname.indexOf('.') === -1) return null;  // needs a dot
+  if (!/^[a-z0-9.-]+$/i.test(u.hostname)) return null;
+  return u.host + u.pathname.replace(/\/$/, '') + (u.search || '');
+}
 
 // --- Pro monitoring panel (pages with #pro-monitor-root) ---
 function initProMonitor() {
