@@ -6,10 +6,33 @@
  * cannot be derived from these columns, it is not reported at all — that is why
  * the "citation lift" claims have no equivalent here: static auditing cannot
  * observe whether an AI engine cited a site.
+ * Usage:
+ *   node tools/analyse-study.mjs --in data/geo-audit-v2.csv [--out data/study-report-v2.txt]
+ * Defaults to the v1 baseline so existing invocations keep working. With no --out
+ * the report goes to stdout only.
  */
 import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const FILE = 'data/geo-audit-merged.csv';
+const REPO = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const _args = process.argv.slice(2);
+const _opt = (name, dflt) => {
+  const i = _args.indexOf(name);
+  return i >= 0 && _args[i + 1] ? _args[i + 1] : dflt;
+};
+if (_args.includes('--help') || _args.includes('-h')) {
+  console.log('usage: node tools/analyse-study.mjs --in <csv> [--out <txt>]');
+  process.exit(0);
+}
+const FILE = path.resolve(REPO, _opt('--in', 'data/geo-audit-merged.csv'));
+const OUT = _opt('--out', null);
+if (OUT) {
+  const fd = fs.openSync(path.resolve(REPO, OUT), 'w');
+  const stdout = console.log.bind(console);
+  console.log = (...a) => { fs.writeSync(fd, a.join(' ') + '\n'); stdout(...a); };
+  process.on('exit', () => { try { fs.closeSync(fd); } catch { /* already closed */ } });
+}
 const DIM_KEYS = ['aiCrawlability', 'aiGuidance', 'structuredData', 'metaSocial', 'contentQuality',
   'eeat', 'brandEntity', 'citationReadiness', 'discoveryEndpoints', 'agentFriendliness', 'freshness'];
 const DIM_LABEL = {

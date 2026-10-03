@@ -88,50 +88,6 @@ if (RESUME && fs.existsSync(OUT)) {
 let cursor = 0, ok = 0, fail = 0, doneCount = 0;
 const t0 = Date.now();
 
-/** Parse robots.txt into a per-AI-crawler decision. "Blocked" = explicitly disallowed
- *  for that crawler, or a blanket `User-agent: * / Disallow: /`. Text matching on the
- *  whole file would misfire on "Disallow: /login" and similar partial rules. */
-function robotsVerdict(robotsTxt) {
-  const txt = String(robotsTxt || '');
-  if (!txt.trim()) return { hasRobots: 0, anyAiBlocked: 1, gptbotBlocked: 1 };
-  const AI = ['gptbot', 'oai-searchbot', 'claudebot', 'anthropic-ai', 'perplexitybot', 'google-extended', 'ccbot'];
-  // Collect rule blocks, keeping the UA token(s) and the Disallow paths.
-  const lines = txt.split(/\r?\n/);
-  const groups = [];
-  let cur = null;
-  for (const raw of lines) {
-    const line = raw.replace(/#.*$/, '').trim();
-    if (!line) continue;
-    const m = line.match(/^([A-Za-z-]+)\s*:\s*(.*)$/);
-    if (!m) continue;
-    const field = m[1].toLowerCase();
-    const value = m[2].trim();
-    if (field === 'user-agent') {
-      if (!cur || cur.disallows.length) { cur = { uas: [], disallows: [] }; groups.push(cur); }
-      cur.uas.push(value.toLowerCase());
-    } else if (field === 'disallow' && cur) {
-      cur.disallows.push(value);
-    }
-  }
-  const blocks = ua => {
-    for (const g of groups) {
-      if (!g.uas.includes(ua) && !g.uas.includes('*')) continue;
-      // An empty Disallow means "allow all" and cancels the rules in the SAME group
-      // only. It must not clear a block declared in an earlier group.
-      if (g.disallows.includes('')) return false;
-      for (const d of g.disallows) {
-        if (d === '/' || d === '*') return true;
-      }
-    }
-    return false;
-  };
-  return {
-    hasRobots: 1,
-    anyAiBlocked: AI.some(blocks) ? 1 : 0,
-    gptbotBlocked: blocks('gptbot') ? 1 : 0,
-  };
-}
-
 async function one(rec) {
   const host = rec[0];
   const started = Date.now();
@@ -144,10 +100,18 @@ async function one(rec) {
     // dimension name, each value { score, maxScore, checks[], ... }.
     const dims = r.dimensions || {};
     const d = DIM_KEYS.map(k => (dims[k] && typeof dims[k].score === 'number') ? dims[k].score : '');
-    const rv = robotsVerdict(r.raw && r.raw.robotsTxt);
+    // Read the product's own verdict instead of parsing robots.txt here. The
+    // per-crawler decisions come from src/lib/analyzers/robots.js, which follows
+    // RFC 9309; a second parser would contradict it (and previously counted
+    // "no robots.txt at all" as blocked).
+    const aiChecks = (dims.aiCrawlability && Array.isArray(dims.aiCrawlability.checks))
+      ? dims.aiCrawlability.checks : [];
+    const hasRobots = (r.raw && r.raw.robotsTxt && String(r.raw.robotsTxt).trim()) ? 1 : 0;
+    const blocksGptbot = aiChecks.some(c => c.id === 'gptbot' && c.passed === false) ? 1 : 0;
+    const blocksAnyAi = aiChecks.some(c => c.passed === false) ? 1 : 0;
     const hasLlms = r.raw && r.raw.llmsTxt ? 1 : 0;
     return [host, '1', r.score ?? '', r.level ?? '', ...d,
-      hasLlms, rv.anyAiBlocked, rv.gptbotBlocked, rv.hasRobots,
+      hasLlms, blocksAnyAi, blocksGptbot, hasRobots,
       Date.now() - started, ''].map(esc).join(',');
   } catch (e) {
     return [host, '0', '', '', ...Array(DIM_KEYS.length).fill(''), '', '', '', '',
