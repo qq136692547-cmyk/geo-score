@@ -127,7 +127,7 @@ Previously a standalone repository, now consolidated under `docs/handbook/`.
 ### Prerequisites
 
 - Node.js 18+
-- npm or pnpm
+- npm
 
 ### Development
 
