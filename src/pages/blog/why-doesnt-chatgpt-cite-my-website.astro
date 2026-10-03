@@ -30,7 +30,7 @@ import Layout from '../../layouts/Layout.astro';
           You've published hundreds of blog posts. Your SEO is solid. You rank on page 1 for dozens of keywords. But when you ask ChatGPT, Perplexity, or Claude a question in your niche, your site never shows up as a cited source.
         </p>
         <p class="text-gray-300 text-lg mb-4">
-          You're not alone. After auditing 1,200+ websites with <a href="https://geoscore.help/" class="text-brand-400 hover:underline">GeoScore</a>, we found that <strong class="text-white">over 70% of sites are invisible to AI search engines</strong> — not because their content is bad, but because they fail one or more technical requirements that AI crawlers need to discover, understand, and cite content.
+          You're not alone. In our <a href="/blog/auditing-1200-websites/" class="text-brand-400 hover:underline">audit of 343 real websites</a> with <a href="https://geoscore.help/" class="text-brand-400 hover:underline">GeoScore</a>, the median site scored <strong class="text-white">38 out of 100</strong> on technical AI-readiness, and <strong class="text-white">54% fell into the lowest band</strong> (under 40). Most fail not because their content is bad, but because they miss technical signals that help AI crawlers discover and parse it. One caveat: a technical audit measures your site, not whether an AI engine chooses to cite it — that happens inside a model, and no static scan can observe it.
         </p>
         <p class="text-gray-400">
           Here are the 7 most common reasons, ordered from most impactful to least. Fix the first three and you'll likely see your site start appearing in AI-generated answers within weeks.
@@ -43,10 +43,10 @@ import Layout from '../../layouts/Layout.astro';
           <span class="text-brand-400">#1.</span> Your robots.txt blocks AI crawlers
         </h2>
         <p class="text-gray-300 mb-4">
-          This is the #1 reason by far. When ChatGPT browses the web, it identifies itself as <code class="text-geo-400">GPTBot</code>. Perplexity uses <code class="text-geo-400">PerplexityBot</code>. Claude uses <code class="text-geo-400">ClaudeBot</code>. Google's AI Overviews use <code class="text-geo-400">Google-Extended</code>.
+          Worth ruling out in two minutes, though it is rarer than you might expect: in our 343-site audit only <strong class="text-white">3%</strong> of sites that publish a robots.txt block any AI crawler. When ChatGPT browses the web, it identifies itself as <code class="text-geo-400">GPTBot</code>. Perplexity uses <code class="text-geo-400">PerplexityBot</code>. Claude uses <code class="text-geo-400">ClaudeBot</code>. Google's AI Overviews use <code class="text-geo-400">Google-Extended</code>.
         </p>
         <p class="text-gray-300 mb-4">
-          If your <code class="text-geo-400">robots.txt</code> doesn't explicitly allow these crawlers, they won't fetch your pages. No fetch = no citation. It's that simple.
+          The default is <strong class="text-white">allow</strong>. A crawler is only blocked if your robots.txt explicitly disallows it — silence is permission, and you do not need to list a bot to let it in. The failure mode to look for is a <code class="text-geo-400">Disallow: /</code> on one of these user-agents, or a blanket one on <code class="text-geo-400">User-agent: *</code>. Partial rules like <code class="text-geo-400">Disallow: /admin</code> are fine: they restrict a section, not the site.
         </p>
         <p class="text-gray-400 mb-3"><strong class="text-white">How to check:</strong></p>
         <p class="text-gray-300 mb-3">
@@ -151,7 +151,7 @@ Allow: /`}</pre>
           AI models prefer to cite content that thoroughly answers a question. If your page has fewer than 300 words of body content, most AI engines will skip it in favor of a competitor's more comprehensive page.
         </p>
         <p class="text-gray-300 mb-4">
-          In our audit data, the average cited page has <strong class="text-white">800-1,200 words</strong> of primary content, with clear headings (H2/H3), bullet lists, and direct answers to the question being asked.
+          As a working guideline, aim for <strong class="text-white">800-1,200 words</strong> of primary content, with clear headings (H2/H3), bullet lists, and direct answers to the question being asked. We are quoting this as advice, not as a measured finding &mdash; we have no data on what cited pages actually look like, because citation happens inside a model.
         </p>
         <p class="text-gray-400 mb-3"><strong class="text-white">How to fix:</strong></p>
         <ul class="text-gray-300 mb-4 list-disc pl-6 space-y-1">

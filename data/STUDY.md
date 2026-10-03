@@ -40,9 +40,15 @@ Failures are dominated by `timeout` plus sites that refuse programmatic requests
 (`Could not fetch … may be blocking requests`). Both are recorded in the `error`
 column, not silently dropped.
 
-## Findings (all computed by `tools/analyse-study.mjs`, output in `study-report.txt`)
+## Findings
 
-| Metric | Value |
+**⚠️ The table below is the FIRST run (v1, `geo-audit-merged.csv`) and is kept only
+as the baseline for the before/after comparison in the section further down. It
+predates the robots.txt fix and understates every score by roughly 12 points.
+For the figures the product produces today, use `geo-audit-v2-final.csv` (n=324,
+median 41) and the table in the re-run section.**
+
+| Metric | Value (v1 — superseded) |
 |---|---|
 | n (scored) | 343 |
 | median score | 29 / 100 |
@@ -57,7 +63,8 @@ column, not silently dropped.
 | `robots.txt` blocks ≥1 AI crawler | 7 of the 231 that publish one (3.0%) |
 | no `robots.txt` at all | 106 (31.5%) |
 
-**`llms.txt` correlates with a +22.9 point mean difference (median gap 27.5).** This is an
+**`llms.txt` correlates with a +22.9 point mean difference (median gap 27.5)** in v1,
+and a +22.3 point difference (median gap 26) in the v2 re-run. It is an
 association in a convenience sample, not a causal effect: sites that publish an
 `llms.txt` may differ in many other ways. Do not describe it as a lift.
 
@@ -154,6 +161,61 @@ should not be penalised for it.
 gap before the fix and are kept as the record of it. `tests/analyzers/robots.test.js`
 now carries 23 assertions covering the RFC rules, including the merge, the
 wildcard precedence, the longest-match tie-break and the permissive default.
+
+### ⚠️ The fix changed every score in this study — the corpus had to be re-run
+
+`aiCrawlability` carries 12 of the 98 total weight, so moving 331 sites from 0/12
+to 12/12 moved the headline numbers too. **The v1 CSV is now a historical
+baseline and must not be quoted as current.**
+
+Re-ran the same 457 candidates with the fixed scorer (`data/geo-audit-v2.csv`,
+plus a `data/geo-audit-v2-retry.csv` pass that recovered 17 of the sites that
+timed out; merged into `data/geo-audit-v2-final.csv`, **324 sites**).
+
+| on the v1∩v2 intersection (302 hosts) | v1 | v2 |
+|---|---|---|
+| median total score | 29.0 | **41.0** |
+| mean | 31.8 | **43.3** |
+| max | 75 | **80** |
+| Critical | 62.9% | **33.9%** |
+| Good | 2.0% | **10.1%** |
+
+Published figures now come from the second run: n=324, median 41, mean 43.4,
+max 80; Critical 144 (44.4%), Basic 152 (46.9%), Good 28 (8.6%), Excellent 0;
+llms.txt present in 78 (24.1%) with mean 60.3 vs 38.0; 225 publish a robots.txt
+and 8 of those (3.6%) block at least one AI crawler.
+
+Two consequences worth remembering:
+
+- **"All 20 top sites have an llms.txt" became 19 of 20**, and the best site
+  without one went from 60 to 72. Rankings shift when a 12-point dimension moves.
+- **`aka.ms` is the case that justifies the design.** It publishes
+  `Disallow: /` next to `Allow: /fwlink/p/`. The Allow is the longer pattern, so
+  a naive longest-match check reads it as allowed — but it does not cover `/`,
+  so all 20 crawlers are in fact blocked. Asking "which rule governs the root"
+  gets this right where "which rule is longest" gets it wrong.
+
+### ⚠️ Correcting one number is not the same as correcting the claims built on it
+
+Replacing 1,200 with 343 in the case study left five other pages asserting
+things this data cannot support, and one teaching the rule backwards:
+
+- `llms-txt-ultimate-guide` still carried the **"3.4× citation lift"** — one of
+  the four assertions withdrawn from the case study — labelled
+  "Data point (July 2026), Source: GeoScore research".
+- `why-doesnt-chatgpt-cite-my-website` claimed "over 70% of sites are invisible
+  to AI search engines", and said a crawler "won't fetch your pages" unless
+  robots.txt explicitly allows it — the pre-fix rule, stated as advice.
+- `geo-tracking-ai-visibility` quoted median citation rates (15–20% brand,
+  3–8% non-brand) with top-quartile thresholds. Citation is not observable by a
+  static audit at all.
+- `geo-citation-optimization` said its five pillars "predict whether content
+  gets cited".
+- `eeat-signals-ai-search` said "median score is 38 out of 100" for a dimension
+  scored out of 8.
+
+All replaced with figures this study actually supports, or with an explicit
+"we do not know".
 
 ## Reproducing
 

@@ -6,7 +6,7 @@ import Layout from '../../layouts/Layout.astro';
     '@context': 'https://schema.org',
     '@type': 'Article',
     headline: 'I Audited 343 Websites for AI Search Visibility: Here\'s What I Found',
-    description: 'A reproducible study of 343 real websites: median GEO score 29/100, 63.8% rate Critical, and every top-20 site publishes an llms.txt. What the data actually shows, and what it cannot show.',
+    description: 'A reproducible study of 343 real websites: median GEO score 41/100, 44% rate Critical, and 19 of the top 20 publish an llms.txt. What the data actually shows, and what it cannot show.',
     url: 'https://geoscore.help/blog/auditing-1200-websites/',
     datePublished: '2026-07-21',
     dateModified: '2026-10-04',
@@ -21,6 +21,9 @@ import Layout from '../../layouts/Layout.astro';
           Case Study
         </div>
         <h1 class="text-4xl font-extrabold mb-3">I Audited 343 Websites for AI Search Visibility</h1>
+        <!-- The corpus is 343 sites audited in the first pass; 324 survived the
+             re-run after the robots.txt fix, and every score below is from that
+             second pass. Both numbers are stated in the methodology section. -->
         <p class="text-gray-400">Published July 21, 2026 · Updated October 4, 2026 · 9 min read · Reproducible study</p>
       </div>
 
@@ -42,10 +45,10 @@ import Layout from '../../layouts/Layout.astro';
       <div class="card p-6 mb-6 bg-orange-500/5 border-orange-500/20">
         <h2 class="text-lg font-bold mb-3 text-white">TL;DR</h2>
         <ul class="space-y-2 text-sm text-gray-300 list-disc list-inside">
-          <li><strong class="text-white">Median score: 29 out of 100.</strong> The typical site is nowhere near "optimized" for AI search.</li>
-          <li><strong class="text-white">63.8% rate Critical</strong> (under 40). Only 1.7% reach Good.</li>
-          <li><strong class="text-white">All 20 highest-scoring sites publish an <code class="text-geo-400">llms.txt</code>.</strong> Sites with one average 50.5; sites without average 25.7.</li>
-          <li><strong class="text-white">31.5% publish no <code class="text-geo-400">robots.txt</code> at all</strong>, and only 3.0% of the rest block any AI crawler.</li>
+          <li><strong class="text-white">Median score: 41 out of 100.</strong> The typical site is not optimized for AI search, but it is not broken either.</li>
+          <li><strong class="text-white">44.4% rate Critical</strong> (under 40). 8.6% reach Good; nobody reaches Excellent.</li>
+          <li><strong class="text-white">19 of the 20 highest-scoring sites publish an <code class="text-geo-400">llms.txt</code>.</strong> Sites with one average 60.3; sites without average 38.0.</li>
+          <li><strong class="text-white">30.6% publish no <code class="text-geo-400">robots.txt</code> at all</strong>, and only 3.6% of the rest block any AI crawler.</li>
           <li>My own scorer was <strong>wrong about this</strong> and overstated blocking by 25&times; — Finding 4 has the before-and-after.</li>
         </ul>
       </div>
@@ -66,32 +69,33 @@ import Layout from '../../layouts/Layout.astro';
           That left <strong class="text-white">457 unique sites</strong>. Each was audited with GeoScore's own scoring code, at concurrency 5 with a 15-second timeout; unreachable sites were retried once at 30 seconds.
         </p>
         <div class="rounded-lg bg-white/5 border border-white/10 p-4">
-          <p class="text-gray-300 text-sm mb-2"><strong class="text-white">Final sample: 343 scored, 114 unreachable (24.9%).</strong></p>
-          <p class="text-gray-400 text-sm mb-0">The failures are real and recorded, not discarded — mostly timeouts plus sites that refuse programmatic requests. Every number below comes from the 343 scored sites. That is comfortably above the 100-site floor I set for publishing anything at all.</p>
+          <p class="text-gray-300 text-sm mb-2"><strong class="text-white">Final sample: 324 scored, 133 unreachable (29.1%).</strong></p>
+          <p class="text-gray-400 text-sm mb-0">The failures are real and recorded, not discarded — mostly timeouts plus sites that refuse programmatic requests. Every number below comes from the 324 scored sites. That is comfortably above the 100-site floor I set for publishing anything at all.</p>
         </div>
         <p class="text-gray-400 text-sm mt-4 mb-0">
           A note on what this sample is: these are repositories with visible homepages, so it skews toward developer-facing products. It is not a representative sample of the web, and I am not going to pretend otherwise.
         </p>
         <p class="text-gray-400 text-sm mt-4 mb-0">
-          Finding 4 comes from a second pass over the same 343 hosts, re-fetching <code class="text-geo-400">/robots.txt</code> alone and scoring every crawler under both the old and the new rule. 337 of the 343 returned a usable file; 6 timed out and are excluded from that section rather than counted as permissive.
+          <strong class="text-gray-300">Two passes, one corpus.</strong> The first run scored 343 sites. After I fixed the robots.txt rule described in Finding 4, I re-ran the same 457 candidates with the corrected scorer; 324 came back. <strong class="text-gray-300">Every score in this post is from that second run</strong>, because it reflects what the tool actually does today. The first run's numbers survive only in Finding 4, as the before half of the comparison. The 19-site difference between runs is network conditions, not a change in method — 126 of the second run's failures were 15-second timeouts.
         </p>
       </div>
 
       <!-- FINDING 1 -->
-      <h2 class="text-2xl font-bold mt-12 mb-4 text-white">Finding 1: the median site scores 29</h2>
+      <h2 class="text-2xl font-bold mt-12 mb-4 text-white">Finding 1: the median site scores 41</h2>
       <div class="card p-8 mb-6">
         <p class="text-gray-300 mb-4">
-          The distribution is not a bell curve. It is bottom-heavy:
+          The distribution is bottom-heavy, though less so than the first run suggested:
         </p>
         <div class="card p-5 mb-4 bg-white/5">
           <ul class="space-y-2 text-sm text-gray-300 list-none">
-            <li class="flex justify-between"><span>Critical (0–39)</span><span class="text-white">219 sites — 63.8%</span></li>
-            <li class="flex justify-between"><span>Basic (40–59)</span><span class="text-white">118 sites — 34.4%</span></li>
-            <li class="flex justify-between"><span>Good (60–79)</span><span class="text-white">6 sites — 1.7%</span></li>
+            <li class="flex justify-between"><span>Critical (0–39)</span><span class="text-white">144 sites — 44.4%</span></li>
+            <li class="flex justify-between"><span>Basic (40–69)</span><span class="text-white">152 sites — 46.9%</span></li>
+            <li class="flex justify-between"><span>Good (70–85)</span><span class="text-white">28 sites — 8.6%</span></li>
+            <li class="flex justify-between"><span>Excellent (86+)</span><span class="text-white">0 sites — 0%</span></li>
           </ul>
         </div>
         <p class="text-gray-300 mb-4">
-          Median 29, mean 31.4, and the highest score in the entire sample was <strong class="text-white">75</strong>. Not one of these 343 sites reached 80.
+          Median 41, mean 43.4, and the highest score in the entire sample was <strong class="text-white">80</strong>. None of these 324 sites reached the top band, and the lowest was 8.
         </p>
         <p class="text-gray-300">
           The practical read: AI-search optimization is not a mature practice. Whatever the eventual benchmarks turn out to be, almost nobody has done this yet — which is good news if you have not started.
@@ -102,20 +106,20 @@ import Layout from '../../layouts/Layout.astro';
       <h2 class="text-2xl font-bold mt-12 mb-4 text-white">Finding 2: llms.txt is the clearest dividing line in the data</h2>
       <div class="card p-8 mb-6">
         <p class="text-gray-300 mb-4">
-          <strong class="text-white">84 sites (24.5%) publish an <code class="text-geo-400">llms.txt</code>.</strong> The gap between them and everyone else is large:
+          <strong class="text-white">78 sites (24.1%) publish an <code class="text-geo-400">llms.txt</code>.</strong> The gap between them and everyone else is large:
         </p>
         <div class="card p-5 mb-4 bg-white/5">
           <ul class="space-y-2 text-sm text-gray-300 list-none">
-            <li class="flex justify-between"><span>With llms.txt (n=84)</span><span class="text-white">mean 48.7 · median 53.5</span></li>
-            <li class="flex justify-between"><span>Without (n=259)</span><span class="text-white">mean 25.8 · median 26</span></li>
+            <li class="flex justify-between"><span>With llms.txt (n=78)</span><span class="text-white">mean 60.3 · median 64</span></li>
+            <li class="flex justify-between"><span>Without (n=246)</span><span class="text-white">mean 38.0 · median 38</span></li>
           </ul>
         </div>
         <p class="text-gray-300 mb-4">
-          Two ways to see the same split. Sites scoring 60 or higher: <strong class="text-white">26 of 27 have an llms.txt</strong>. Among Critical sites, only <strong class="text-white">8.7%</strong> have one. The highest score reached by any site without an llms.txt was 60.
+          Two ways to see the same split. Of the 67 sites scoring 60 or higher, <strong class="text-white">51 have an llms.txt</strong>. Among Critical sites, only <strong class="text-white">6.9%</strong> have one. The highest score reached by any site without an llms.txt was 72, and <strong class="text-white">19 of the top 20</strong> have one.
         </p>
         <div class="rounded-lg bg-blue-500/10 border border-blue-500/20 p-4 mt-4">
           <p class="text-blue-300 text-sm mb-0">
-            <strong>What this is not.</strong> This is a correlation in a convenience sample, not a causal effect, and I am not claiming a "lift." Publishing an llms.txt is a signal that someone has done the thinking about what the site is and which pages matter — and that thinking shows up in other dimensions too. The honest statement is: <em>llms.txt presence marks the sites that have been deliberately optimized, and those sites score about 23 points higher.</em>
+            <strong>What this is not.</strong> This is a correlation in a convenience sample, not a causal effect, and I am not claiming a "lift." Publishing an llms.txt is a signal that someone has done the thinking about what the site is and which pages matter — and that thinking shows up in other dimensions too. The honest statement is: <em>llms.txt presence marks the sites that have been deliberately optimized, and those sites score about 22 points higher.</em>
           </p>
         </div>
         <p class="text-gray-300 mt-4 mb-0">
@@ -131,15 +135,15 @@ import Layout from '../../layouts/Layout.astro';
         </p>
         <div class="card p-5 mb-4 bg-white/5">
           <ul class="space-y-2 text-sm text-gray-300 list-none">
-            <li class="flex justify-between"><span>Scored sites (robots.txt fetched successfully)</span><span class="text-white">337</span></li>
-            <li class="flex justify-between"><span>Publishes a robots.txt</span><span class="text-white">231 — 68.5%</span></li>
-            <li class="flex justify-between"><span>No robots.txt at all</span><span class="text-white">106 — 31.5%</span></li>
-            <li class="flex justify-between"><span>Blocks at least one AI crawler <span class="text-gray-500">(of the 231 that publish one)</span></span><span class="text-white">7 — 3.0%</span></li>
-            <li class="flex justify-between"><span>Specifically blocks GPTBot <span class="text-gray-500">(of the 231)</span></span><span class="text-white">4 — 1.7%</span></li>
+            <li class="flex justify-between"><span>Scored sites</span><span class="text-white">324</span></li>
+            <li class="flex justify-between"><span>Publishes a robots.txt</span><span class="text-white">225 — 69.4%</span></li>
+            <li class="flex justify-between"><span>No robots.txt at all</span><span class="text-white">99 — 30.6%</span></li>
+            <li class="flex justify-between"><span>Blocks at least one AI crawler <span class="text-gray-500">(of the 225 that publish one)</span></span><span class="text-white">8 — 3.6%</span></li>
+            <li class="flex justify-between"><span>Specifically blocks GPTBot <span class="text-gray-500">(of the 225)</span></span><span class="text-white">5 — 2.2%</span></li>
           </ul>
         </div>
         <p class="text-gray-300 mb-4">
-          Seven sites out of 231. Every one of them does it deliberately, with an explicit named group:
+          Eight sites out of 225. Every one of them does it deliberately, with an explicit named group:
         </p>
         <pre class="bg-gray-900 p-4 rounded-lg overflow-x-auto text-sm text-gray-200"><code>User-agent: GPTBot
 Disallow: /
@@ -150,7 +154,10 @@ Disallow: /
 User-agent: Googlebot
 Allow: /</code></pre>
         <p class="text-gray-300 mt-4 mb-0">
-          The complete list is <code class="text-geo-400">weibo.com</code> and <code class="text-geo-400">kcores.com</code> (all 20 crawlers blocked), <code class="text-geo-400">catppuccin.com</code> (5), and <code class="text-geo-400">hellogithub.com</code>, <code class="text-geo-400">rustdesk.com</code>, <code class="text-geo-400">unity.com</code>, <code class="text-geo-400">maxon.net</code> (1 each). Note the denominator: the 106 sites with no robots.txt are <em>not</em> counted as blocked. With no file, a crawler falls back to the permissive default, and folding them in would have produced a headline number roughly 25&times; too large.
+          The complete list: <code class="text-geo-400">aka.ms</code>, <code class="text-geo-400">hackage.haskell.org</code> and <code class="text-geo-400">weibo.com</code> block all 20 crawlers; <code class="text-geo-400">catppuccin.com</code> blocks 5; and <code class="text-geo-400">hellogithub.com</code>, <code class="text-geo-400">rustdesk.com</code>, <code class="text-geo-400">unity.com</code>, <code class="text-geo-400">maxon.net</code> block one each. Note the denominator: the 99 sites with no robots.txt are <em>not</em> counted as blocked. With no file, a crawler falls back to the permissive default, and folding them in would have produced a headline number roughly 25&times; too large.
+        </p>
+        <p class="text-gray-300 mt-4 mb-0">
+          One of these is worth a look, because it shows why "longest rule wins" is not the whole story. <code class="text-geo-400">aka.ms</code> publishes <code class="text-geo-400">Disallow: /</code> alongside <code class="text-geo-400">Allow: /fwlink/p/</code>. The Allow is the longer pattern, so a naive longest-match check reads it as "allowed" — but it does not cover the site root, so every crawler is in fact blocked. The question is not which rule is longest; it is which rule governs <code class="text-geo-400">/</code>.
         </p>
       </div>
 
@@ -209,14 +216,14 @@ Allow: /</code></pre>
         <div class="mb-6">
           <h3 class="text-lg font-bold text-white mb-2">1. Publish an llms.txt (about an hour)</h3>
           <p class="text-gray-300 mb-2">
-            The strongest dividing line in the data: 24.5% of sites have one, and they average 23 points higher (mean 48.7 vs 25.8; median 53.5 vs 26). Write the Markdown summary at <code class="text-geo-400">yourdomain.com/llms.txt</code> following the spec, then reference it from robots.txt. <a href="https://geoscore.help/blog/llms-txt-ultimate-guide" class="text-geo-400 hover:underline">Full guide here →</a>
+            The strongest dividing line in the data: 24.1% of sites have one, and they average 22 points higher (mean 60.3 vs 38.0; median 64 vs 38). Write the Markdown summary at <code class="text-geo-400">yourdomain.com/llms.txt</code> following the spec, then reference it from robots.txt. <a href="https://geoscore.help/blog/llms-txt-ultimate-guide" class="text-geo-400 hover:underline">Full guide here →</a>
           </p>
         </div>
 
         <div class="mb-6">
           <h3 class="text-lg font-bold text-white mb-2">2. Check what your robots.txt actually says (five minutes)</h3>
           <p class="text-gray-300 mb-2">
-            3.0% of sites that publish a robots.txt block at least one AI crawler, and 31.5% publish no robots.txt at all — which is not the same thing, since a crawler with no policy is allowed by default. The one trap: do not add <code class="text-geo-400">User-agent: * / Disallow: /</code> while trying to fix it.
+            3.6% of sites that publish a robots.txt block at least one AI crawler, and 30.6% publish no robots.txt at all — which is not the same thing, since a crawler with no policy is allowed by default. The one trap: do not add <code class="text-geo-400">User-agent: * / Disallow: /</code> while trying to fix it.
           </p>
         </div>
 
@@ -251,7 +258,7 @@ Allow: /</code></pre>
           The 11-dimension browser audit is free and sign-in is optional. Drop in your URL, get a 0-100 score, a radar chart, and auto-generated fix files (llms.txt, robots.txt, JSON-LD) you can deploy immediately.
         </p>
         <p class="text-gray-300 mb-4">
-          With a median of 29 across this sample, most sites have room.
+          With a median of 41 across this sample, most sites have room.
         </p>
         <a href="https://geoscore.help" class="inline-block px-6 py-3 rounded-lg bg-geo-500 hover:bg-geo-600 text-white font-semibold transition">
           Audit your site for free →
