@@ -1,0 +1,30 @@
+# Normalise line endings so a file has exactly one kind, repo-wide.
+#
+# Why this file exists: the repo had no .gitattributes while core.autocrlf=true,
+# so 98 tracked files were pure CRLF, 66 pure LF, and 34 were MIXED — the same
+# file holding both (public/scripts/auth.js had 342 CRLF + 20 lone LF). Every
+# touch of such a file produced spurious whole-file diffs, and reviewers could
+# not tell a real change from a line-ending change.
+#
+# Policy: the repository stores LF. On checkout, text files are LF on every
+# platform, so a Windows contributor's editor cannot silently rewrite the file.
+# Binary files are marked so Git never touches them.
+
+# Default: everything is text, stored and checked out as LF.
+* text=auto eol=lf
+
+# Binary assets — never line-ending normalised, never diffed.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.ico binary
+*.pdf binary
+*.zip binary
+*.mp4 binary
+*.woff binary
+*.woff2 binary
+
+# Lockfiles: LF, so `npm ci` never sees a stray CR.
+package-lock.json text eol=lf
