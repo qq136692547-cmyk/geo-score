@@ -51,13 +51,13 @@ column, not silently dropped.
 | Critical (<40) | 219 (63.8%) |
 | Basic | 118 (34.4%) |
 | Good | 6 (1.7%) |
-| has `llms.txt` | 78 (23.3%) |
-| mean score with `llms.txt` | 50.5 |
-| mean score without | 25.7 |
+| has `llms.txt` | 84 (24.5%) |
+| mean score with `llms.txt` | 48.7 (median 53.5) |
+| mean score without | 25.8 (median 26) |
 | `robots.txt` blocks ≥1 AI crawler | 114 (33.2%) |
 | no `robots.txt` at all | 108 (31.5%) |
 
-**`llms.txt` correlates with a +24.8 point score difference.** This is an
+**`llms.txt` correlates with a +22.9 point mean difference (median gap 27.5).** This is an
 association in a convenience sample, not a causal effect: sites that publish an
 `llms.txt` may differ in many other ways. Do not describe it as a lift.
 
@@ -89,7 +89,7 @@ Verified counter-example: **dev.to** has `User-agent: *` with partial `Disallow`
 rules (`/search?q=*` and similar) and never mentions GPTBot. No rule blocks it.
 The product scores it 0/12 with `gptbot passed=false`.
 
-Consequence: **315 of 343 sites (94.0%) score 0/12 on that dimension.** That is not
+Consequence: **323 of 343 sites (94.2%) score 0/12 on that dimension.** That is not
 a plausible measurement of the web, it is the checker being stricter than the
 robots exclusion standard. The gap script is `tools/quantify-robots-gap.mjs`.
 

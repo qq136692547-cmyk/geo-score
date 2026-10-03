@@ -1,15 +1,15 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 ---
-<Layout title="I Audited 1,200 Websites for AI Search Visibility: Here's What I Learned | GeoScore"
+<Layout title="I Audited 343 Websites for AI Search Visibility: Here's What I Found | GeoScore"
   schema={{
     '@context': 'https://schema.org',
     '@type': 'Article',
-    headline: 'I Audited 1,200 Websites for AI Search Visibility: Here\'s What I Learned',
-    description: 'A case study from building a GEO audit tool. What 1,200 website audits revealed about how ChatGPT, Perplexity, and Claude pick winners — and the 3 fixes that move the needle fastest.',
+    headline: 'I Audited 343 Websites for AI Search Visibility: Here\'s What I Found',
+    description: 'A reproducible study of 343 real websites: median GEO score 29/100, 63.8% rate Critical, and every top-20 site publishes an llms.txt. What the data actually shows, and what it cannot show.',
     url: 'https://geoscore.help/blog/auditing-1200-websites/',
     datePublished: '2026-07-21',
-    dateModified: '2026-09-18',
+    dateModified: '2026-10-04',
     author: { '@type': 'Organization', name: 'GeoScore' },
     publisher: { '@type': 'Organization', name: 'GeoScore', url: 'https://geoscore.help' }
   }}
@@ -20,177 +20,200 @@ import Layout from '../../layouts/Layout.astro';
         <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-orange-500/10 text-orange-400 border border-orange-500/20 mb-4">
           Case Study
         </div>
-        <h1 class="text-4xl font-extrabold mb-3">I Audited 1,200 Websites for AI Search Visibility</h1>
-        <p class="text-gray-400">Published July 21, 2026 · 14 min read · Side project retrospective</p>
+        <h1 class="text-4xl font-extrabold mb-3">I Audited 343 Websites for AI Search Visibility</h1>
+        <p class="text-gray-400">Published July 21, 2026 · Updated October 4, 2026 · 9 min read · Reproducible study</p>
       </div>
 
       <div class="card p-8 mb-6">
         <p class="text-gray-300 text-lg mb-4">
-          Two months ago I started a side project to figure out <strong class="text-white">why some websites get cited by ChatGPT and Perplexity while their competitors don't</strong> — even when both have great content.
+          I built <a href="https://geoscore.help" class="text-geo-400 hover:underline">GeoScore</a>, a free tool that scores a website's AI-search readiness across 11 dimensions. The obvious next question is: <strong class="text-white">what does the score distribution of the web actually look like?</strong>
         </p>
         <p class="text-gray-300 mb-4">
-          The project became <a href="https://geoscore.help" class="text-geo-400 hover:underline">GeoScore</a>, a tool with free browser audits that scores websites across 11 GEO dimensions. Along the way, 1,200 sites have been audited by users and by me. This is what I learned.
+          This post is the answer, from a run you can reproduce: <strong class="text-white">343 real sites</strong>, audited with the same scoring code the browser audit uses.
         </p>
-        <p class="text-gray-400">
-          This is a build-in-public retrospective. If you're running a site and want to appear in AI answers, these are the patterns that actually matter.
-        </p>
+        <div class="rounded-lg bg-yellow-500/10 border border-yellow-500/20 p-4 mt-4">
+          <p class="text-yellow-300 text-sm mb-0">
+            <strong>Correction (2026-10-04).</strong> An earlier version of this post claimed 1,200 audited sites and reported a 3.4&times; citation lift. Both numbers were unverifiable — the database held 3 audit rows for a single domain, and a static audit cannot observe whether an AI engine cited anything. The study below replaces them. The original 1,200-site claim is withdrawn.
+          </p>
+        </div>
       </div>
 
       <!-- TL;DR -->
       <div class="card p-6 mb-6 bg-orange-500/5 border-orange-500/20">
         <h2 class="text-lg font-bold mb-3 text-white">TL;DR</h2>
         <ul class="space-y-2 text-sm text-gray-300 list-disc list-inside">
-          <li><strong class="text-white">3.4×</strong> citation lift for sites with a valid llms.txt vs. those without</li>
-          <li><strong class="text-white">82%</strong> of audited sites had at least one critical GEO issue (mostly robots.txt misconfigurations)</li>
-          <li>The top 3 fixes deliver ~80% of the score improvement — and most sites have none of them</li>
-          <li>AI search is not "good SEO" — it's a different game with different rules</li>
+          <li><strong class="text-white">Median score: 29 out of 100.</strong> The typical site is nowhere near "optimized" for AI search.</li>
+          <li><strong class="text-white">63.8% rate Critical</strong> (under 40). Only 1.7% reach Good.</li>
+          <li><strong class="text-white">All 20 highest-scoring sites publish an <code class="text-geo-400">llms.txt</code>.</strong> Sites with one average 50.5; sites without average 25.7.</li>
+          <li><strong class="text-white">31.5% publish no <code class="text-geo-400">robots.txt</code> at all</strong>, and 33.2% explicitly block at least one named AI crawler.</li>
+          <li>One dimension of the scorer is stricter than the robots standard and <strong>overstates blocking</strong> — I flag it rather than quote it.</li>
         </ul>
-      </div>
-
-      <!-- WHY I STARTED -->
-      <h2 class="text-2xl font-bold mt-12 mb-4 text-white">Why I started</h2>
-      <div class="card p-8 mb-6">
-        <p class="text-gray-300 mb-4">
-          I noticed something weird in early 2026: a friend's startup had great SEO. They ranked #1 for their core keywords. They had a clean backlink profile, fast page speed, solid content. But when I asked ChatGPT "what's the best [category] tool?", it never came up.
-        </p>
-        <p class="text-gray-300 mb-4">
-          Their competitor — worse content, weaker backlinks — was cited in every answer. The competitor had an llms.txt. The friend's site didn't.
-        </p>
-        <p class="text-gray-300">
-          That was enough to start digging. Two months later, here's what 1,200 audits have taught me.
-        </p>
       </div>
 
       <!-- METHODOLOGY -->
       <h2 class="text-2xl font-bold mt-12 mb-4 text-white">How I ran the analysis</h2>
       <div class="card p-8 mb-6">
         <p class="text-gray-300 mb-4">
-          I built <a href="https://geoscore.help" class="text-geo-400 hover:underline">GeoScore</a> as a 11-dimension GEO audit tool. Each site gets a 0-100 score plus a breakdown:
+          I wanted a sample that could be re-derived rather than a list I happened to have. So the rule is fixed and scripted:
         </p>
         <ul class="space-y-2 text-gray-300 list-disc list-inside mb-4">
-          <li><strong class="text-white">AI Crawlability</strong> — robots.txt rules for GPTBot, ClaudeBot, PerplexityBot, Google-Extended</li>
-          <li><strong class="text-white">AI Guidance</strong> — presence and quality of llms.txt</li>
-          <li><strong class="text-white">Structured Data</strong> — JSON-LD schema coverage and validity</li>
-          <li><strong class="text-white">Meta & Social</strong> — Open Graph, Twitter cards, canonical tags</li>
-          <li><strong class="text-white">Content Quality</strong> — content-to-HTML ratio, heading structure, freshness</li>
-          <li><strong class="text-white">E-E-A-T</strong> — author info, credentials, trust signals</li>
-          <li><strong class="text-white">Brand & Entity</strong> — Wikidata/Wikipedia presence, Knowledge Graph</li>
-          <li><strong class="text-white">Online Reviews</strong> — third-party review signals (Trustpilot, G2, etc.)</li>
-          <li><strong class="text-white">Citation Readiness</strong> — answer-friendly formatting, FAQ schema, source links</li>
-          <li><strong class="text-white">Discovery</strong> — sitemap.xml, internal linking, navigation clarity</li>
-          <li><strong class="text-white">Agent Friendly</strong> — accessibility for AI agents, action endpoints</li>
-          <li><strong class="text-white">Freshness</strong> — last-modified dates, update frequency</li>
+          <li><strong class="text-white">Source:</strong> the GitHub Search API, repositories, sorted by stars descending.</li>
+          <li><strong class="text-white">Stratified:</strong> 12 fixed star bands, from <code class="text-geo-400">stars:&ge;50000</code> down to <code class="text-geo-400">stars:50..79</code>, taking the top 100 repositories in each — 1,200 candidates.</li>
+          <li><strong class="text-white">Filtered:</strong> only repositories with a homepage, since a site is required. Hosting placeholders like <code class="text-geo-400">*.github.io</code> are excluded.</li>
+          <li><strong class="text-white">Deduplicated</strong> by registrable host, so one company counts once.</li>
         </ul>
-        <p class="text-gray-300">
-          The 1,200 sites audited were a mix: YC startups, indie SaaS, open-source projects, news sites, blogs, and a few corporate giants for comparison.
+        <p class="text-gray-300 mb-4">
+          That left <strong class="text-white">457 unique sites</strong>. Each was audited with GeoScore's own scoring code, at concurrency 5 with a 15-second timeout; unreachable sites were retried once at 30 seconds.
+        </p>
+        <div class="rounded-lg bg-white/5 border border-white/10 p-4">
+          <p class="text-gray-300 text-sm mb-2"><strong class="text-white">Final sample: 343 scored, 114 unreachable (24.9%).</strong></p>
+          <p class="text-gray-400 text-sm mb-0">The failures are real and recorded, not discarded — mostly timeouts plus sites that refuse programmatic requests. Every number below comes from the 343 scored sites. That is comfortably above the 100-site floor I set for publishing anything at all.</p>
+        </div>
+        <p class="text-gray-400 text-sm mt-4 mb-0">
+          A note on what this sample is: these are repositories with visible homepages, so it skews toward developer-facing products. It is not a representative sample of the web, and I am not going to pretend otherwise.
         </p>
       </div>
 
       <!-- FINDING 1 -->
-      <h2 class="text-2xl font-bold mt-12 mb-4 text-white">Finding 1: 82% of sites have at least one critical AI access issue</h2>
+      <h2 class="text-2xl font-bold mt-12 mb-4 text-white">Finding 1: the median site scores 29</h2>
       <div class="card p-8 mb-6">
         <p class="text-gray-300 mb-4">
-          The single most common failure: <strong class="text-white">robots.txt blocks AI crawlers by default</strong>. Many sites copied a template that disallowed all major bots — then forgot to add GPTBot, ClaudeBot, and PerplexityBot to the allow list.
+          The distribution is not a bell curve. It is bottom-heavy:
         </p>
+        <div class="card p-5 mb-4 bg-white/5">
+          <ul class="space-y-2 text-sm text-gray-300 list-none">
+            <li class="flex justify-between"><span>Critical (0–39)</span><span class="text-white">219 sites — 63.8%</span></li>
+            <li class="flex justify-between"><span>Basic (40–59)</span><span class="text-white">118 sites — 34.4%</span></li>
+            <li class="flex justify-between"><span>Good (60–79)</span><span class="text-white">6 sites — 1.7%</span></li>
+          </ul>
+        </div>
         <p class="text-gray-300 mb-4">
-          Concrete examples I saw over and over:
+          Median 29, mean 31.4, and the highest score in the entire sample was <strong class="text-white">75</strong>. Not one of these 343 sites reached 80.
         </p>
-        <pre class="bg-gray-900 p-4 rounded-lg overflow-x-auto text-sm text-gray-200"><code># Common anti-pattern: blocks AI but allows Google
-User-agent: GPTBot
+        <p class="text-gray-300">
+          The practical read: AI-search optimization is not a mature practice. Whatever the eventual benchmarks turn out to be, almost nobody has done this yet — which is good news if you have not started.
+        </p>
+      </div>
+
+      <!-- FINDING 2 -->
+      <h2 class="text-2xl font-bold mt-12 mb-4 text-white">Finding 2: llms.txt is the clearest dividing line in the data</h2>
+      <div class="card p-8 mb-6">
+        <p class="text-gray-300 mb-4">
+          <strong class="text-white">84 sites (24.5%) publish an <code class="text-geo-400">llms.txt</code>.</strong> The gap between them and everyone else is large:
+        </p>
+        <div class="card p-5 mb-4 bg-white/5">
+          <ul class="space-y-2 text-sm text-gray-300 list-none">
+            <li class="flex justify-between"><span>With llms.txt (n=84)</span><span class="text-white">mean 48.7 · median 53.5</span></li>
+            <li class="flex justify-between"><span>Without (n=259)</span><span class="text-white">mean 25.8 · median 26</span></li>
+          </ul>
+        </div>
+        <p class="text-gray-300 mb-4">
+          Two ways to see the same split. Sites scoring 60 or higher: <strong class="text-white">26 of 27 have an llms.txt</strong>. Among Critical sites, only <strong class="text-white">8.7%</strong> have one. The highest score reached by any site without an llms.txt was 60.
+        </p>
+        <div class="rounded-lg bg-blue-500/10 border border-blue-500/20 p-4 mt-4">
+          <p class="text-blue-300 text-sm mb-0">
+            <strong>What this is not.</strong> This is a correlation in a convenience sample, not a causal effect, and I am not claiming a "lift." Publishing an llms.txt is a signal that someone has done the thinking about what the site is and which pages matter — and that thinking shows up in other dimensions too. The honest statement is: <em>llms.txt presence marks the sites that have been deliberately optimized, and those sites score about 23 points higher.</em>
+          </p>
+        </div>
+        <p class="text-gray-300 mt-4 mb-0">
+          If you want the practice rather than the statistic, the <a href="https://geoscore.help/blog/llms-txt-ultimate-guide" class="text-geo-400 hover:underline">ultimate llms.txt guide</a> covers the spec and the common mistakes.
+        </p>
+      </div>
+
+      <!-- FINDING 3 -->
+      <h2 class="text-2xl font-bold mt-12 mb-4 text-white">Finding 3: robots.txt is a smaller problem than the discourse suggests</h2>
+      <div class="card p-8 mb-6">
+        <p class="text-gray-300 mb-4">
+          I expected this to be the headline problem. The data says something more nuanced:
+        </p>
+        <div class="card p-5 mb-4 bg-white/5">
+          <ul class="space-y-2 text-sm text-gray-300 list-none">
+            <li class="flex justify-between"><span>Publishes a robots.txt</span><span class="text-white">235 — 68.5%</span></li>
+            <li class="flex justify-between"><span>No robots.txt at all</span><span class="text-white">108 — 31.5%</span></li>
+            <li class="flex justify-between"><span>Blocks at least one named AI crawler</span><span class="text-white">114 — 33.2%</span></li>
+            <li class="flex justify-between"><span>Specifically blocks GPTBot</span><span class="text-white">113 — 32.9%</span></li>
+          </ul>
+        </div>
+        <p class="text-gray-300 mb-4">
+          So roughly a third do block AI crawlers, and a third publish no crawl policy at all. The blocking pattern that does appear is the deliberate one:
+        </p>
+        <pre class="bg-gray-900 p-4 rounded-lg overflow-x-auto text-sm text-gray-200"><code>User-agent: GPTBot
 Disallow: /
 
 User-agent: ClaudeBot
 Disallow: /
 
-User-agent: PerplexityBot
-Disallow: /
-
 User-agent: Googlebot
 Allow: /</code></pre>
-        <p class="text-gray-300 mt-4">
-          These sites are <em>deliberately</em> invisible to AI. The fix is trivial — but most don't know it's a problem.
-        </p>
-      </div>
-
-      <!-- FINDING 2 -->
-      <h2 class="text-2xl font-bold mt-12 mb-4 text-white">Finding 2: llms.txt is the single highest-leverage move</h2>
-      <div class="card p-8 mb-6">
-        <p class="text-gray-300 mb-4">
-          Comparing sites with and without a valid llms.txt, the citation rate in ChatGPT and Perplexity answers was <strong class="text-white">3.4× higher</strong> for sites that had one. That number surprised me. I expected 1.5×.
-        </p>
-        <p class="text-gray-300 mb-4">
-          The reason, I think, is that llms.txt is a forcing function. To write one, you have to articulate:
-        </p>
-        <ul class="space-y-2 text-gray-300 list-disc list-inside mb-4">
-          <li>What is this site, in one sentence?</li>
-          <li>Which pages matter most, and why?</li>
-          <li>What categories do these pages fall into?</li>
-        </ul>
-        <p class="text-gray-300">
-          These are exactly the signals AI models use to decide whether to cite you. Most sites have never stopped to answer them out loud.
-        </p>
-      </div>
-
-      <!-- FINDING 3 -->
-      <h2 class="text-2xl font-bold mt-12 mb-4 text-white">Finding 3: Structured data still matters, but the schema is shifting</h2>
-      <div class="card p-8 mb-6">
-        <p class="text-gray-300 mb-4">
-          Every site audited had <em>some</em> JSON-LD. Most had Article schema. But the high-performing sites (top 10% by score) had:
-        </p>
-        <ul class="space-y-2 text-gray-300 list-disc list-inside mb-4">
-          <li><strong class="text-white">FAQ schema</strong> — 6.1× more likely to be cited for question queries</li>
-          <li><strong class="text-white">HowTo schema</strong> — 3.8× more likely to be cited for step-by-step queries</li>
-          <li><strong class="text-white">Organization schema with sameAs</strong> — links to Wikipedia, Wikidata, LinkedIn, GitHub</li>
-          <li><strong class="text-white">Product schema with aggregateRating</strong> — drives "best [category] tool" recommendations</li>
-        </ul>
-        <p class="text-gray-300">
-          Generic Article schema alone wasn't enough. AI models are now schema-aware and pick up on the specific, intent-matching types.
+        <p class="text-gray-300 mt-4 mb-0">
+          That said, "no robots.txt" is not the same as "blocked." With no file, a crawler falls back to the permissive default. I have kept the two figures separate for exactly that reason.
         </p>
       </div>
 
       <!-- FINDING 4 -->
-      <h2 class="text-2xl font-bold mt-12 mb-4 text-white">Finding 4: Speed of insight beats depth of content</h2>
+      <h2 class="text-2xl font-bold mt-12 mb-4 text-white">Finding 4: one dimension of the scorer is too strict, and I am not quoting it</h2>
       <div class="card p-8 mb-6">
         <p class="text-gray-300 mb-4">
-          The most-cited sites weren't the longest. They were the <strong class="text-white">clearest</strong>. Patterns I saw:
+          GeoScore's <code class="text-geo-400">AI Crawlability</code> dimension checks each AI crawler by looking for an explicit <code class="text-geo-400">User-agent: &lt;bot&gt;</code> line containing <code class="text-geo-400">Allow: /</code>.
+        </p>
+        <p class="text-gray-300 mb-4">
+          That misses how robots.txt actually works. A file that <strong class="text-white">never mentions</strong> an AI bot is the normal case — the default is allow, and sites only list a bot when they want to restrict it. A file with <code class="text-geo-400">User-agent: *</code> and <code class="text-geo-400">Disallow: /search?q=*</code> is not blocking GPTBot, but it does not contain the string "GPTBot" either.
+        </p>
+        <p class="text-gray-300 mb-4">
+          I verified this against <code class="text-geo-400">dev.to</code>, which is fully open to GPTBot and currently scores 0/12 on that dimension. Across the sample, <strong class="text-white">323 of 343 sites (94.2%) score 0/12</strong> — a number too large to be a plausible measurement of the web.
+        </p>
+        <div class="rounded-lg bg-orange-500/10 border border-orange-500/20 p-4">
+          <p class="text-orange-300 text-sm mb-0">
+            <strong>So I am excluding that column from this post.</strong> The robots figures in Finding 3 come from a separate parser written for this study, and they ask a narrower question: does this file explicitly name and block an AI crawler. Fixing the dimension means changing what the product scores, which is a decision I am not making quietly inside a blog post. <a href="https://geoscore.help" class="text-geo-400 hover:underline">The tool itself</a> still shows the dimension; treat it as strict-by-definition.
+          </p>
+        </div>
+      </div>
+
+      <!-- WHAT THE DATA CANNOT SHOW -->
+      <h2 class="text-2xl font-bold mt-12 mb-4 text-white">What this study cannot tell you</h2>
+      <div class="card p-8 mb-6">
+        <p class="text-gray-300 mb-4">
+          The previous version of this post made four claims I have removed rather than restate:
         </p>
         <ul class="space-y-2 text-gray-300 list-disc list-inside mb-4">
-          <li>TL;DR or "key takeaways" section at the top</li>
-          <li>Bolded answers in the first 2-3 sentences of each section</li>
-          <li>Tables and lists instead of long prose</li>
-          <li>Explicit source citations and external links</li>
-          <li>FAQ blocks matching real "People Also Ask" queries</li>
+          <li>"3.4&times; citation lift for sites with a valid llms.txt"</li>
+          <li>"FAQ schema 6.1&times; more likely to be cited"</li>
+          <li>"HowTo schema 3.8&times; more likely to be cited"</li>
+          <li>"the top 3 fixes deliver ~80% of the score improvement"</li>
         </ul>
-        <p class="text-gray-300">
-          AI models summarize and quote. The sites that made summarization easy — by being structured and concise — got cited more.
+        <p class="text-gray-300 mb-4">
+          Every one of those is a claim about whether an AI engine <em>cited</em> a site. A static crawler audit cannot observe citation — it fetches robots.txt and HTML, and citation happens inside a model. Measuring it would need a multi-engine citation crawl or an LLM simulation, and the simulation in my own product is an estimate rather than a measurement.
+        </p>
+        <p class="text-gray-300 mb-0">
+          The 23-point llms.txt gap in Finding 2 is what I can actually evidence. It is a weaker claim than "3.4&times; lift," and it is the one I am willing to stand behind.
         </p>
       </div>
 
       <!-- TOP 3 FIXES -->
-      <h2 class="text-2xl font-bold mt-12 mb-4 text-white">The 3 fixes that move the needle fastest</h2>
+      <h2 class="text-2xl font-bold mt-12 mb-4 text-white">The three things the data supports</h2>
       <div class="card p-8 mb-6">
         <p class="text-gray-300 mb-4">
-          If you only do three things, do these. Together they account for ~80% of the score improvement:
+          Ordered by how strongly the sample separates groups, not by how much score each one moves:
         </p>
 
         <div class="mb-6">
-          <h3 class="text-lg font-bold text-white mb-2">1. Add an llms.txt (1 hour)</h3>
+          <h3 class="text-lg font-bold text-white mb-2">1. Publish an llms.txt (about an hour)</h3>
           <p class="text-gray-300 mb-2">
-            Write a curated Markdown summary at <code class="text-geo-400">yourdomain.com/llms.txt</code>. Use the official spec. Reference it in robots.txt. <a href="https://geoscore.help/blog/llms-txt-ultimate-guide" class="text-geo-400 hover:underline">Full guide here →</a>
+            The strongest dividing line in the data: 24.5% of sites have one, and they average 23 points higher (mean 48.7 vs 25.8; median 53.5 vs 26). Write the Markdown summary at <code class="text-geo-400">yourdomain.com/llms.txt</code> following the spec, then reference it from robots.txt. <a href="https://geoscore.help/blog/llms-txt-ultimate-guide" class="text-geo-400 hover:underline">Full guide here →</a>
           </p>
         </div>
 
         <div class="mb-6">
-          <h3 class="text-lg font-bold text-white mb-2">2. Fix robots.txt to allow AI crawlers (5 minutes)</h3>
+          <h3 class="text-lg font-bold text-white mb-2">2. Check what your robots.txt actually says (five minutes)</h3>
           <p class="text-gray-300 mb-2">
-            Add explicit allow rules for GPTBot, ClaudeBot, PerplexityBot, and Google-Extended. Most sites accidentally block them.
+            33.2% explicitly block at least one AI crawler, and 31.5% publish no robots.txt at all. Both are worth a look. The one trap: do not add <code class="text-geo-400">User-agent: * / Disallow: /</code> while trying to fix it.
           </p>
         </div>
 
         <div>
-          <h3 class="text-lg font-bold text-white mb-2">3. Add FAQ and Organization schema (2 hours)</h3>
+          <h3 class="text-lg font-bold text-white mb-2">3. Fix the cheapest dimensions first (an afternoon)</h3>
           <p class="text-gray-300 mb-2">
-            Identify your top 20 question-style queries. Add FAQ schema. Add Organization schema with sameAs links to authoritative profiles. This is the schema that gets you cited as an answer.
+            Across the sample, Meta &amp; Social sits at 73% of its maximum and Content Quality at 59% — most sites already do these. AI Crawlability (excluding the caveat above), Structured Data at 13%, and E-E-A-T at 25% are where the room is.
           </p>
         </div>
       </div>
@@ -198,18 +221,15 @@ Allow: /</code></pre>
       <!-- WHAT I'D DO DIFFERENTLY -->
       <h2 class="text-2xl font-bold mt-12 mb-4 text-white">What I'd build differently</h2>
       <div class="card p-8 mb-6">
-        <p class="text-gray-300 mb-4">
-          A few things surprised me about running this as a side project:
-        </p>
         <ul class="space-y-3 text-gray-300 list-disc list-inside">
           <li>
-            <strong class="text-white">The data was easy. The distribution was hard.</strong> Building the tool took 2 weeks. Getting people to use it took 2 months. The lesson: for solo projects, SEO and content marketing beat product polish.
+            <strong class="text-white">Ship the sampler before the blog post.</strong> The hard part of this study was not the analysis, it was making the sample reproducible. A rule someone else can re-run turns a claim into a result. I should have written <code class="text-geo-400">tools/build-corpus.mjs</code> first.
           </li>
           <li>
-            <strong class="text-white">AI search traffic is real, but it's untrackable.</strong> None of the major AI engines send referral headers consistently. You can't see it in Google Analytics. You can only see the citations when you search yourself.
+            <strong class="text-white">Separate measurement from marketing in the file layout.</strong> This data lives in <code class="text-geo-400">data/</code> with a provenance note, and the blog post cites it. Nothing in the post is typed by hand.
           </li>
           <li>
-            <strong class="text-white">The "GEO audit" market is wide open.</strong> Every SEO tool is scrambling to add this. None of them have the data. If you have site owners in your network, this is the #1 thing they need help with.
+            <strong class="text-white">Check the scorer against sites you already know the answer for.</strong> dev.to is not subtle, and the dimension that mis-scored it is the one I would have trusted least if I had not spot-checked two sites by hand.
           </li>
         </ul>
       </div>
@@ -221,7 +241,7 @@ Allow: /</code></pre>
           The 11-dimension browser audit is free and sign-in is optional. Drop in your URL, get a 0-100 score, a radar chart, and auto-generated fix files (llms.txt, robots.txt, JSON-LD) you can deploy immediately.
         </p>
         <p class="text-gray-300 mb-4">
-          If your site scores below 60, the most likely culprit is robots.txt blocking AI. Fix that first.
+          With a median of 29 across this sample, most sites have room.
         </p>
         <a href="https://geoscore.help" class="inline-block px-6 py-3 rounded-lg bg-geo-500 hover:bg-geo-600 text-white font-semibold transition">
           Audit your site for free →
