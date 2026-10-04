@@ -1,5 +1,6 @@
 ﻿---
 import Layout from '../../layouts/Layout.astro';
+import demo from '../../../data/demo-report.json';
 ---
 <Layout title="AI Readiness Score — Check Your Site's AI Search Visibility | GeoScore"
   schema={{
@@ -36,7 +37,7 @@ import Layout from '../../layouts/Layout.astro';
 
       <p class="text-xs text-gray-500 mb-10 text-center">
         <a href="/report/demo/" class="text-gray-400 hover:text-geo-400 transition underline underline-offset-2">See a sample report</a>
-        &mdash; example.com scored <span class="text-geo-400 font-semibold">72/100 (Good)</span>, 8/11 dimensions above 60%. Try your own URL.
+        &mdash; {demo.host} scored <span class="text-geo-400 font-semibold">{demo.score}/100 ({demo.level})</span>, {demo.dimensionsAboveSixty}/{demo.dimensionCount} dimensions above 60%. Try your own URL.
       </p>
 
 

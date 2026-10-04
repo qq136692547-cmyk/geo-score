@@ -1,5 +1,22 @@
 ﻿---
 import Layout from '../../layouts/Layout.astro';
+import demo from '../../../data/demo-report.json';
+
+// Bar colour is derived from the real percentage. These must stay literal
+// strings so Tailwind's scanner can see them — never build class names by
+// concatenation.
+const barColor = (pct) => (pct >= 80 ? 'bg-geo-500' : pct >= 50 ? 'bg-warn-500' : 'bg-danger-500');
+
+const levelLabel = { Excellent: 'Excellent', Good: 'Good', Basic: 'Basic', Critical: 'Critical' };
+const auditDate = new Date(demo.generatedAt).toISOString().slice(0, 10);
+const botsAllowed = demo.aiBots.filter((b) => b.allowed).length;
+const botsBlocked = demo.aiBots.filter((b) => !b.allowed);
+const botsNote = botsBlocked.length > 0
+  ? ` Blocked: ${botsBlocked.map((b) => b.bot).join(', ')}.`
+  : ' None blocked.';
+const piNote = demo.promptInjectionFlags > 0
+  ? ` Prompt-injection scan: ${demo.promptInjectionFlags} flag(s), -${demo.promptInjectionPoints} pts.`
+  : '';
 ---
 <Layout title="Demo Report — GeoScore Sample Audit | GeoScore"
   schema={{
@@ -28,55 +45,48 @@ import Layout from '../../layouts/Layout.astro';
       <div class="flex items-center justify-between flex-wrap gap-4">
         <div>
           <p class="text-sm text-gray-500">Audited URL</p>
-          <p class="text-lg font-mono text-white">example.com</p>
+          <p class="text-lg font-mono text-white">{demo.host}</p>
         </div>
         <div class="text-center">
-          <div class="text-5xl font-extrabold text-geo-500">72</div>
-          <div class="text-xs font-semibold text-geo-400 mt-1">Good</div>
+          <div class="text-5xl font-extrabold text-geo-500">{demo.score}</div>
+          <div class="text-xs font-semibold text-geo-400 mt-1">{levelLabel[demo.level] || demo.level}</div>
         </div>
         <div class="text-right">
           <p class="text-sm text-gray-500">Audit Date</p>
-          <p class="text-sm text-gray-300">2026-08-11</p>
+          <p class="text-sm text-gray-300">{auditDate}</p>
         </div>
       </div>
       <div class="mt-4 p-3 rounded-lg bg-white/5 text-sm text-gray-400">
-        Score 72/100 (Good). 8/11 dimensions above 60%. 2 negative signal(s) detected.
+        Score {demo.score}/100 ({levelLabel[demo.level] || demo.level}). {demo.dimensionsAboveSixty}/{demo.dimensionCount} dimensions above 60%. {demo.negativeSignals} negative signal(s) detected. {demo.promptInjectionFlags} prompt injection flag(s).
       </div>
+      <p class="mt-3 text-xs text-gray-500">
+        These are real results: GeoScore scanned {demo.host} on {auditDate}. Regenerate with <code class="font-mono text-gray-400">node tools/refresh-demo-report.mjs</code>.
+      </p>
     </div>
 
     <!-- Dimension Breakdown -->
     <div class="card p-6 mb-6">
       <h2 class="text-xl font-bold mb-4">Dimension Breakdown</h2>
       <div class="space-y-3">
-        {[
-          { name: 'AI Crawlability (Robots.txt)', score: 92, weight: '12%', color: 'bg-geo-500' },
-          { name: 'AI Guidance (llms.txt)', score: 75, weight: '12%', color: 'bg-geo-500' },
-          { name: 'Structured Data (Schema)', score: 43, weight: '14%', color: 'bg-danger-500' },
-          { name: 'Meta & Social Tags', score: 80, weight: '10%', color: 'bg-geo-500' },
-          { name: 'Content Quality', score: 67, weight: '12%', color: 'bg-warn-500' },
-          { name: 'E-E-A-T Signals', score: 50, weight: '8%', color: 'bg-warn-500' },
-          { name: 'Brand & Entity', score: 75, weight: '8%', color: 'bg-geo-500' },
-          { name: 'Citation Readiness', score: 63, weight: '8%', color: 'bg-warn-500' },
-          { name: 'Discovery Endpoints', score: 100, weight: '6%', color: 'bg-geo-500' },
-          { name: 'Agent-Friendliness', score: 50, weight: '4%', color: 'bg-warn-500' },
-          { name: 'Freshness & Maintenance', score: 67, weight: '4%', color: 'bg-warn-500' },
-        ].map(d => (
+        {demo.dimensions.map(d => (
           <div>
             <div class="flex items-center justify-between text-sm mb-1">
-              <span class="text-gray-300">{d.name}</span>
-              <span class="text-gray-500 font-mono">{d.score}% <span class="text-gray-400">({d.weight})</span></span>
+              <span class="text-gray-300">{d.label}</span>
+              <span class="text-gray-500 font-mono">{d.score}/{d.maxScore} &middot; {d.pct}% <span class="text-gray-400">(weight &times;{d.weight})</span></span>
             </div>
             <div class="w-full h-2 rounded-full bg-gray-700/50 overflow-hidden">
-              <div class={`h-full rounded-full ${d.color}`} style={`width:${d.score}%`}></div>
+              <div class={`h-full rounded-full ${barColor(d.pct)}`} style={`width:${d.pct}%`}></div>
             </div>
           </div>
         ))}
         <div class="pt-2 border-t border-gray-700/50">
           <div class="flex items-center justify-between text-sm">
             <span class="text-gray-300">Negative Signals</span>
-            <span class="text-danger-400 font-mono">-8 pts</span>
+            <span class="text-danger-400 font-mono">-{demo.negativeSignalPoints} pts</span>
           </div>
-          <p class="text-xs text-gray-500 mt-1">Detected: intrusive interstitials, missing alt text on 3 images</p>
+          <p class="text-xs text-gray-500 mt-1">
+            {demo.negativeSignals} deduction(s) detected.{piNote}
+          </p>
         </div>
       </div>
     </div>
@@ -85,58 +95,32 @@ import Layout from '../../layouts/Layout.astro';
     <div class="card p-6 mb-6">
       <h2 class="text-xl font-bold mb-4">AI Crawler Checks (20 bots)</h2>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
-        {[
-          { bot: 'GPTBot', status: true, tier: 'T1' },
-          { bot: 'OAI-SearchBot', status: true, tier: 'T1' },
-          { bot: 'ClaudeBot', status: true, tier: 'T1' },
-          { bot: 'anthropic-ai', status: true, tier: 'T1' },
-          { bot: 'PerplexityBot', status: true, tier: 'T1' },
-          { bot: 'Google-Extended', status: true, tier: 'T1' },
-          { bot: 'CCBot', status: true, tier: 'T2' },
-          { bot: 'Bytespider', status: false, tier: 'T2' },
-          { bot: 'meta-externalagent', status: true, tier: 'T2' },
-          { bot: 'Amazonbot', status: false, tier: 'T2' },
-          { bot: 'Applebot-Extended', status: false, tier: 'T2' },
-          { bot: 'ChatGPT-User', status: true, tier: 'T2' },
-          { bot: 'Claude-SearchBot', status: false, tier: 'T2' },
-          { bot: 'cohere-ai', status: false, tier: 'T3' },
-          { bot: 'DuckAssistBot', status: false, tier: 'T3' },
-          { bot: 'AI2Bot', status: false, tier: 'T3' },
-          { bot: 'xAI-Bot', status: false, tier: 'T3' },
-          { bot: 'Perplexity-User', status: true, tier: 'T3' },
-          { bot: 'YouBot', status: false, tier: 'T3' },
-          { bot: 'PetalBot', status: true, tier: 'T3' },
-        ].map(c => (
-          <div class={`flex items-center gap-2 p-2 rounded-lg text-sm ${c.status ? 'bg-geo-500/5' : 'bg-danger-500/5'}`}>
-            <span class={`w-2 h-2 rounded-full ${c.status ? 'bg-geo-500' : 'bg-danger-500'}`}></span>
+        {demo.aiBots.map(c => (
+          <div class={`flex items-center gap-2 p-2 rounded-lg text-sm ${c.allowed ? 'bg-geo-500/5' : 'bg-danger-500/5'}`}>
+            <span class={`w-2 h-2 rounded-full ${c.allowed ? 'bg-geo-500' : 'bg-danger-500'}`}></span>
             <span class="font-mono text-gray-300">{c.bot}</span>
             <span class="text-gray-400 text-xs ml-auto">{c.tier}</span>
-            <span class={`text-xs font-semibold ${c.status ? 'text-geo-400' : 'text-danger-400'}`}>{c.status ? 'Allowed' : 'Blocked'}</span>
+            <span class={`text-xs font-semibold ${c.allowed ? 'text-geo-400' : 'text-danger-400'}`}>{c.allowed ? 'Allowed' : 'Blocked'}</span>
           </div>
         ))}
       </div>
-      <p class="text-sm text-gray-500 mt-3">12 of 20 AI crawlers allowed. Missing: Bytespider, Amazonbot, Applebot-Extended, Claude-SearchBot, cohere-ai, DuckAssistBot, AI2Bot, xAI-Bot, YouBot.</p>
+      <p class="text-sm text-gray-500 mt-3">
+        {botsAllowed} of {demo.aiBots.length} AI crawlers allowed.{botsNote}
+      </p>
     </div>
 
     <!-- Recommendations -->
     <div class="card p-6 mb-6">
       <h2 class="text-xl font-bold mb-4">Priority Recommendations</h2>
       <div class="space-y-3">
-        {[
-          { priority: 'P0', text: 'Add Applebot-Extended, Amazonbot, and Claude-SearchBot to robots.txt Allow list', impact: '+6 points' },
-          { priority: 'P0', text: 'Add JSON-LD Article schema with author, datePublished, and dateModified', impact: '+8 points' },
-          { priority: 'P1', text: 'Add llms.txt file with site summary and key page links', impact: '+5 points' },
-          { priority: 'P1', text: 'Fix missing alt text on 3 images (accessibility + AI context)', impact: '+3 points' },
-          { priority: 'P1', text: 'Add author bio page with credentials for E-E-A-T', impact: '+4 points' },
-          { priority: 'P2', text: 'Add FAQPage schema for Q&A content', impact: '+2 points' },
-          { priority: 'P2', text: 'Update content: last blog post was 45 days ago', impact: '+2 points' },
-        ].map(r => (
+        {demo.recommendations.map(r => (
           <div class="flex items-start gap-3 p-3 rounded-lg bg-white/5">
             <span class={`px-2 py-0.5 rounded text-xs font-bold ${r.priority === 'P0' ? 'bg-danger-500/20 text-danger-400' : r.priority === 'P1' ? 'bg-warn-500/20 text-warn-400' : 'bg-gray-500/20 text-gray-400'}`}>{r.priority}</span>
             <span class="text-sm text-gray-300 flex-1">{r.text}</span>
             <span class="text-xs text-geo-400 font-mono whitespace-nowrap">{r.impact}</span>
           </div>
         ))}
+        <p class="text-xs text-gray-500 mt-3">Showing the top {demo.recommendations.length} of {demo.recommendationCount} highest-priority fixes from the full audit. The dimension that raised each one is shown on the right.</p>
       </div>
     </div>
 

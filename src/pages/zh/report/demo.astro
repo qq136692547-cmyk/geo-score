@@ -1,5 +1,21 @@
 ---
 import LayoutZh from '../../../layouts/LayoutZh.astro';
+import demo from '../../../../data/demo-report.json';
+
+// 进度条颜色由真实百分比决定。这些必须是字面量字符串，Tailwind 扫描源码时
+// 才能找到——不要用字符串拼接生成类名。
+const barColor = (pct) => (pct >= 80 ? 'bg-geo-500' : pct >= 50 ? 'bg-warn-500' : 'bg-danger-500');
+
+const levelLabel = { Excellent: '优秀', Good: '良好', Basic: '基础', Critical: '严重' };
+const auditDate = new Date(demo.generatedAt).toISOString().slice(0, 10);
+const botsAllowed = demo.aiBots.filter((b) => b.allowed).length;
+const botsBlocked = demo.aiBots.filter((b) => !b.allowed);
+const piNote = demo.promptInjectionFlags > 0
+  ? ` 提示注入检测：${demo.promptInjectionFlags} 项标记，-${demo.promptInjectionPoints} 分。`
+  : '';
+const botsNote = botsBlocked.length > 0
+  ? ` 已阻止：${botsBlocked.map((b) => b.bot).join('、')}。`
+  : ' 无任何爬虫被阻止。';
 ---
 <LayoutZh title="示例审计报告 — GeoScore | GeoScore"
   schema={{
@@ -28,55 +44,48 @@ import LayoutZh from '../../../layouts/LayoutZh.astro';
       <div class="flex items-center justify-between flex-wrap gap-4">
         <div>
           <p class="text-sm text-gray-500">审计 URL</p>
-          <p class="text-lg font-mono text-white">example.com</p>
+          <p class="text-lg font-mono text-white">{demo.host}</p>
         </div>
         <div class="text-center">
-          <div class="text-5xl font-extrabold text-geo-500">72</div>
-          <div class="text-xs font-semibold text-geo-400 mt-1">良好</div>
+          <div class="text-5xl font-extrabold text-geo-500">{demo.score}</div>
+          <div class="text-xs font-semibold text-geo-400 mt-1">{levelLabel[demo.level] || demo.level}</div>
         </div>
         <div class="text-right">
           <p class="text-sm text-gray-500">审计日期</p>
-          <p class="text-sm text-gray-300">2026-08-11</p>
+          <p class="text-sm text-gray-300">{auditDate}</p>
         </div>
       </div>
       <div class="mt-4 p-3 rounded-lg bg-white/5 text-sm text-gray-400">
-        得分 72/100（良好）。11 个维度中 8 个超过 60%。检测到 2 个负面信号。
+        得分 {demo.score}/100（{levelLabel[demo.level] || demo.level}）。{demo.dimensionCount} 个维度中 {demo.dimensionsAboveSixty} 个超过 60%。检测到 {demo.negativeSignals} 个负面信号，{demo.promptInjectionFlags} 个提示注入标记。
       </div>
+      <p class="mt-3 text-xs text-gray-500">
+        以下为真实结果：GeoScore 于 {auditDate} 扫描了 {demo.host}。可用 <code class="font-mono text-gray-400">node tools/refresh-demo-report.mjs</code> 重新生成。
+      </p>
     </div>
 
     <!-- 维度明细 -->
     <div class="card p-6 mb-6">
       <h2 class="text-xl font-bold mb-4">维度明细</h2>
       <div class="space-y-3">
-        {[
-          { name: 'AI 可爬性 (Robots.txt)', score: 92, weight: '12%', color: 'bg-geo-500' },
-          { name: 'AI 引导 (llms.txt)', score: 75, weight: '12%', color: 'bg-geo-500' },
-          { name: '结构化数据 (Schema)', score: 43, weight: '14%', color: 'bg-danger-500' },
-          { name: 'Meta 和社交标签', score: 80, weight: '10%', color: 'bg-geo-500' },
-          { name: '内容质量', score: 67, weight: '12%', color: 'bg-warn-500' },
-          { name: 'E-E-A-T 信号', score: 50, weight: '8%', color: 'bg-warn-500' },
-          { name: '品牌和实体', score: 75, weight: '8%', color: 'bg-geo-500' },
-          { name: '引用就绪度', score: 63, weight: '8%', color: 'bg-warn-500' },
-          { name: '发现端点', score: 100, weight: '6%', color: 'bg-geo-500' },
-          { name: 'Agent 友好性', score: 50, weight: '4%', color: 'bg-warn-500' },
-          { name: '新鲜度和维护', score: 67, weight: '4%', color: 'bg-warn-500' },
-        ].map(d => (
+        {demo.dimensions.map(d => (
           <div>
             <div class="flex items-center justify-between text-sm mb-1">
-              <span class="text-gray-300">{d.name}</span>
-              <span class="text-gray-500 font-mono">{d.score}% <span class="text-gray-400">({d.weight})</span></span>
+              <span class="text-gray-300">{d.labelZh}</span>
+              <span class="text-gray-500 font-mono">{d.score}/{d.maxScore} &middot; {d.pct}% <span class="text-gray-400">(权重 &times;{d.weight})</span></span>
             </div>
             <div class="w-full h-2 rounded-full bg-gray-700/50 overflow-hidden">
-              <div class={`h-full rounded-full ${d.color}`} style={`width:${d.score}%`}></div>
+              <div class={`h-full rounded-full ${barColor(d.pct)}`} style={`width:${d.pct}%`}></div>
             </div>
           </div>
         ))}
         <div class="pt-2 border-t border-gray-700/50">
           <div class="flex items-center justify-between text-sm">
             <span class="text-gray-300">负面信号</span>
-            <span class="text-danger-400 font-mono">-8 分</span>
+            <span class="text-danger-400 font-mono">-{demo.negativeSignalPoints} 分</span>
           </div>
-          <p class="text-xs text-gray-500 mt-1">检测到：侵入式弹窗、3 张图片缺少 alt 文本</p>
+          <p class="text-xs text-gray-500 mt-1">
+            检测到 {demo.negativeSignals} 项扣分。{piNote}
+          </p>
         </div>
       </div>
     </div>
@@ -85,58 +94,32 @@ import LayoutZh from '../../../layouts/LayoutZh.astro';
     <div class="card p-6 mb-6">
       <h2 class="text-xl font-bold mb-4">AI 爬虫检测（20 个）</h2>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
-        {[
-          { bot: 'GPTBot', status: true, tier: 'T1' },
-          { bot: 'OAI-SearchBot', status: true, tier: 'T1' },
-          { bot: 'ClaudeBot', status: true, tier: 'T1' },
-          { bot: 'anthropic-ai', status: true, tier: 'T1' },
-          { bot: 'PerplexityBot', status: true, tier: 'T1' },
-          { bot: 'Google-Extended', status: true, tier: 'T1' },
-          { bot: 'CCBot', status: true, tier: 'T2' },
-          { bot: 'Bytespider', status: false, tier: 'T2' },
-          { bot: 'meta-externalagent', status: true, tier: 'T2' },
-          { bot: 'Amazonbot', status: false, tier: 'T2' },
-          { bot: 'Applebot-Extended', status: false, tier: 'T2' },
-          { bot: 'ChatGPT-User', status: true, tier: 'T2' },
-          { bot: 'Claude-SearchBot', status: false, tier: 'T2' },
-          { bot: 'cohere-ai', status: false, tier: 'T3' },
-          { bot: 'DuckAssistBot', status: false, tier: 'T3' },
-          { bot: 'AI2Bot', status: false, tier: 'T3' },
-          { bot: 'xAI-Bot', status: false, tier: 'T3' },
-          { bot: 'Perplexity-User', status: true, tier: 'T3' },
-          { bot: 'YouBot', status: false, tier: 'T3' },
-          { bot: 'PetalBot', status: true, tier: 'T3' },
-        ].map(c => (
-          <div class={`flex items-center gap-2 p-2 rounded-lg text-sm ${c.status ? 'bg-geo-500/5' : 'bg-danger-500/5'}`}>
-            <span class={`w-2 h-2 rounded-full ${c.status ? 'bg-geo-500' : 'bg-danger-500'}`}></span>
+        {demo.aiBots.map(c => (
+          <div class={`flex items-center gap-2 p-2 rounded-lg text-sm ${c.allowed ? 'bg-geo-500/5' : 'bg-danger-500/5'}`}>
+            <span class={`w-2 h-2 rounded-full ${c.allowed ? 'bg-geo-500' : 'bg-danger-500'}`}></span>
             <span class="font-mono text-gray-300">{c.bot}</span>
             <span class="text-gray-400 text-xs ml-auto">{c.tier}</span>
-            <span class={`text-xs font-semibold ${c.status ? 'text-geo-400' : 'text-danger-400'}`}>{c.status ? '已允许' : '已阻止'}</span>
+            <span class={`text-xs font-semibold ${c.allowed ? 'text-geo-400' : 'text-danger-400'}`}>{c.allowed ? '已允许' : '已阻止'}</span>
           </div>
         ))}
       </div>
-      <p class="text-sm text-gray-500 mt-3">20 个 AI 爬虫中 12 个已允许。缺失：Bytespider、Amazonbot、Applebot-Extended、Claude-SearchBot、cohere-ai、DuckAssistBot、AI2Bot、xAI-Bot、YouBot。</p>
+      <p class="text-sm text-gray-500 mt-3">
+        {demo.aiBots.length} 个 AI 爬虫中 {botsAllowed} 个已允许。{botsNote}
+      </p>
     </div>
 
     <!-- 优先建议 -->
     <div class="card p-6 mb-6">
       <h2 class="text-xl font-bold mb-4">优先修复建议</h2>
       <div class="space-y-3">
-        {[
-          { priority: 'P0', text: '将 Applebot-Extended、Amazonbot 和 Claude-SearchBot 添加到 robots.txt 允许列表', impact: '+6 分' },
-          { priority: 'P0', text: '添加 JSON-LD Article schema，包含 author、datePublished 和 dateModified', impact: '+8 分' },
-          { priority: 'P1', text: '添加 llms.txt 文件，包含网站摘要和关键页面链接', impact: '+5 分' },
-          { priority: 'P1', text: '修复 3 张图片缺失的 alt 文本（无障碍 + AI 上下文）', impact: '+3 分' },
-          { priority: 'P1', text: '添加作者简介页面，包含资质信息以增强 E-E-A-T', impact: '+4 分' },
-          { priority: 'P2', text: '为问答内容添加 FAQPage schema', impact: '+2 分' },
-          { priority: 'P2', text: '更新内容：最后一篇博客发表于 45 天前', impact: '+2 分' },
-        ].map(r => (
+        {demo.recommendations.map(r => (
           <div class="flex items-start gap-3 p-3 rounded-lg bg-white/5">
             <span class={`px-2 py-0.5 rounded text-xs font-bold ${r.priority === 'P0' ? 'bg-danger-500/20 text-danger-400' : r.priority === 'P1' ? 'bg-warn-500/20 text-warn-400' : 'bg-gray-500/20 text-gray-400'}`}>{r.priority}</span>
             <span class="text-sm text-gray-300 flex-1">{r.text}</span>
             <span class="text-xs text-geo-400 font-mono whitespace-nowrap">{r.impact}</span>
           </div>
         ))}
+        <p class="text-xs text-gray-500 mt-3">共 {demo.recommendationCount} 条建议，此处展示优先级最高的 {demo.recommendations.length} 条。右侧为提出该建议的维度。</p>
       </div>
     </div>
 

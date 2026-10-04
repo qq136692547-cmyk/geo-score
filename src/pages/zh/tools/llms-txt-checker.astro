@@ -1,5 +1,6 @@
 ---
 import LayoutZh from '../../../layouts/LayoutZh.astro';
+import demo from '../../../../data/demo-report.json';
 ---
 <LayoutZh title="llms.txt 检测器 — 免费 AI 引导文件审计 | GeoScore"
   schema={{
@@ -36,7 +37,7 @@ import LayoutZh from '../../../layouts/LayoutZh.astro';
 
       <p class="text-xs text-gray-500 mb-10 text-center">
         <a href="/zh/report/demo/" class="text-gray-400 hover:text-geo-400 transition underline underline-offset-2">查看样例报告</a>
-        &mdash; example.com 得分 <span class="text-geo-400 font-semibold">72/100（Good）</span>，11 个维度中 8 个超过 60%。跑一遍你自己的。
+        &mdash; {demo.host} 得分 <span class="text-geo-400 font-semibold">{demo.score}/100（{demo.level}）</span>，{demo.dimensionCount} 个维度中 {demo.dimensionsAboveSixty} 个超过 60%。跑一遍你自己的。
       </p>
 
 

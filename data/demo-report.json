@@ -1,0 +1,262 @@
+{
+  "generatedAt": "2026-10-04T06:21:08.800Z",
+  "url": "https://n8n.io",
+  "host": "n8n.io",
+  "score": 66,
+  "level": "Basic",
+  "summary": "Score 66/100 (Basic). 8/11 dimensions above 60%. 0 negative signal(s) detected. 2 prompt injection flag(s).",
+  "dimensions": [
+    {
+      "key": "aiCrawlability",
+      "label": "AI Crawlability (Robots.txt)",
+      "labelZh": "AI 可爬性 (Robots.txt)",
+      "pct": 100,
+      "weight": 12,
+      "score": 12,
+      "maxScore": 12
+    },
+    {
+      "key": "aiGuidance",
+      "label": "AI Guidance (llms.txt)",
+      "labelZh": "AI 引导 (llms.txt)",
+      "pct": 83,
+      "weight": 12,
+      "score": 10,
+      "maxScore": 12
+    },
+    {
+      "key": "structuredData",
+      "label": "Structured Data (Schema)",
+      "labelZh": "结构化数据 (Schema)",
+      "pct": 43,
+      "weight": 14,
+      "score": 6,
+      "maxScore": 14
+    },
+    {
+      "key": "metaSocial",
+      "label": "Meta & Social Tags",
+      "labelZh": "Meta 和社交标签",
+      "pct": 100,
+      "weight": 10,
+      "score": 10,
+      "maxScore": 10
+    },
+    {
+      "key": "contentQuality",
+      "label": "Content Quality",
+      "labelZh": "内容质量",
+      "pct": 67,
+      "weight": 12,
+      "score": 8,
+      "maxScore": 12
+    },
+    {
+      "key": "eeat",
+      "label": "E-E-A-T Signals",
+      "labelZh": "E-E-A-T 信号",
+      "pct": 50,
+      "weight": 8,
+      "score": 4,
+      "maxScore": 8
+    },
+    {
+      "key": "brandEntity",
+      "label": "Brand & Entity",
+      "labelZh": "品牌和实体",
+      "pct": 75,
+      "weight": 8,
+      "score": 6,
+      "maxScore": 8
+    },
+    {
+      "key": "citationReadiness",
+      "label": "Citation Readiness",
+      "labelZh": "引用就绪度",
+      "pct": 100,
+      "weight": 8,
+      "score": 8,
+      "maxScore": 8
+    },
+    {
+      "key": "discoveryEndpoints",
+      "label": "Discovery Endpoints",
+      "labelZh": "发现端点",
+      "pct": 0,
+      "weight": 6,
+      "score": 0,
+      "maxScore": 6
+    },
+    {
+      "key": "agentFriendliness",
+      "label": "Agent-Friendliness",
+      "labelZh": "Agent 友好性",
+      "pct": 75,
+      "weight": 4,
+      "score": 3,
+      "maxScore": 4
+    },
+    {
+      "key": "freshness",
+      "label": "Freshness & Maintenance",
+      "labelZh": "新鲜度和维护",
+      "pct": 63,
+      "weight": 4,
+      "score": 2.5,
+      "maxScore": 4
+    }
+  ],
+  "dimensionsAboveSixty": 8,
+  "dimensionCount": 11,
+  "aiBots": [
+    {
+      "bot": "GPTBot",
+      "tier": "T1",
+      "allowed": true
+    },
+    {
+      "bot": "OAI-SearchBot",
+      "tier": "T1",
+      "allowed": true
+    },
+    {
+      "bot": "ClaudeBot",
+      "tier": "T1",
+      "allowed": true
+    },
+    {
+      "bot": "anthropic-ai",
+      "tier": "T1",
+      "allowed": true
+    },
+    {
+      "bot": "PerplexityBot",
+      "tier": "T1",
+      "allowed": true
+    },
+    {
+      "bot": "Google-Extended",
+      "tier": "T1",
+      "allowed": true
+    },
+    {
+      "bot": "CCBot",
+      "tier": "T2",
+      "allowed": true
+    },
+    {
+      "bot": "Bytespider",
+      "tier": "T2",
+      "allowed": true
+    },
+    {
+      "bot": "meta-externalagent",
+      "tier": "T2",
+      "allowed": true
+    },
+    {
+      "bot": "Amazonbot",
+      "tier": "T2",
+      "allowed": true
+    },
+    {
+      "bot": "Applebot-Extended",
+      "tier": "T2",
+      "allowed": true
+    },
+    {
+      "bot": "ChatGPT-User",
+      "tier": "T2",
+      "allowed": true
+    },
+    {
+      "bot": "Claude-SearchBot",
+      "tier": "T2",
+      "allowed": true
+    },
+    {
+      "bot": "cohere-ai",
+      "tier": "T3",
+      "allowed": true
+    },
+    {
+      "bot": "DuckAssistBot",
+      "tier": "T3",
+      "allowed": true
+    },
+    {
+      "bot": "AI2Bot",
+      "tier": "T3",
+      "allowed": true
+    },
+    {
+      "bot": "xAI-Bot",
+      "tier": "T3",
+      "allowed": true
+    },
+    {
+      "bot": "Perplexity-User",
+      "tier": "T3",
+      "allowed": true
+    },
+    {
+      "bot": "YouBot",
+      "tier": "T3",
+      "allowed": true
+    },
+    {
+      "bot": "PetalBot",
+      "tier": "T3",
+      "allowed": true
+    }
+  ],
+  "negativeSignals": 0,
+  "negativeSignalPoints": 0,
+  "promptInjectionFlags": 2,
+  "promptInjectionPoints": 5,
+  "recommendationCount": 27,
+  "recommendations": [
+    {
+      "priority": "P0",
+      "text": "Has 1 area section(s) (need 2+)",
+      "impact": "AI Guidance (llms.txt)",
+      "dimensionKey": "aiGuidance"
+    },
+    {
+      "priority": "P0",
+      "text": "Article schema on blog posts",
+      "impact": "Structured Data (Schema)",
+      "dimensionKey": "structuredData"
+    },
+    {
+      "priority": "P0",
+      "text": "FAQPage schema on Q&A content",
+      "impact": "Structured Data (Schema)",
+      "dimensionKey": "structuredData"
+    },
+    {
+      "priority": "P0",
+      "text": "HowTo schema present",
+      "impact": "Structured Data (Schema)",
+      "dimensionKey": "structuredData"
+    },
+    {
+      "priority": "P0",
+      "text": "H1 present and descriptive",
+      "impact": "Content Quality",
+      "dimensionKey": "contentQuality"
+    },
+    {
+      "priority": "P0",
+      "text": "H1:0 H2:8 H3:7 hierarchy",
+      "impact": "Content Quality",
+      "dimensionKey": "contentQuality"
+    },
+    {
+      "priority": "P0",
+      "text": "Hidden text (display:none / visibility:hidden / color match) with substantive content",
+      "impact": "Prompt Injection Safety",
+      "dimensionKey": "promptInjection"
+    }
+  ]
+}
