@@ -253,25 +253,76 @@ function geoHide(el) {
 }
 
 var resultViewedTimer = null;
+// Monotonic token identifying the newest report. A report that has been
+// superseded (the visitor started another audit) must never report, even if its
+// own timer or IntersectionObserver fires late — otherwise one visit reports
+// result_viewed twice, the stale event carrying the previous report's score.
+var resultViewedRun = 0;
 // Fire result_viewed once the score header is actually seen (not just rendered),
 // to avoid systematically inflating the denominator on long reports.
+// gtag() only exists after the visitor opts in (Layout.astro + consent.js), so a
+// report rendered before consent must NOT consume the one-shot latch — otherwise
+// the event is dropped for good, which is exactly how result_viewed ended up
+// near-zero in GA4 while audit_completed kept arriving. Retry on a bounded
+// budget instead; once it is spent we disconnect and clear, so neither the
+// observer nor a timer is leaked.
 function setupResultViewed(root, r) {
   var header = root.querySelector('.stagger-section');
   if (!header) return;
+  var RETRY_MS = 1000;
+  var MAX_ATTEMPTS = 30;               // ~30s window for a late consent click
+  var run = ++resultViewedRun;         // supersedes any previous report
   var fired = false;
+  var attempts = 0;
   var observer = null;
+  var myTimer = null;
+  function canTrack() {
+    // Mirrors exactly what geoTrack() checks internally, so "not ready" here
+    // means geoTrack() would have been a silent no-op anyway.
+    return typeof window.geoTrack === 'function' && typeof window.gtag === 'function';
+  }
+  function stop() {
+    if (observer) { observer.disconnect(); observer = null; }
+    if (myTimer !== null) {
+      clearTimeout(myTimer);
+      // Only release the shared slot if it is still ours; a newer audit owns it otherwise.
+      if (resultViewedTimer === myTimer) resultViewedTimer = null;
+      myTimer = null;
+    }
+  }
+  function arm(delay) {
+    if (myTimer !== null) clearTimeout(myTimer);
+    myTimer = setTimeout(fire, delay);
+    // Keep the shared slot pointing at the live timer of the newest report, so
+    // the next setupResultViewed() cancels this chain instead of a dead id.
+    resultViewedTimer = myTimer;
+  }
   function fire() {
     if (fired) return;
-    fired = true;
-    if (typeof window.geoTrack === 'function') {
-      window.geoTrack('result_viewed', {
-        score: r.score,
-        score_bucket: scoreBucket(r.score),
-        level: r.level,
-        source_type: getGeoSource()
-      });
+    if (run !== resultViewedRun) { stop(); return; }   // superseded: never report
+    if (myTimer !== null) {
+      // The timer that brought us here (if any) is spent; drop it from the slot
+      // before deciding, so a retry below re-arms with a live id.
+      if (resultViewedTimer === myTimer) resultViewedTimer = null;
+      clearTimeout(myTimer);
+      myTimer = null;
     }
-    if (observer) observer.disconnect();
+    if (!canTrack()) {
+      // Consent has not arrived yet. Leave `fired` false so a later attempt can
+      // still send; no third-party request happens in the meantime.
+      attempts++;
+      if (attempts >= MAX_ATTEMPTS) { stop(); return; }
+      arm(RETRY_MS);
+      return;
+    }
+    fired = true;
+    if (observer) { observer.disconnect(); observer = null; }
+    window.geoTrack('result_viewed', {
+      score: r.score,
+      score_bucket: scoreBucket(r.score),
+      level: r.level,
+      source_type: getGeoSource()
+    });
   }
   if ('IntersectionObserver' in window) {
     observer = new IntersectionObserver(function(entries) {
@@ -281,9 +332,10 @@ function setupResultViewed(root, r) {
     }, { threshold: 0.5 });
     observer.observe(header);
   }
-  // 3s fallback to prevent coverage collapse if IO never fires
-  if (resultViewedTimer) clearTimeout(resultViewedTimer);
-  resultViewedTimer = setTimeout(fire, 3000);
+  // 3s fallback to prevent coverage collapse if IO never fires. A retry re-arms
+  // the same timer until the event lands or the budget runs out.
+  if (resultViewedTimer !== null) clearTimeout(resultViewedTimer);
+  arm(3000);
 }
 
 // Queried at call time so a mid-session preference change is honoured.
