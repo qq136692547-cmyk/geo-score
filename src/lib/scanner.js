@@ -29,12 +29,14 @@ async function auditUrl(url) {
   // burn one full proxy timeout, and a site that needed the proxy for both
   // batches paid it twice — measured at ~30s end to end. Only the content-page
   // fetch genuinely needs pageHtml, so it is still deferred.
+  const aboutUrl = `${origin}/about`;
+  const aboutPending = fetchResource(aboutUrl);
   const optionalPending = [
     fetchResource(`${origin}/.well-known/ai.txt`),
     fetchResource(`${origin}/ai/summary.json`, 'json'),
     fetchResource(`${origin}/ai/faq.json`, 'json'),
     fetchResource(`${origin}/sitemap.xml`),
-    fetchResource(`${origin}/about`),
+    aboutPending,
   ];
 
   // Core resources: if these fail, the audit cannot proceed
@@ -54,10 +56,18 @@ async function auditUrl(url) {
     );
   }
 
-  // Optional AI discovery endpoints: failure here should NOT abort the audit
+  // Optional AI discovery endpoints: failure here should NOT abort the audit.
+  //
+  // extractContentPageUrl falls back to /about when the page carries no blog
+  // link, and /about is already in flight from the batch above. Asking for the
+  // same URL twice costs one extra request and — because this batch only starts
+  // once the core batch has resolved — one extra full proxy timeout when the
+  // proxy is the slow part. Reusing the promise keeps combinedHtml byte-identical
+  // to today's output, so scores do not move.
+  const contentUrl = extractContentPageUrl(pageHtml, origin);
   const [aiTxt, aiSummary, aiFaq, sitemapXml, aboutHtml, contentHtml] = await Promise.allSettled([
     ...optionalPending,
-    fetchResource(extractContentPageUrl(pageHtml, origin)),
+    contentUrl === aboutUrl ? aboutPending : fetchResource(contentUrl),
   ]).then(function(results) {
     return results.map(function(r) { return r.status === 'fulfilled' ? r.value : null; });
   });

@@ -41,14 +41,19 @@ async function auditUrl(url) {
     );
   }
 
-  // Optional AI discovery endpoints: failure here should NOT abort the audit
+  // Optional AI discovery endpoints: failure here should NOT abort the audit.
+  // extractContentPageUrl falls back to /about, which is already being fetched
+  // below, so reuse that promise instead of requesting the same URL twice.
+  const aboutUrl = origin + '/about';
+  const aboutPending = fetchResource(aboutUrl);
+  const contentUrl = extractContentPageUrl(pageHtml, origin);
   const [aiTxt, aiSummary, aiFaq, sitemapXml, aboutHtml, contentHtml] = await Promise.allSettled([
     fetchResource(origin + '/.well-known/ai.txt'),
     fetchResource(origin + '/ai/summary.json', 'json'),
     fetchResource(origin + '/ai/faq.json', 'json'),
     fetchResource(origin + '/sitemap.xml'),
-    fetchResource(origin + '/about'),
-    fetchResource(extractContentPageUrl(pageHtml, origin)),
+    aboutPending,
+    contentUrl === aboutUrl ? aboutPending : fetchResource(contentUrl),
   ]).then(function (results) {
     return results.map(function (r) { return r.status === 'fulfilled' ? r.value : null; });
   });
