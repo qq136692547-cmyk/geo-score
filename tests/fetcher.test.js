@@ -112,6 +112,36 @@ describe('fetchResource 代理竞速', () => {
     await expect(fetchResource('https://example.com')).resolves.toBe('unwrapped-html');
   });
 
+  it('胜出的代理会掐掉其余仍在飞行的代理请求', async () => {
+    // 一个 headed 实测里，报告渲染完成时还有 27 个代理请求在飞且从未结算。
+    // 它们已经不可能改变结果，却要占着连接直到各自的 15s 超时。
+    const seen = [];
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async (url, opts) => {
+        const u = String(url);
+        seen.push({ url: u, signal: opts && opts.signal });
+        if (u === 'https://example.com') {
+          // 直连被 CORS 拦下，快速失败
+          await new Promise((r) => setTimeout(r, 10));
+          throw new Error('CORS');
+        }
+        if (u.startsWith(SELF_HOSTED)) {
+          await new Promise((r) => setTimeout(r, 30));
+          return { ok: true, status: 200, text: async () => 'winner', json: async () => ({}) };
+        }
+        // 其余代理永不结算，模拟真实的慢代理
+        return new Promise(() => {});
+      })
+    );
+
+    await expect(fetchResource('https://example.com')).resolves.toBe('winner');
+
+    const proxyCalls = seen.filter((s) => s.url !== 'https://example.com');
+    expect(proxyCalls.length).toBe(PROXIES.length);
+    expect(proxyCalls.every((s) => s.signal && s.signal.aborted)).toBe(true);
+  });
+
   it('corsproxy.io 已从代理列表中移除（它对每个请求都返回 401 需要 API key）', () => {
     expect(PROXIES.some((p) => p.url.includes('corsproxy.io'))).toBe(false);
   });

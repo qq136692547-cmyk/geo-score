@@ -22,9 +22,9 @@ var PROXIES = [
   { url: "https://api.codetabs.com/v1/proxy/?quest=", type: "raw" },
 ];
 
-async function tryProxy(proxy, url, type) {
+async function tryProxy(proxy, url, type, signal) {
   var proxyUrl = proxy.url + encodeURIComponent(url);
-  var proxyRes = await fetch(proxyUrl, { signal: AbortSignal.timeout(15000) });
+  var proxyRes = await fetch(proxyUrl, { signal: signal });
   if (!proxyRes.ok) {
     if (proxyRes.status >= 400 && proxyRes.status < 500) return { value: null, status: "notfound" };
     throw new Error("proxy " + proxyRes.status);
@@ -65,8 +65,16 @@ async function fetchResource(url, type) {
   // drop us into waiting out every remaining 15s timeout, even when a slower
   // proxy would still have returned usable content. Waiting for all is only the
   // right fallback once every proxy has genuinely failed.
+  // One controller covers the whole batch, and it is aborted on either of two
+  // events: the 15s budget running out, or a winner being known. Without the
+  // second case the losing requests stay in flight for their full timeout — a
+  // headed run measured 27 proxy requests still unresolved at the moment the
+  // report rendered. They cannot change the answer any more, and under
+  // HTTP/1.1 they just occupy connections that later fetches need.
+  var controller = new AbortController();
+  var timer = setTimeout(function() { controller.abort(); }, 15000);
   var proxyPromises = PROXIES.map(function(proxy) {
-    return tryProxy(proxy, url, type).catch(function() { return null; });
+    return tryProxy(proxy, url, type, controller.signal).catch(function() { return null; });
   });
 
   return new Promise(function(resolve) {
@@ -74,6 +82,8 @@ async function fetchResource(url, type) {
     function finish(value) {
       if (done) return;
       done = true;
+      clearTimeout(timer);
+      controller.abort();
       resolve(value);
     }
     proxyPromises.forEach(function(p) {
