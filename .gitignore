@@ -40,3 +40,6 @@ geo-fixes/
 
 # Temporary test scripts
 test_*.mjs
+
+# Google service account keys for tools/ga4-report.mjs (read-only GA4 access)
+secrets/
