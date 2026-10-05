@@ -4,13 +4,22 @@
  */
 
 var PROXIES = [
-  // Self-hosted Cloudflare Pages proxy — most reliable
+  // Self-hosted Cloudflare Pages proxy — the only one measured to still work.
   { url: "https://geo-score-proxy.pages.dev/api/proxy?url=", type: "raw" },
-  // Public proxies as fallback
+  // Public proxies as fallback.
+  //
+  // corsproxy.io used to be last here but is gone: it now answers
+  //   401 {"error":"A valid API key is required. Get one at https://console.corsproxy.io/"}
+  // for every request, so it only ever contributed a wasted round trip. It can
+  // come back if an API key is provisioned and sent, but until then it is dead
+  // weight.
+  //
+  // The remaining three are kept on purpose even though they time out from
+  // mainland-China networks: that timeout is not proof the service is down, and
+  // removing them would strip overseas visitors of their only fallback paths.
   { url: "https://api.allorigins.win/get?url=", type: "json-wrap" },
   { url: "https://api.allorigins.win/raw?url=", type: "raw" },
   { url: "https://api.codetabs.com/v1/proxy/?quest=", type: "raw" },
-  { url: "https://corsproxy.io/?url=", type: "raw" },
 ];
 
 async function tryProxy(proxy, url, type) {
@@ -48,30 +57,40 @@ async function fetchResource(url, type) {
     if (res.status >= 400 && res.status < 500) return null;
   } catch (_) {}
 
-  // 2) Race all proxies in parallel — first success wins
+  // 2) Try every proxy in parallel; the first one that actually succeeds wins.
+  //
+  // Promise.race by itself is not enough here: it settles on the first promise
+  // to *finish*, not the first to succeed. A single fast failure — the common
+  // case, since the self-hosted proxy answers in ~350ms — therefore used to
+  // drop us into waiting out every remaining 15s timeout, even when a slower
+  // proxy would still have returned usable content. Waiting for all is only the
+  // right fallback once every proxy has genuinely failed.
   var proxyPromises = PROXIES.map(function(proxy) {
     return tryProxy(proxy, url, type).catch(function() { return null; });
   });
 
-  // Add a promise that resolves to null after all proxies timeout
-  var allSettled = Promise.all(proxyPromises).then(function(results) {
-    // Find first successful result
-    for (var i = 0; i < results.length; i++) {
-      if (results[i] && results[i].status === "ok") return results[i].value;
-      if (results[i] && results[i].status === "notfound") return null;
+  return new Promise(function(resolve) {
+    var done = false;
+    function finish(value) {
+      if (done) return;
+      done = true;
+      resolve(value);
     }
-    return null;
+    proxyPromises.forEach(function(p) {
+      p.then(function(r) {
+        if (r && r.status === "ok") finish(r.value);
+        // A 4xx from a proxy means the resource genuinely is not there, so
+        // there is nothing left for the slower proxies to find either.
+        else if (r && r.status === "notfound") finish(null);
+      });
+    });
+    Promise.all(proxyPromises).then(function(results) {
+      for (var i = 0; i < results.length; i++) {
+        if (results[i] && results[i].status === "ok") return finish(results[i].value);
+      }
+      finish(null);
+    });
   });
-
-  // Also race for first success (faster than waiting for all)
-  var firstSuccess = Promise.race(proxyPromises).then(function(r) {
-    if (r && r.status === "ok") return r.value;
-    // If first to settle is notfound, wait for all
-    if (r && r.status === "notfound") return allSettled;
-    return allSettled;
-  });
-
-  return firstSuccess;
 }
 
 
