@@ -23,6 +23,20 @@ async function auditUrl(url) {
   const base = new URL(normalized);
   const origin = base.origin;
 
+  // The optional discovery endpoints below do not depend on the page HTML, so
+  // they start here rather than in a second batch after the core fetches.
+  // They used to wait, which doubled the audit's worst case: every fetch can
+  // burn one full proxy timeout, and a site that needed the proxy for both
+  // batches paid it twice — measured at ~30s end to end. Only the content-page
+  // fetch genuinely needs pageHtml, so it is still deferred.
+  const optionalPending = [
+    fetchResource(`${origin}/.well-known/ai.txt`),
+    fetchResource(`${origin}/ai/summary.json`, 'json'),
+    fetchResource(`${origin}/ai/faq.json`, 'json'),
+    fetchResource(`${origin}/sitemap.xml`),
+    fetchResource(`${origin}/about`),
+  ];
+
   // Core resources: if these fail, the audit cannot proceed
   const [robotsTxt, llmsTxt, pageResult] = await Promise.all([
     fetchResource(`${origin}/robots.txt`),
@@ -42,11 +56,7 @@ async function auditUrl(url) {
 
   // Optional AI discovery endpoints: failure here should NOT abort the audit
   const [aiTxt, aiSummary, aiFaq, sitemapXml, aboutHtml, contentHtml] = await Promise.allSettled([
-    fetchResource(`${origin}/.well-known/ai.txt`),
-    fetchResource(`${origin}/ai/summary.json`, 'json'),
-    fetchResource(`${origin}/ai/faq.json`, 'json'),
-    fetchResource(`${origin}/sitemap.xml`),
-    fetchResource(`${origin}/about`),
+    ...optionalPending,
     fetchResource(extractContentPageUrl(pageHtml, origin)),
   ]).then(function(results) {
     return results.map(function(r) { return r.status === 'fulfilled' ? r.value : null; });
