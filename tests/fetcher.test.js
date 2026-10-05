@@ -146,3 +146,72 @@ describe('fetchResource 代理竞速', () => {
     expect(PROXIES.some((p) => p.url.includes('corsproxy.io'))).toBe(false);
   });
 });
+
+/**
+ * 这两个用例的假 fetch **必须响应 signal**：被测的正是"到点就掐掉请求"，
+ * 而上面共用的 stubFetch 只按自己的 ms 兑现、完全无视 abort，
+ * 用它测预算等于测不到任何东西。
+ *
+ * 构造：所有请求都永不自行结算，只在被 abort 时才 reject。
+ * 于是 fetchResource 若没有主动掐断，用例就会挂住而不是"通过"。
+ */
+function stubNeverSettling(directMs) {
+  vi.stubGlobal(
+    'fetch',
+    vi.fn(async (url, opts) => {
+      const u = String(url);
+      const signal = opts && opts.signal;
+      if (u === 'https://example.com') {
+        // 直连：等 directMs 后被 CORS 拦下（directMs=0 表示永不结算）
+        if (directMs === 0) {
+          return new Promise((_, reject) => {
+            if (signal.aborted) return reject(new Error('aborted'));
+            signal.addEventListener('abort', () => reject(new Error('aborted')));
+          });
+        }
+        await new Promise((r) => setTimeout(r, directMs));
+        throw new Error('CORS');
+      }
+      return new Promise((_, reject) => {
+        if (signal.aborted) return reject(new Error('aborted'));
+        signal.addEventListener('abort', () => reject(new Error('aborted')));
+      });
+    })
+  );
+}
+
+describe('fetchResource 预算', () => {
+  it('budgetMs 到期就返回 null，不等默认的两个超时窗口', async () => {
+    stubNeverSettling(0);
+
+    const t0 = Date.now();
+    const value = await fetchResource('https://example.com', 'text', 300);
+    const elapsed = Date.now() - t0;
+
+    expect(value).toBeNull();
+    expect(elapsed).toBeGreaterThanOrEqual(250);
+    expect(elapsed).toBeLessThan(1500);
+  });
+
+  it('budgetMs 是总预算：直连用掉的时间从代理预算里扣', async () => {
+    // 直连 400ms 后才失败，预算 700ms ⇒ 代理只剩 ~300ms，而不是又拿满 15s。
+    stubNeverSettling(400);
+
+    const t0 = Date.now();
+    const value = await fetchResource('https://example.com', 'text', 700);
+    const elapsed = Date.now() - t0;
+
+    expect(value).toBeNull();
+    expect(elapsed).toBeGreaterThanOrEqual(380);
+    expect(elapsed).toBeLessThan(1800);
+  });
+
+  it('不传 budgetMs 时行为不变（仍能在慢速代理兑现时返回内容）', async () => {
+    stubFetch({
+      [SELF_HOSTED]: { ms: 50, fail: true },
+      [WRAPPED]: { ms: 600, status: 200, body: JSON.stringify({ contents: 'still-works' }) },
+      ...Object.fromEntries(REST.map((u) => [u, { ms: 15000, fail: true }])),
+    });
+    await expect(fetchResource('https://example.com')).resolves.toBe('still-works');
+  });
+});

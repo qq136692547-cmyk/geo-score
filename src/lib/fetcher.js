@@ -45,17 +45,32 @@ async function tryProxy(proxy, url, type, signal) {
   return { value: text, status: "ok" };
 }
 
-async function fetchResource(url, type) {
+var DIRECT_TIMEOUT_MS = 10000;
+var PROXY_BUDGET_MS = 15000;
+
+async function fetchResource(url, type, budgetMs) {
   if (!type) type = "text";
+
+  // budgetMs caps the whole call, not each stage: whatever the direct attempt
+  // spends is taken off the proxy batch. Without this a caller asking for a
+  // 3s answer could still wait 3s for the direct attempt and then a further
+  // 3s for the proxies. Omit it and the two default budgets apply unchanged.
+  var deadline = budgetMs > 0 ? Date.now() + budgetMs : null;
+  function leftFor(cap) {
+    if (deadline === null) return cap;
+    return Math.max(1, Math.min(cap, deadline - Date.now()));
+  }
 
   // 1) Try direct browser fetch
   try {
-    var res = await fetch(url, { signal: AbortSignal.timeout(10000), redirect: "follow" });
+    var res = await fetch(url, { signal: AbortSignal.timeout(leftFor(DIRECT_TIMEOUT_MS)), redirect: "follow" });
     if (res.ok) {
       return type === "json" ? await res.json() : await res.text();
     }
     if (res.status >= 400 && res.status < 500) return null;
   } catch (_) {}
+
+  if (deadline !== null && Date.now() >= deadline) return null;
 
   // 2) Try every proxy in parallel; the first one that actually succeeds wins.
   //
@@ -72,7 +87,7 @@ async function fetchResource(url, type) {
   // report rendered. They cannot change the answer any more, and under
   // HTTP/1.1 they just occupy connections that later fetches need.
   var controller = new AbortController();
-  var timer = setTimeout(function() { controller.abort(); }, 15000);
+  var timer = setTimeout(function() { controller.abort(); }, leftFor(PROXY_BUDGET_MS));
   var proxyPromises = PROXIES.map(function(proxy) {
     return tryProxy(proxy, url, type, controller.signal).catch(function() { return null; });
   });

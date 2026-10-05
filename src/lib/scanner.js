@@ -18,6 +18,16 @@ import { analyzePromptInjection } from './analyzers/promptInjection.js';
 import { computeScore } from './scoring.js';
 import { generateRecommendations } from './recommendations.js';
 
+// The content-page fetch is the only one that cannot start until the core
+// batch has resolved, so it is also the only one that can push an audit into a
+// second full proxy timeout — the 15s + 15s that produced the measured
+// 30,016ms run. It is also the only one the report can do without: the schema
+// and E-E-A-T analyzers take `pageHtml + aboutHtml + contentHtml`, so missing
+// it degrades two dimensions instead of failing the audit outright. Capping it
+// trades a little input for a bounded wait. 3000ms is ~3x the slowest healthy
+// sample measured (870ms for geoscore.help's blog page).
+var CONTENT_PAGE_BUDGET_MS = 3000;
+
 async function auditUrl(url) {
   const normalized = normalizeUrl(url);
   const base = new URL(normalized);
@@ -67,7 +77,7 @@ async function auditUrl(url) {
   const contentUrl = extractContentPageUrl(pageHtml, origin);
   const [aiTxt, aiSummary, aiFaq, sitemapXml, aboutHtml, contentHtml] = await Promise.allSettled([
     ...optionalPending,
-    contentUrl === aboutUrl ? aboutPending : fetchResource(contentUrl),
+    contentUrl === aboutUrl ? aboutPending : fetchResource(contentUrl, 'text', CONTENT_PAGE_BUDGET_MS),
   ]).then(function(results) {
     return results.map(function(r) { return r.status === 'fulfilled' ? r.value : null; });
   });
