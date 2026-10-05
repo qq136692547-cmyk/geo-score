@@ -119,6 +119,11 @@ import demo from '../../../data/demo-report.json';
     </div>
   </section>
 
+  <!-- 由 boot.js 在审计从工具页跳转而来时填充，标明本次审计的发起页。
+       刻意放在 #loading-section 与 #report-section 之外：它要在扫描动画结束后
+       继续存在，并在报告替换报告容器后仍然可见。 -->
+  <div id="audit-origin" class="hidden max-w-2xl mx-auto mb-4"></div>
+
   <div id="loading-section" class="hidden max-w-lg mx-auto py-12">
     <div class="card p-8 text-center">
       <div class="scan-bar rounded-full mb-8"></div>

@@ -120,6 +120,12 @@ import demo from '../../data/demo-report.json';
     </div>
   </section>
 
+  <!-- Filled by boot.js when the audit was bounced off a tool page, so the run
+       is labelled with where it started. Sits outside #loading-section and
+       #report-section deliberately: it has to outlive the scan animation and
+       still be visible once the report replaces the report container. -->
+  <div id="audit-origin" class="hidden max-w-2xl mx-auto mb-4"></div>
+
   <div id="loading-section" class="hidden max-w-lg mx-auto py-12">
     <div class="card p-8 text-center">
       <div class="scan-bar rounded-full mb-8"></div>

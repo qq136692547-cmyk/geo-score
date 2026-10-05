@@ -160,7 +160,13 @@ window.startAudit = async function (entryPoint) {
     // Pages without the audit containers (e.g. /tools/*) bounce to the homepage
     // audit flow, which owns the loading + report UI. entry_point is preserved via &src=.
     var base = /^\/zh(\/|$)/.test(window.location.pathname) ? '/zh/' : '/';
-    window.location.href = base + '?audit=' + encodeURIComponent(url) + '&src=tool_page';
+    // Carry the originating tool's slug along. A headed-browser run measured
+    // the bounce itself at 329ms, so the jump is not what loses people — what
+    // loses them is that the landing page carries no trace of where the audit
+    // came from (verified: anySrcIndicatorInReport = false). The homepage uses
+    // this to label the run.
+    var slug = window.location.pathname.replace(/\/+$/, '').split('/').pop() || '';
+    window.location.href = base + '?audit=' + encodeURIComponent(url) + '&src=tool_page&tool=' + encodeURIComponent(slug);
     return;
   }
   // Keep (or restore) the pristine loading markup so "Try Again" can re-run in place.
@@ -576,6 +582,35 @@ async function submitLead(ctaId, r) {
   }
 }
 
+// --- Attribution for audits that were bounced off a tool page ---------------
+// The tool pages have no #loading-section / #report-section, so a run started
+// there executes here. Without this label the visitor lands on a page with a
+// different h1, Home highlighted in the nav and a generic scan panel, and the
+// only sensible reading in the first few seconds is "I clicked the wrong
+// thing". The slug is validated against the known tool pages and rendered with
+// textContent, so a hand-crafted ?tool= cannot inject markup.
+var TOOL_PAGE_NAMES = {
+  'llms-txt-checker': 'llms.txt Checker',
+  'ai-readiness-score': 'AI Readiness Score',
+  'robots-txt-ai-checker': 'robots.txt AI Checker'
+};
+
+function showAuditOrigin(slug) {
+  var host = document.getElementById('audit-origin');
+  if (!host || !slug) return;
+  if (!Object.prototype.hasOwnProperty.call(TOOL_PAGE_NAMES, slug)) return;
+  var name = TOOL_PAGE_NAMES[slug];
+  var box = document.createElement('div');
+  box.className = 'card p-3 text-sm text-gray-400 text-center';
+  box.appendChild(document.createTextNode(t('Audit started from ', '本次审计发起自 ')));
+  var strong = document.createElement('strong');
+  strong.className = 'text-white';
+  strong.textContent = name;
+  box.appendChild(strong);
+  host.appendChild(box);
+  host.classList.remove('hidden');
+}
+
 // --- Bootstrap: attach click listeners (replaces onclick) ---
 document.addEventListener("DOMContentLoaded", function() {
   var ab = document.getElementById("audit-btn");
@@ -609,6 +644,7 @@ document.addEventListener("DOMContentLoaded", function() {
     if (!/^https?:\/\//i.test(cleanUrl)) cleanUrl = 'https://' + cleanUrl;
     var urlInput = document.getElementById('url-input');
     if (urlInput) urlInput.value = cleanUrl.replace(/^https?:\/\//, '');
+    if (params.get('src') === 'tool_page') showAuditOrigin(params.get('tool'));
     setTimeout(function() { window.startAudit(params.get('src') || 'share_link'); }, 300);
   }
 
