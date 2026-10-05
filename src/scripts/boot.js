@@ -607,6 +607,9 @@ function showAuditOrigin(slug) {
   strong.className = 'text-white';
   strong.textContent = name;
   box.appendChild(strong);
+  // 清空再挂：这个函数是往容器里 append 的，重复调用会叠出第二条标识。
+  // 目前每次加载只调用一次，但让它幂等不花钱。
+  host.textContent = '';
   host.appendChild(box);
   host.classList.remove('hidden');
 }

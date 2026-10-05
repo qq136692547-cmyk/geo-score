@@ -30,10 +30,9 @@ if (START < 0 || END < 0) throw new Error('找不到 showAuditOrigin 片段，�
 const SLICE = BOOT_SRC.slice(START, END);
 
 function makeEl(tag) {
-  return {
+  const el = {
     tag,
     className: '',
-    textContent: '',
     children: [],
     classList: {
       removed: [],
@@ -41,6 +40,14 @@ function makeEl(tag) {
     },
     appendChild(child) { this.children.push(child); return child; },
   };
+  // 真实 DOM 里给 textContent 赋值会清空子节点，这正是幂等性的依据；
+  // stub 必须照做，否则测出来的是 stub 的行为而不是浏览器的行为。
+  let text = '';
+  Object.defineProperty(el, 'textContent', {
+    get() { return text; },
+    set(v) { text = v; el.children.length = 0; },
+  });
+  return el;
 }
 
 function run({ hostId, slug, lang }) {
@@ -65,18 +72,17 @@ describe('showAuditOrigin', () => {
     expect(host.classList.removed).toContain('hidden');
     expect(host.children.length).toBe(1);
     const box = host.children[0];
-    expect(box.textContent).toBe('');
-    // 文案 + 工具名都进了子树
-    const flat = JSON.stringify(box.children);
-    expect(flat).toContain('llms.txt Checker');
-    expect(flat).toContain('Audit started from ');
+    expect(box.children.length).toBe(2);
+    expect(box.children[0].textContent).toBe('Audit started from ');
+    expect(box.children[1].tag).toBe('strong');
+    expect(box.children[1].textContent).toBe('llms.txt Checker');
   });
 
   it('中文站用中文引导文案', () => {
     const { host } = run({ hostId: 'audit-origin', slug: 'ai-readiness-score', lang: 'zh' });
-    const flat = JSON.stringify(host.children[0].children);
-    expect(flat).toContain('本次审计发起自');
-    expect(flat).toContain('AI Readiness Score');
+    const box = host.children[0];
+    expect(box.children[0].textContent).toBe('本次审计发起自 ');
+    expect(box.children[1].textContent).toBe('AI Readiness Score');
   });
 
   it('未知 slug 一律不渲染 —— 这是 XSS 防线，不是可选项', () => {
@@ -85,6 +91,13 @@ describe('showAuditOrigin', () => {
       expect(host.children.length, `slug=${slug} 不该渲染`).toBe(0);
       expect(host.classList.removed).toEqual([]);
     }
+  });
+
+  it('重复调用不叠加（Try Again 场景）', () => {
+    const { host, ctx } = run({ hostId: 'audit-origin', slug: 'llms-txt-checker', lang: 'en' });
+    ctx.showAuditOrigin('llms-txt-checker');
+    ctx.showAuditOrigin('llms-txt-checker');
+    expect(host.children.length).toBe(1);
   });
 
   it('容器不存在时静默返回，不抛错', () => {
