@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import Adsterra from '../components/Adsterra.astro';
+import { alternates } from '../lib/hreflang.js';
 export interface Props {
   title?: string;
   description?: string;
@@ -9,6 +10,9 @@ export interface Props {
 const { title = 'GeoScore - GEO Audit Tool', description = 'Check your website visibility to AI search engines. Free GEO audit tool.', schema } = Astro.props;
 const path = Astro.url.pathname;
 const isBlog = path === '/blog' || path.startsWith('/blog/');
+// null for pages with no Chinese counterpart (most blog posts): a one-sided
+// hreflang would point at a 404, which is worse than none.
+const alt = alternates(Astro.site, path);
 ---
 <!DOCTYPE html>
 <html lang="en" class="dark">
@@ -29,6 +33,9 @@ const isBlog = path === '/blog' || path.startsWith('/blog/');
   <meta name="twitter:image" content="https://geoscore.help/og-image.png" />
     <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
   <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site).href} />
+  {alt && <link rel="alternate" hreflang="en" href={alt.en} />}
+  {alt && <link rel="alternate" hreflang="zh-CN" href={alt.zh} />}
+  {alt && <link rel="alternate" hreflang="x-default" href={alt.xDefault} />}
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="dns-prefetch" href="https://github.com" />
   <title>{title}</title>
