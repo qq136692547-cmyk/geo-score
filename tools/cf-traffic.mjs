@@ -41,6 +41,17 @@
 //   Cloudflare rejects any query wider than 13w2d (93 days) with
 //   "cannot request a time range wider than...". Query per-day to stay under it.
 //
+// WHY IT QUERIES PER DAY AND NOT PER WINDOW -- measured, not assumed.
+//   A single query covering 2026-09-26..10-06 returned 270 pv in 6 buckets
+//   (110, 100, 20, 20, 10, 10). The same span queried day by day returned 320
+//   pv across 21 buckets. The 50 pv difference is entirely small buckets that
+//   the wide query never returned -- orderBy:[count_DESC] with any limit,
+//   including 500, still returned only those 6.
+//
+//   So a multi-day query silently undercounts, and it undercounts exactly the
+//   low-traffic days a quiet site is made of. Raising `limit` does not fix it.
+//   Query one day at a time.
+//
 // USAGE (proxy prefix required on this machine -- see MEMORY.md)
 //   set -a && . secrets/cf.env && set +a
 //   HTTP_PROXY=http://127.0.0.1:10809 HTTPS_PROXY=http://127.0.0.1:10809 \
