@@ -159,8 +159,18 @@ for (const row of ga.rows || []) {
 // ---------- denominator: Cloudflare Web Analytics, everyone ----------
 const CF_TOKEN = process.env.CF_API_TOKEN;
 const ACCOUNT_TAG = process.env.CF_ACCOUNT_TAG;
-// Taken from the injected beacon on the live page: data-cf-beacon '{"token":"..."}'
-const SITE_TAG = process.env.CF_SITE_TAG || '97fd80785ec8477ea3027b50e0f333ce';
+// The siteTag MUST come from the Analytics API, not from the page beacon.
+//
+// The old default was scraped out of the injected data-cf-beacon attribute on
+// the live homepage and was simply WRONG: filtering on it returned 0 rows for
+// every window, which looked like "Cloudflare has no data" for two rounds.
+//
+// Correct value (2026-10-07, from an unfiltered rumPageloadEventsAdaptiveGroups
+// query listing siteTag per requestHost):
+//   geoscore.help -> aae87fe93a3041d6b528a41c3ec00c29
+// The account also hosts ag.anan.lat / cpa.anan.lat under a different tag, so
+// guessing the tag from a page is not safe here.
+const SITE_TAG = process.env.CF_SITE_TAG || 'aae87fe93a3041d6b528a41c3ec00c29';
 
 let cf = null;
 if (!CF_TOKEN || !ACCOUNT_TAG) {
