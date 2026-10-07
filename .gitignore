@@ -2,7 +2,11 @@
 node_modules/
 
 # Build output
+# dist.bak-<timestamp> is the old dist moved aside before a rebuild: Astro's
+# cleanServerOutput deletes >50 files at once, which trips the bulk-delete guard.
 dist/
+dist.bak-*/
+dist-verify/
 
 # Temp scripts
 _*.py
