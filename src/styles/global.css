@@ -1,13 +1,6 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
-/* Tailwind v4 class detection walks the whole project. These two files are
-   build leftovers that are not imported by any page, but their class strings
-   were still being compiled into dist CSS. Paths resolve relative to THIS file
-   (src/styles/global.css). */
-@source not "../inline_bundle.js";
-@source not "../bundle.generated.js";
-
 @theme {
   /* Brand: GEO Green */
   --color-geo-50: #f0fdf4;
