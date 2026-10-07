@@ -155,7 +155,7 @@ const alt = alternates(Astro.site, path);
   <!-- JSON-LD: WebApplication (global) + page-specific schema via @graph -->
   <script is:inline type="application/ld+json" set:html={JSON.stringify(schema ? {
     '@context': 'https://schema.org',
-    '@graph': [schema, {
+    '@graph': [...(Array.isArray(schema) ? schema : [schema]), {
     '@context': 'https://schema.org',
     '@type': 'WebApplication',
     name: 'GeoScore',

@@ -2,25 +2,64 @@
 import Layout from '../../layouts/Layout.astro';
 import demo from '../../../data/demo-report.json';
 ---
-<Layout title="AI Readiness Score — Check Your Site's AI Search Visibility | GeoScore"
-  schema={{
-    '@context': 'https://schema.org',
-    '@type': 'SoftwareApplication',
-    name: 'AI Readiness Score',
-    description: 'Get a 0-100 score showing how well AI search engines like ChatGPT, Perplexity, and Google AI Overviews can discover, understand, and cite your website across 11 dimensions.',
-    url: 'https://geoscore.help/tools/ai-readiness-score/',
-    applicationCategory: 'SEO Tool',
-    operatingSystem: 'Any',
-    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
-    isPartOf: { '@type': 'WebApplication', name: 'GeoScore', url: 'https://geoscore.help' }
-  }}
+<Layout title="Website AI Readiness Score — Is Your Site AI-Ready? | GeoScore"
+  schema={[
+    {
+      '@context': 'https://schema.org',
+      '@type': 'SoftwareApplication',
+      name: 'Website AI Readiness Score',
+      description: 'Get a 0-100 score showing how well AI search engines like ChatGPT, Perplexity, and Google AI Overviews can discover, understand, and cite your website across 11 dimensions.',
+      url: 'https://geoscore.help/tools/ai-readiness-score/',
+      applicationCategory: 'SEO Tool',
+      operatingSystem: 'Any',
+      offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+      isPartOf: { '@type': 'WebApplication', name: 'GeoScore', url: 'https://geoscore.help' }
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: [
+        {
+          '@type': 'Question',
+          name: 'How do I make my website AI ready?',
+          acceptedAnswer: { '@type': 'Answer', text: 'Start with three things a crawler can see without running JavaScript: allow GPTBot, ClaudeBot, PerplexityBot and Google-Extended in robots.txt; publish an llms.txt file at your domain root; and add Organization plus WebSite JSON-LD so AI engines can resolve who you are. Then make sure each key page states its answer in the first sentence under a clear heading — AI engines extract passages, not whole pages.' }
+        },
+        {
+          '@type': 'Question',
+          name: 'How do I check if my website is crawlable by AI bots?',
+          acceptedAnswer: { '@type': 'Answer', text: 'Fetch yourdomain.com/robots.txt and look for Disallow rules matching GPTBot, ClaudeBot, PerplexityBot, Google-Extended or CCBot. A broad Disallow: / aimed at training crawlers also blocks the search and answer crawlers that decide whether you appear in AI answers. GeoScore checks 20 AI crawlers across three priority tiers and reports exactly which ones your robots.txt blocks.' }
+        },
+        {
+          '@type': 'Question',
+          name: 'How can I tell if my website is visible in AI search?',
+          acceptedAnswer: { '@type': 'Answer', text: 'Traditional analytics will not show it, because AI answers often produce no click. Measure it three ways: watch server logs for GPTBot and PerplexityBot hits, ask ChatGPT or Perplexity about your category and see whether your brand appears, and track impressions in Google Search Console for AI Overviews related queries. A GEO audit covers the technical half — whether AI engines can reach, parse and attribute your content at all.' }
+        },
+        {
+          '@type': 'Question',
+          name: 'Why is my website not showing up in ChatGPT answers?',
+          acceptedAnswer: { '@type': 'Answer', text: 'The usual causes, in order of frequency: a robots.txt rule blocking the AI crawler, content that only renders after JavaScript runs, no structured data telling the model what the page is about, and no third-party sources mentioning your brand. Language models cite pages they can fetch, parse and corroborate. Crawlability and schema are the part you control directly.' }
+        },
+        {
+          '@type': 'Question',
+          name: 'How do I get my website cited by AI search engines?',
+          acceptedAnswer: { '@type': 'Answer', text: 'Being fetchable is necessary but not sufficient. AI engines tend to cite sources that answer a question directly in the first sentence, carry clear authorship and dates, are corroborated elsewhere on the web, and use schema that makes claims machine-readable. Original data, named examples and specific numbers get quoted far more often than general advice.' }
+        },
+        {
+          '@type': 'Question',
+          name: 'What is a good AI readiness score for a website?',
+          acceptedAnswer: { '@type': 'Answer', text: 'GeoScore rates 0 to 100 across 11 dimensions. 86 and above means AI engines can reach, parse and attribute your content with few blockers. 68 to 85 is a solid foundation with specific gaps. 36 to 67 means AI engines will struggle to understand the site. Below 36 the site is close to invisible to AI search. The score is diagnostic — it measures readiness, not guaranteed placement.' }
+        }
+      ]
+    }
+  ]}
 >
   <section class="max-w-4xl mx-auto">
     <div class="text-center mb-10">
       <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-brand-500/10 text-brand-400 border border-brand-500/20 mb-4">
         Free Tool
       </div>
-      <h1 class="text-4xl font-extrabold mb-3">AI Readiness Score</h1>
+      <h1 class="text-4xl font-extrabold mb-3">Website AI Readiness Score</h1>
+      <p class="text-gray-400 max-w-2xl mx-auto">This scores a <strong class="text-gray-200">website</strong> for AI search — whether ChatGPT, Perplexity and Google AI Overviews can crawl, parse and cite it. It is not an enterprise AI maturity assessment of your data, teams or internal processes.</p>
     </div>
 
     <div class="card p-8 mb-8">
@@ -91,6 +130,28 @@ import demo from '../../../data/demo-report.json';
           <div><strong class="text-white">Critical</strong> <span class="text-gray-400 text-sm">— Your site is nearly invisible to AI search.</span></div>
         </div>
       </div>
+    </div>
+
+    <div class="card p-8 mt-8">
+      <h2 class="text-2xl font-bold mb-6">Frequently Asked Questions</h2>
+
+      <h3 class="text-lg font-bold text-white mt-6 mb-2">How do I make my website AI ready?</h3>
+      <p class="text-gray-400">Start with three things a crawler can see without running JavaScript: allow GPTBot, ClaudeBot, PerplexityBot and Google-Extended in robots.txt; publish an llms.txt file at your domain root; and add Organization plus WebSite JSON-LD so AI engines can resolve who you are. Then make sure each key page states its answer in the first sentence under a clear heading — AI engines extract passages, not whole pages.</p>
+
+      <h3 class="text-lg font-bold text-white mt-6 mb-2">How do I check if my website is crawlable by AI bots?</h3>
+      <p class="text-gray-400">Fetch yourdomain.com/robots.txt and look for Disallow rules matching GPTBot, ClaudeBot, PerplexityBot, Google-Extended or CCBot. A broad <code class="text-geo-400">Disallow: /</code> aimed at training crawlers also blocks the search and answer crawlers that decide whether you appear in AI answers. GeoScore checks 20 AI crawlers across three priority tiers and reports exactly which ones your robots.txt blocks — try the <a href="/tools/robots-txt-ai-checker/" class="text-geo-400 hover:underline">robots.txt AI crawler checker</a>.</p>
+
+      <h3 class="text-lg font-bold text-white mt-6 mb-2">How can I tell if my website is visible in AI search?</h3>
+      <p class="text-gray-400">Traditional analytics will not show it, because AI answers often produce no click. Measure it three ways: watch server logs for GPTBot and PerplexityBot hits, ask ChatGPT or Perplexity about your category and see whether your brand appears, and track impressions in Google Search Console for AI Overviews related queries. A GEO audit covers the technical half — whether AI engines can reach, parse and attribute your content at all.</p>
+
+      <h3 class="text-lg font-bold text-white mt-6 mb-2">Why is my website not showing up in ChatGPT answers?</h3>
+      <p class="text-gray-400">The usual causes, in order of frequency: a robots.txt rule blocking the AI crawler, content that only renders after JavaScript runs, no structured data telling the model what the page is about, and no third-party sources mentioning your brand. Language models cite pages they can fetch, parse and corroborate. Crawlability and schema are the part you control directly.</p>
+
+      <h3 class="text-lg font-bold text-white mt-6 mb-2">How do I get my website cited by AI search engines?</h3>
+      <p class="text-gray-400">Being fetchable is necessary but not sufficient. AI engines tend to cite sources that answer a question directly in the first sentence, carry clear authorship and dates, are corroborated elsewhere on the web, and use schema that makes claims machine-readable. Original data, named examples and specific numbers get quoted far more often than general advice.</p>
+
+      <h3 class="text-lg font-bold text-white mt-6 mb-2">What is a good AI readiness score for a website?</h3>
+      <p class="text-gray-400">GeoScore rates 0 to 100 across 11 dimensions. 86 and above means AI engines can reach, parse and attribute your content with few blockers. 68 to 85 is a solid foundation with specific gaps. 36 to 67 means AI engines will struggle to understand the site. Below 36 the site is close to invisible to AI search. The score is diagnostic — it measures readiness, not guaranteed placement.</p>
     </div>
   </section>
 </Layout>

@@ -43,3 +43,8 @@ test_*.mjs
 
 # Google service account keys for tools/ga4-report.mjs (read-only GA4 access)
 secrets/
+
+# Browser automation leftovers (temp profile holds a live Google session)
+.tmp-*/
+.tmp-*.png
+gsc-scrape-*.json

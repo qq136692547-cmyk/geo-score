@@ -27,6 +27,7 @@
 
 import { readFileSync } from 'node:fs';
 import { createSign } from 'node:crypto';
+import { winnable, winnableShare } from './gsc-winnable.js';
 
 const arg = (k, d) => {
   const i = process.argv.indexOf(k);
@@ -92,14 +93,14 @@ const end = new Date(Date.now() - 864e5);
 const start = new Date(end.getTime() - (DAYS - 1) * 864e5);
 const iso = (d) => d.toISOString().slice(0, 10);
 
-async function query(dimensions) {
+async function query(dimensions, startRow = 0, rowLimit = LIMIT) {
   const r = await fetch(
     `https://searchconsole.googleapis.com/webmasters/v3/sites/${encodeURIComponent(site.siteUrl)}/searchAnalytics/query`,
     {
       method: 'POST', headers: hdr,
       body: JSON.stringify({
         startDate: iso(start), endDate: iso(end),
-        dimensions, rowLimit: LIMIT, startRow: 0,
+        dimensions, rowLimit, startRow,
       }),
     }
   );
@@ -108,11 +109,42 @@ async function query(dimensions) {
   return j.rows || [];
 }
 
+// Page through every row. WHY: GSC sorts by clicks descending, and this site has
+// ~2 clicks total, so a plain top-N cut is ordered by an almost-constant key and
+// can silently drop the rows that matter. Only a full walk makes the winnable
+// screen below trustworthy.
+async function queryAll(dimensions, pageSize = 250, cap = 20000) {
+  const all = [];
+  let startRow = 0;
+  while (startRow < cap) {
+    const rows = await query(dimensions, startRow, pageSize);
+    all.push(...rows);
+    if (rows.length < pageSize) break;
+    startRow += pageSize;
+  }
+  return all;
+}
+
 console.log(`窗口 ${iso(start)} → ${iso(end)}（${DAYS} 天）\n`);
 
+// Denominator first: an empty dimensions array returns the window aggregate.
+// Every number below must be readable against this, never on its own.
+const totalRows = await query([]);
+const windowImpressions = totalRows.length ? Number(totalRows[0].impressions) : 0;
+if (totalRows.length) {
+  const t = totalRows[0];
+  console.log(
+    `窗口总计：展示 ${t.impressions}  点击 ${t.clicks}  ` +
+      `CTR ${t.ctr ? (t.ctr * 100).toFixed(2) + '%' : '—'}  均排 ${t.position ? t.position.toFixed(1) : '—'}`
+  );
+  console.log('（下面各维度只取 top N，是总计的子集，不能直接相加当作总量）\n');
+}
+
+let queryRows = [];
 for (const [label, dim] of [['查询词', ['query']], ['页面', ['page']], ['国家', ['country']]]) {
-  const rows = await query(dim);
-  console.log(`=== ${label} top ${rows.length} ===`);
+  const rows = dim[0] === 'query' ? await queryAll(dim) : await query(dim);
+  if (dim[0] === 'query') queryRows = rows;
+  console.log(`=== ${label} ${dim[0] === 'query' ? '全量' : 'top'} ${rows.length} ===`);
   if (!rows.length) { console.log('  （无数据）\n'); continue; }
   console.log('  展示'.padStart(7) + '点击'.padStart(6) + 'CTR'.padStart(7) + '均排'.padStart(7) + '   ' + label);
   for (const r of rows) {
@@ -126,6 +158,34 @@ for (const [label, dim] of [['查询词', ['query']], ['页面', ['page']], ['�
   }
   console.log();
 }
+
+// The decision-grade output: which queries are close enough that a rewrite
+// could actually move them. Everything else is noise at this volume.
+console.log('=== 可赢词（均排 <= 30 且展示 >= 3）===');
+const win = winnable(queryRows);
+if (!win.length) {
+  console.log('  没有。全部查询词均排都在 30 名以外。');
+  console.log('  ⇒ 改标题 / 改 meta 对这站目前无效，别在这上面花时间。\n');
+} else {
+  console.log('  展示'.padStart(7) + '点击'.padStart(6) + '均排'.padStart(7) + '   查询词');
+  for (const r of win) {
+    console.log(
+      String(r.impressions).padStart(7) +
+      String(r.clicks).padStart(6) +
+      (r.position ? r.position.toFixed(1) : '—').padStart(7) + '   ' + (r.keys[0] || '').slice(0, 70)
+    );
+  }
+  console.log();
+}
+const share = winnableShare(queryRows, windowImpressions);
+if (share) {
+  console.log(
+    `可赢词展示 ${share.sum} / 窗口总展示 ${share.total} = ${(share.share * 100).toFixed(1)}%` +
+      `（查询词共 ${queryRows.length} 条，已全量分页取回）`
+  );
+}
+console.log('口径：可赢词按"整窗口平均排名"筛选；一个词若只在某天排到第 5、其余时间在第 60，');
+console.log('      平均值仍会被拉高而落选 —— 所以这是**下界**，不是全部机会。\n');
 
 console.log('口径：');
 console.log('  · GSC 展示/点击与 CF/GA4 的 pv 完全不同源，不可相除、不可对比趋势');

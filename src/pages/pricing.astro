@@ -4,26 +4,40 @@ import Layout from '../layouts/Layout.astro';
 <Layout title="GeoScore Pricing - Free & Pro Plans" schema={{
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
+  // 这份 mainEntity 必须与页面下方 "Pricing FAQ" 区块逐条对齐。
+  // 之前的版本声明了 'Is GeoScore free?' 与 'What is included in the Pro plan?'，
+  // 但页面上显示的是另外一组问题——schema 里的答案用户看不到，属于不一致，
+  // 会被判为无资格显示富媒体结果。tests/faq-schema-consistency.test.js 守住这条。
   mainEntity: [
     {
       '@type': 'Question',
-      name: 'Is GeoScore free?',
-      acceptedAnswer: { '@type': 'Answer', text: 'The open-source single browser audit, CLI, and MCP Server are free. Optional Pro plans include paid cloud monitoring and history.' }
-    },
-    {
-      '@type': 'Question',
-      name: 'What is included in the Pro plan?',
-      acceptedAnswer: { '@type': 'Answer', text: 'Pro includes weekly automated audits, 30-day audit history, regression alerts, and PDF export for $9/month with a 7-day free trial.' }
+      name: 'Is GeoScore really free?',
+      acceptedAnswer: { '@type': 'Answer', text: 'Single browser audits, the CLI, and the MCP Server are free. Sign-in is optional; Pro monitoring and history are paid. The source code is MIT-licensed on GitHub.' }
     },
     {
       '@type': 'Question',
       name: 'Do I need a credit card to start?',
-      acceptedAnswer: { '@type': 'Answer', text: 'No credit card required for the Free plan. The Pro plan includes a 7-day free trial — your card is only charged after the trial ends.' }
+      acceptedAnswer: { '@type': 'Answer', text: 'No credit card required for the Free plan. Pro monthly includes a 7-day free trial — your card is only charged after the trial ends. Pro annual is paid upfront for $79 and does not include a trial.' }
     },
     {
       '@type': 'Question',
-      name: 'Will Studio and Agency be available?',
-      acceptedAnswer: { '@type': 'Answer', text: 'Yes. Studio ($29/mo) and Agency ($59/mo) are coming soon. Follow the project on GitHub to be notified when they launch.' }
+      name: 'Can I cancel anytime?',
+      acceptedAnswer: { '@type': 'Answer', text: 'Yes. Cancel anytime from the customer portal. You keep access until the end of your billing period.' }
+    },
+    {
+      '@type': 'Question',
+      name: 'How is GeoScore different from GeoReady?',
+      acceptedAnswer: { '@type': 'Answer', text: 'GeoScore is open-source (MIT), supports Chinese, includes CLI and MCP Server, and offers prompt injection detection in its free browser audit. GeoReady charges $9-89/month for similar monitoring features.' }
+    },
+    {
+      '@type': 'Question',
+      name: 'Do you handle VAT and taxes?',
+      acceptedAnswer: { '@type': 'Answer', text: 'Yes. As a Merchant of Record, our payment partner Creem handles VAT, GST, and sales tax compliance in 190+ countries.' }
+    },
+    {
+      '@type': 'Question',
+      name: 'When will Studio and Agency be available?',
+      acceptedAnswer: { '@type': 'Answer', text: 'Studio and Agency are coming soon. We are launching with Pro first to validate the workflow. Watch our GitHub repository for updates.' }
     }
   ]
 }}>

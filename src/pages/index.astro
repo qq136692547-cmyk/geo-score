@@ -19,7 +19,7 @@ import demo from '../../data/demo-report.json';
       name: 'How is GEO different from SEO?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'SEO optimizes for ranked lists of blue links on search engines like Google and Bing. GEO optimizes for being cited as a source in AI-generated answers. They overlap heavily &mdash; good content, structured data, and authority help both &mdash; but GEO requires explicit AI-crawler allowance in robots.txt, an llms.txt file, and machine-parseable schema for AI models.'
+        text: 'SEO optimizes for ranked lists of blue links on search engines like Google and Bing. GEO optimizes for being cited as a source in AI-generated answers. They overlap heavily — good content, structured data, and authority help both — but GEO requires explicit AI-crawler allowance in robots.txt, an llms.txt file, and machine-parseable schema for AI models.'
       }
     },
     {
@@ -52,6 +52,30 @@ import demo from '../../data/demo-report.json';
       acceptedAnswer: {
         '@type': 'Answer',
         text: 'At minimum, allow: GPTBot and OAI-SearchBot (OpenAI/ChatGPT), ClaudeBot and anthropic-ai (Anthropic/Claude), PerplexityBot (Perplexity), Google-Extended (Google Gemini and AI Overviews), and CCBot (Common Crawl, used by many models). GeoScore will tell you exactly which crawlers you are currently blocking.'
+      }
+    },
+    {
+      '@type': 'Question',
+      name: 'How do I appear in AI search results?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Three things have to line up. The crawler must be allowed to fetch the page, the content must be readable without JavaScript, and the page must state its answer plainly under a heading that matches the question. AI engines assemble answers from passages they can quote, so a page that answers one question well beats a page that mentions the topic ten times.'
+      }
+    },
+    {
+      '@type': 'Question',
+      name: 'How do I get my website cited by ChatGPT?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'ChatGPT cites pages it can fetch and corroborate. In practice that means allowing OAI-SearchBot and GPTBot in robots.txt, publishing content with named authors and dates, and making sure other sites reference you. Original data and specific numbers get quoted; general advice usually does not.'
+      }
+    },
+    {
+      '@type': 'Question',
+      name: 'How do I make my website AI ready?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Allow the AI crawlers, ship an llms.txt file, add Organization and WebSite JSON-LD, and put a direct answer in the first sentence under each major heading. GeoScore audits all of this in one pass and produces the fix files you need to deploy.'
       }
     }
   ]
@@ -279,6 +303,38 @@ import demo from '../../data/demo-report.json';
           <p class="text-gray-400 text-sm">Free single browser audits — open-source, with optional Pro monitoring</p>
         </div>
       </div>
+    </div>
+
+    <!-- FAQ：这些问答同时以 FAQPage JSON-LD 声明。两侧必须逐条一致，
+         只在 schema 里写而页面上看不到，会失去富媒体结果资格。
+         tests/faq-schema-consistency.test.js 守住这条。 -->
+    <hr class="border-gray-700/50 my-12">
+    <div class="max-w-3xl mx-auto text-left">
+      <h2 class="text-2xl font-bold text-center mb-8">Frequently Asked Questions</h2>
+
+      <h3 class="text-lg font-bold text-white mt-6 mb-2">How is GEO different from SEO?</h3>
+      <p class="text-gray-400">SEO optimizes for ranked lists of blue links on search engines like Google and Bing. GEO optimizes for being cited as a source in AI-generated answers. They overlap heavily — good content, structured data, and authority help both — but GEO requires explicit AI-crawler allowance in robots.txt, an llms.txt file, and machine-parseable schema for AI models.</p>
+
+      <h3 class="text-lg font-bold text-white mt-6 mb-2">What is llms.txt?</h3>
+      <p class="text-gray-400">llms.txt is a markdown file placed at the root of your website (yoursite.com/llms.txt) that provides AI models with a curated summary of your site: what it is, who it serves, and which pages matter most. It is the machine-readable equivalent of an About page, designed to be ingested by ChatGPT, Perplexity, Claude, and other LLM-powered crawlers in a single fetch.</p>
+
+      <h3 class="text-lg font-bold text-white mt-6 mb-2">How does GeoScore work?</h3>
+      <p class="text-gray-400">GeoScore audits any public URL across 11 dimensions of GEO readiness (AI crawlability, llms.txt presence, structured data, meta tags, content quality, E-E-A-T signals, brand entity, citation readiness, discovery, agent-friendliness, and freshness), producing a 0-100 score plus a prioritized list of fixes. A single browser audit is free; the browser does not send the audited URL to GeoScore for storage.</p>
+
+      <h3 class="text-lg font-bold text-white mt-6 mb-2">Is GeoScore free?</h3>
+      <p class="text-gray-400">The open-source browser audit, CLI, and MCP Server are free. Optional Pro, Studio, and Agency plans with automated monitoring start at $9/month — see our <a href="/pricing/" class="text-geo-400 hover:underline">pricing page</a> for details. The source code is available on GitHub at github.com/qq136692547-cmyk/geo-score.</p>
+
+      <h3 class="text-lg font-bold text-white mt-6 mb-2">Which AI crawlers should I allow in robots.txt?</h3>
+      <p class="text-gray-400">At minimum, allow: GPTBot and OAI-SearchBot (OpenAI/ChatGPT), ClaudeBot and anthropic-ai (Anthropic/Claude), PerplexityBot (Perplexity), Google-Extended (Google Gemini and AI Overviews), and CCBot (Common Crawl, used by many models). GeoScore will tell you exactly which crawlers you are currently blocking.</p>
+
+      <h3 class="text-lg font-bold text-white mt-6 mb-2">How do I appear in AI search results?</h3>
+      <p class="text-gray-400">Three things have to line up. The crawler must be allowed to fetch the page, the content must be readable without JavaScript, and the page must state its answer plainly under a heading that matches the question. AI engines assemble answers from passages they can quote, so a page that answers one question well beats a page that mentions the topic ten times.</p>
+
+      <h3 class="text-lg font-bold text-white mt-6 mb-2">How do I get my website cited by ChatGPT?</h3>
+      <p class="text-gray-400">ChatGPT cites pages it can fetch and corroborate. In practice that means allowing OAI-SearchBot and GPTBot in robots.txt, publishing content with named authors and dates, and making sure other sites reference you. Original data and specific numbers get quoted; general advice usually does not.</p>
+
+      <h3 class="text-lg font-bold text-white mt-6 mb-2">How do I make my website AI ready?</h3>
+      <p class="text-gray-400">Allow the AI crawlers, ship an llms.txt file, add Organization and WebSite JSON-LD, and put a direct answer in the first sentence under each major heading. GeoScore audits all of this in one pass and produces the fix files you need to deploy. Start with the <a href="/tools/ai-readiness-score/" class="text-geo-400 hover:underline">website AI readiness score</a>.</p>
     </div>
   </section>
 
