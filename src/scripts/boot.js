@@ -15,6 +15,7 @@ import { renderFixFilesPanel } from '../components/fixFilesPanel.js';
 import { generateFixFiles } from '../lib/fixGenerator.js';
 import { renderExportButtons } from '../components/exportButtons.js';
 import { renderShareButtons } from '../components/shareButtons.js';
+import { normalizeAuditUrl } from '../lib/auditUrl.js';
 import { renderHistoryList } from '../components/historyList.js';
 import { renderTrendContainer, initTrendChart } from '../components/trendChart.js';
 import { renderComparisonPanel } from '../components/comparisonPanel.js';
@@ -149,11 +150,45 @@ function extractUrlsFromSitemap(xml) {
   return urls;
 }
 
+// Inline error shown under the audit input. Created on demand so it works on
+// every page that owns a #url-input without touching each .astro file.
+function geoShowUrlError(message) {
+  var input = document.getElementById("url-input");
+  if (!input) return;
+  var box = document.getElementById("url-error");
+  if (!box) {
+    box = document.createElement("p");
+    box.id = "url-error";
+    box.setAttribute("role", "alert");
+    box.className = "text-danger-500 text-sm mt-2";
+    var anchor = input.closest(".flex") || input.parentElement;
+    if (anchor && anchor.parentElement) anchor.parentElement.insertBefore(box, anchor.nextSibling);
+  }
+  box.textContent = message;
+  input.setAttribute("aria-invalid", "true");
+}
+
+function geoClearUrlError() {
+  var box = document.getElementById("url-error");
+  if (box && box.parentElement) box.parentElement.removeChild(box);
+  var input = document.getElementById("url-input");
+  if (input) input.removeAttribute("aria-invalid");
+}
+
 window.startAudit = async function (entryPoint) {
   var input = document.getElementById("url-input");
   var btn = document.getElementById("audit-btn");
-  var url = (input.value || "").trim();
-  if (!url) { input.focus(); return; }
+  // Reject before the loading state takes over. Once it does, the hero (and the
+  // input with it) is hidden, so a typo used to mean 45s+ of waiting with no way
+  // back to fix it. See src/lib/auditUrl.js.
+  var parsedUrl = normalizeAuditUrl(input.value);
+  if (!parsedUrl) {
+    geoShowUrlError(t("Enter a website address like example.com", "请输入网址，例如 example.com"));
+    input.focus();
+    return;
+  }
+  geoClearUrlError();
+  var url = parsedUrl.url;
   var loadEl = document.getElementById("loading-section");
   var reportEl = document.getElementById("report-section");
   if (!loadEl || !reportEl) {
