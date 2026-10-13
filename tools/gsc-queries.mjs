@@ -85,9 +85,24 @@ if (!sites.length) {
   process.exit(2);
 }
 
-// Prefer the domain property (sc-domain:) over the URL-prefix one.
-const site = sites.find((s) => s.siteUrl.startsWith('sc-domain:')) || sites[0];
+// Pick the property EXPLICITLY.
+// ⚠️ This used to be `|| sites[0]`, which was silently wrong: once the service
+// account was added to a second property the same command began answering for
+// ttcalc.shop (2026-10-13) while every note in this repo describes geoscore.help.
+// Nothing failed loudly; the numbers just quietly belonged to another site.
+const WANT = arg('--property', '');
+const site = (WANT && sites.find((s) => s.siteUrl === WANT))
+  || sites.find((s) => /geoscore\.help/.test(s.siteUrl))
+  || sites.find((s) => s.siteUrl.startsWith('sc-domain:'))
+  || sites[0];
 console.log(`属性: ${site.siteUrl}  （可用: ${sites.map((s) => s.siteUrl).join(', ')}）`);
+if (WANT && site.siteUrl !== WANT) {
+  console.log(`❌ --property ${WANT} 未在可用列表中，已退回 ${site.siteUrl}`);
+}
+if (!/geoscore/i.test(site.siteUrl)) {
+  console.log(`⚠️ 警告：选中的属性不是 geoscore.help —— 下面的数字属于 ${site.siteUrl}。`);
+  console.log('   指定属性：--property https://geoscore.help/');
+}
 
 const end = new Date(Date.now() - 864e5);
 const start = new Date(end.getTime() - (DAYS - 1) * 864e5);
