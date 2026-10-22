@@ -10,10 +10,13 @@ import { showToast } from '../scripts/toast.js';
 var IS_ZH = (document.documentElement.lang || 'en').toLowerCase().indexOf('zh') === 0;
 function t(en, zh) { return IS_ZH ? zh : en; }
 
+// Bands must match scoring.js (86/68/36). They used to be 80/60/40 here, so an
+// 82-point audit showed a blue "Good" badge in the report header and a green
+// "excellent"-coloured row in history — same number, two meanings.
 function scoreClass(score) {
-  if (score >= 80) return 'text-geo-500';
-  if (score >= 60) return 'text-brand-500';
-  if (score >= 40) return 'text-warn-500';
+  if (score >= 86) return 'text-geo-500';
+  if (score >= 68) return 'text-brand-500';
+  if (score >= 36) return 'text-warn-500';
   return 'text-danger-500';
 }
 
@@ -106,7 +109,7 @@ async function initCloudTrend(audits) {
         fill: true,
         tension: 0.3,
         pointBackgroundColor: reversed.map(function(a) {
-          return a.score >= 80 ? '#22c55e' : a.score >= 60 ? '#3b82f6' : a.score >= 40 ? '#eab308' : '#ef4444';
+          return a.score >= 86 ? '#22c55e' : a.score >= 68 ? '#3b82f6' : a.score >= 36 ? '#eab308' : '#ef4444';
         }),
         pointRadius: 4,
         pointBorderColor: '#1e293b',

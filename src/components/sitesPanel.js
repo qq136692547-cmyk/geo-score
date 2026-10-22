@@ -13,10 +13,11 @@ function t(en, zh) { return IS_ZH ? zh : en; }
 
 var MAX_SITES = 5;
 
+// Bands match scoring.js (86/68/36), not the old 80/60/40 — see auditHistory.js.
 function scoreClass(score) {
-  if (score >= 80) return 'text-geo-500';
-  if (score >= 60) return 'text-brand-500';
-  if (score >= 40) return 'text-warn-500';
+  if (score >= 86) return 'text-geo-500';
+  if (score >= 68) return 'text-brand-500';
+  if (score >= 36) return 'text-warn-500';
   return 'text-danger-500';
 }
 

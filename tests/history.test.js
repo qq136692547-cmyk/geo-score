@@ -89,3 +89,30 @@ describe('GEO history', () => {
     expect(getHistory()).toEqual([]);
   });
 });
+
+// A17 (2026-10-23): addToHistory used to splice out the previous entry for the
+// same URL, so getUrlHistory(url).length was permanently 1 and boot.js's
+// `urlHistory.length >= 2` guard could never fire -- the trend chart was dead
+// code. Keeping every run is what makes it render.
+describe('A17 — repeated audits of one URL', () => {
+  beforeEach(() => {
+    clearHistory();
+  });
+
+  it('keeps every run for the trend chart, but one row for the list', () => {
+    addToHistory({ ...mockResult, score: 70, timestamp: 1700000000000 });
+    addToHistory({ ...mockResult, score: 82, timestamp: 1700000001000 });
+
+    expect(getUrlHistory('https://example.com').length).toBe(2);
+    expect(getHistory().length).toBe(1);
+    expect(getHistory()[0].score).toBe(82);
+  });
+
+  it('returns newest first so the chart can reverse into chronological order', () => {
+    addToHistory({ ...mockResult, score: 70, timestamp: 1700000000000 });
+    addToHistory({ ...mockResult, score: 82, timestamp: 1700000001000 });
+    const runs = getUrlHistory('https://example.com');
+    expect(runs[0].score).toBe(82);
+    expect(runs[1].score).toBe(70);
+  });
+});

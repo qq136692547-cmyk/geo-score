@@ -1,14 +1,26 @@
 const HISTORY_KEY = 'geoscope_history';
 
-function getHistory() {
+// Raw timeline: one entry per audit run, newest first.
+function getTimeline() {
   try {
     var data = localStorage.getItem(HISTORY_KEY);
     return data ? JSON.parse(data) : [];
   } catch (e) { return []; }
 }
 
+// Latest entry per URL, newest first. This is what the history list shows —
+// five rows of the same site would be noise.
+function getHistory() {
+  var seen = {};
+  var out = [];
+  getTimeline().forEach(function (e) {
+    if (!seen[e.url]) { seen[e.url] = true; out.push(e); }
+  });
+  return out;
+}
+
 function addToHistory(result) {
-  var history = getHistory();
+  var history = getTimeline();
   var entry = {
     id: Date.now().toString(36),
     url: result.url.replace(/https?:\/\//, "").replace(/\/$/, ""),
@@ -19,17 +31,20 @@ function addToHistory(result) {
       Object.entries(result.dimensions).map(function(kv) { return [kv[0], kv[1].percentage || 0]; })
     ) : {}
   };
-  var existing = history.findIndex(function(e) { return e.url === entry.url; });
-  if (existing >= 0) history.splice(existing, 1);
+  // 2026-10-23: this used to splice out the previous entry for the same URL.
+  // That made getUrlHistory(url) permanently length 1, so boot.js's
+  // `urlHistory.length >= 2` guard (boot.js:435) could never be true and the
+  // trend chart was dead code. Keep every run; deduplicate at display time.
   history.unshift(entry);
   if (history.length > 50) history = history.slice(0, 50);
   try { localStorage.setItem(HISTORY_KEY, JSON.stringify(history)); } catch (e) {}
   return entry;
 }
 
+// All runs for one URL, newest first. The trend chart reverses this.
 function getUrlHistory(url) {
   var clean = url.replace(/https?:\/\//, "").replace(/\/$/, "");
-  return getHistory().filter(function(e) { return e.url === clean; });
+  return getTimeline().filter(function(e) { return e.url === clean; });
 }
 
 function getComparisonData(urls) {

@@ -219,7 +219,7 @@ import demo from '../../data/demo-report.json';
           Each audit produces a 0&ndash;100 score, a radar chart of the 11 dimensions, and a prioritized list of fixes. The tool also auto-generates three fix files you can deploy immediately: a production-ready llms.txt, an AI-crawler-friendly robots.txt, and a JSON-LD snippet for Organization, Article, FAQ, and HowTo schema. A single browser audit is client-side, while optional Pro monitoring uses cloud storage.
         </p>
         <p>
-          If your site scores below 60, the most common cause is robots.txt blocking AI crawlers by default. Adding GPTBot, ClaudeBot, PerplexityBot, and Google-Extended to the allow list, and shipping an llms.txt, typically raises the score by 20&ndash;30 points in a single deployment. The highest-scoring sites combine technical compliance with content depth, source citations, and structured data that AI models can parse in one pass.
+          If your site scores below 60, robots.txt is usually <em>not</em> the reason: in our own audit of 324 sites, only 3.6% of those publishing a robots.txt block any AI crawler, and a file that never mentions an AI bot leaves it on the permissive default. The room is elsewhere &mdash; across that sample, AI guidance averaged 20% of its maximum, structured data 12%, discovery endpoints 1%, and E-E-A-T 32%. The highest-scoring sites combine technical compliance with content depth, source citations, and structured data that AI models can parse in one pass.
         </p>
       </div>
           </details>
@@ -228,62 +228,62 @@ import demo from '../../data/demo-report.json';
     <hr class="border-gray-700/50 my-12">
     <h2 class="text-2xl font-bold text-center mb-8">Free GEO Tools</h2>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-12">
-      <a href="/tools/llms-txt-checker/" class="card card-hover card-lift p-6 block">
+      <div class="card card-hover card-lift p-6">
         <div class="text-geo-400 text-sm font-mono mb-2">/tools/llms-txt-checker</div>
-        <h3 class="text-lg font-bold mb-2">llms.txt Checker</h3>
+        <h3 class="text-lg font-bold mb-2"><a href="/tools/llms-txt-checker/" class="hover:text-geo-400 transition">llms.txt Checker</a></h3>
         <p class="text-gray-400 text-sm">Check if your site has the AI guidance file that helps ChatGPT, Claude, and Perplexity understand your content.</p>
-      </a>
-      <a href="/tools/robots-txt-ai-checker/" class="card card-hover card-lift p-6 block">
+      </div>
+      <div class="card card-hover card-lift p-6">
         <div class="text-brand-400 text-sm font-mono mb-2">/tools/robots-txt-ai-checker</div>
-        <h3 class="text-lg font-bold mb-2">Robots.txt AI Checker</h3>
+        <h3 class="text-lg font-bold mb-2"><a href="/tools/robots-txt-ai-checker/" class="hover:text-geo-400 transition">Robots.txt AI Checker</a></h3>
         <p class="text-gray-400 text-sm">Verify your robots.txt isn't blocking GPTBot, ClaudeBot, PerplexityBot, and other AI crawlers.</p>
-      </a>
-      <a href="/tools/ai-readiness-score/" class="card card-hover card-lift p-6 block">
+      </div>
+      <div class="card card-hover card-lift p-6">
         <div class="text-brand-400 text-sm font-mono mb-2">/tools/ai-readiness-score</div>
-        <h3 class="text-lg font-bold mb-2">AI Readiness Score</h3>
+        <h3 class="text-lg font-bold mb-2"><a href="/tools/ai-readiness-score/" class="hover:text-geo-400 transition">AI Readiness Score</a></h3>
         <p class="text-gray-400 text-sm">Get a 0-100 score across 11 dimensions of AI search visibility with actionable fixes.</p>
-      </a>
+      </div>
     </div>
 
     <hr class="border-gray-700/50 my-12">
     <h2 class="text-2xl font-bold text-center mb-8">Learn GEO</h2>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
-      <a href="/blog/why-doesnt-chatgpt-cite-my-website/" class="card card-hover card-lift p-6 block ring-1 ring-brand-500/20">
+      <div class="card card-hover card-lift p-6 ring-1 ring-brand-500/20">
         <div class="text-xs text-brand-400 mb-2">Popular · 12 min</div>
-        <h3 class="text-base font-bold mb-2">Why Doesn't ChatGPT Cite My Site?</h3>
+        <h3 class="text-base font-bold mb-2"><a href="/blog/why-doesnt-chatgpt-cite-my-website/" class="hover:text-geo-400 transition">Why Doesn't ChatGPT Cite My Site?</a></h3>
         <p class="text-gray-400 text-sm">7 common reasons your site is invisible to AI search engines &mdash; and exactly how to fix each one.</p>
-      </a>
-      <a href="/blog/what-is-geo/" class="card card-hover card-lift p-6 block">
+      </div>
+      <div class="card card-hover card-lift p-6">
         <div class="text-xs text-gray-500 mb-2">Guide · 8 min</div>
-        <h3 class="text-base font-bold mb-2">What is GEO?</h3>
+        <h3 class="text-base font-bold mb-2"><a href="/blog/what-is-geo/" class="hover:text-geo-400 transition">What is GEO?</a></h3>
         <p class="text-gray-400 text-sm">Complete introduction to Generative Engine Optimization and the 11 dimensions of readiness.</p>
-      </a>
-      <a href="/blog/geo-vs-seo/" class="card card-hover card-lift p-6 block">
+      </div>
+      <div class="card card-hover card-lift p-6">
         <div class="text-xs text-gray-500 mb-2">Guide · 10 min</div>
-        <h3 class="text-base font-bold mb-2">GEO vs SEO</h3>
+        <h3 class="text-base font-bold mb-2"><a href="/blog/geo-vs-seo/" class="hover:text-geo-400 transition">GEO vs SEO</a></h3>
         <p class="text-gray-400 text-sm">What's the difference? Target engines, crawlers, content strategy, and how they work together.</p>
-      </a>
-      <a href="/blog/llms-txt-ultimate-guide/" class="card card-hover card-lift p-6 block">
+      </div>
+      <div class="card card-hover card-lift p-6">
         <div class="text-xs text-gray-500 mb-2">Tutorial · 15 min</div>
-        <h3 class="text-base font-bold mb-2">llms.txt Ultimate Guide</h3>
+        <h3 class="text-base font-bold mb-2"><a href="/blog/llms-txt-ultimate-guide/" class="hover:text-geo-400 transition">llms.txt Ultimate Guide</a></h3>
         <p class="text-gray-400 text-sm">Step-by-step guide with real examples for creating an llms.txt file for your website.</p>
-      </a>
+      </div>
 </div>
     <div class="text-center -mt-6 mb-12">
       <a href="/blog/" class="text-brand-400 hover:text-brand-300 text-sm font-medium transition">View all articles &rarr;</a>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-12">
-      <a href="/methodology/" class="card card-hover card-lift p-6 block">
+      <div class="card card-hover card-lift p-6">
         <div class="text-xs text-gray-500 mb-2">Reference</div>
-        <h3 class="text-lg font-bold mb-2">Scoring Methodology</h3>
+        <h3 class="text-lg font-bold mb-2"><a href="/methodology/" class="hover:text-geo-400 transition">Scoring Methodology</a></h3>
         <p class="text-gray-400 text-sm">Detailed breakdown of how GeoScore calculates your 0-100 score across 11 dimensions.</p>
-      </a>
-      <a href="https://github.com/qq136692547-cmyk/geo-score/tree/main/docs/handbook" target="_blank" rel="noopener" class="card card-hover card-lift p-6 block">
+      </div>
+      <div class="card card-hover card-lift p-6">
         <div class="text-xs text-gray-500 mb-2">External Resource</div>
-        <h3 class="text-lg font-bold mb-2">GEO Optimization Handbook</h3>
+        <h3 class="text-lg font-bold mb-2"><a href="https://github.com/qq136692547-cmyk/geo-score/tree/main/docs/handbook" target="_blank" rel="noopener" class="hover:text-geo-400 transition">GEO Optimization Handbook</a></h3>
         <p class="text-gray-400 text-sm">Comprehensive handbook covering advanced GEO strategies and best practices.</p>
-      </a>
+      </div>
     </div>
 
     <div class="text-center">
@@ -295,7 +295,7 @@ import demo from '../../data/demo-report.json';
           <p class="text-gray-400 text-sm">Weighted dimensions analyzed, plus negative signals &amp; prompt injection detection</p>
         </div>
         <div class="text-left">
-          <div class="text-brand-500 text-3xl font-extrabold mb-2">85+</div>
+          <div class="text-brand-500 text-3xl font-extrabold mb-2">85</div>
           <p class="text-gray-400 text-sm">Individual checks across all dimensions, with specific fix recommendations</p>
         </div>
         <div class="text-left">

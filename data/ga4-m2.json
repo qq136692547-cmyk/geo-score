@@ -1,0 +1,75 @@
+{
+  "generatedAt": "2026-10-05T09:58:59.903Z",
+  "propertyId": "546156702",
+  "serviceAccount": "drive-uploader@cogent-tide-361602.iam.gserviceaccount.com",
+  "range": {
+    "start": "7daysAgo",
+    "end": "today"
+  },
+  "toolPageSharePct": 0,
+  "toolPageEvents": 0,
+  "totalAuditStartedEvents": 2,
+  "byEntryPoint": [
+    {
+      "entry_point": "(not set)",
+      "eventCount": "2",
+      "totalUsers": "2"
+    }
+  ],
+  "byUrlDomain": [
+    {
+      "url_domain": "(not set)",
+      "eventCount": "2"
+    }
+  ],
+  "allEvents": [
+    {
+      "eventName": "page_view",
+      "eventCount": "47",
+      "totalUsers": "40"
+    },
+    {
+      "eventName": "user_engagement",
+      "eventCount": "43",
+      "totalUsers": "37"
+    },
+    {
+      "eventName": "scroll",
+      "eventCount": "41",
+      "totalUsers": "35"
+    },
+    {
+      "eventName": "first_visit",
+      "eventCount": "40",
+      "totalUsers": "40"
+    },
+    {
+      "eventName": "session_start",
+      "eventCount": "40",
+      "totalUsers": "40"
+    },
+    {
+      "eventName": "audit_started",
+      "eventCount": "2",
+      "totalUsers": "2"
+    },
+    {
+      "eventName": "audit_completed",
+      "eventCount": "1",
+      "totalUsers": "1"
+    },
+    {
+      "eventName": "audit_failed",
+      "eventCount": "1",
+      "totalUsers": "1"
+    },
+    {
+      "eventName": "result_viewed",
+      "eventCount": "1",
+      "totalUsers": "1"
+    }
+  ],
+  "consentedUsers": "48",
+  "sessions": "48",
+  "caveat": "Consented users only. The consent-rate denominator is invisible by design."
+}

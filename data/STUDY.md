@@ -4,7 +4,7 @@ Generated 2026-10-04. Read this before citing anything in this directory.
 
 ## Why this directory exists
 
-`src/pages/blog/auditing-1200-websites.astro` claimed "I audited 1,200 websites"
+`src/pages/blog/auditing-343-websites.astro` claimed "I audited 1,200 websites"
 with specific findings (82% had a critical issue, 3.4x citation lift for llms.txt,
 6.1x for FAQ schema). Investigation found no traceable source:
 

@@ -44,10 +44,11 @@ export function renderShareButtons(result) {
         '<span id="copy-label">' + t('Copy Link', '复制链接') + '</span>' +
       '</button>' +
     '</div>' +
-    // Embed badge section
-    '<div class="mt-4 pt-4 border-t border-gray-700/50">' +
-      '<p class="text-xs text-gray-500 mb-2">' + t('Embed this score on your site:', '在你的网站上嵌入此分数：') + '</p>' +
-      '<code class="text-xs text-gray-400 bg-black/30 px-3 py-2 rounded-lg block overflow-x-auto">&lt;a href="https://geoscore.help/?audit=' + encodeURIComponent(result.url) + '"&gt;&lt;img src="https://geoscore.help/badge/' + encodeURIComponent(result.url) + '" alt="GEO Score: ' + score + '/100" /&gt;&lt;/a&gt;</code>' +
-    '</div>' +
+    // 2026-10-23: an "embed this score" snippet used to live here and pointed at
+    // https://geoscore.help/badge/<url>. No such endpoint exists — not in dist/,
+    // not in the worker route table (worker/pro.js) — so anyone who pasted it
+    // got a broken image. The only "take it with you" asset we shipped was a
+    // 404. The copy-link button above still works, so the snippet is gone until
+    // a real badge endpoint exists.
   '</div>';
 }

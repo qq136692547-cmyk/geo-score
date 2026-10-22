@@ -188,7 +188,7 @@ import demo from '../../../data/demo-report.json';
           每次审计生成一个 0–100 分、11 维度的雷达图和优先修复列表。工具还自动生成三个可立即部署的修复文件：生产级 llms.txt、AI 爬虫友好的 robots.txt 和 Organization、Article、FAQ、HowTo schema 的 JSON-LD 代码片段。审计完全在客户端运行，你的 URL 不会被存储。
         </p>
         <p>
-          如果你的网站得分低于 60，最常见的原因是 robots.txt 默认阻止了 AI 爬虫。将 GPTBot、ClaudeBot、PerplexityBot 和 Google-Extended 加入允许列表，并发布 llms.txt，通常可以在一次部署中将分数提高 20–30 分。最高分的网站将技术合规性与内容深度、来源引用和 AI 模型可一次性解析的结构化数据相结合。
+          如果你的网站得分低于 60，robots.txt 通常<em>不是</em>原因：在我们自己审计的 324 个站点里，发布 robots.txt 的站点中只有 3.6% 拦截了任意一个 AI 爬虫，而完全没有提到 AI 爬虫的文件默认就是放行的。真正的空间在别处 —— 同一批样本里，AI 引导（llms.txt）平均只拿到该维度满分的 20%，结构化数据 12%，发现端点 1%，E-E-A-T 32%。高分站点把技术合规与内容深度、来源引用、以及 AI 模型能一次性解析的结构化数据结合在一起。
         </p>
       </div>
     </div>
@@ -246,7 +246,7 @@ import demo from '../../../data/demo-report.json';
           <p class="text-gray-400 text-sm">分析维度——从 AI 可爬性到引用就绪度</p>
         </div>
         <div class="text-left">
-          <div class="text-brand-500 text-3xl font-extrabold mb-2">85+</div>
+          <div class="text-brand-500 text-3xl font-extrabold mb-2">85</div>
           <p class="text-gray-400 text-sm">所有维度的独立检查项，提供具体修复建议</p>
         </div>
         <div class="text-left">

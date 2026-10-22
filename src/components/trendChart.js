@@ -32,7 +32,7 @@ export async function initTrendChart(urlHistory) {
         fill: true,
         tension: 0.3,
         pointBackgroundColor: reversed.map(function(e) {
-          return e.score >= 80 ? "#22c55e" : e.score >= 60 ? "#3b82f6" : e.score >= 40 ? "#eab308" : "#ef4444";
+          return e.score >= 86 ? "#22c55e" : e.score >= 68 ? "#3b82f6" : e.score >= 36 ? "#eab308" : "#ef4444";
         }),
         pointRadius: 4,
         pointBorderColor: "#1e293b",

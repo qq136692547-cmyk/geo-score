@@ -12,6 +12,8 @@ dist-verify/
 _*.py
 _*.ps1
 test_*.cjs
+.gsc-*.png
+.ux-*.png
 test_*.js
 
 # Screenshots

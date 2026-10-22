@@ -6,8 +6,8 @@ import Layout from '../../layouts/Layout.astro';
     '@context': 'https://schema.org',
     '@type': 'Article',
     headline: 'I Audited 343 Websites for AI Search Visibility: Here\'s What I Found',
-    description: 'A reproducible study of 343 real websites: median GEO score 41/100, 44% rate Critical, and 19 of the top 20 publish an llms.txt. What the data actually shows, and what it cannot show.',
-    url: 'https://geoscore.help/blog/auditing-1200-websites/',
+    description: 'A reproducible study of 343 real websites: median GEO score 41/100, 33% rate Critical, and all 18 sites scoring 73+ publish an llms.txt. What the data actually shows, and what it cannot show.',
+    url: 'https://geoscore.help/blog/auditing-343-websites/',
     datePublished: '2026-07-21',
     dateModified: '2026-10-04',
     author: { '@type': 'Organization', name: 'GeoScore' },
@@ -46,8 +46,8 @@ import Layout from '../../layouts/Layout.astro';
         <h2 class="text-lg font-bold mb-3 text-white">TL;DR</h2>
         <ul class="space-y-2 text-sm text-gray-300 list-disc list-inside">
           <li><strong class="text-white">Median score: 41 out of 100.</strong> The typical site is not optimized for AI search, but it is not broken either.</li>
-          <li><strong class="text-white">44.4% rate Critical</strong> (under 40). 8.6% reach Good; nobody reaches Excellent.</li>
-          <li><strong class="text-white">19 of the 20 highest-scoring sites publish an <code class="text-geo-400">llms.txt</code>.</strong> Sites with one average 60.3; sites without average 38.0.</li>
+          <li><strong class="text-white">33.0% rate Critical</strong> (under 36). 10.2% reach Good; nobody reaches Excellent.</li>
+          <li><strong class="text-white">All 18 sites scoring 73 or higher publish an <code class="text-geo-400">llms.txt</code>.</strong> Sites with one average 60.3; sites without average 38.0.</li>
           <li><strong class="text-white">30.6% publish no <code class="text-geo-400">robots.txt</code> at all</strong>, and only 3.6% of the rest block any AI crawler.</li>
           <li>My own scorer was <strong>wrong about this</strong> and overstated blocking by 25&times; — Finding 4 has the before-and-after.</li>
         </ul>
@@ -78,9 +78,10 @@ import Layout from '../../layouts/Layout.astro';
         <p class="text-gray-400 text-sm mt-4 mb-0">
           <strong class="text-gray-300">Two passes, one corpus.</strong> The first run scored 343 sites. After I fixed the robots.txt rule described in Finding 4, I re-ran the same 457 candidates with the corrected scorer; 324 came back. <strong class="text-gray-300">Every score in this post is from that second run</strong>, because it reflects what the tool actually does today. The first run's numbers survive only in Finding 4, as the before half of the comparison. The 19-site difference between runs is network conditions, not a change in method — 126 of the second run's failures were 15-second timeouts.
         </p>
+        <p class="text-gray-400 text-sm mt-4 mb-0">
+          <strong class="text-gray-300">Score version: v1.8 (2026-10-04).</strong> Every figure in this post comes from the v1.8 weights. On 2026-10-23 the llms.txt dimension was reweighted — "file exists" went from 4 points to 1, and the content checks took the difference (see the <a href="/methodology/" class="text-geo-400 hover:underline">methodology page</a>) — so a fresh run would land roughly 0.3 points lower on the sample mean and 1.1 lower for the llms.txt group. Read these numbers as v1.8, not as today's scorer.
+        </p>
       </div>
-
-      <!-- FINDING 1 -->
       <h2 class="text-2xl font-bold mt-12 mb-4 text-white">Finding 1: the median site scores 41</h2>
       <div class="card p-8 mb-6">
         <p class="text-gray-300 mb-4">
@@ -88,14 +89,14 @@ import Layout from '../../layouts/Layout.astro';
         </p>
         <div class="card p-5 mb-4 bg-white/5">
           <ul class="space-y-2 text-sm text-gray-300 list-none">
-            <li class="flex justify-between"><span>Critical (0–39)</span><span class="text-white">144 sites — 44.4%</span></li>
-            <li class="flex justify-between"><span>Basic (40–69)</span><span class="text-white">152 sites — 46.9%</span></li>
-            <li class="flex justify-between"><span>Good (70–85)</span><span class="text-white">28 sites — 8.6%</span></li>
+            <li class="flex justify-between"><span>Critical (0–35)</span><span class="text-white">107 sites — 33.0%</span></li>
+            <li class="flex justify-between"><span>Basic (36–67)</span><span class="text-white">184 sites — 56.8%</span></li>
+            <li class="flex justify-between"><span>Good (68–85)</span><span class="text-white">33 sites — 10.2%</span></li>
             <li class="flex justify-between"><span>Excellent (86+)</span><span class="text-white">0 sites — 0%</span></li>
           </ul>
         </div>
         <p class="text-gray-300 mb-4">
-          Median 41, mean 43.4, and the highest score in the entire sample was <strong class="text-white">80</strong>. None of these 324 sites reached the top band, and the lowest was 8.
+          Median 41, mean 43.4, and the highest score in the entire sample was <strong class="text-white">80</strong>. None of these 324 sites reached the top band, and the lowest was 8. The bands are the ones the product actually applies (36/68/86, the same thresholds on the methodology page); an earlier version of this table printed 0–39/40–69/70–85, which no code path ever produced, and the counts were derived from it.
         </p>
         <p class="text-gray-300">
           The practical read: AI-search optimization is not a mature practice. Whatever the eventual benchmarks turn out to be, almost nobody has done this yet — which is good news if you have not started.
@@ -115,7 +116,7 @@ import Layout from '../../layouts/Layout.astro';
           </ul>
         </div>
         <p class="text-gray-300 mb-4">
-          Two ways to see the same split. Of the 67 sites scoring 60 or higher, <strong class="text-white">51 have an llms.txt</strong>. Among Critical sites, only <strong class="text-white">6.9%</strong> have one. The highest score reached by any site without an llms.txt was 72, and <strong class="text-white">19 of the top 20</strong> have one.
+          Two ways to see the same split. Of the 67 sites scoring 60 or higher, <strong class="text-white">51 have an llms.txt</strong>. Among Critical sites (under 36), only <strong class="text-white">6.5%</strong> have one. The highest score reached by any site without an llms.txt was 72, and <strong class="text-white">all 18 sites above that</strong> have one.
         </p>
         <div class="rounded-lg bg-blue-500/10 border border-blue-500/20 p-4 mt-4">
           <p class="text-blue-300 text-sm mb-0">
@@ -202,7 +203,7 @@ Allow: /</code></pre>
           Every one of those is a claim about whether an AI engine <em>cited</em> a site. A static crawler audit cannot observe citation — it fetches robots.txt and HTML, and citation happens inside a model. Measuring it would need a multi-engine citation crawl or an LLM simulation, and the simulation in my own product is an estimate rather than a measurement.
         </p>
         <p class="text-gray-300 mb-0">
-          The 23-point llms.txt gap in Finding 2 is what I can actually evidence. It is a weaker claim than "3.4&times; lift," and it is the one I am willing to stand behind.
+          The 22-point llms.txt gap in Finding 2 is what I can actually evidence. It is a weaker claim than "3.4&times; lift," and it is the one I am willing to stand behind.
         </p>
       </div>
 
@@ -230,7 +231,7 @@ Allow: /</code></pre>
         <div>
           <h3 class="text-lg font-bold text-white mb-2">3. Fix the cheapest dimensions first (an afternoon)</h3>
           <p class="text-gray-300 mb-2">
-            Across the sample, Meta &amp; Social sits at 73% of its maximum and Content Quality at 59% — most sites already do these. AI Crawlability (excluding the caveat above), Structured Data at 13%, and E-E-A-T at 25% are where the room is.
+            Measured as a share of each dimension's maximum, the sample sits at 99% on AI Crawlability (Finding 4 explains why that number is now uninformative), 85% on Citation Readiness, 59% on Meta &amp; Social, and 58% on Content Quality. The room is in AI Guidance at <strong class="text-white">20%</strong>, E-E-A-T at <strong class="text-white">32%</strong>, Structured Data at <strong class="text-white">12%</strong>, and Discovery Endpoints at <strong class="text-white">1%</strong>.
           </p>
         </div>
       </div>

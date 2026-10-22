@@ -397,11 +397,15 @@ function renderReport(r) {
     renderRadarContainer(),
     renderDimensionBreakdown(r.dimensions),
     renderNegativeSignals(r.negativeSignals),
+    // 2026-10-23: the fix list used to render 9th, after the upgrade ask (5th).
+    // The page asked for money before it said what to do — for a 94-score site
+    // the sequence was "you're fine -> but you can't prove it -> buy". Show the
+    // actionable list first, then ask.
+    renderFixesPanel(r.recommendations),
+    renderFixFilesPanel(r),
     renderUpgradeCta(r, 'primary'),
     renderSeoSupplement(r.seoSupplement),
-    renderFixFilesPanel(r),
     renderUpgradeCta(r, 'lead'),
-    renderFixesPanel(r.recommendations),
     renderExportButtons(),
     renderShareButtons(r),
     '<div id="save-cloud-root"></div>'

@@ -59,7 +59,7 @@ import Layout from '../layouts/Layout.astro';
         <div class="text-xs text-gray-500 mb-6">forever</div>
         <ul class="text-sm text-gray-400 space-y-2 mb-6 flex-1">
           <li class="flex gap-2"><span class="text-geo-500">✓</span> Single URL audit</li>
-          <li class="flex gap-2"><span class="text-geo-500">✓</span> 11 dimensions, 85+ checks</li>
+          <li class="flex gap-2"><span class="text-geo-500">✓</span> 11 dimensions, 85 checks</li>
           <li class="flex gap-2"><span class="text-geo-500">✓</span> Fix file generator</li>
           <li class="flex gap-2"><span class="text-geo-500">✓</span> CLI & MCP Server</li>
           <li class="flex gap-2"><span class="text-geo-500">✓</span> Sign-in optional</li>
@@ -145,7 +145,7 @@ import Layout from '../layouts/Layout.astro';
           </thead>
           <tbody class="divide-y divide-gray-700/50">
             <tr><td class="py-2.5 text-gray-300">Single URL audit</td><td class="text-center">✓</td><td class="text-center">✓</td><td class="text-center">✓</td><td class="text-center">✓</td></tr>
-            <tr><td class="py-2.5 text-gray-300">11 dimensions, 85+ checks</td><td class="text-center">✓</td><td class="text-center">✓</td><td class="text-center">✓</td><td class="text-center">✓</td></tr>
+            <tr><td class="py-2.5 text-gray-300">11 dimensions, 85 checks</td><td class="text-center">✓</td><td class="text-center">✓</td><td class="text-center">✓</td><td class="text-center">✓</td></tr>
             <tr><td class="py-2.5 text-gray-300">Fix file generator</td><td class="text-center">✓</td><td class="text-center">✓</td><td class="text-center">✓</td><td class="text-center">✓</td></tr>
             <tr><td class="py-2.5 text-gray-300">CLI & MCP Server</td><td class="text-center">✓</td><td class="text-center">✓</td><td class="text-center">✓</td><td class="text-center">✓</td></tr>
             <tr><td class="py-2.5 text-gray-300">Automated audits</td><td class="text-center text-gray-400">—</td><td class="text-center text-gray-300">Weekly</td><td class="text-center text-gray-500">Daily</td><td class="text-center text-gray-500">Hourly</td></tr>
@@ -223,6 +223,11 @@ import Layout from '../layouts/Layout.astro';
     }
     const token = localStorage.getItem('geoscore_token');
     if (!token) {
+      // 2026-10-23: remember which plan they picked. The login flow reloads the
+      // page, so without this the user had to find and click the price again.
+      try {
+        localStorage.setItem('geoscore_pending_checkout', JSON.stringify({ period: period, ts: Date.now() }));
+      } catch (e) { /* storage blocked: the old double-click flow still works */ }
       if (window.geoscoreAuth) {
         window.geoscoreAuth.openAuthModal();
       } else {
@@ -279,5 +284,48 @@ import Layout from '../layouts/Layout.astro';
         transport_type: 'beacon',
       });
     }
+    // 2026-10-23: this used to fire an event and change nothing visible. A buyer
+    // landed back on the same four plan cards with no confirmation that the
+    // payment worked — the highest-intent moment in the funnel was a blank.
+    renderCheckoutSuccess();
   }
+
+  function renderCheckoutSuccess() {
+    const host = document.querySelector('section');
+    if (!host || document.getElementById('checkout-success')) return;
+    const zh = (document.documentElement.lang || 'en').toLowerCase().indexOf('zh') === 0;
+    const box = document.createElement('div');
+    box.id = 'checkout-success';
+    box.setAttribute('role', 'status');
+    box.className = 'card p-6 mb-8 border-geo-500/40 bg-geo-500/10';
+    box.innerHTML =
+      '<h2 class="text-lg font-bold text-white mb-2">' +
+        (zh ? '付款成功，Pro 已生效' : 'Payment received — Pro is active') +
+      '</h2>' +
+      '<p class="text-sm text-gray-300 mb-4">' +
+        (zh
+          ? '你的账号已升级。Pro 面板在首页，跑一次审计后即可看到监控、历史与 AI 可见度。'
+          : 'Your account is upgraded. The Pro panel lives on the home page — run one audit and monitoring, history and AI visibility open up.') +
+      '</p>' +
+      '<a href="/' + (zh ? 'zh/' : '') + '#pro-monitor-root" class="inline-block px-4 py-2 rounded-lg bg-geo-500 hover:bg-geo-600 text-white text-sm font-semibold transition">' +
+        (zh ? '打开 Pro 面板 →' : 'Open the Pro panel →') +
+      '</a>';
+    host.insertBefore(box, host.firstChild);
+  }
+
+  // Resume a checkout that was interrupted by the sign-in flow. Both auth paths
+  // in public/scripts/auth.js end with location.reload(), so the only reliable
+  // place to continue is page load.
+  (function resumePendingCheckout() {
+    let pending = null;
+    try {
+      pending = JSON.parse(localStorage.getItem('geoscore_pending_checkout') || 'null');
+      localStorage.removeItem('geoscore_pending_checkout');
+    } catch (e) { return; }
+    if (!pending || !pending.period) return;
+    if (!localStorage.getItem('geoscore_token')) return;
+    if (Date.now() - pending.ts > 10 * 60 * 1000) return;
+    const btn = document.querySelector('[data-billing="' + pending.period + '"]');
+    if (btn) startCheckout(btn);
+  })();
 </script>

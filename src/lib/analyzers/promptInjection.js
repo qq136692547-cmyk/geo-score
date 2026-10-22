@@ -74,8 +74,19 @@ function analyzePromptInjection(html) {
   // to avoid false positives from legitimate UI patterns (loading states, error messages, etc.)
   const bodyHtml = html.replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '').replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '');
   
-  // Find elements with hidden styles and extract their text content
-  const hiddenElementRegex = /<(?:div|span|p|section|article|ul|ol|li|h[1-6])[^>]*(?:style="[^"]*(?:display\s*:\s*none|visibility\s*:\s*hidden|font-size\s*:\s*0px)[^"]*"|class="[^"]*(?:\bhidden\b|\bsr-only\b|\bvisually-hidden\b)[^"]*")[^>]*>([\s\S]*?)<\/(?:div|span|p|section|article|ul|ol|li|h[1-6])>/gi;
+  // Find elements with hidden INLINE STYLES and extract their text content.
+  //
+  // 2026-10-22: class-based hiding used to be included here (`\bhidden\b`,
+  // `\bsr-only\b`, `\bvisually-hidden\b`). That flagged legitimate layout and
+  // accessibility patterns -- notably Tailwind's `hidden md:block`, which is
+  // responsive layout, not cloaking. geoscore.help itself (a Tailwind site)
+  // lost 3 points to it, 100 -> 97. `sr-only` is the standard accessibility
+  // utility for screen-reader text and is the opposite of cloaking.
+  // There is no way to tell a cloaking utility class from a responsive one
+  // without rendering, and this check feeds a score DEDUCTION, so a false
+  // positive costs the user real points. Inline styles remain detectable and
+  // are what actual injection attempts use.
+  const hiddenElementRegex = /<(?:div|span|p|section|article|ul|ol|li|h[1-6])[^>]*style="[^"]*(?:display\s*:\s*none|visibility\s*:\s*hidden|font-size\s*:\s*0px)[^"]*"[^>]*>([\s\S]*?)<\/(?:div|span|p|section|article|ul|ol|li|h[1-6])>/gi;
   let hiddenTextContent = '';
   let match;
   while ((match = hiddenElementRegex.exec(bodyHtml)) !== null) {

@@ -65,6 +65,23 @@ import demo from '../../../data/demo-report.json';
     </div>
 
     <div class="card p-8 mb-8">
+      <h2 class="text-xl font-bold mb-4">What this checker actually verifies</h2>
+      <p class="text-gray-400 mb-4">
+        The audit scores <strong class="text-white">five</strong> things about your <code class="text-geo-400 bg-white/5 px-1.5 py-0.5 rounded">llms.txt</code>, not a longer wish list. Being explicit about the boundary matters: a checklist you cannot verify is a checklist you cannot act on.
+      </p>
+      <ul class="space-y-3 text-gray-400">
+        <li class="flex gap-3"><span class="text-geo-500 flex-shrink-0">1</span><span><strong class="text-white">It exists.</strong> Any 200 text response at <code class="bg-white/5 px-1.5 py-0.5 rounded">/llms.txt</code> counts — including a soft-404 HTML error page, which is a known limitation of every HTTP-based checker.</span></li>
+        <li class="flex gap-3"><span class="text-geo-500 flex-shrink-0">2</span><span><strong class="text-white">Structure.</strong> The file must open with an <code class="bg-white/5 px-1.5 py-0.5 rounded"># H1</code> and contain a <code class="bg-white/5 px-1.5 py-0.5 rounded">&gt; summary</code> line. Both are one check.</span></li>
+        <li class="flex gap-3"><span class="text-geo-500 flex-shrink-0">3</span><span><strong class="text-white">At least 2 area sections</strong> — <code class="bg-white/5 px-1.5 py-0.5 rounded">## Heading</code> lines. <code class="bg-white/5 px-1.5 py-0.5 rounded">###</code> does not count.</span></li>
+        <li class="flex gap-3"><span class="text-geo-500 flex-shrink-0">4</span><span><strong class="text-white">Descriptive links</strong> — at least one absolute <code class="bg-white/5 px-1.5 py-0.5 rounded">https://</code> URL in markdown link form. A file whose links are all relative fails this one.</span></li>
+        <li class="flex gap-3"><span class="text-geo-500 flex-shrink-0">5</span><span><strong class="text-white">Under 200 lines</strong> — and this point only counts once the structure check passes, so an empty file earns nothing for being short.</span></li>
+      </ul>
+      <p class="text-gray-500 text-sm mt-4 mb-0">
+        The best practices above are guidance, not all scored criteria. Publishing an <code class="bg-white/5 px-1.5 py-0.5 rounded">llms.txt</code> is a low-cost option, not a proven ranking factor — see <a href="/methodology/" class="text-geo-400 hover:underline">how the score is computed</a>.
+      </p>
+    </div>
+
+    <div class="card p-8 mb-8">
       <h2 class="text-xl font-bold mb-4">Example llms.txt File</h2>
       <pre class="bg-black/30 rounded-lg p-4 text-sm text-gray-300 overflow-x-auto"><code># Example Site
 
