@@ -4,3 +4,16 @@
 /blog/how-to-write-llms-txt/  /blog/llms-txt-ultimate-guide/  301
 /about/  /methodology/  301
 /zh/about/  /zh/methodology/  301
+
+# 2026-10-22：上面两条只覆盖带斜杠的路径。/about 目录已不存在后 Cloudflare 不再补
+# 308 到带斜杠版，裸路径直接 404（GSC 里 /about 有 4 次展示、均排 8.3）。补两条。
+# 目标是 methodology 里的 #about 区块（"About & Contact"，作者/联系/源码），
+# 301 后用户直接落到该区块，而不是被丢到方法论正文顶部。
+/about  /methodology/#about  301
+/zh/about  /zh/methodology/#about  301
+
+# 2026-10-22：这篇研究的 slug 一直写着 1200，而正文和标题都是 343（1,200 是
+# 2026-10-04 主动撤回的那个数字）。地址栏与内容长期互相矛盾，现在把 slug 改对，
+# 旧 URL 永久重定向，外部链接不丢。
+/blog/auditing-1200-websites/  /blog/auditing-343-websites/  301
+/blog/auditing-1200-websites  /blog/auditing-343-websites/  301

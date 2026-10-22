@@ -309,6 +309,7 @@ const API_BASE = 'https://geoscore-payments.geo-score.workers.dev';
 
     if (currentUser) {
       const initial = (currentUser.name || currentUser.email)[0].toUpperCase();
+      const isPro = !!currentUser.plan && currentUser.plan !== 'free';
       const planLabel = currentUser.plan !== 'free' 
         ? `<span class="px-2 py-0.5 rounded text-xs font-semibold bg-brand-500/20 text-brand-400">${currentUser.plan.toUpperCase()}</span>` 
         : '';
@@ -330,7 +331,9 @@ const API_BASE = 'https://geoscore-payments.geo-score.workers.dev';
             <div class="px-3 py-2 border-b border-gray-700 text-xs text-gray-400">
               ${safeEmail}
             </div>
-            <a href="${t('/pricing/', '/zh/pricing/')}" class="block px-3 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-800/50 rounded transition">${t('Upgrade Plan', '升级方案')}</a>
+            ${isPro
+              ? `<a href="${t('/#pro-monitor-root', '/zh/#pro-monitor-root')}" class="block px-3 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-800/50 rounded transition">${t('Pro dashboard', 'Pro 控制台')}</a>`
+              : `<a href="${t('/pricing/', '/zh/pricing/')}" class="block px-3 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-800/50 rounded transition">${t('Upgrade Plan', '升级方案')}</a>`}
             <button id="logout-btn" class="w-full text-left px-3 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-gray-800/50 rounded transition">${t('Sign Out', '退出登录')}</button>
           </div>
         </div>
