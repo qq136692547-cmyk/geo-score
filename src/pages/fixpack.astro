@@ -2,7 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 ---
 <Layout title="AI Visibility Fix Pack — Done-For-You GEO Fixes, $49 One-Time | GeoScore"
-  description="We rebuild your llms.txt from your real catalog, write explicit AI-crawler rules for robots.txt, and complete Product schema for your best-seller — then re-audit after you deploy. $49 one-time, 48-hour delivery."
+  description="Done-for-you GEO fixes: we rebuild your store's AI files from your real catalog — explicit AI-crawler robots.txt rules, completed Product schema for your best-seller, and a catalog-built llms.txt — then re-audit after you deploy. $49 one-time, 48-hour delivery."
   schema={{
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
@@ -16,6 +16,11 @@ import Layout from '../layouts/Layout.astro';
         '@type': 'Question',
         name: 'How is this different from the free fix file generator?',
         acceptedAnswer: { '@type': 'Answer', text: 'The free generator produces a generic skeleton from your homepage title and description. The Fix Pack is built by a human from your actual catalog and pages, checked against your live robots.txt and schema, and verified with a re-audit after deployment. You are paying for the catalog work, the checking, and the verification — not for three files any chatbot can draft.' }
+      },
+      {
+        '@type': 'Question',
+        name: 'Does llms.txt actually get read by AI engines?',
+        acceptedAnswer: { '@type': 'Answer', text: 'Rarely, on current evidence. Ahrefs\' June 2026 study of 137,210 domains found 97% of published llms.txt files got zero requests in May 2026, and Google says it ignores the file. We include a catalog-built llms.txt because it is free, harmless, and read by some agents and tools — but the measurable parts of this pack are the robots.txt access rules and the Product schema. We will never promise you citations.' }
       },
       {
         '@type': 'Question',
@@ -54,16 +59,16 @@ import Layout from '../layouts/Layout.astro';
       <div class="text-sm text-gray-400 space-y-3">
         <p>
           When a shopper asks ChatGPT or Perplexity for a product, the engine can only use what its crawlers
-          can read. We checked 20 well-known direct-to-consumer stores on 2026-10-23: every <span class="font-mono text-gray-300">llms.txt</span>
+          can read. On 2026-10-23 we checked the <span class="font-mono text-gray-300">llms.txt</span> and <span class="font-mono text-gray-300">robots.txt</span> of 20 well-known direct-to-consumer stores ourselves: every <span class="font-mono text-gray-300">llms.txt</span>
           we found was either Shopify's stock template with <strong class="text-gray-200">zero product facts</strong>,
           a 65-byte broken file, or missing entirely (404). Their <span class="font-mono text-gray-300">robots.txt</span> files
           never mentioned GPTBot, ClaudeBot or PerplexityBot at all.
         </p>
         <p>
-          An independent 2026 study of 216 Shopify stores (Visibility Mesh) put the median AI visibility at
+          An independent study of 216 Shopify stores (Visibility Mesh, <em>State of AI Visibility 2026</em>, June 2026) put the median AI visibility at
           <strong class="text-gray-200">46/100</strong>, with only 13% of stores fully legible to AI crawlers.
-          In our own audit of 343 websites, all 18 sites scoring above 72 had a real llms.txt — the template
-          version does not get you there.
+          In our own audit of 343 websites, all 18 sites scoring above 72 had a real llms.txt — a correlation
+          in our sample, not proof the file caused the scores; the template version does not get you there.
         </p>
         <p>
           Run the <a href="/" class="text-brand-400 hover:underline">free GeoScore audit</a> on your store first.
@@ -78,13 +83,33 @@ import Layout from '../layouts/Layout.astro';
       <ul class="text-sm text-gray-300 space-y-3">
         <li class="flex gap-2"><span class="text-brand-500">✓</span><span><strong class="text-white">Custom llms.txt built from your catalog</strong> — your categories, best-sellers and key pages, written from your sitemap and product data. Not the stock template, not a homepage skeleton.</span></li>
         <li class="flex gap-2"><span class="text-brand-500">✓</span><span><strong class="text-white">robots.txt AI-crawler snippet</strong> — explicit rules welcoming GPTBot, ClaudeBot and PerplexityBot, merged so your existing rules stay exactly as they are.</span></li>
-        <li class="flex gap-2"><span class="text-brand-500">✓</span><span><strong class="text-white">Product JSON-LD for 1 best-seller</strong> — name, offers, price, availability and identifiers completed and validated, so AI engines stop dropping the product for malformed schema.</span></li>
+        <li class="flex gap-2"><span class="text-brand-500">✓</span><span><strong class="text-white">Product JSON-LD for 1 best-seller</strong> — name, offers, price, availability and identifiers completed and validated, so your product data is complete, valid and machine-readable for the crawlers and shopping agents that parse it.</span></li>
         <li class="flex gap-2"><span class="text-brand-500">✓</span><span><strong class="text-white">1-page audit summary</strong> — your 11-dimension scores and the exact gaps the files address, in plain language.</span></li>
         <li class="flex gap-2"><span class="text-brand-500">✓</span><span><strong class="text-white">Post-deploy re-audit</strong> — once the files are live, we re-run the audit and send before/after scores. If a file was pasted wrong, you see it here, not months later.</span></li>
       </ul>
       <p class="text-xs text-gray-500 mt-4">
         Need more products or sitewide schema? The extended pack ($129) covers up to 10 products — ask in the same Fiverr thread.
       </p>
+    </div>
+
+    <!-- Honest note on llms.txt -->
+    <div class="card p-6 md:p-8 mb-8">
+      <h2 class="text-xl font-bold mb-4">An honest note on llms.txt</h2>
+      <div class="text-sm text-gray-400 space-y-3">
+        <p>
+          The largest log study so far — Ahrefs, June 2026, server logs from 137,210 domains — found that
+          <strong class="text-gray-200">97% of published llms.txt files received zero requests in May 2026</strong>,
+          and no major AI provider has said it reads the file. Google's AI search guide says it is not
+          required and is ignored by Google Search. So we do not sell llms.txt as a citation lever — and you
+          should be suspicious of anyone who does.
+        </p>
+        <p>
+          Why include one at all? It costs nothing, does no harm, and some AI agents and developer tools do
+          fetch it — and if anything reads yours, a correct file built from your real catalog beats Shopify's
+          empty template. The parts of this pack with machine-verifiable effect are the robots.txt crawler
+          access and the Product schema, and the post-deploy re-audit shows you exactly what changed.
+        </p>
+      </div>
     </div>
 
     <!-- How it works -->
@@ -118,6 +143,10 @@ import Layout from '../layouts/Layout.astro';
         <div class="card p-5">
           <h3 class="font-semibold mb-2">How is this different from the free fix file generator?</h3>
           <p class="text-sm text-gray-400">The free generator produces a generic skeleton from your homepage title and description. The Fix Pack is built by a human from your actual catalog and pages, checked against your live robots.txt and schema, and verified with a re-audit after deployment. You are paying for the catalog work, the checking, and the verification — not for three files any chatbot can draft.</p>
+        </div>
+        <div class="card p-5">
+          <h3 class="font-semibold mb-2">Does llms.txt actually get read by AI engines?</h3>
+          <p class="text-sm text-gray-400">Rarely, on current evidence. Ahrefs' June 2026 study of 137,210 domains found 97% of published llms.txt files got zero requests in May 2026, and Google says it ignores the file. We include a catalog-built llms.txt because it is free, harmless, and read by some agents and tools — but the measurable parts of this pack are the robots.txt access rules and the Product schema. We will never promise you citations.</p>
         </div>
         <div class="card p-5">
           <h3 class="font-semibold mb-2">Do you guarantee rankings or AI citations?</h3>

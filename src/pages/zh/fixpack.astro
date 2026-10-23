@@ -18,6 +18,11 @@ import LayoutZh from '../../layouts/LayoutZh.astro';
       },
       {
         '@type': 'Question',
+        name: 'llms.txt 真的会被 AI 引擎读取吗？',
+        acceptedAnswer: { '@type': 'Answer', text: '按目前证据：很少。Ahrefs 2026 年 6 月对 137,210 个域名的研究显示，97% 已发布的 llms.txt 在 2026 年 5 月零请求，Google 也明确表示会忽略它。我们仍按目录定制一份，因为它免费、无害，且确有部分代理与工具会读——但这个包里可度量的部分是 robots.txt 放行规则与 Product schema。我们永远不会向你承诺“被引用”。' }
+      },
+      {
+        '@type': 'Question',
         name: '保证排名或被 AI 引用吗？',
         acceptedAnswer: { '@type': 'Answer', text: '不保证——诚实的服务商都不会保证。AI 的回答取决于引擎、你的内容和市场。我们保证的是交付物本身：正确、按你的目录定制、可直接部署的文件，外加一份标明 11 维分数具体变化的复检报告。' }
       },
@@ -51,15 +56,15 @@ import LayoutZh from '../../layouts/LayoutZh.astro';
       <h2 class="text-xl font-bold mb-4">为什么大多数店铺对 AI 搜索是隐形的</h2>
       <div class="text-sm text-gray-400 space-y-3">
         <p>
-          顾客向 ChatGPT、Perplexity 提问时，引擎只能用爬虫能读到的内容作答。我们在 2026-10-23 实查了 20 家知名 DTC 独立站：
+          顾客向 ChatGPT、Perplexity 提问时，引擎只能用爬虫能读到的内容作答。我们在 2026-10-23 实查了 20 家知名 DTC 独立站的 <span class="font-mono text-gray-300">llms.txt</span> 与 <span class="font-mono text-gray-300">robots.txt</span>：
           找到的每个 <span class="font-mono text-gray-300">llms.txt</span> 要么是 Shopify 的库存模板（<strong class="text-gray-200">产品事实为零</strong>），
           要么是一个 65 字节的损坏文件，要么根本不存在（404）；它们的 <span class="font-mono text-gray-300">robots.txt</span> 里
           也从未提及 GPTBot、ClaudeBot 或 PerplexityBot。
         </p>
         <p>
-          2026 年一项针对 216 家 Shopify 店铺的独立研究（Visibility Mesh）显示，AI 可见度中位数只有
+          Visibility Mesh《State of AI Visibility 2026》（2026 年 6 月）对 216 家 Shopify 店铺的研究显示，AI 可见度中位数只有
           <strong class="text-gray-200">46/100</strong>，仅 13% 的店铺能被 AI 爬虫完整读取。在我们对 343 个网站的审计中，
-          72 分以上的 18 个站全部有真实的 llms.txt——模板版到不了这个分数段。
+          72 分以上的 18 个站全部有真实的 llms.txt——这是我们样本里的相关性，不证明高分由这个文件导致；但模板版到不了这个分数段。
         </p>
         <p>
           先给你的店铺跑一次 <a href="/zh/" class="text-brand-400 hover:underline">免费 GeoScore 审计</a>。
@@ -73,13 +78,30 @@ import LayoutZh from '../../layouts/LayoutZh.astro';
       <ul class="text-sm text-gray-300 space-y-3">
         <li class="flex gap-2"><span class="text-brand-500">✓</span><span><strong class="text-white">按目录定制的 llms.txt</strong>——按你的 sitemap 与商品数据梳理类目、畅销款与关键页面。不是库存模板，不是首页骨架。</span></li>
         <li class="flex gap-2"><span class="text-brand-500">✓</span><span><strong class="text-white">robots.txt AI 爬虫规则片段</strong>——显式放行 GPTBot、ClaudeBot、PerplexityBot，合并方式保证你现有规则原样保留。</span></li>
-        <li class="flex gap-2"><span class="text-brand-500">✓</span><span><strong class="text-white">1 款畅销商品的 Product JSON-LD</strong>——名称、报价、价格、库存与标识符补全并通过校验，避免商品因 schema 格式错误被 AI 静默丢弃。</span></li>
+        <li class="flex gap-2"><span class="text-brand-500">✓</span><span><strong class="text-white">1 款畅销商品的 Product JSON-LD</strong>——名称、报价、价格、库存与标识符补全并通过校验，让商品数据完整、规范、可被解析它的爬虫与购物代理机器读取。</span></li>
         <li class="flex gap-2"><span class="text-brand-500">✓</span><span><strong class="text-white">一页纸审计摘要</strong>——11 维分数与这几个文件对应的缺口，用人话写清。</span></li>
         <li class="flex gap-2"><span class="text-brand-500">✓</span><span><strong class="text-white">部署后复检</strong>——文件上线后重跑审计，发送前后分数对比。若粘贴出错，在这里就能看出来，不用等几个月。</span></li>
       </ul>
       <p class="text-xs text-gray-500 mt-4">
         需要更多商品或全站 schema？扩展包（$129）覆盖最多 10 款商品——在同一个 Fiverr 对话里问即可。
       </p>
+    </div>
+
+    <div class="card p-6 md:p-8 mb-8">
+      <h2 class="text-xl font-bold mb-4">关于 llms.txt 的诚实说明</h2>
+      <div class="text-sm text-gray-400 space-y-3">
+        <p>
+          目前最大规模的日志研究——Ahrefs，2026 年 6 月，137,210 个域名的服务器日志——发现：
+          <strong class="text-gray-200">已发布的 llms.txt 中，97% 在 2026 年 5 月的请求量为零</strong>；
+          也没有任何一家主流 AI 厂商公开表示会读取这个文件。Google 的 AI 搜索指南明确说该文件不是必需的，
+          Google 搜索会忽略它。所以我们不把 llms.txt 当作“被引用杠杆”来卖——谁这样卖，你都该多问一句为什么。
+        </p>
+        <p>
+          它为什么还在交付清单里？因为它成本为零、无害，而且确有部分 AI 代理与开发工具会抓取它；
+          真有东西来读时，一份按你真实目录写的文件，总比 Shopify 的空模板强。这个包里效果可被机器验证的部分，
+          是 robots.txt 的爬虫放行与 Product schema——部署后复检会把具体变化摆给你看。
+        </p>
+      </div>
     </div>
 
     <div class="card p-6 md:p-8 mb-8">
@@ -111,6 +133,10 @@ import LayoutZh from '../../layouts/LayoutZh.astro';
         <div class="card p-5">
           <h3 class="font-semibold mb-2">和免费的修复文件生成器有什么区别？</h3>
           <p class="text-sm text-gray-400">免费生成器只按首页标题和描述产出通用骨架。Fix Pack 由人工按你的真实目录和页面制作，对照你线上的 robots.txt 与 schema 逐项核对，并在部署后用复检验证。你付费买的是目录梳理、核对与验证，而不是三份任何聊天机器人都能起草的文件。</p>
+        </div>
+        <div class="card p-5">
+          <h3 class="font-semibold mb-2">llms.txt 真的会被 AI 引擎读取吗？</h3>
+          <p class="text-sm text-gray-400">按目前证据：很少。Ahrefs 2026 年 6 月对 137,210 个域名的研究显示，97% 已发布的 llms.txt 在 2026 年 5 月零请求，Google 也明确表示会忽略它。我们仍按目录定制一份，因为它免费、无害，且确有部分代理与工具会读——但这个包里可度量的部分是 robots.txt 放行规则与 Product schema。我们永远不会向你承诺“被引用”。</p>
         </div>
         <div class="card p-5">
           <h3 class="font-semibold mb-2">保证排名或被 AI 引用吗？</h3>
