@@ -152,13 +152,16 @@ describe('P0.2 · geoTrack 事件队列', () => {
     expect(sliceGA).toMatch(/__geoFlushPending/);
   });
 
-  it('补发必须挂在 gtag.js 的 load 事件上，不能在 injectScript 之后立刻发', () => {
-    // 实测：injectScript 之后立刻补发是无效的 —— gtag.js 还没加载，
-    // 推入 dataLayer 的条目会被丢弃（队列空了但网络上一个请求都没有）。
-    // 只有等加载器 load 事件触发时补发，才真的发得出去。
-    expect(CONSENT_JS).toMatch(/injectScript\(GA_SCRIPT_ID,\s*GA_SRC,\s*null,\s*flushPending\)/);
+  it('补发必须等 gtag.js 真正初始化之后，不能在 injectScript 之后立刻发', () => {
+    // 实测（线上、无代理）：injectScript 之后立刻补发 → 队列清了但一个请求都没发；
+    // 挂在 load 事件上补发 → 同样一个请求都没发；只有等 gtag.js 初始化完成才发得出去。
+    // 可观测的初始化标志是 window.google_tag_manager（实测：page_view 发出后 45ms 出现）。
+    expect(CONSENT_JS).toMatch(/injectScript\(GA_SCRIPT_ID,\s*GA_SRC,\s*null,\s*flushWhenGaReady\)/);
+    expect(CONSENT_JS).toMatch(/if \(window\.google_tag_manager\)\s*\{\s*flushPending\(\);\s*return;/);
     // injectScript 必须支持 onload 回调
     expect(CONSENT_JS).toMatch(/function injectScript\(id, src, extraAttr, onload\)/);
     expect(CONSENT_JS).toMatch(/addEventListener\('load',\s*onload\)/);
+    // 没有 setTimeout 的环境（测试沙箱）必须直接补发，不能静默不补发
+    expect(CONSENT_JS).toMatch(/if \(typeof setTimeout !== 'function'\) \{ flushPending\(\); return; \}/);
   });
 });
