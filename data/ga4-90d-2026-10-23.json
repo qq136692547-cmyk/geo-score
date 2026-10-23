@@ -1,0 +1,117 @@
+{
+  "generatedAt": "2026-10-23T03:36:08.870Z",
+  "propertyId": "546156702",
+  "serviceAccount": "drive-uploader@cogent-tide-361602.iam.gserviceaccount.com",
+  "range": {
+    "start": "2026-07-24",
+    "end": "2026-10-22"
+  },
+  "toolPageSharePct": 9.5,
+  "toolPageEvents": 2,
+  "totalAuditStartedEvents": 21,
+  "byEntryPoint": [
+    {
+      "entry_point": "(not set)",
+      "eventCount": "15",
+      "totalUsers": "10"
+    },
+    {
+      "entry_point": "home",
+      "eventCount": "3",
+      "totalUsers": "2"
+    },
+    {
+      "entry_point": "tool_page",
+      "eventCount": "2",
+      "totalUsers": "1"
+    },
+    {
+      "entry_point": "history",
+      "eventCount": "1",
+      "totalUsers": "1"
+    }
+  ],
+  "byUrlDomain": [
+    {
+      "url_domain": "(not set)",
+      "eventCount": "15"
+    },
+    {
+      "url_domain": "www.aimaji.top",
+      "eventCount": "4"
+    },
+    {
+      "url_domain": "aimaji.top",
+      "eventCount": "1"
+    },
+    {
+      "url_domain": "example.com",
+      "eventCount": "1"
+    }
+  ],
+  "allEvents": [
+    {
+      "eventName": "page_view",
+      "eventCount": "323",
+      "totalUsers": "216"
+    },
+    {
+      "eventName": "session_start",
+      "eventCount": "241",
+      "totalUsers": "216"
+    },
+    {
+      "eventName": "first_visit",
+      "eventCount": "217",
+      "totalUsers": "216"
+    },
+    {
+      "eventName": "user_engagement",
+      "eventCount": "200",
+      "totalUsers": "109"
+    },
+    {
+      "eventName": "scroll",
+      "eventCount": "121",
+      "totalUsers": "103"
+    },
+    {
+      "eventName": "audit_completed",
+      "eventCount": "22",
+      "totalUsers": "15"
+    },
+    {
+      "eventName": "audit_started",
+      "eventCount": "21",
+      "totalUsers": "12"
+    },
+    {
+      "eventName": "result_viewed",
+      "eventCount": "11",
+      "totalUsers": "5"
+    },
+    {
+      "eventName": "click",
+      "eventCount": "7",
+      "totalUsers": "4"
+    },
+    {
+      "eventName": "audit_failed",
+      "eventCount": "4",
+      "totalUsers": "3"
+    },
+    {
+      "eventName": "form_start",
+      "eventCount": "3",
+      "totalUsers": "3"
+    },
+    {
+      "eventName": "sign_in",
+      "eventCount": "1",
+      "totalUsers": "1"
+    }
+  ],
+  "consentedUsers": "225",
+  "sessions": "249",
+  "caveat": "Consented users only. The consent-rate denominator is invisible by design."
+}

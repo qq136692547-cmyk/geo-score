@@ -1,7 +1,7 @@
 /**
  * GeoScore sample builder — deterministic source list for the "1,200 audits" study.
  *
- * Why this file exists: the blog post src/pages/blog/auditing-1200-websites.astro
+ * Why this file exists: the blog post src/pages/blog/auditing-343-websites.astro
  * claims 1,200 audited sites. The production D1 database holds 3 audit rows covering
  * 1 distinct URL, and the earliest row (2026-08-23) post-dates the post's stated
  * publish date (2026-07-21), so the claim has no traceable origin. This script
