@@ -108,6 +108,17 @@
     window.gtag('config', GA_ID, { anonymize_ip: true });
 
     injectScript(GA_SCRIPT_ID, GA_SRC);
+
+    // P0.2 (2026-10-23): gtag now exists, so every event geoTrack queued
+    // while the visitor had not yet consented can finally be sent.
+    // consent.js is deferred, which means this ALSO covers the parse-time
+    // events of a returning visitor (pricing_viewed, fixpack_viewed) — they
+    // fired before gtag existed and used to be dropped on the floor.
+    // Guarded on purpose: this file is also loaded on pages that never
+    // define the queue, and a missing function must not break the page.
+    if (typeof window.__geoFlushPending === 'function') {
+      try { window.__geoFlushPending(); } catch (e) { /* never break consent */ }
+    }
   }
 
   function loadAds() {
