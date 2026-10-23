@@ -12,6 +12,23 @@ import LayoutZh from '../../layouts/LayoutZh.astro';
       </p>
     </div>
 
+    <!-- Fix Pack：一次性代做服务，刻意放在订阅价格网格之外 -->
+    <div class="card p-6 md:p-8 mb-12 border-brand-500/30 flex flex-col md:flex-row md:items-center gap-6">
+      <div class="flex-1">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-brand-500/10 text-brand-400 border border-brand-500/20 mb-3">一次性 · 代做</div>
+        <h2 class="text-2xl font-bold mb-2">AI 可见度 Fix Pack — $49</h2>
+        <p class="text-sm text-gray-400">
+          不想自己动手？我们按你店铺的真实目录重写 llms.txt、为 robots.txt 写显式 AI 爬虫放行规则、
+          补全一款畅销商品的 Product schema——部署后复检。人工制作、对照线上站点核对，48 小时交付。
+        </p>
+      </div>
+      <div class="text-center shrink-0">
+        <div class="text-4xl font-extrabold mb-1">$49</div>
+        <div class="text-xs text-gray-500 mb-4">一次性 · 无订阅</div>
+        <a id="fixpack-banner-cta" href="/zh/fixpack/" class="inline-block px-6 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-geo-600 to-brand-600 hover:from-geo-500 hover:to-brand-500 transition">查看包含什么 →</a>
+      </div>
+    </div>
+
     <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
       <!-- Free -->
       <div class="card p-6 flex flex-col">
@@ -39,7 +56,7 @@ import LayoutZh from '../../layouts/LayoutZh.astro';
           <li class="flex gap-2"><span class="text-brand-500">✓</span> 30 天审计历史</li>
           <li class="flex gap-2"><span class="text-brand-500">✓</span> 回归告警</li>
           <li class="flex gap-2"><span class="text-brand-500">✓</span> PDF 导出</li>
-          <li class="flex gap-2"><span class="text-brand-500">✓</span> AI 可见度估算——模拟 ChatGPT · Perplexity · Claude · Gemini 的回答，非真实引擎流量</li>
+          <li class="flex gap-2"><span class="text-brand-500">✓</span> AI 可见度估算——由大模型模拟 ChatGPT · Perplexity · Claude · Gemini 的回答，明确标注为估算，非真实引擎流量；每月 30 次</li>
           <li class="flex gap-2"><span class="text-brand-500">✓</span> 5 个域名</li>
         </ul>
         <!-- 月付与年付并排；各自发起对应的结账 -->
@@ -149,6 +166,10 @@ import LayoutZh from '../../layouts/LayoutZh.astro';
           <p class="text-sm text-gray-400">是的。我们的支付合作伙伴 Creem 作为记录商户（MoR），自动处理 190+ 个国家的 VAT、GST 和销售税合规。您无需操心税务表格。</p>
         </div>
         <div class="card p-5">
+          <h3 class="font-semibold mb-2">可以帮我直接把修复做完吗？</h3>
+          <p class="text-sm text-gray-400">可以。<a href="/zh/fixpack/" class="text-brand-400 hover:underline">AI 可见度 Fix Pack</a> 是一次性 $49 的代做服务：按你的目录定制 llms.txt、为 robots.txt 写显式 AI 爬虫放行规则、补全一款畅销商品的 Product schema、一页纸审计，部署后复检。通过 Fiverr Custom Offer 下单，先免费诊断，48 小时交付。</p>
+        </div>
+        <div class="card p-5">
           <h3 class="font-semibold mb-2">Studio 和 Agency 什么时候推出？</h3>
           <p class="text-sm text-gray-400">Studio 和 Agency 即将推出。我们先以 Pro 启动，验证工作流程。请关注我们的 <a href="https://github.com/qq136692547-cmyk/geo-score" class="text-brand-400 hover:underline">GitHub 仓库</a> 获取更新。</p>
         </div>
@@ -180,6 +201,8 @@ import LayoutZh from '../../layouts/LayoutZh.astro';
       const leave = function (url) {
         if (window.geoTrack) {
           // transport_type beacon：紧接着页面就卸载了，必须用 sendBeacon 送出去。
+          // checkout_started 标记「点击 → 进入 Creem」之间的一步，缺了它就看不到在哪流失。
+          window.geoTrack('checkout_started', { cta_id: 'pricing_pro', billing_period: period, source_type: sourceType, transport_type: 'beacon' });
           window.geoTrack('trial_started', { cta_id: 'pricing_pro', billing_period: period, source_type: sourceType, transport_type: 'beacon' });
         }
         window.location.href = url;
@@ -224,5 +247,16 @@ import LayoutZh from '../../layouts/LayoutZh.astro';
           transport_type: 'beacon',
         });
       }
+    }
+
+    // 漏斗埋点（2026-10-23 重造补齐）：定价页此前没有浏览事件，付费漏斗顶部不可测。
+    if (window.geoTrack) {
+      window.geoTrack('pricing_viewed', { source_type: window.geoSource ? window.geoSource() : 'other' });
+    }
+    const fixpackCta = document.getElementById('fixpack-banner-cta');
+    if (fixpackCta) {
+      fixpackCta.addEventListener('click', function () {
+        if (window.geoTrack) window.geoTrack('fixpack_cta_clicked', { placement: 'pricing_banner', transport_type: 'beacon' });
+      });
     }
   </script>

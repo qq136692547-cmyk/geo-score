@@ -36,6 +36,11 @@
                               "name":  "AI Readiness Score",
                               "description":  "Get a 0-100 score across 11 dimensions of AI search visibility with actionable fixes",
                               "url":  "https://geoscore.help/tools/ai-readiness-score"
+                          },
+                          {
+                              "name":  "AI Visibility Fix Pack",
+                              "description":  "Done-for-you GEO fix package: custom llms.txt built from your catalog, AI-crawler robots.txt rules, Product schema completion, a 1-page audit and a post-deploy re-audit. One-time $49.",
+                              "url":  "https://geoscore.help/fixpack"
                           }
                       ],
     "geo_dimensions":  [

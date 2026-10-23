@@ -1,0 +1,152 @@
+---
+import LayoutZh from '../../layouts/LayoutZh.astro';
+---
+<LayoutZh title="AI 可见度 Fix Pack — GEO 修复代做，$49 一次性 | GeoScore"
+  schema={{
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: [
+      {
+        '@type': 'Question',
+        name: 'Fix Pack 包含什么？',
+        acceptedAnswer: { '@type': 'Answer', text: '一份按你的 sitemap 与商品目录定制的 llms.txt（不是模板）、一段显式放行 GPTBot、ClaudeBot、PerplexityBot 的 robots.txt 规则（不改动你现有的任何规则）、一款畅销商品的完整 Product JSON-LD、一页纸审计摘要，以及文件部署后的复检报告（含前后分数对比）。' }
+      },
+      {
+        '@type': 'Question',
+        name: '和免费的修复文件生成器有什么区别？',
+        acceptedAnswer: { '@type': 'Answer', text: '免费生成器只按首页标题和描述产出通用骨架。Fix Pack 由人工按你的真实目录和页面制作，对照你线上的 robots.txt 与 schema 逐项核对，并在部署后用复检验证。你付费买的是目录梳理、核对与验证，而不是三份任何聊天机器人都能起草的文件。' }
+      },
+      {
+        '@type': 'Question',
+        name: '保证排名或被 AI 引用吗？',
+        acceptedAnswer: { '@type': 'Answer', text: '不保证——诚实的服务商都不会保证。AI 的回答取决于引擎、你的内容和市场。我们保证的是交付物本身：正确、按你的目录定制、可直接部署的文件，外加一份标明 11 维分数具体变化的复检报告。' }
+      },
+      {
+        '@type': 'Question',
+        name: '如何下单和付款？',
+        acceptedAnswer: { '@type': 'Answer', text: '先在 Fiverr 上把店铺网址发给我们，免费拿一段诊断结论。若诊断显示确有缺口，再在同一个 Fiverr gig 里下 $49 的 Custom Offer——款项由 Fiverr 托管，你确认交付后才放款。' }
+      },
+      {
+        '@type': 'Question',
+        name: '需要我提供什么？',
+        acceptedAnswer: { '@type': 'Answer', text: '只需要店铺网址和哪款商品最畅销。不需要后台权限，不需要密码。文件由你（或你的开发者）粘贴上线——我们附 Shopify 与普通 HTML 站点的安装说明——上线后告诉我们，即可安排复检。' }
+      }
+    ]
+  }}>
+  <section class="max-w-4xl mx-auto py-12">
+    <div class="text-center mb-10">
+      <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-brand-500/10 text-brand-400 border border-brand-500/20 mb-4">
+        代做服务 · 一次性付款
+      </div>
+      <h1 class="text-4xl md:text-5xl font-extrabold mb-4 tracking-tight">
+        AI 可见度 <span class="gradient-text">Fix Pack</span>
+      </h1>
+      <p class="text-lg text-gray-400 max-w-2xl mx-auto">
+        由 GeoScore 的开发者按你店铺的真实目录重做 AI 文件，部署后复检验证。
+        <span class="text-white font-semibold">$49 一次性 · 48 小时交付。</span>
+      </p>
+    </div>
+
+    <div class="card p-6 md:p-8 mb-8">
+      <h2 class="text-xl font-bold mb-4">为什么大多数店铺对 AI 搜索是隐形的</h2>
+      <div class="text-sm text-gray-400 space-y-3">
+        <p>
+          顾客向 ChatGPT、Perplexity 提问时，引擎只能用爬虫能读到的内容作答。我们在 2026-10-23 实查了 20 家知名 DTC 独立站：
+          找到的每个 <span class="font-mono text-gray-300">llms.txt</span> 要么是 Shopify 的库存模板（<strong class="text-gray-200">产品事实为零</strong>），
+          要么是一个 65 字节的损坏文件，要么根本不存在（404）；它们的 <span class="font-mono text-gray-300">robots.txt</span> 里
+          也从未提及 GPTBot、ClaudeBot 或 PerplexityBot。
+        </p>
+        <p>
+          2026 年一项针对 216 家 Shopify 店铺的独立研究（Visibility Mesh）显示，AI 可见度中位数只有
+          <strong class="text-gray-200">46/100</strong>，仅 13% 的店铺能被 AI 爬虫完整读取。在我们对 343 个网站的审计中，
+          72 分以上的 18 个站全部有真实的 llms.txt——模板版到不了这个分数段。
+        </p>
+        <p>
+          先给你的店铺跑一次 <a href="/zh/" class="text-brand-400 hover:underline">免费 GeoScore 审计</a>。
+          若 AI 指引、爬虫可达或结构化数据维度偏弱，这个包修的正是这几个文件。
+        </p>
+      </div>
+    </div>
+
+    <div class="card p-6 md:p-8 mb-8">
+      <h2 class="text-xl font-bold mb-4">交付内容</h2>
+      <ul class="text-sm text-gray-300 space-y-3">
+        <li class="flex gap-2"><span class="text-brand-500">✓</span><span><strong class="text-white">按目录定制的 llms.txt</strong>——按你的 sitemap 与商品数据梳理类目、畅销款与关键页面。不是库存模板，不是首页骨架。</span></li>
+        <li class="flex gap-2"><span class="text-brand-500">✓</span><span><strong class="text-white">robots.txt AI 爬虫规则片段</strong>——显式放行 GPTBot、ClaudeBot、PerplexityBot，合并方式保证你现有规则原样保留。</span></li>
+        <li class="flex gap-2"><span class="text-brand-500">✓</span><span><strong class="text-white">1 款畅销商品的 Product JSON-LD</strong>——名称、报价、价格、库存与标识符补全并通过校验，避免商品因 schema 格式错误被 AI 静默丢弃。</span></li>
+        <li class="flex gap-2"><span class="text-brand-500">✓</span><span><strong class="text-white">一页纸审计摘要</strong>——11 维分数与这几个文件对应的缺口，用人话写清。</span></li>
+        <li class="flex gap-2"><span class="text-brand-500">✓</span><span><strong class="text-white">部署后复检</strong>——文件上线后重跑审计，发送前后分数对比。若粘贴出错，在这里就能看出来，不用等几个月。</span></li>
+      </ul>
+      <p class="text-xs text-gray-500 mt-4">
+        需要更多商品或全站 schema？扩展包（$129）覆盖最多 10 款商品——在同一个 Fiverr 对话里问即可。
+      </p>
+    </div>
+
+    <div class="card p-6 md:p-8 mb-8">
+      <h2 class="text-xl font-bold mb-4">流程</h2>
+      <ol class="text-sm text-gray-300 space-y-3 list-none">
+        <li class="flex gap-3"><span class="font-bold text-brand-400">1.</span><span><strong class="text-white">先免费诊断。</strong>通过下方 Fiverr gig 把店铺网址发来，你会收到一段诊断：AI 爬虫在你的站上到底看到了什么。免费、无义务。</span></li>
+        <li class="flex gap-3"><span class="font-bold text-brand-400">2.</span><span><strong class="text-white">下 $49 Custom Offer。</strong>款项由 Fiverr 托管。全程不索取后台权限或密码。</span></li>
+        <li class="flex gap-3"><span class="font-bold text-brand-400">3.</span><span><strong class="text-white">48 小时内交付。</strong>文件外加 Shopify / 普通 HTML 的安装说明。</span></li>
+        <li class="flex gap-3"><span class="font-bold text-brand-400">4.</span><span><strong class="text-white">你部署，我们复检。</strong>把文件粘贴上线（或交给你的开发者），告诉我们已生效，即可收到前后对比复检。</span></li>
+      </ol>
+      <div class="mt-6 flex flex-col sm:flex-row gap-3">
+        <a id="fixpack-fiverr-cta" href="https://www.fiverr.com/chinesefood885/audit-your-website-for-ai-search-visibility-and-implement-geo-fixes" target="_blank" rel="noopener" class="flex-1 text-center px-6 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-geo-600 to-brand-600 hover:from-geo-500 hover:to-brand-500 transition">
+          去 Fiverr 拿免费诊断 →
+        </a>
+        <a href="mailto:qq136692547@gmail.com?subject=Fix%20Pack%20—%20我的店铺网址" class="flex-1 text-center px-6 py-3 rounded-xl font-semibold text-sm border border-gray-600 text-gray-300 hover:border-brand-500 hover:text-white transition">
+          或邮件发送店铺网址
+        </a>
+      </div>
+      <p class="text-xs text-gray-500 mt-3 text-center">由 GeoScore 开发者 Deng Li 本人制作交付——同一引擎给本站的自审分数是 94/100。</p>
+    </div>
+
+    <div class="max-w-2xl mx-auto">
+      <h2 class="text-2xl font-bold text-center mb-6">Fix Pack 常见问题</h2>
+      <div class="space-y-4">
+        <div class="card p-5">
+          <h3 class="font-semibold mb-2">Fix Pack 包含什么？</h3>
+          <p class="text-sm text-gray-400">一份按你的 sitemap 与商品目录定制的 llms.txt（不是模板）、一段显式放行 GPTBot、ClaudeBot、PerplexityBot 的 robots.txt 规则（不改动你现有的任何规则）、一款畅销商品的完整 Product JSON-LD、一页纸审计摘要，以及文件部署后的复检报告（含前后分数对比）。</p>
+        </div>
+        <div class="card p-5">
+          <h3 class="font-semibold mb-2">和免费的修复文件生成器有什么区别？</h3>
+          <p class="text-sm text-gray-400">免费生成器只按首页标题和描述产出通用骨架。Fix Pack 由人工按你的真实目录和页面制作，对照你线上的 robots.txt 与 schema 逐项核对，并在部署后用复检验证。你付费买的是目录梳理、核对与验证，而不是三份任何聊天机器人都能起草的文件。</p>
+        </div>
+        <div class="card p-5">
+          <h3 class="font-semibold mb-2">保证排名或被 AI 引用吗？</h3>
+          <p class="text-sm text-gray-400">不保证——诚实的服务商都不会保证。AI 的回答取决于引擎、你的内容和市场。我们保证的是交付物本身：正确、按你的目录定制、可直接部署的文件，外加一份标明 11 维分数具体变化的复检报告。</p>
+        </div>
+        <div class="card p-5">
+          <h3 class="font-semibold mb-2">如何下单和付款？</h3>
+          <p class="text-sm text-gray-400">先在 Fiverr 上把店铺网址发给我们，免费拿一段诊断结论。若诊断显示确有缺口，再在同一个 Fiverr gig 里下 $49 的 Custom Offer——款项由 Fiverr 托管，你确认交付后才放款。</p>
+        </div>
+        <div class="card p-5">
+          <h3 class="font-semibold mb-2">需要我提供什么？</h3>
+          <p class="text-sm text-gray-400">只需要店铺网址和哪款商品最畅销。不需要后台权限，不需要密码。文件由你（或你的开发者）粘贴上线——我们附 Shopify 与普通 HTML 站点的安装说明——上线后告诉我们，即可安排复检。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script is:inline type="application/ld+json" set:html={JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    name: 'AI 可见度 Fix Pack',
+    serviceType: 'GEO（生成式引擎优化）修复代做',
+    provider: { '@type': 'Organization', name: 'GeoScore', url: 'https://geoscore.help' },
+    description: 'GEO 修复代做包：按目录定制的 llms.txt、AI 爬虫 robots.txt 规则、Product JSON-LD 补全、一页纸审计与部署后复检。',
+    offers: { '@type': 'Offer', price: '49', priceCurrency: 'USD', name: 'AI 可见度 Fix Pack（一次性）', availability: 'https://schema.org/InStock', url: 'https://geoscore.help/zh/fixpack/' }
+  })} />
+</LayoutZh>
+
+<script>
+  if (window.geoTrack) {
+    window.geoTrack('fixpack_viewed', { source_type: window.geoSource ? window.geoSource() : 'other' });
+  }
+  var cta = document.getElementById('fixpack-fiverr-cta');
+  if (cta) {
+    cta.addEventListener('click', function () {
+      if (window.geoTrack) window.geoTrack('fixpack_cta_clicked', { placement: 'fixpack_page', transport_type: 'beacon' });
+    });
+  }
+</script>

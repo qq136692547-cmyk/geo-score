@@ -144,6 +144,17 @@ import demo from '../../data/demo-report.json';
     </div>
   </section>
 
+  <!-- Fix Pack strip: the done-for-you offer, visible before any audit is run -->
+  <section class="max-w-4xl mx-auto mb-8">
+    <div class="card p-5 md:p-6 border-brand-500/30 flex flex-col sm:flex-row sm:items-center gap-4">
+      <div class="flex-1 text-left">
+        <div class="font-semibold text-white">No time to fix it yourself?</div>
+        <p class="text-sm text-gray-400">The <strong class="text-gray-200">AI Visibility Fix Pack</strong> rebuilds your llms.txt from your real catalog, adds explicit AI-crawler rules and Product schema — then re-audits after you deploy. $49 one-time, 48 hours.</p>
+      </div>
+      <a href="/fixpack/" class="shrink-0 text-center px-5 py-2.5 rounded-lg font-semibold text-sm text-white bg-gradient-to-r from-geo-600 to-brand-600 hover:from-geo-500 hover:to-brand-500 transition">Get it done for me →</a>
+    </div>
+  </section>
+
   <!-- Filled by boot.js when the audit was bounced off a tool page, so the run
        is labelled with where it started. Sits outside #loading-section and
        #report-section deliberately: it has to outlive the scan animation and

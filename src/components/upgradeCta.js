@@ -41,7 +41,11 @@ function renderPrimary(r) {
       '</div>' +
       '<p class="mt-2 text-xs text-gray-500">' + t('One check gives you a baseline; continuous monitoring tells you when that baseline changes.', '一次检测给你基线；持续监测告诉你基线何时变化。') + '</p>';
     var btn = '<a href="' + pricingHref + '" data-cta-id="result_monitor" data-cta-placement="primary" class="mt-4 ' + BTN_CLS + '">' + t('Track this site continuously', '持续跟踪这个站') + '</a>';
-    return ctaShell(title, body + compare, btn);
+    // Low scorers are the done-for-you buyers: offer the Fix Pack as the quiet
+    // second path under the monitoring ask (2026-10-23 rebuild).
+    var fixpackHref = IS_ZH ? '/zh/fixpack/' : '/fixpack/';
+    var dfy = '<div class="mt-3"><a href="' + fixpackHref + '" data-cta-id="result_fixpack" data-cta-placement="primary-secondary" class="text-sm text-brand-400 hover:underline">' + t('Or get the top fixes done for you — $49 Fix Pack, delivered in 48h →', '或者直接代做——$49 Fix Pack，48 小时交付 →') + '</a></div>';
+    return ctaShell(title, body + compare, btn + dfy);
   }
 
   if (b === 'mid') {

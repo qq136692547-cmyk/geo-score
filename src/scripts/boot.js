@@ -412,6 +412,20 @@ function renderReport(r) {
   ];
   root.innerHTML = "<div>" + parts.join("") + "</div>";
 
+  // Funnel step that was missing (2026-10-23 rebuild): the upgrade CTA is part
+  // of this render, so its impression is recorded here — clicks alone could
+  // not show the view->click drop-off. Deliberately NOT inside the
+  // result_viewed consent-retry closure: that path is call-count tested, and
+  // this event follows the audit_started pattern (geoTrack no-ops pre-consent).
+  if (typeof window.geoTrack === 'function') {
+    window.geoTrack('result_cta_impression', {
+      score: r.score,
+      score_bucket: scoreBucket(r.score),
+      cta_id: scoreBucket(r.score) === 'low' ? 'result_monitor' : 'result_visibility',
+      source_type: getGeoSource()
+    });
+  }
+
   // Animate report sections with Web Animations API (reliable for dynamically inserted content)
   var animEls = root.querySelectorAll(".stagger-section");
   if (prefersReducedMotion()) {
