@@ -80,8 +80,14 @@
     document.documentElement.setAttribute('data-consent', 'decided');
   }
 
-  function injectScript(id, src, extraAttr) {
-    if (document.getElementById(id)) return;
+  function injectScript(id, src, extraAttr, onload) {
+    if (document.getElementById(id)) {
+      // The tag is already there, so no load event will fire for it. Call the
+      // callback anyway -- a cached script is already "loaded" from the page's
+      // point of view, and skipping it would strand whatever the caller queued.
+      if (onload) { try { onload(); } catch (e) { } }
+      return;
+    }
     var el = document.createElement('script');
     el.id = id;
     el.async = true;
@@ -91,6 +97,7 @@
         if (Object.prototype.hasOwnProperty.call(extraAttr, key)) el.setAttribute(key, extraAttr[key]);
       }
     }
+    if (onload) el.addEventListener('load', onload);
     document.head.appendChild(el);
   }
 
@@ -107,18 +114,30 @@
     window.gtag('js', new Date());
     window.gtag('config', GA_ID, { anonymize_ip: true });
 
-    injectScript(GA_SCRIPT_ID, GA_SRC);
-
-    // P0.2 (2026-10-23): gtag now exists, so every event geoTrack queued
-    // while the visitor had not yet consented can finally be sent.
-    // consent.js is deferred, which means this ALSO covers the parse-time
-    // events of a returning visitor (pricing_viewed, fixpack_viewed) — they
-    // fired before gtag existed and used to be dropped on the floor.
-    // Guarded on purpose: this file is also loaded on pages that never
-    // define the queue, and a missing function must not break the page.
-    if (typeof window.__geoFlushPending === 'function') {
-      try { window.__geoFlushPending(); } catch (e) { /* never break consent */ }
-    }
+    // P0.2 (2026-10-23): the events geoTrack queued while gtag was missing can
+    // finally be sent.
+    //
+    // TIMING IS THE WHOLE POINT. gtag.js only starts draining dataLayer once it
+    // has loaded; anything pushed into the raw array before that is dropped on
+    // the floor. Flushing straight after injectScript() therefore did NOT work
+    // — the queue emptied but nothing was sent. It has to happen on the
+    // loader's load event, when gtag.js has installed its own dataLayer
+    // handler. Measured: a manual gtag('event', ...) issued AFTER the loader
+    // arrived does reach /g/collect; the same call issued before it does not.
+    //
+    // consent.js is deferred, so this also covers the parse-time events of a
+    // returning visitor (pricing_viewed, fixpack_viewed) — they fired before
+    // gtag existed and used to be lost.
+    var flushPending = function () {
+      if (typeof window.__geoFlushPending === 'function') {
+        try { window.__geoFlushPending(); } catch (e) { /* never break consent */ }
+      }
+    };
+    // No timer fallback on purpose: the loader is async, so its load event is
+    // the one and only signal that gtag.js is ready. (A timer here would also
+    // mean a second flush path that could race the queue.) If the tag was
+    // already in the DOM, injectScript() calls the callback immediately.
+    injectScript(GA_SCRIPT_ID, GA_SRC, null, flushPending);
   }
 
   function loadAds() {
