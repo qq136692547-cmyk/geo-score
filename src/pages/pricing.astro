@@ -36,6 +36,11 @@ import Layout from '../layouts/Layout.astro';
     },
     {
       '@type': 'Question',
+      name: 'Can you just do the fixes for me?',
+      acceptedAnswer: { '@type': 'Answer', text: 'Yes. The AI Visibility Fix Pack is a one-time $49 done-for-you service: a custom llms.txt built from your catalog, explicit AI-crawler rules for robots.txt, Product schema for one best-seller, a 1-page audit, and a re-audit after you deploy. Delivered in 48 hours via Fiverr Custom Offer, with a free diagnosis first.' }
+    },
+    {
+      '@type': 'Question',
       name: 'When will Studio and Agency be available?',
       acceptedAnswer: { '@type': 'Answer', text: 'Studio and Agency are coming soon. We are launching with Pro first to validate the workflow. Watch our GitHub repository for updates.' }
     }
@@ -49,6 +54,24 @@ import Layout from '../layouts/Layout.astro';
       <p class="text-lg text-gray-400 max-w-2xl mx-auto">
         Free forever for single audits. Upgrade when you need monitoring, history, or team features.
       </p>
+    </div>
+
+    <!-- Fix Pack: one-time done-for-you service, deliberately outside the subscription grid -->
+    <div class="card p-6 md:p-8 mb-12 border-brand-500/30 flex flex-col md:flex-row md:items-center gap-6">
+      <div class="flex-1">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-brand-500/10 text-brand-400 border border-brand-500/20 mb-3">One-time · Done for you</div>
+        <h2 class="text-2xl font-bold mb-2">AI Visibility Fix Pack — $49</h2>
+        <p class="text-sm text-gray-400">
+          Don't want to DIY? We rebuild your llms.txt from your real catalog, write explicit AI-crawler rules
+          for robots.txt, and complete Product schema for your best-seller — then re-audit after you deploy.
+          Human-made, checked against your live site, delivered in 48 hours.
+        </p>
+      </div>
+      <div class="text-center shrink-0">
+        <div class="text-4xl font-extrabold mb-1">$49</div>
+        <div class="text-xs text-gray-500 mb-4">one-time · no subscription</div>
+        <a id="fixpack-banner-cta" href="/fixpack/" class="inline-block px-6 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-geo-600 to-brand-600 hover:from-geo-500 hover:to-brand-500 transition">See what's included →</a>
+      </div>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
@@ -78,7 +101,7 @@ import Layout from '../layouts/Layout.astro';
           <li class="flex gap-2"><span class="text-brand-500">✓</span> 30-day audit history</li>
           <li class="flex gap-2"><span class="text-brand-500">✓</span> Regression alerts</li>
           <li class="flex gap-2"><span class="text-brand-500">✓</span> PDF export</li>
-          <li class="flex gap-2"><span class="text-brand-500">✓</span> AI visibility estimate — simulated ChatGPT · Perplexity · Claude · Gemini answers, not real engine traffic</li>
+          <li class="flex gap-2"><span class="text-brand-500">✓</span> AI visibility estimate — LLM-simulated answers (ChatGPT · Perplexity · Claude · Gemini), labelled as estimates, not live engine traffic; 30 runs/month</li>
           <li class="flex gap-2"><span class="text-brand-500">✓</span> 5 domains</li>
         </ul>
         <!-- Monthly and annual side by side; each option starts its own checkout -->
@@ -188,6 +211,10 @@ import Layout from '../layouts/Layout.astro';
           <p class="text-sm text-gray-400">Yes. As a Merchant of Record, our payment partner Creem handles VAT, GST, and sales tax compliance in 190+ countries. You don't need to worry about tax forms.</p>
         </div>
         <div class="card p-5">
+          <h3 class="font-semibold mb-2">Can you just do the fixes for me?</h3>
+          <p class="text-sm text-gray-400">Yes. The <a href="/fixpack/" class="text-brand-400 hover:underline">AI Visibility Fix Pack</a> is a one-time $49 done-for-you service: a custom llms.txt built from your catalog, explicit AI-crawler rules for robots.txt, Product schema for one best-seller, a 1-page audit, and a re-audit after you deploy. Delivered in 48 hours via Fiverr Custom Offer, with a free diagnosis first.</p>
+        </div>
+        <div class="card p-5">
           <h3 class="font-semibold mb-2">When will Studio and Agency be available?</h3>
           <p class="text-sm text-gray-400">Studio and Agency are coming soon. We're launching with Pro first to validate the workflow. Watch our <a href="https://github.com/qq136692547-cmyk/geo-score" class="text-brand-400 hover:underline">GitHub repository</a> for updates.</p>
         </div>
@@ -204,7 +231,8 @@ import Layout from '../layouts/Layout.astro';
     offers: [
       { '@type': 'Offer', price: '0', priceCurrency: 'USD', name: 'Free', availability: 'https://schema.org/InStock' },
       { '@type': 'Offer', price: '9', priceCurrency: 'USD', name: 'Pro monthly', availability: 'https://schema.org/InStock', url: 'https://www.creem.io/payment/prod_3hLh24EkJOL0jS0Jrf9zq5' },
-      { '@type': 'Offer', price: '79', priceCurrency: 'USD', name: 'Pro annual', availability: 'https://schema.org/InStock', url: 'https://www.creem.io/payment/prod_2OZLydXjeAKD3HyVY20eEN' }
+      { '@type': 'Offer', price: '79', priceCurrency: 'USD', name: 'Pro annual', availability: 'https://schema.org/InStock', url: 'https://www.creem.io/payment/prod_2OZLydXjeAKD3HyVY20eEN' },
+      { '@type': 'Offer', price: '49', priceCurrency: 'USD', name: 'AI Visibility Fix Pack (one-time service)', availability: 'https://schema.org/InStock', url: 'https://geoscore.help/fixpack/' }
     ]
   })} />
 </Layout>
@@ -240,6 +268,9 @@ import Layout from '../layouts/Layout.astro';
       if (window.geoTrack) {
         // transport_type beacon: the page unloads right after this, so the event
         // must survive on sendBeacon instead of a normal gtag round trip.
+        // checkout_started marks the funnel step between CTA click and Creem:
+        // without it, "clicked but never reached checkout" was invisible.
+        window.geoTrack('checkout_started', { cta_id: 'pricing_pro', billing_period: period, source_type: sourceType, transport_type: 'beacon' });
         window.geoTrack('trial_started', { cta_id: 'pricing_pro', billing_period: period, source_type: sourceType, transport_type: 'beacon' });
       }
       window.location.href = url;
@@ -328,4 +359,16 @@ import Layout from '../layouts/Layout.astro';
     const btn = document.querySelector('[data-billing="' + pending.period + '"]');
     if (btn) startCheckout(btn);
   })();
+
+  // Funnel instrumentation (2026-10-23 rebuild): the pricing page itself had no
+  // view event, so the top of the paid funnel could not be measured at all.
+  if (window.geoTrack) {
+    window.geoTrack('pricing_viewed', { source_type: window.geoSource ? window.geoSource() : 'other' });
+  }
+  const fixpackCta = document.getElementById('fixpack-banner-cta');
+  if (fixpackCta) {
+    fixpackCta.addEventListener('click', function () {
+      if (window.geoTrack) window.geoTrack('fixpack_cta_clicked', { placement: 'pricing_banner', transport_type: 'beacon' });
+    });
+  }
 </script>
