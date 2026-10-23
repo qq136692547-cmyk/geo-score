@@ -9,6 +9,7 @@
 - [Robots.txt AI Checker](https://geoscore.help/tools/robots-txt-ai-checker/): See if your robots.txt blocks GPTBot, ClaudeBot, PerplexityBot, or Google-Extended
 - [AI Readiness Score](https://geoscore.help/tools/ai-readiness-score/): The full 11-dimension audit with fix recommendations
 - [Demo Report](https://geoscore.help/report/demo/): Example audit report showing all 11 dimensions and recommendations
+- [AI Visibility Fix Pack](https://geoscore.help/fixpack/): Done-for-you GEO fixes — custom llms.txt built from your catalog, AI-crawler robots.txt rules, Product schema completion, and a re-audit after deployment. One-time $49.
 - CLI: `npx geoscore <url>` — zero-dependency command-line tool (--json, --html, --fix, --quiet)
 - MCP Server: `geoscore-mcp` — Model Context Protocol server for AI agent integration (audit_url, generate_fixes tools)
 
