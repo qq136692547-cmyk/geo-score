@@ -117,13 +117,18 @@
     // P0.2 (2026-10-23): the events geoTrack queued while gtag was missing can
     // finally be sent.
     //
-    // TIMING IS THE WHOLE POINT. gtag.js only starts draining dataLayer once it
-    // has loaded; anything pushed into the raw array before that is dropped on
-    // the floor. Flushing straight after injectScript() therefore did NOT work
-    // — the queue emptied but nothing was sent. It has to happen on the
-    // loader's load event, when gtag.js has installed its own dataLayer
-    // handler. Measured: a manual gtag('event', ...) issued AFTER the loader
-    // arrived does reach /g/collect; the same call issued before it does not.
+    // TIMING IS THE WHOLE POINT, and it took three attempts to get right.
+    // Measured on the live site (no proxy, headless Edge):
+    //   - flush immediately after injectScript()  -> queue empties, NOTHING sent
+    //   - flush on the loader's load event        -> queue empties, NOTHING sent
+    //   - flush AFTER gtag.js has initialised     -> sent
+    // gtag.js only starts draining dataLayer once it has initialised; anything
+    // pushed into the raw array before that is dropped on the floor. The
+    // observable marker of "initialised" is window.google_tag_manager, which
+    // appears right after the library's first /g/collect (measured: page_view
+    // at +1244ms, google_tag_manager at +1289ms). A gtag('event', ...) issued
+    // after that marker does reach /g/collect; the same call issued earlier
+    // does not.
     //
     // consent.js is deferred, so this also covers the parse-time events of a
     // returning visitor (pricing_viewed, fixpack_viewed) — they fired before
@@ -133,11 +138,20 @@
         try { window.__geoFlushPending(); } catch (e) { /* never break consent */ }
       }
     };
-    // No timer fallback on purpose: the loader is async, so its load event is
-    // the one and only signal that gtag.js is ready. (A timer here would also
-    // mean a second flush path that could race the queue.) If the tag was
-    // already in the DOM, injectScript() calls the callback immediately.
-    injectScript(GA_SCRIPT_ID, GA_SRC, null, flushPending);
+    var flushWhenGaReady = function () {
+      // No setTimeout (test sandbox / exotic runtime): flush right away, which
+      // is the old behaviour — better than never flushing.
+      if (typeof setTimeout !== 'function') { flushPending(); return; }
+      var tries = 0;
+      var tick = function () {
+        if (window.google_tag_manager) { flushPending(); return; }
+        tries++;
+        if (tries >= 60) { flushPending(); return; }  // 30s ceiling, then send anyway
+        setTimeout(tick, 500);
+      };
+      setTimeout(tick, 500);
+    };
+    injectScript(GA_SCRIPT_ID, GA_SRC, null, flushWhenGaReady);
   }
 
   function loadAds() {
