@@ -143,14 +143,22 @@ describe('P0.2 · geoTrack 事件队列', () => {
   });
 
   it('consent.js 在加载 GA 后会触发补发（否则队列永远不落地）', () => {
-    // consent.js 里有这行调用
     expect(CONSENT_JS).toMatch(/__geoFlushPending/);
-    // 且在 loadAnalytics 内部（不是模块顶层）
     const a = CONSENT_JS.indexOf('function loadAnalytics()');
     const b = CONSENT_JS.indexOf('function loadAds()');
     expect(a).toBeGreaterThan(-1);
     expect(b).toBeGreaterThan(a);
     const sliceGA = CONSENT_JS.slice(a, b);
     expect(sliceGA).toMatch(/__geoFlushPending/);
+  });
+
+  it('补发必须挂在 gtag.js 的 load 事件上，不能在 injectScript 之后立刻发', () => {
+    // 实测：injectScript 之后立刻补发是无效的 —— gtag.js 还没加载，
+    // 推入 dataLayer 的条目会被丢弃（队列空了但网络上一个请求都没有）。
+    // 只有等加载器 load 事件触发时补发，才真的发得出去。
+    expect(CONSENT_JS).toMatch(/injectScript\(GA_SCRIPT_ID,\s*GA_SRC,\s*null,\s*flushPending\)/);
+    // injectScript 必须支持 onload 回调
+    expect(CONSENT_JS).toMatch(/function injectScript\(id, src, extraAttr, onload\)/);
+    expect(CONSENT_JS).toMatch(/addEventListener\('load',\s*onload\)/);
   });
 });
