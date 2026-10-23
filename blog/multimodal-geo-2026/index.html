@@ -11,8 +11,10 @@
       document.documentElement.setAttribute('data-consent', decided ? 'decided' : 'pending');
     })();
   </script><!-- Consent gate. GA4 and both Adsterra loaders are created here on opt-in;
-       no third-party script is requested before that. --><script src="/scripts/consent.js" defer></script><!-- GA4 track custom events. gtag() only exists after consent, so every
-       geoTrack call is a silent no-op until then. --><script>
+       no third-party script is requested before that. --><script src="/scripts/consent.js" defer></script><!-- GA4 track custom events. gtag() only exists after consent, so calls made
+       before that are queued and flushed the moment gtag appears (see
+       __geoFlushPending below, called from consent.js). A visitor who never
+       consents never flushes -- that is the compliance requirement. --><script>
     function geoAuthed() {
       try {
         if (window.geoscoreAuth && typeof window.geoscoreAuth.getCurrentUser === 'function') {
@@ -23,12 +25,34 @@
         return false;
       }
     }
+    // 2026-10-23 (P0.2): geoTrack used to be a SILENT NO-OP until gtag existed
+    // (consent.js injects it), with no queue and no replay. Events fired while
+    // the page was still parsing were therefore dropped for every visitor who
+    // had not consented yet -- and for returning visitors too, because
+    // consent.js is deferred, so gtag does not exist at parse time either.
+    // That killed pricing_viewed (on /pricing/) and fixpack_viewed (on
+    // /fixpack/), which are exactly the two events the funnel top is measured
+    // by. Now: queue while gtag is missing, flush in order the moment it
+    // exists. A visitor who never consents never flushes -- that is the
+    // compliance requirement, not a defect.
+    window.__geoPending = [];
+    window.__geoFlushPending = function () {
+      if (typeof gtag !== 'function') return;
+      var pending = window.__geoPending.splice(0);
+      for (var i = 0; i < pending.length; i++) {
+        var params = pending[i].params || {};
+        if (params.authed === undefined) params.authed = geoAuthed();
+        gtag('event', pending[i].action, params);
+      }
+    };
     window.geoTrack = function(action, params) {
       if (typeof gtag === 'function') {
         params = params || {};
         if (params.authed === undefined) params.authed = geoAuthed();
         gtag('event', action, params);
+        return;
       }
+      window.__geoPending.push({ action: action, params: params || {} });
     };
     function geoCrossSource() {
       try {
