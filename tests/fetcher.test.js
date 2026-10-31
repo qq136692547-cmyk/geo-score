@@ -45,9 +45,24 @@ function stubFetch(rules) {
   );
 }
 
+// 2026-11-01: production now ships a single self-hosted proxy. The public ones
+// (allorigins x2, codetabs) sent the audited URL to a third party, which
+// contradicted privacy.astro's promise that an audit never goes through a
+// third-party CORS proxy, so they were removed from src/lib/fetcher.js.
+//
+// The racing logic they exercised still exists and still needs coverage, so the
+// tests below inject two synthetic proxies into the module's exported array.
+// They never ship: nothing outside this file can see them.
+const TEST_JSON_WRAP = 'https://test.invalid/json-wrap?url=';
+const TEST_SLOW_RAW = 'https://test.invalid/slow-raw?url=';
+PROXIES.push(
+  { url: TEST_JSON_WRAP, type: 'json-wrap' },
+  { url: TEST_SLOW_RAW, type: 'raw' }
+);
+
 const SELF_HOSTED = PROXIES[0].url;
-const WRAPPED = PROXIES.find((p) => p.type === 'json-wrap').url;
-const REST = PROXIES.filter((p) => p.url !== SELF_HOSTED && p.url !== WRAPPED).map((p) => p.url);
+const WRAPPED = TEST_JSON_WRAP;
+const REST = [TEST_SLOW_RAW];
 
 describe('fetchResource 代理竞速', () => {
   it('自建代理成功时直接返回它的内容', async () => {

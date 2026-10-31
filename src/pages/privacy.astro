@@ -8,7 +8,7 @@ import Layout from '../layouts/Layout.astro';
         Legal
       </div>
       <h1 class="text-4xl font-extrabold mb-3">Privacy Policy</h1>
-      <p class="text-gray-400">Last updated: 2026-09-29</p>
+      <p class="text-gray-400">Last updated: 2026-11-01</p>
     </div>
 
     <div class="card p-8 space-y-6 text-gray-300 leading-relaxed">
@@ -17,15 +17,20 @@ import Layout from '../layouts/Layout.astro';
         <p>
           GeoScore is an open-source GEO audit tool with free single-browser audits and optional Pro monitoring. This policy explains what data each mode collects and why.
         </p>
+        <p class="mt-2">
+          The two modes handle your data differently. A <strong>free audit runs in your browser</strong>. <strong>Pro monitoring is server-side</strong>: the site you add is audited on a weekly schedule from our servers, and the results — including the site URL — are stored in our database so we can show you history, alerts and PDF exports.
+        </p>
       </section>
 
       <section>
-        <h2 class="text-xl font-bold text-white mb-3">2. Data We Do NOT Collect</h2>
-        <p>A single browser audit runs client-side. When you enter a URL to audit:</p>
+        <h2 class="text-xl font-bold text-white mb-3">2. The URL You Audit</h2>
+        <p>A free audit runs in your browser. When you enter a URL:</p>
         <ul class="list-disc list-inside space-y-1 mt-2">
-          <li>The URL is fetched directly from your browser to public proxies and the target site.</li>
-          <li>The URL is not sent to GeoScore servers as part of the browser audit; the browser requests public resources directly or through a CORS proxy.</li>
-          <li>The URL is <strong>never logged</strong>, <strong>never stored</strong>, and <strong>never shared</strong> with third parties.</li>
+          <li>It is fetched directly from your browser to the target site. When the target blocks direct browser requests, it goes through GeoScore's own proxy at geo-score-proxy.pages.dev — <strong>never through a third-party CORS proxy</strong>.</li>
+          <li>It is not logged on our servers, and we keep no audit history for anonymous visitors. Your audit history stays in your own browser's local storage.</li>
+          <li><strong>The bare hostname is sent to Google Analytics</strong> as an event property (for example <code class="text-gray-400 bg-white/5 px-1.5 py-0.5 rounded">example.com</code> — never the path or query string), so we can see which domains get audited. It is not sent to any advertising network.</li>
+          <li>If you use the optional "help me fix it" form, the URL you entered and your email address are stored in our database so we can reply. That is the only case in which we store a URL from a free audit.</li>
+          <li>If you run the <strong>AI visibility estimate</strong> (Pro, or the free check that requires signing in), we store the result: the site URL and hostname, the auto-generated question, the model's answer, and which simulated engine it was attributed to. What is sent to the model is a plain-text sample of your page — title, meta description and up to 1,200 characters of body text. These answers are produced by a language model playing each engine; they are estimates, not real engine traffic.</li>
         </ul>
       </section>
 
@@ -34,6 +39,7 @@ import Layout from '../layouts/Layout.astro';
         <p>We use Google Analytics 4 (GA4) to understand aggregate traffic patterns. GA4 collects:</p>
         <ul class="list-disc list-inside space-y-1 mt-2">
           <li>Page views (URL paths only, no query strings with audit URLs)</li>
+          <li>The audited hostname, as a property on audit events (hostname only, never the full URL)</li>
           <li>Referrer (the previous website you came from)</li>
           <li>Country and city (derived from IP, then discarded)</li>
           <li>Device type, browser, operating system</li>
@@ -67,10 +73,13 @@ import Layout from '../layouts/Layout.astro';
         <h2 class="text-xl font-bold text-white mb-3">6. Third-Party Services</h2>
         <p>GeoScore relies on the following third-party services, each with their own privacy policies:</p>
         <ul class="list-disc list-inside space-y-1 mt-2">
-          <li><strong>GitHub Pages</strong> (hosting) — <a href="https://docs.github.com/en/site-policy/privacy-policies/github-privacy-statement" target="_blank" rel="noopener" class="text-brand-400 hover:underline">GitHub Privacy Statement</a></li>
-          <li><strong>Cloudflare Pages</strong> (CORS proxy) — <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener" class="text-brand-400 hover:underline">Cloudflare Privacy Policy</a></li>
+          <li><strong>Cloudflare</strong> (Pages hosting, our own CORS proxy, and the D1 database) — <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener" class="text-brand-400 hover:underline">Cloudflare Privacy Policy</a></li>
           <li><strong>Google Analytics 4</strong> (analytics) — <a href="https://policies.google.com/privacy" target="_blank" rel="noopener" class="text-brand-400 hover:underline">Google Privacy Policy</a></li>
           <li><strong>Adsterra</strong> (advertising) — <a href="https://adsterra.com/privacy-policy/" target="_blank" rel="noopener" class="text-brand-400 hover:underline">Adsterra Privacy Policy</a></li>
+          <li><strong>Google Sign-In</strong> (optional OAuth login for Pro) — <a href="https://policies.google.com/privacy" target="_blank" rel="noopener" class="text-brand-400 hover:underline">Google Privacy Policy</a></li>
+          <li><strong>Creem</strong> (payments; acts as Merchant of Record, so it is the legal seller for paid plans) — <a href="https://www.creem.io/privacy" target="_blank" rel="noopener" class="text-brand-400 hover:underline">Creem Privacy Policy</a></li>
+          <li><strong>Resend</strong> (transactional email: login codes and receipt notices) — <a href="https://resend.com/legal/privacy-policy" target="_blank" rel="noopener" class="text-brand-400 hover:underline">Resend Privacy Policy</a></li>
+          <li><strong>TokenRhythm</strong> (language model provider for the AI visibility <em>estimate</em>; when a signed-in user runs a check, the audited page's title, meta description and a text excerpt of up to about 1,200 characters, plus the generated question, are sent to its API) — <a href="https://tokenrhythm.studio/" target="_blank" rel="noopener" class="text-brand-400 hover:underline">TokenRhythm</a></li>
         </ul>
       </section>
 

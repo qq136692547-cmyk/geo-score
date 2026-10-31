@@ -4,10 +4,13 @@
  */
 
 var PROXIES = [
-  { url: 'https://api.allorigins.win/get?url=', type: 'json-wrap' },
-  { url: 'https://api.allorigins.win/raw?url=', type: 'raw' },
-  { url: 'https://api.codetabs.com/v1/proxy/?quest=', type: 'raw' },
-  { url: 'https://corsproxy.io/?url=', type: 'raw' },
+  // Self-hosted proxy only. The public proxies that used to be listed here
+  // (allorigins x2, codetabs, corsproxy.io) were removed on 2026-11-01: they
+  // sent the audited URL to a third party, which contradicts privacy.astro, and
+  // all four were measured dead (timeouts / 401). Node has no CORS restriction,
+  // so the direct fetch above is the real path; this proxy only covers sites
+  // that block non-browser user agents.
+  { url: 'https://geo-score-proxy.pages.dev/api/proxy?url=', type: 'raw' },
 ];
 
 async function tryProxy(proxy, url, type) {

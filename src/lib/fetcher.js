@@ -4,22 +4,20 @@
  */
 
 var PROXIES = [
-  // Self-hosted Cloudflare Pages proxy — the only one measured to still work.
+  // Self-hosted Cloudflare Pages proxy — the only entry, on purpose.
+  //
+  // 2026-11-01: the three public proxies that used to live here (allorigins
+  // get + raw, codetabs) were removed. Two reasons, both decisive:
+  //   1. Privacy. The audited URL was sent in clear text to a third party, which
+  //      contradicted privacy.astro's promise that an audit never goes through a
+  //      third-party CORS proxy. For an overseas customer that leak is literally
+  //      "who is auditing what".
+  //   2. They were already dead. Measured 2026-10-27: all three time out and
+  //      corsproxy.io answers 401 without a paid key, so they only ever added a
+  //      wasted round trip.
+  // If this proxy fails, the audit fails honestly instead of silently handing
+  // the customer's domain to an unknown middleman.
   { url: "https://geo-score-proxy.pages.dev/api/proxy?url=", type: "raw" },
-  // Public proxies as fallback.
-  //
-  // corsproxy.io used to be last here but is gone: it now answers
-  //   401 {"error":"A valid API key is required. Get one at https://console.corsproxy.io/"}
-  // for every request, so it only ever contributed a wasted round trip. It can
-  // come back if an API key is provisioned and sent, but until then it is dead
-  // weight.
-  //
-  // The remaining three are kept on purpose even though they time out from
-  // mainland-China networks: that timeout is not proof the service is down, and
-  // removing them would strip overseas visitors of their only fallback paths.
-  { url: "https://api.allorigins.win/get?url=", type: "json-wrap" },
-  { url: "https://api.allorigins.win/raw?url=", type: "raw" },
-  { url: "https://api.codetabs.com/v1/proxy/?quest=", type: "raw" },
 ];
 
 async function tryProxy(proxy, url, type, signal) {

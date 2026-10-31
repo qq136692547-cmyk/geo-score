@@ -8,7 +8,7 @@ import LayoutZh from '../../layouts/LayoutZh.astro';
         法律
       </div>
       <h1 class="text-4xl font-extrabold mb-3">隐私政策</h1>
-      <p class="text-gray-400">最后更新：2026-09-29</p>
+      <p class="text-gray-400">最后更新：2026-11-01</p>
     </div>
 
     <div class="card p-8 space-y-6 text-gray-300 leading-relaxed">
@@ -17,15 +17,20 @@ import LayoutZh from '../../layouts/LayoutZh.astro';
         <p>
           GeoScore 是一个开源 GEO 审计工具，提供免费单次浏览器审计和可选 Pro 监控。本政策解释不同模式分别收集哪些数据以及原因。
         </p>
+        <p class="mt-2">
+          两种模式的数据处理方式不同。<strong>免费审计在你的浏览器里运行</strong>；<strong>Pro 监控在服务端运行</strong>——你添加的站点会由我们的服务器按周自动审计，结果（含站点 URL）存入我们的数据库，用于展示历史、告警和 PDF 导出。
+        </p>
       </section>
 
       <section>
-        <h2 class="text-xl font-bold text-white mb-3">2. 我们不收集的数据</h2>
-        <p>GeoScore 审计 100% 在客户端运行。当你输入 URL 进行审计时：</p>
+        <h2 class="text-xl font-bold text-white mb-3">2. 你审计的 URL</h2>
+        <p>免费审计在你的浏览器里运行。当你输入一个 URL：</p>
         <ul class="list-disc list-inside space-y-1 mt-2">
-          <li>URL 直接从你的浏览器获取到公共代理和目标站点。</li>
-          <li>单次浏览器审计不会把 URL 发送给 GeoScore 存储；浏览器会直接或通过 CORS 代理请求公开资源。</li>
-          <li>URL <strong>绝不会被记录</strong>、<strong>绝不会被存储</strong>，也<strong>绝不会被分享</strong>给第三方。</li>
+          <li>URL 直接从你的浏览器获取到目标站点。当目标站点阻止浏览器直连时，会经过 GeoScore 自建的代理 geo-score-proxy.pages.dev——<strong>绝不经过第三方公共 CORS 代理</strong>。</li>
+          <li>URL 不会记录在我们的服务器上，我们也不为匿名访客保留审计历史。你的审计历史只存在你自己浏览器的本地存储里。</li>
+          <li><strong>域名会被发送给 Google Analytics</strong>，作为审计事件的属性（例如 <code class="text-gray-400 bg-white/5 px-1.5 py-0.5 rounded">example.com</code>，不含路径和查询字符串），用于了解哪些域名被审计。它不会被发送给任何广告网络。</li>
+          <li>如果你使用可选的「我来帮你修」表单，你填的 URL 和邮箱会存入我们的数据库，以便我们回复你。这是免费审计中唯一会存储 URL 的情形。</li>
+          <li>如果你运行 <strong>AI 可见度估算</strong>（Pro，或需要登录的免费版检查），我们会把结果存入数据库：站点 URL 与域名、自动生成的提问、模型回答，以及它被归属的模拟引擎。发送给模型的是你页面的纯文本样本——标题、meta 描述，以及最多 1,200 字符的正文。这些回答由大模型扮演各个引擎生成，是估算，不代表真实引擎流量。</li>
         </ul>
       </section>
 
@@ -34,6 +39,7 @@ import LayoutZh from '../../layouts/LayoutZh.astro';
         <p>我们使用 Google Analytics 4 (GA4) 了解聚合流量模式。GA4 收集：</p>
         <ul class="list-disc list-inside space-y-1 mt-2">
           <li>页面浏览（仅 URL 路径，不含审计 URL 的查询字符串）</li>
+          <li>被审计的域名，作为审计事件的属性（仅域名，不含完整 URL）</li>
           <li>来源（你来自的上一个网站）</li>
           <li>国家和城市（从 IP 推导，然后丢弃）</li>
           <li>设备类型、浏览器、操作系统</li>
@@ -67,10 +73,13 @@ import LayoutZh from '../../layouts/LayoutZh.astro';
         <h2 class="text-xl font-bold text-white mb-3">6. 第三方服务</h2>
         <p>GeoScore 依赖以下第三方服务，各有其自己的隐私政策：</p>
         <ul class="list-disc list-inside space-y-1 mt-2">
-          <li><strong>GitHub Pages</strong>（托管）— <a href="https://docs.github.com/en/site-policy/privacy-policies/github-privacy-statement" target="_blank" rel="noopener" class="text-brand-400 hover:underline">GitHub 隐私声明</a></li>
-          <li><strong>Cloudflare Pages</strong>（CORS 代理）— <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener" class="text-brand-400 hover:underline">Cloudflare 隐私政策</a></li>
+          <li><strong>Cloudflare</strong>（Pages 托管、自建 CORS 代理、D1 数据库）— <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener" class="text-brand-400 hover:underline">Cloudflare 隐私政策</a></li>
           <li><strong>Google Analytics 4</strong>（分析）— <a href="https://policies.google.com/privacy" target="_blank" rel="noopener" class="text-brand-400 hover:underline">Google 隐私政策</a></li>
           <li><strong>Adsterra</strong>（广告）— <a href="https://adsterra.com/privacy-policy/" target="_blank" rel="noopener" class="text-brand-400 hover:underline">Adsterra 隐私政策</a></li>
+          <li><strong>Google 登录</strong>（Pro 的可选 OAuth 登录）— <a href="https://policies.google.com/privacy" target="_blank" rel="noopener" class="text-brand-400 hover:underline">Google 隐私政策</a></li>
+          <li><strong>Creem</strong>（支付；作为记录商户 MoR，付费方案的法律卖方是它）— <a href="https://www.creem.io/privacy" target="_blank" rel="noopener" class="text-brand-400 hover:underline">Creem 隐私政策</a></li>
+          <li><strong>Resend</strong>（事务邮件：登录验证码与收据通知）— <a href="https://resend.com/legal/privacy-policy" target="_blank" rel="noopener" class="text-brand-400 hover:underline">Resend 隐私政策</a></li>
+          <li><strong>TokenRhythm</strong>（AI 可见度<em>估算</em>所用的大模型服务商；登录用户发起检测时，被审计页面的标题、meta 描述与最多约 1,200 字的正文摘要，连同自动生成的提问，会发送给其 API）— <a href="https://tokenrhythm.studio/" target="_blank" rel="noopener" class="text-brand-400 hover:underline">TokenRhythm</a></li>
         </ul>
       </section>
 
