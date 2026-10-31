@@ -32,20 +32,22 @@ function renderPrimary(r) {
       ? t('Your site has ' + n + ' priority fixes this run', '你的站这次有 ' + n + ' 项优先修复项')
       : t('There are still items worth verifying', '仍有需要验证的项');
     var body = t(
-      'Whether the fixes actually took effect still needs a re-check. Want me to run it weekly and alert you when the score changes?',
-      '改完后是否生效仍需要复查。要我每周替你跑一次，分数变了就通知你吗？'
+      'You can fix these yourself with the free fix files above — that path costs nothing. If you would rather not touch robots.txt, Product schema and llms.txt on a live store, we rebuild them from your actual catalog and re-audit after you deploy.',
+      '这些你可以用上面的免费修复文件自己改，那条路不花钱。如果你不想在正在营业的店上动 robots.txt、Product schema 和 llms.txt，我们按你的真实商品目录重做这些文件，并在你部署后重新审计。'
     );
-    var compare = '<div class="mt-4 grid grid-cols-2 gap-3 text-sm">' +
+    // The primary ask for a low scorer is the done-for-you service, not the
+    // subscription. A site that just failed 20+ checks needs work performed, and
+    // monitoring a broken baseline sells the wrong thing. Reversed 2026-11-01:
+    // the Fix Pack used to be a quiet text link under a "track this site" button.
+    var fixpackHref = IS_ZH ? '/zh/fixpack/' : '/fixpack/';
+    var btn = '<a href="' + fixpackHref + '" data-cta-id="result_fixpack" data-cta-placement="primary" class="mt-4 ' + BTN_CLS + '">' + t('Get these fixed for me — $49, 48h →', '帮我改好这些——$49，48 小时 →') + '</a>';
+    var compare = '<div class="mt-5 pt-5 border-t border-gray-700/50"><div class="grid grid-cols-2 gap-3 text-sm">' +
         '<div class="rounded-lg bg-white/5 p-3"><div class="text-xs text-gray-500 mb-1">' + t('This run', '本次') + '</div><div class="font-mono font-bold text-gray-200">' + r.score + ' · ' + (r.timestamp || '') + '</div></div>' +
         '<div class="rounded-lg bg-white/5 p-3"><div class="text-xs text-gray-500 mb-1">' + t('Next', '下次') + '</div><div class="text-gray-400">' + t('To be re-checked', '待复查') + '</div></div>' +
       '</div>' +
-      '<p class="mt-2 text-xs text-gray-500">' + t('One check gives you a baseline; continuous monitoring tells you when that baseline changes.', '一次检测给你基线；持续监测告诉你基线何时变化。') + '</p>';
-    var btn = '<a href="' + pricingHref + '" data-cta-id="result_monitor" data-cta-placement="primary" class="mt-4 ' + BTN_CLS + '">' + t('Track this site continuously', '持续跟踪这个站') + '</a>';
-    // Low scorers are the done-for-you buyers: offer the Fix Pack as the quiet
-    // second path under the monitoring ask (2026-10-23 rebuild).
-    var fixpackHref = IS_ZH ? '/zh/fixpack/' : '/fixpack/';
-    var dfy = '<div class="mt-3"><a href="' + fixpackHref + '" data-cta-id="result_fixpack" data-cta-placement="primary-secondary" class="text-sm text-brand-400 hover:underline">' + t('Or get the top fixes done for you — $49 Fix Pack, delivered in 48h →', '或者直接代做——$49 Fix Pack，48 小时交付 →') + '</a></div>';
-    return ctaShell(title, body + compare, btn + dfy);
+      '<p class="mt-2 text-xs text-gray-500">' + t('One check gives you a baseline; continuous monitoring tells you when that baseline changes.', '一次检测给你基线；持续监测告诉你基线何时变化。') + '</p>' +
+      '<div class="mt-3"><a href="' + pricingHref + '" data-cta-id="result_monitor" data-cta-placement="primary-secondary" class="text-sm text-brand-400 hover:underline">' + t('Or track this site weekly instead →', '或者改为每周跟踪这个站 →') + '</a></div></div>';
+    return ctaShell(title, body, btn + compare);
   }
 
   if (b === 'mid') {
