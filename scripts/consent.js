@@ -101,6 +101,25 @@
     document.head.appendChild(el);
   }
 
+  // ?audit=<target URL> is how share links and the tool pages hand an audit to
+  // the homepage. GA4's automatic page_view would forward the whole query string
+  // to Google, putting the audited URL back into a third party — exactly what
+  // privacy.astro section 2 says does not happen. Only utm_* survives.
+  function analyticsSafeUrl(href) {
+    if (!href) return null;
+    try {
+      var u = new URL(href);
+      var keep = new URLSearchParams();
+      u.searchParams.forEach(function (value, key) {
+        if (/^utm_/i.test(key)) keep.append(key, value);
+      });
+      var qs = keep.toString();
+      return u.origin + u.pathname + (qs ? '?' + qs : '');
+    } catch (e) {
+      return String(href).split('?')[0];
+    }
+  }
+
   function loadAnalytics() {
     if (analyticsLoaded) return;
     analyticsLoaded = true;
@@ -112,7 +131,9 @@
       window.gtag = function () { window.dataLayer.push(arguments); };
     }
     window.gtag('js', new Date());
-    window.gtag('config', GA_ID, { anonymize_ip: true });
+    window.gtag('config', GA_ID, { anonymize_ip: true, send_page_view: false });
+    var safeLocation = analyticsSafeUrl(window.location && window.location.href);
+    if (safeLocation) window.gtag('event', 'page_view', { page_location: safeLocation });
 
     // P0.2 (2026-10-23): the events geoTrack queued while gtag was missing can
     // finally be sent.
