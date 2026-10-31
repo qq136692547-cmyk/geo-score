@@ -1,0 +1,26 @@
+domain,llms_status,llms_bytes,llms_verdict,llms_first_line,robots_status,robots_bytes,ai_bots_mentioned,ai_bots_disallowed_at_root,blocks_root
+skims.com,404,,missing-404,,200,18338,,,0
+gymshark.com,200,5748,platform-agent-template,# Agent Instructions — Gymshark US,200,3730,,,0
+allbirds.com,200,5767,platform-agent-template,# Agent Instructions — Allbirds,200,2285,,,0
+fashionnova.com,200,5483,stock-template-no-product-facts,# LLMs.txt - Fashion Nova (fashionnova.com),200,4356,,,0
+casper.com,200,5666,platform-agent-template,# Agent Instructions — Casper Sleep,200,2262,,,0
+bombas.com,429,,http-429,,429,,,,
+glossier.com,200,5694,platform-agent-template,# Agent Instructions — Glossier,200,3698,,,0
+warbyparker.com,200,1746,stock-template-no-product-facts,# Warby Parker,200,1124,Bytespider;CCBot,Bytespider;CCBot,1
+awaytravel.com,200,10321,platform-agent-template,# Agent Instructions — Away,200,3397,ChatGPT-User;GPTBot;OAI-SearchBot;ClaudeBot;PerplexityBot;Google-Extended;CCBot;Bytespider;anthropic-ai,,0
+outdoorvoices.com,200,126198,platform-agent-template,# Outdoor Voices,200,3715,,,0
+brooklinen.com,200,5710,platform-agent-template,# Agent Instructions — Brooklinen,200,3700,,,0
+dollarshaveclub.com,200,5827,platform-agent-template,# Agent Instructions — Dollar Shave Club,200,3728,,,0
+everlane.com,200,5767,platform-agent-template,# Agent Instructions — Everlane,200,3698,,,0
+untuckit.com,200,5694,platform-agent-template,# Agent Instructions — UNTUCKit,200,3690,,,0
+chubbiesshorts.com,200,6224,stock-template-no-product-facts,# Chubbies,200,398,,,0
+mvmt.com,200,5577,platform-agent-template,# Agent Instructions — MVMT,200,3658,,,0
+taylorstitch.com,200,5805,platform-agent-template,# Agent Instructions — Taylor Stitch,200,2582,,,0
+ripplefoods.com,200,5768,platform-agent-template,# Agent Instructions — Ripple Foods,200,3687,,,0
+olipop.com,ERR,,unreachable,,ERR,,,,
+greatjonesgoods.com,404,,missing-404,,200,3371,GPTBot;CCBot;ClaudeBot;PerplexityBot,,0
+harrys.com,200,2208408,soft-404-html-2208408b,"<!DOCTYPE html><html lang=""en-US"" dir=""ltr""><head><meta charSet=""utf-8""/><meta n",200,1802,OAI-SearchBot;GPTBot,,0
+liquiddeath.com,200,5696,platform-agent-template,# Agent Instructions — Liquid Death,200,3691,,,0
+nativecos.com,200,5770,platform-agent-template,# Agent Instructions — Native,200,2103,,,0
+beardbrand.com,200,5785,platform-agent-template,# Agent Instructions — Beardbrand,200,2560,,,0
+trueclassictees.com,200,5824,platform-agent-template,# Agent Instructions — True Classic,200,2180,,,0

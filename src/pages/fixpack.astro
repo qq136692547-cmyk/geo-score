@@ -35,7 +35,7 @@ import Layout from '../layouts/Layout.astro';
       {
         '@type': 'Question',
         name: 'What do you need from me?',
-        acceptedAnswer: { '@type': 'Answer', text: 'Just your store URL and which product sells best. No admin access, no passwords. You (or your developer) paste the files in — we include install notes for Shopify and plain-HTML sites — and tell us when they are live so we can run the re-audit.' }
+        acceptedAnswer: { '@type': 'Answer', text: 'Just your store URL and which product sells best. No admin access, no passwords. On Shopify, llms.txt is not a file you upload — since May 2026 the platform generates /agents.md and points /llms.txt at it, and the only supported override is a theme template (Online Store > Themes > Edit code > Templates > add llms.txt.liquid). We write that template for you and your developer adds it in one step. Two things we handle so you do not break anything: a custom template replaces Shopify\'s output instead of merging with it, so it must carry the UCP and MCP discovery links across, and it renders in a restricted Liquid context where shop, collections and pages are blank — so the content is curated and static rather than generated from your catalogue, and it needs a refresh when your range changes. Plain-HTML and WordPress sites get files they can drop in as-is.' }
       }
     ]
   }}>
@@ -59,16 +59,21 @@ import Layout from '../layouts/Layout.astro';
       <div class="text-sm text-gray-400 space-y-3">
         <p>
           When a shopper asks ChatGPT or Perplexity for a product, the engine can only use what its crawlers
-          can read. On 2026-10-23 we checked the <span class="font-mono text-gray-300">llms.txt</span> and <span class="font-mono text-gray-300">robots.txt</span> of 20 well-known direct-to-consumer stores ourselves: every <span class="font-mono text-gray-300">llms.txt</span>
-          we found was either Shopify's stock template with <strong class="text-gray-200">zero product facts</strong>,
-          a 65-byte broken file, or missing entirely (404). Their <span class="font-mono text-gray-300">robots.txt</span> files
-          never mentioned GPTBot, ClaudeBot or PerplexityBot at all.
+          can read. On 2026-11-01 we checked the <span class="font-mono text-gray-300">llms.txt</span> and <span class="font-mono text-gray-300">robots.txt</span>
+          of 25 well-known direct-to-consumer stores ourselves. <strong class="text-gray-200">20 of them return an
+          <span class="font-mono text-gray-300">llms.txt</span>, and not one describes what the store sells.</strong>
+          17 serve the platform's agent-integration guide — it explains how an agent should build a cart and
+          where the MCP endpoint lives, and says nothing about the catalogue. 3 serve a skeleton with no
+          product facts. 2 return 404, and the rest are rate-limited or broken.
         </p>
         <p>
-          In our own audit of 324 sites, the median score is <strong class="text-gray-200">41/100</strong> and
-          <strong class="text-gray-200">75.9%</strong> publish no <span class="font-mono text-gray-300">llms.txt</span> at all.
-          All 18 sites scoring above 72 had a real one — a correlation in our sample, not proof the file caused
-          the scores; the template version does not get you there.
+          Access is not the problem. 23 of those stores publish a readable
+          <span class="font-mono text-gray-300">robots.txt</span>, 4 mention GPTBot or ClaudeBot, and exactly one
+          blocks anything at all. The problem is that the file an AI reads when it arrives says nothing about
+          the business. On general websites the gap looks different again: across our separate audit of 324
+          sites the median scores <strong class="text-gray-200">41/100</strong> and
+          <strong class="text-gray-200">75.9%</strong> have no <span class="font-mono text-gray-300">llms.txt</span>
+          at all, because no platform generates one for them.
         </p>
         <p>
           Run the <a href="/" class="text-brand-400 hover:underline">free GeoScore audit</a> on your store first.
@@ -85,7 +90,7 @@ import Layout from '../layouts/Layout.astro';
         <li class="flex gap-2"><span class="text-brand-500">✓</span><span><strong class="text-white">robots.txt AI-crawler snippet</strong> — explicit rules welcoming GPTBot, ClaudeBot and PerplexityBot, merged so your existing rules stay exactly as they are.</span></li>
         <li class="flex gap-2"><span class="text-brand-500">✓</span><span><strong class="text-white">Product JSON-LD for 1 best-seller</strong> — name, offers, price, availability and identifiers completed and validated, so your product data is complete, valid and machine-readable for the crawlers and shopping agents that parse it.</span></li>
         <li class="flex gap-2"><span class="text-brand-500">✓</span><span><strong class="text-white">1-page audit summary</strong> — your 11-dimension scores and the exact gaps the files address, in plain language.</span></li>
-        <li class="flex gap-2"><span class="text-brand-500">✓</span><span><strong class="text-white">Post-deploy re-audit</strong> — once the files are live, we re-run the audit and send before/after scores. If a file was pasted wrong, you see it here, not months later.</span></li>
+        <li class="flex gap-2"><span class="text-brand-500">✓</span><span><strong class="text-white">Post-deploy re-audit</strong> — once the template or files are live, we re-run the audit and send before/after scores. If the override did not take effect, you see it here, not months later.</span></li>
       </ul>
       <p class="text-xs text-gray-500 mt-4">
         Need more products or sitewide schema? The extended pack ($129) covers up to 10 products — ask in the same Fiverr thread.
@@ -118,7 +123,7 @@ import Layout from '../layouts/Layout.astro';
       <ol class="text-sm text-gray-300 space-y-3 list-none">
         <li class="flex gap-3"><span class="font-bold text-brand-400">1.</span><span><strong class="text-white">Free diagnosis first.</strong> Message your store URL via the Fiverr gig below. You get a 1-paragraph diagnosis of what AI crawlers actually see — free, no obligation.</span></li>
         <li class="flex gap-3"><span class="font-bold text-brand-400">2.</span><span><strong class="text-white">Order the $49 Custom Offer.</strong> Payment stays in Fiverr escrow. No admin access or passwords are ever requested.</span></li>
-        <li class="flex gap-3"><span class="font-bold text-brand-400">3.</span><span><strong class="text-white">Delivery within 48 hours.</strong> Files plus install notes for Shopify or plain HTML.</span></li>
+        <li class="flex gap-3"><span class="font-bold text-brand-400">3.</span><span><strong class="text-white">Delivery within 48 hours.</strong> A Shopify theme template (<span class="font-mono text-gray-300">llms.txt.liquid</span>) that keeps your UCP/MCP discovery links intact, or drop-in files for plain HTML — with install notes for both.</span></li>
         <li class="flex gap-3"><span class="font-bold text-brand-400">4.</span><span><strong class="text-white">You deploy, we re-audit.</strong> Paste the files (or hand them to your developer), tell us they're live, and receive your before/after re-audit.</span></li>
       </ol>
       <div class="mt-6 flex flex-col sm:flex-row gap-3">
@@ -158,7 +163,7 @@ import Layout from '../layouts/Layout.astro';
         </div>
         <div class="card p-5">
           <h3 class="font-semibold mb-2">What do you need from me?</h3>
-          <p class="text-sm text-gray-400">Just your store URL and which product sells best. No admin access, no passwords. You (or your developer) paste the files in — we include install notes for Shopify and plain-HTML sites — and tell us when they are live so we can run the re-audit.</p>
+          <p class="text-sm text-gray-400">Just your store URL and which product sells best. No admin access, no passwords. On Shopify, llms.txt is not a file you upload — the platform generates <span class="font-mono text-gray-300">/agents.md</span> and points <span class="font-mono text-gray-300">/llms.txt</span> at it, and the only supported override is a theme template. We write <span class="font-mono text-gray-300">templates/llms.txt.liquid</span> for you; your developer adds it in one step. We handle the two traps: a custom template <em>replaces</em> Shopify's output rather than merging with it, so it must carry the UCP and MCP discovery links across, and it renders in a restricted Liquid context where shop, collections and pages are blank — so the content is curated and static, and needs a refresh when your range changes.</p>
         </div>
       </div>
     </div>

@@ -34,7 +34,7 @@ import LayoutZh from '../../layouts/LayoutZh.astro';
       {
         '@type': 'Question',
         name: '需要我提供什么？',
-        acceptedAnswer: { '@type': 'Answer', text: '只需要店铺网址和哪款商品最畅销。不需要后台权限，不需要密码。文件由你（或你的开发者）粘贴上线——我们附 Shopify 与普通 HTML 站点的安装说明——上线后告诉我们，即可安排复检。' }
+        acceptedAnswer: { '@type': 'Answer', text: '只需要店铺网址和哪款商品最畅销。不需要后台权限，不需要密码。Shopify 上的 llms.txt 不是上传文件——平台会生成 /agents.md 并把 /llms.txt 指向它，唯一受支持的覆盖方式是主题模板。我们会写好 templates/llms.txt.liquid，你的开发者一步就能加上。两个坑我们替你处理：自定义模板是整体替换平台输出、不与它合并，所以必须把 UCP 与 MCP 发现链接抄过去，否则会弄坏代理下单；另外模板运行在受限 Liquid 上下文里，shop、collections、pages 都是空的，所以内容是人工整理、静态的，商品线变化时需要更新。普通 HTML 与 WordPress 站点则拿到可直接放入的文件。' }
       }
     ]
   }}>
@@ -56,15 +56,16 @@ import LayoutZh from '../../layouts/LayoutZh.astro';
       <h2 class="text-xl font-bold mb-4">为什么大多数店铺对 AI 搜索是隐形的</h2>
       <div class="text-sm text-gray-400 space-y-3">
         <p>
-          顾客向 ChatGPT、Perplexity 提问时，引擎只能用爬虫能读到的内容作答。我们在 2026-10-23 实查了 20 家知名 DTC 独立站的 <span class="font-mono text-gray-300">llms.txt</span> 与 <span class="font-mono text-gray-300">robots.txt</span>：
-          找到的每个 <span class="font-mono text-gray-300">llms.txt</span> 要么是 Shopify 的库存模板（<strong class="text-gray-200">产品事实为零</strong>），
-          要么是一个 65 字节的损坏文件，要么根本不存在（404）；它们的 <span class="font-mono text-gray-300">robots.txt</span> 里
-          也从未提及 GPTBot、ClaudeBot 或 PerplexityBot。
+          顾客向 ChatGPT、Perplexity 提问时，引擎只能用爬虫能读到的内容作答。我们在 2026-11-01 实查了 25 家知名 DTC 独立站的 <span class="font-mono text-gray-300">llms.txt</span> 与 <span class="font-mono text-gray-300">robots.txt</span>：
+          <strong class="text-gray-200">其中 20 家都有 <span class="font-mono text-gray-300">llms.txt</span>，但没有一份说明这家店在卖什么。</strong>
+          17 份是平台自动生成的代理接入说明——它讲的是 AI 该怎么建购物车、MCP 端点在哪儿，对商品目录只字未提；
+          3 份是没有商品事实的骨架；2 份返回 404；其余被限流或已损坏。
         </p>
         <p>
-          我们自己审计的 324 个站里，中位数是 <strong class="text-gray-200">41/100</strong>，
-          <strong class="text-gray-200">75.9%</strong> 完全没有 <span class="font-mono text-gray-300">llms.txt</span>。
-          72 分以上的 18 个站全部有真实的 llms.txt——这是我们样本里的相关性，不证明高分由这个文件导致；但模板版到不了这个分数段。
+          访问权限不是问题：这些站里有 23 份 <span class="font-mono text-gray-300">robots.txt</span> 可读，4 份提到了 GPTBot 或 ClaudeBot，
+          真正拦掉爬虫的只有 1 家。问题在于 AI 来了之后读到的那份文件，一个字都没说这门生意是什么。
+          在普通网站上缺口又是另一种形状：我们另一份 324 站的审计里，中位数 <strong class="text-gray-200">41/100</strong>，
+          <strong class="text-gray-200">75.9%</strong> 根本没有 <span class="font-mono text-gray-300">llms.txt</span>，因为没有平台替它们生成。
         </p>
         <p>
           先给你的店铺跑一次 <a href="/zh/" class="text-brand-400 hover:underline">免费 GeoScore 审计</a>。
@@ -109,8 +110,8 @@ import LayoutZh from '../../layouts/LayoutZh.astro';
       <ol class="text-sm text-gray-300 space-y-3 list-none">
         <li class="flex gap-3"><span class="font-bold text-brand-400">1.</span><span><strong class="text-white">先免费诊断。</strong>通过下方 Fiverr gig 把店铺网址发来，你会收到一段诊断：AI 爬虫在你的站上到底看到了什么。免费、无义务。</span></li>
         <li class="flex gap-3"><span class="font-bold text-brand-400">2.</span><span><strong class="text-white">下 $49 Custom Offer。</strong>款项由 Fiverr 托管。全程不索取后台权限或密码。</span></li>
-        <li class="flex gap-3"><span class="font-bold text-brand-400">3.</span><span><strong class="text-white">48 小时内交付。</strong>文件外加 Shopify / 普通 HTML 的安装说明。</span></li>
-        <li class="flex gap-3"><span class="font-bold text-brand-400">4.</span><span><strong class="text-white">你部署，我们复检。</strong>把文件粘贴上线（或交给你的开发者），告诉我们已生效，即可收到前后对比复检。</span></li>
+        <li class="flex gap-3"><span class="font-bold text-brand-400">3.</span><span><strong class="text-white">48 小时内交付。</strong>一份 Shopify 主题模板（<span class="font-mono text-gray-300">llms.txt.liquid</span>，保留你原有的 UCP/MCP 发现链接），或普通 HTML 站点的可直接放入文件——两种都附安装说明。</span></li>
+        <li class="flex gap-3"><span class="font-bold text-brand-400">4.</span><span><strong class="text-white">你部署，我们复检。</strong>把模板加上或把文件放上去（也可交给你的开发者），告诉我们已生效，即可收到前后对比复检。</span></li>
       </ol>
       <div class="mt-6 flex flex-col sm:flex-row gap-3">
         <a id="fixpack-fiverr-cta" href="https://www.fiverr.com/chinesefood885/audit-your-website-for-ai-search-visibility-and-implement-geo-fixes" target="_blank" rel="noopener" class="flex-1 text-center px-6 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-geo-600 to-brand-600 hover:from-geo-500 hover:to-brand-500 transition">
@@ -148,7 +149,7 @@ import LayoutZh from '../../layouts/LayoutZh.astro';
         </div>
         <div class="card p-5">
           <h3 class="font-semibold mb-2">需要我提供什么？</h3>
-          <p class="text-sm text-gray-400">只需要店铺网址和哪款商品最畅销。不需要后台权限，不需要密码。文件由你（或你的开发者）粘贴上线——我们附 Shopify 与普通 HTML 站点的安装说明——上线后告诉我们，即可安排复检。</p>
+          <p class="text-sm text-gray-400">只需要店铺网址和哪款商品最畅销。不需要后台权限，不需要密码。Shopify 上的 llms.txt 不是上传文件——平台生成 <span class="font-mono text-gray-300">/agents.md</span> 并把 <span class="font-mono text-gray-300">/llms.txt</span> 指向它，唯一受支持的覆盖方式是主题模板。我们写好 <span class="font-mono text-gray-300">templates/llms.txt.liquid</span>，你的开发者一步加上。两个坑我们替你处理：自定义模板是<em>整体替换</em>平台输出、不与它合并，所以必须把 UCP 与 MCP 发现链接抄过去；模板又运行在受限 Liquid 上下文里，shop、collections、pages 都是空的，所以内容是人工整理、静态的，商品线变化时需要更新。</p>
         </div>
       </div>
     </div>

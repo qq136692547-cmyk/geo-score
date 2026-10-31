@@ -1,0 +1,29 @@
+# Well-known direct-to-consumer retail brands, used by tools/dtc-llms-check.mjs
+# to produce the evidence behind the llms.txt/robots.txt paragraph on /fixpack/.
+# Over-provisioned on purpose: some of these will 403 or have moved, and the
+# page copy should state the number that actually responded, not the number tried.
+allbirds.com
+gymshark.com
+fashionnova.com
+skims.com
+glossier.com
+warbyparker.com
+casper.com
+bombas.com
+chubbiesshorts.com
+dollarshaveclub.com
+brooklinen.com
+awaytravel.com
+outdoorvoices.com
+everlane.com
+untuckit.com
+harrys.com
+nativecos.com
+olipop.com
+mvmt.com
+taylorstitch.com
+greatjonesgoods.com
+ripplefoods.com
+liquiddeath.com
+beardbrand.com
+trueclassictees.com
