@@ -51,8 +51,8 @@ function renderPrimary(r) {
   if (b === 'mid') {
     var title2 = t(r.score + ' sits in the "workable basics, no clear edge" range', r.score + ' 分处在“基础能用、差异未拉开”的区间');
     var body2 = t(
-      'When competing with peers, what matters more is whether an AI answer would actually mention your site. Pro includes a content-based AI visibility simulation.',
-      '和同行竞争时，更值得验证的是 AI 回答会不会提到你的站。Pro 提供基于网页内容的 AI 可见性模拟。'
+      'When competing with peers, what matters more is whether an AI answer would actually mention your site. Pro includes a content-based AI visibility simulation — an estimate, not live engine traffic.',
+      '和同行竞争时，更值得验证的是 AI 回答会不会提到你的站。Pro 提供基于网页内容的 AI 可见性模拟——是估算，不代表真实引擎流量。'
     );
     var btn2 = '<a href="' + pricingHref + '" data-cta-id="result_visibility" data-cta-placement="primary" class="mt-4 ' + BTN_CLS + '">' + t('See what Pro includes', '查看 Pro 包含什么') + '</a>';
     return ctaShell(title2, body2, btn2);
@@ -60,8 +60,8 @@ function renderPrimary(r) {
 
   var title3 = t(r.score + ' means the basics have no obvious problems', r.score + ' 分说明基础没有明显问题');
   var body3 = t(
-    'The score alone cannot prove an AI answer will mention your site. Pro includes a content-based AI visibility simulation.',
-    '分数本身不能证明 AI 会在回答里提到你的站。Pro 提供基于网页内容的 AI 可见性模拟。'
+    'The score alone cannot prove an AI answer will mention your site. Pro includes a content-based AI visibility simulation — an estimate, not live engine traffic.',
+    '分数本身不能证明 AI 会在回答里提到你的站。Pro 提供基于网页内容的 AI 可见性模拟——是估算，不代表真实引擎流量。'
   );
   var btn3 = '<a href="' + pricingHref + '" data-cta-id="result_visibility" data-cta-placement="primary" class="mt-4 ' + BTN_CLS + '">' + t('See what Pro includes', '查看 Pro 包含什么') + '</a>';
   return ctaShell(title3, body3, btn3);
