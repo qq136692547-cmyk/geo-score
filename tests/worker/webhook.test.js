@@ -182,7 +182,7 @@ describe('Creem webhook', () => {
     expect(db._tables.subscriptions).toHaveLength(1);
   });
 
-  it('accepts events signed with the test webhook secret', async () => {
+  it('accepts test-secret events only when ALLOW_TEST_WEBHOOK is enabled', async () => {
     const db = createMockDb();
     const rawBody = JSON.stringify({
       id: 'evt_test1',
@@ -195,8 +195,122 @@ describe('Creem webhook', () => {
       headers: { 'creem-signature': signature, 'Content-Type': 'application/json' },
       body: rawBody,
     });
-    const resp = await handler.fetch(req, { DB: db, CREEM_WEBHOOK_SECRET: SECRET, CREEM_WEBHOOK_SECRET_TEST: 'test-secret' });
+    const resp = await handler.fetch(req, { DB: db, CREEM_WEBHOOK_SECRET: SECRET, CREEM_WEBHOOK_SECRET_TEST: 'test-secret', ALLOW_TEST_WEBHOOK: 'true' });
     expect(resp.status).toBe(200);
     expect(db._tables.subscriptions[0].subscription_id).toBe('sub_t1');
+  });
+
+  it('rejects test-secret events when ALLOW_TEST_WEBHOOK is unset (production)', async () => {
+    const db = createMockDb();
+    const rawBody = JSON.stringify({
+      id: 'evt_test2',
+      event_type: 'subscription.active',
+      data: { object: { id: 'sub_t2', product: { id: PRO_PRODUCT_ID }, customer: { id: 'cus_t2', email: 'sandbox@example.com' } } },
+    });
+    const signature = await hmacSha256(rawBody, 'test-secret');
+    const req = new Request('https://worker.test/webhook', {
+      method: 'POST',
+      headers: { 'creem-signature': signature, 'Content-Type': 'application/json' },
+      body: rawBody,
+    });
+    const resp = await handler.fetch(req, { DB: db, CREEM_WEBHOOK_SECRET: SECRET, CREEM_WEBHOOK_SECRET_TEST: 'test-secret' });
+    expect(resp.status).toBe(401);
+    expect(db._tables.subscriptions).toHaveLength(0);
+  });
+
+  it('ignores an unknown product id instead of granting Pro', async () => {
+    const db = createMockDb();
+    const rawBody = JSON.stringify({
+      id: 'evt_unknown',
+      event_type: 'subscription.active',
+      data: { object: { id: 'sub_x', product: { id: 'prod_unknown_zero' }, customer: { id: 'cus_x', email: 'x@example.com' } } },
+    });
+    const resp = await postWebhook(db, rawBody);
+    expect(resp.status).toBe(200);
+    expect(db._tables.subscriptions).toHaveLength(0);
+  });
+
+  it('ignores a zero-amount checkout', async () => {
+    const db = createMockDb();
+    const rawBody = JSON.stringify({
+      id: 'evt_zero',
+      event_type: 'checkout.completed',
+      data: {
+        object: {
+          id: 'cs_zero',
+          subscription: { id: 'sub_zero' },
+          customer: { id: 'cus_z', email: 'zero@example.com' },
+          product: { id: PRO_PRODUCT_ID, price: 900 },
+          amount: 0,
+        },
+      },
+    });
+    const resp = await postWebhook(db, rawBody);
+    expect(resp.status).toBe(200);
+    expect(db._tables.subscriptions).toHaveLength(0);
+  });
+
+  it('ignores a completed checkout with no subscription id', async () => {
+    const db = createMockDb();
+    const rawBody = JSON.stringify({
+      id: 'evt_nosub',
+      event_type: 'checkout.completed',
+      data: {
+        object: {
+          id: 'cs_nosub',
+          customer: { id: 'cus_n', email: 'nosub@example.com' },
+          product: { id: PRO_PRODUCT_ID, price: 900 },
+        },
+      },
+    });
+    const resp = await postWebhook(db, rawBody);
+    expect(resp.status).toBe(200);
+    expect(db._tables.subscriptions).toHaveLength(0);
+  });
+
+  it('ignores a payload with no product id even when the price looks right', async () => {
+    const db = createMockDb();
+    const rawBody = JSON.stringify({
+      id: 'evt_noid',
+      event_type: 'checkout.completed',
+      data: {
+        object: {
+          id: 'cs_noid',
+          subscription: { id: 'sub_noid' },
+          customer: { id: 'cus_noid', email: 'noid@example.com' },
+          product: { price: 900 },
+          amount: 900,
+        },
+      },
+    });
+    const resp = await postWebhook(db, rawBody);
+    expect(resp.status).toBe(200);
+    expect(db._tables.subscriptions).toHaveLength(0);
+  });
+
+  it('grants Pro on the annual product configured through a secret', async () => {
+    const db = createMockDb();
+    const rawBody = JSON.stringify({
+      id: 'evt_annual',
+      event_type: 'checkout.completed',
+      data: {
+        object: {
+          id: 'cs_annual',
+          subscription: { id: 'sub_annual' },
+          customer: { id: 'cus_a', email: 'annual@example.com' },
+          product: { id: 'prod_annual_xyz' },
+          amount: 7900,
+        },
+      },
+    });
+    const signature = await hmacSha256(rawBody, SECRET);
+    const req = new Request('https://worker.test/webhook', {
+      method: 'POST',
+      headers: { 'creem-signature': signature, 'Content-Type': 'application/json' },
+      body: rawBody,
+    });
+    const resp = await handler.fetch(req, { DB: db, CREEM_WEBHOOK_SECRET: SECRET, CREEM_PRODUCT_ID_ANNUAL: 'prod_annual_xyz' });
+    expect(resp.status).toBe(200);
+    expect(db._tables.subscriptions[0].plan).toBe('pro');
   });
 });

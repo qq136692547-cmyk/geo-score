@@ -396,9 +396,18 @@ async function handleWebhook(request, env, corsHeaders) {
       return new Response('Missing signature', { status: 401, headers: corsHeaders });
     }
 
-    // Accept the production secret and, when set, the test-mode secret
+    // Accept the production secret always. The test-mode secret is only honoured
+    // when ALLOW_TEST_WEBHOOK is explicitly enabled (staging only): a sandbox
+    // event must never be able to write the production subscriptions table.
+    // 2026-11-01: production had CREEM_WEBHOOK_SECRET_TEST set, so nine sandbox
+    // events (one of them a hand-made "evt_replay_embed_*" replay) landed in the
+    // live table and made a self-test look like a $9 subscriber.
+    const secrets = [env.CREEM_WEBHOOK_SECRET];
+    if (env.ALLOW_TEST_WEBHOOK === 'true' && env.CREEM_WEBHOOK_SECRET_TEST) {
+      secrets.push(env.CREEM_WEBHOOK_SECRET_TEST);
+    }
     let signatureValid = false;
-    for (const secret of [env.CREEM_WEBHOOK_SECRET, env.CREEM_WEBHOOK_SECRET_TEST]) {
+    for (const secret of secrets) {
       if (!secret) continue;
       if (constantTimeEqual(signature, await hmacSha256(rawBody, secret))) { signatureValid = true; break; }
     }
@@ -428,13 +437,17 @@ async function handleWebhook(request, env, corsHeaders) {
     switch (eventType) {
       case 'checkout.completed': {
         const customer = object?.customer;
-        const product = object?.product;
         const email = customer?.email;
-        const plan = PLAN_MAP[product?.id] || inferPlanFromPrice(product?.price);
-        if (!email || !plan) break;
-        const now = Math.floor(Date.now() / 1000);
+        const plan = resolvePlanFromPayload(object, env);
         // Creem checkout payload nests the subscription object; legacy mocks use subscription_id
         const subId = object?.subscription?.id || object?.subscription_id || '';
+        if (!email || !plan) break;
+        // A completed checkout with no subscription id is not a subscription
+        // purchase (one-off, $0, sandbox) - never activate Pro on it.
+        if (!subId) { console.warn('checkout.completed without subscription id, ignored'); break; }
+        // An explicitly zero amount means nothing was charged.
+        if (chargedAmount(object) === 0) { console.warn('checkout.completed with zero amount, ignored'); break; }
+        const now = Math.floor(Date.now() / 1000);
 
         await env.DB.prepare(
           `INSERT INTO subscriptions (email, plan, status, customer_id, subscription_id, current_period_end, updated_at)
@@ -457,8 +470,11 @@ async function handleWebhook(request, env, corsHeaders) {
       case 'subscription.paid':
       case 'subscription.update': {
         const email = object?.customer?.email;
-        const plan = PLAN_MAP[object?.product?.id] || inferPlanFromPrice(object?.product?.price);
-        if (!email) break;
+        const plan = resolvePlanFromPayload(object, env);
+        // No fallback to 'pro': an unknown product id used to be upgraded to the
+        // paid tier here, which is how a $0/sandbox subscription became "active".
+        if (!email || !plan) { console.warn('subscription event without a resolvable plan, ignored'); break; }
+        if (chargedAmount(object) === 0) { console.warn('subscription event with zero amount, ignored'); break; }
         const now = Math.floor(Date.now() / 1000);
 
         // Use upsert (INSERT ... ON CONFLICT) instead of UPDATE to handle missing rows
@@ -469,12 +485,12 @@ async function handleWebhook(request, env, corsHeaders) {
              plan=excluded.plan, status='active', customer_id=excluded.customer_id,
              subscription_id=excluded.subscription_id, current_period_end=excluded.current_period_end,
              updated_at=excluded.updated_at`
-        ).bind(email, plan || 'pro', object?.customer?.id || '', object?.id || '',
+        ).bind(email, plan, object?.customer?.id || '', object?.id || '',
           periodEndSeconds(object, now + 30 * 86400), now).run();
 
         await env.DB.prepare(
           `UPDATE users SET plan=?, updated_at=? WHERE email=?`
-        ).bind(plan || 'pro', now, email).run();
+        ).bind(plan, now, email).run();
         break;
       }
 
@@ -504,8 +520,8 @@ async function handleWebhook(request, env, corsHeaders) {
 
       case 'subscription.trialing': {
         const email = object?.customer?.email;
-        const plan = PLAN_MAP[object?.product?.id] || 'pro';
-        if (!email) break;
+        const plan = resolvePlanFromPayload(object, env);
+        if (!email || !plan) break;
 
         await env.DB.prepare(
           `INSERT INTO subscriptions (email, plan, status, customer_id, subscription_id, current_period_end, updated_at)
@@ -557,15 +573,24 @@ async function handleSubscriptionCheck(request, env, corsHeaders, url) {
   }
 
   const now = Math.floor(Date.now() / 1000);
-  if (result.current_period_end && result.current_period_end < now && result.status === 'active') {
+  // Kept consistent with resolvePlan() in pro.js: a missing period end means
+  // expired, not "never expires". Before 2026-11-01 this endpoint reported
+  // plan=pro for a NULL period end while resolvePlan() had already downgraded
+  // the same row, so the two authorisation paths disagreed.
+  const activeStatus = result.status === 'active' || result.status === 'trialing';
+  const periodValid = !!result.current_period_end && result.current_period_end >= now;
+  if (activeStatus && !periodValid) {
     await env.DB.prepare(
       `UPDATE subscriptions SET status='expired', updated_at=? WHERE email=?`
     ).bind(now, email).run();
     result.status = 'expired';
   }
+  // Computed from the pre-update status on purpose: `activeStatus` must not be
+  // re-read after the downgrade, or the response would still say pro.
+  const effectivePro = activeStatus && periodValid;
 
   return json({
-    plan: result.plan,
+    plan: effectivePro ? result.plan : 'free',
     status: result.status,
     current_period_end: result.current_period_end,
   }, 200, corsHeaders);
@@ -605,11 +630,41 @@ async function signJWT(payload, secret) {
   return `${data}.${signature}`;
 }
 
-function inferPlanFromPrice(price) {
-  if (!price) return null;
-  const amount = typeof price === 'number' ? price : parseInt(price, 10);
-  if (amount === 900) return 'pro';
+/**
+ * Map a Creem product id to a plan name, including the product ids that live in
+ * Worker secrets rather than in code. Returns null for anything unrecognised:
+ * an unknown product must never be upgraded to Pro. Before 2026-11-01 the
+ * subscription.* branch fell back to 'pro', so every unknown or $0 product
+ * became a paid tier.
+ */
+function resolvePlanFromPayload(object, env) {
+  const productId = object?.product?.id;
+  // The product id is the only identity we trust. Falling back to the price let
+  // a payload with no product id (or an empty one) plus price:900 become Pro -
+  // the independent reviewer reproduced exactly that on 2026-11-01.
+  if (!productId) {
+    console.error('webhook: payload without a product id, refusing to grant a plan');
+    return null;
+  }
+  if (PLAN_MAP[productId]) return PLAN_MAP[productId];
+  if (env?.CREEM_PRODUCT_ID_MONTHLY && productId === env.CREEM_PRODUCT_ID_MONTHLY) return 'pro';
+  if (env?.CREEM_PRODUCT_ID_ANNUAL && productId === env.CREEM_PRODUCT_ID_ANNUAL) return 'pro';
+  // Loud on purpose: an unmatched id means a secret is missing, and the event
+  // will be dropped. grep `unmatched product id` in `wrangler tail`.
+  console.error('webhook: unmatched product id', productId);
   return null;
+}
+
+/**
+ * Amount actually charged, in the smallest currency unit, when the payload says
+ * so. null means "not stated" (older and simplified payloads) and is allowed
+ * through; an explicit 0 means a $0 checkout and must never grant Pro.
+ */
+function chargedAmount(object) {
+  const raw = object?.amount ?? object?.amount_paid ?? object?.order?.amount ?? object?.order?.amount_paid;
+  if (raw === undefined || raw === null) return null;
+  const n = typeof raw === 'number' ? raw : parseInt(raw, 10);
+  return Number.isFinite(n) ? n : null;
 }
 
 

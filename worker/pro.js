@@ -79,7 +79,9 @@ export async function resolvePlan(user, env) {
   ).bind(user.email).first();
   if (sub && (sub.status === 'active' || sub.status === 'trialing')) {
     const now = Math.floor(Date.now() / 1000);
-    if (!sub.current_period_end || sub.current_period_end >= now) {
+    // A missing period end is treated as expired, not as "never expires":
+    // before 2026-11-01 a NULL value granted Pro forever.
+    if (sub.current_period_end && sub.current_period_end >= now) {
       return sub.plan || 'free';
     }
     // Period ended: downgrade
