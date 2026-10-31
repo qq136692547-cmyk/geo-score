@@ -54,3 +54,7 @@ secrets/
 .tmp-*/
 .tmp-*.png
 gsc-scrape-*.json
+
+# Audit asset exception: review/_linkgraph.py is a deliverable, not a temp script
+# (must come after the "_*.py" rule above to take effect)
+!review/_linkgraph.py
