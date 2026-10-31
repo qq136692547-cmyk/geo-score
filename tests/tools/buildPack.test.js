@@ -14,6 +14,7 @@ import {
   offersOf,
   firstString,
   normalizePrice,
+  parsePrice,
   normalizeCurrency,
   normalizeAvailability,
   extractSections,
@@ -488,13 +489,20 @@ describe('buildRobotsPatch — a specific group replaces the wildcard, so rules 
     expect(patch).toContain('Disallow: /cart');
   });
 
-  it('adds a Sitemap line only when the file has none', () => {
+  it('writes a Sitemap line only for a sitemap that was found, never one it invented', () => {
     const without = 'User-agent: *\nAllow: /\n\nUser-agent: GPTBot\nDisallow: /\n';
+    // No sitemap was probed: nothing is written. The earlier version invented
+    // `<origin>/sitemap.xml` for every site, including sites that publish none.
     expect(buildRobotsPatch(without, analyzeRobotsForAi(without), 'https://s.example'))
+      .not.toContain('Sitemap:');
+
+    // A sitemap that actually answered is linked.
+    expect(buildRobotsPatch(without, analyzeRobotsForAi(without), 'https://s.example', 'https://s.example/sitemap.xml'))
       .toContain('Sitemap: https://s.example/sitemap.xml');
 
+    // One the file already declares is not duplicated.
     const withSitemap = without + '\nSitemap: https://s.example/sitemap.xml\n';
-    const patch = buildRobotsPatch(withSitemap, analyzeRobotsForAi(withSitemap), 'https://s.example');
+    const patch = buildRobotsPatch(withSitemap, analyzeRobotsForAi(withSitemap), 'https://s.example', 'https://s.example/sitemap.xml');
     expect(patch.match(/Sitemap:/g)).toBeNull();
   });
 });
@@ -564,7 +572,8 @@ describe('productNodeSufficient — do not sell a file they already have', () =>
   it('is true only when the page already covers everything we would add', () => {
     const product = extractProduct(SHOPIFY_HTML, URL);
     product.fields.sku = 'WR-1';
-    product.hasIdentifier = true;
+    // The identifier has to be in the node itself, not only in the page.
+    product.existing.hasIdentifier = true;
     expect(productNodeSufficient(product)).toBe(true);
 
     const pack = buildPack({
@@ -574,6 +583,17 @@ describe('productNodeSufficient — do not sell a file they already have', () =>
     });
     // The fixture has no sku, so the pack still generates the file.
     expect(pack.files['product.jsonld']).toBeDefined();
+  });
+
+  it('does not count a microdata sku as an identifier on the JSON-LD node', () => {
+    // A theme that prints itemprop="sku" in the markup but no sku in its
+    // JSON-LD is exactly the case where the node is incomplete and the file is
+    // still worth shipping. Reading the microdata made it look finished.
+    const html = SHOPIFY_HTML.replace('</head>', '<meta itemprop="sku" content="WR-1"></head>');
+    const product = extractProduct(html, URL);
+    expect(product.hasIdentifier).toBe(true);
+    expect(product.existing.hasIdentifier).toBe(false);
+    expect(productNodeSufficient(product)).toBe(false);
   });
 
   it('suppresses the file and says so when the node is already complete', () => {
@@ -649,5 +669,170 @@ describe('helpers', () => {
 
   it('IDENTIFIERS covers the four things a shopping surface accepts', () => {
     expect(IDENTIFIERS).toEqual(['sku', 'gtin13', 'gtin', 'mpn']);
+  });
+
+  it('accepts a number where schema.org allows one', () => {
+    expect(firstString(4.6)).toBe('4.6');
+    expect(firstString(NaN)).toBe('');
+  });
+});
+
+/* ------------------------------------------------------------------ *
+ * Regressions — every one of these was a real false statement a paying
+ * buyer would have pasted into production.
+ * ------------------------------------------------------------------ */
+
+describe('normalizePrice refuses a format it cannot read exactly one way', () => {
+  it('reads the European forms exactly', () => {
+    expect(normalizePrice('19,99')).toBe('19.99');
+    expect(normalizePrice('1.234,56')).toBe('1234.56');
+    expect(normalizePrice('1 234,56')).toBe('1234.56');
+    expect(normalizePrice('1.234.567,89')).toBe('1234567.89');
+  });
+
+  it('reads the US forms exactly', () => {
+    expect(normalizePrice('1,234,567.89')).toBe('1234567.89');
+    expect(normalizePrice('$1,299.00')).toBe('1299.00');
+    expect(normalizePrice('0')).toBe('0.00');
+  });
+
+  it('refuses anything that could be read two ways', () => {
+    // "1,299" is 1299 in the US and 1.299 in the EU — a thousandfold gap, so
+    // neither reading is chosen. The old parser deleted the comma and shipped
+    // 1999.00 for "19,99".
+    expect(normalizePrice('1,299')).toBe('');
+    expect(normalizePrice('1.299')).toBe('');
+    expect(normalizePrice('19.99 - 24.99')).toBe('');
+    expect(normalizePrice('was $29.99 now $19.99')).toBe('');
+    expect(normalizePrice('Call for price')).toBe('');
+    expect(normalizePrice('-19.99')).toBe('');
+    expect(normalizePrice('19.99.99')).toBe('');
+  });
+
+  it('says why it refused, so the question to the buyer is the right one', () => {
+    expect(parsePrice('19,99').value).toBe('19.99');
+    expect(parsePrice('1,299').reason).toContain('ambiguous');
+    expect(parsePrice('Call for price').reason).toBe('no digits');
+  });
+});
+
+describe('a field that is present but unreadable is not "already done"', () => {
+  const html = `<html><head><script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Product","name":"Mug","image":"https://c.example/m.jpg","sku":"M1",
+ "offers":{"@type":"Offer","price":"Call for price","priceCurrency":"USD","availability":"https://schema.org/InStock"}}
+</script></head><body></body></html>`;
+
+  it('does not treat "Call for price" as a price', () => {
+    const p = extractProduct(html, URL);
+    expect(p.existing.requiredPresent).not.toContain('price');
+    expect(productNodeSufficient(p)).toBe(false);
+  });
+
+  it('records the unreadable value instead of pretending the page had none', () => {
+    const p = extractProduct(html, URL);
+    expect(p.unreadable).toHaveLength(1);
+    expect(p.unreadable[0].raw).toBe('Call for price');
+    const text = buildNeedsConfirmation(p);
+    expect(text).toContain('On the page, but not readable');
+    expect(text).toContain('Call for price');
+  });
+});
+
+describe('robots.txt is judged against the page we are auditing', () => {
+  it('sees that a wildcard path rule closes the audited URL', () => {
+    const a = analyzeRobotsForAi('User-agent: *\nDisallow: /products\n', '/products/wool-runner');
+    expect(a.wildcardBlocksPath).toBe(true);
+    expect(a.needed).toBe(false);
+  });
+
+  it('does not claim the site allows AI crawlers when it closes the page', () => {
+    const pack = buildPack({
+      pageUrl: URL, host: 'shop.example', html: SHOPIFY_HTML,
+      robotsTxt: 'User-agent: *\nDisallow: /products\n',
+      platform: 'shopify', sections: [], warnings: [],
+    });
+    const text = pack.files['INSTALL.md'];
+    expect(text).not.toContain('already lets AI crawlers in');
+    expect(text).toContain('closes `/products/wool-runner` to every crawler');
+    expect(pack.files['robots.txt']).toBeUndefined();
+  });
+});
+
+describe('an unreadable robots.txt is not a permissive one', () => {
+  it('reports that it could not read the file', () => {
+    const a = analyzeRobotsForAi('');
+    expect(a.readable).toBe(false);
+    expect(a.needed).toBe(false);
+  });
+
+  it('does not tell the buyer their file already allows AI crawlers', () => {
+    const pack = buildPack({
+      pageUrl: URL, host: 'shop.example', html: SHOPIFY_HTML,
+      robotsTxt: '', platform: 'shopify', sections: [], warnings: [],
+    });
+    const warnings = pack.manifest.warnings.join(' ');
+    expect(pack.manifest.robots.readable).toBe(false);
+    expect(warnings).toContain('No robots.txt could be read');
+    expect(warnings).not.toContain('already allows AI crawlers');
+    expect(pack.files['INSTALL.md']).toContain('I cannot tell you why');
+  });
+});
+
+describe('the appended group inherits the rules the owner set for that crawler', () => {
+  it('keeps a path the owner closed for that one bot', () => {
+    const existing = 'User-agent: *\nDisallow: /admin\n\nUser-agent: GPTBot\nDisallow: /private\nDisallow: /\n';
+    const patch = buildRobotsPatch(existing, analyzeRobotsForAi(existing), 'https://s.example');
+    expect(patch).toContain('Disallow: /admin');
+    expect(patch).toContain('Disallow: /private');
+    // `/` is dropped on purpose: the group below is the reversal of that rule,
+    // and repeating it next to `Allow: /` states two opposite things.
+    expect(patch).not.toMatch(/^Disallow: \/$/m);
+  });
+});
+
+describe('INSTALL.md is a document, not a stringified object', () => {
+  it('carries the audited URL and no [object Object]', () => {
+    const pack = buildPack({
+      pageUrl: URL, host: 'shop.example', html: SHOPIFY_HTML,
+      robotsTxt: '', platform: 'shopify', sections: [], warnings: [],
+      extra: ['Your theme prints two Product nodes.'],
+    });
+    const text = pack.files['INSTALL.md'];
+    expect(text).not.toContain('[object Object]');
+    expect(text).toContain('node tools/diagnose.mjs ' + URL);
+    expect(text).toContain('- Your theme prints two Product nodes.');
+  });
+});
+
+describe('a collection page is not a product page', () => {
+  it('rejects /shop/gift-cards, which the old pattern accepted', () => {
+    expect(looksLikeProductPage('https://s.example/shop/gift-cards', '', { fields: {} })).toBe(false);
+  });
+});
+
+describe('a malformed entity cannot crash the run', () => {
+  it('leaves an impossible code point as it found it', () => {
+    expect(() => decodeEntities('&#x110000;')).not.toThrow();
+    expect(decodeEntities('&#x110000;')).toBe('&#x110000;');
+    expect(decodeEntities('&#0;')).toBe('&#0;');
+    expect(decodeEntities('a&#38;b')).toBe('a&b');
+  });
+});
+
+describe('a page with several real prices gets a range, not a guess', () => {
+  const html = `<html><head><script type="application/ld+json">
+{"@context":"https://schema.org","@type":"ProductGroup","name":"Wool Runner","image":"https://c.example/w.jpg",
+ "hasVariant":[
+   {"@type":"Product","name":"42","sku":"WR-42","offers":{"@type":"Offer","price":"98.00","priceCurrency":"USD","availability":"https://schema.org/InStock"}},
+   {"@type":"Product","name":"44","sku":"WR-44","offers":{"@type":"Offer","price":"104.00","priceCurrency":"USD","availability":"https://schema.org/InStock"}}
+ ]}
+</script></head><body></body></html>`;
+
+  it('emits an AggregateOffer over the real range instead of the first variant', () => {
+    const node = buildProductJsonLd(extractProduct(html, URL), URL);
+    expect(node.offers['@type']).toBe('AggregateOffer');
+    expect(node.offers.lowPrice).toBe('98.00');
+    expect(node.offers.highPrice).toBe('104.00');
+    expect(node.offers.offerCount).toBe(2);
   });
 });

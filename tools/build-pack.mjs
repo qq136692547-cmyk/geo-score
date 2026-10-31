@@ -64,6 +64,9 @@ export function isProductNode(node) {
 /** schema.org allows a value to be a string, an object with url/@id, or a list. */
 export function firstString(value) {
   if (typeof value === 'string') return value.trim();
+  // `"ratingValue": 4.6` is valid JSON-LD and common; requiring a string here
+  // silently dropped every numeric rating on the web.
+  if (typeof value === 'number' && Number.isFinite(value)) return String(value);
   if (Array.isArray(value)) {
     for (const item of value) {
       const s = firstString(item);
@@ -140,13 +143,83 @@ export function normalizeAvailability(value) {
   return AVAILABILITY[key] || '';
 }
 
-/** "1,299.00" -> "1299.00"; anything unparseable -> '' (never a guess). */
+/**
+ * Read a price without guessing which convention wrote it.
+ *
+ * The first version of this function deleted every comma and kept the first
+ * run of digits. On a European store that turns `19,99` into `1999.00` — a
+ * hundredfold error written into a file the buyer pastes into production. A
+ * price is the one field where a plausible guess is worse than a blank, so the
+ * parser below accepts only strings that can be read exactly one way, and says
+ * why it refused the rest.
+ *
+ * Returns `{ value, reason }`. `value` is '' whenever the string is not
+ * unambiguous; `reason` is for the operator, never for the buyer.
+ */
+export function parsePrice(value) {
+  const raw = decodeEntities(String(value == null ? '' : value)).trim();
+  if (!raw) return { value: '', reason: 'empty' };
+
+  const start = raw.search(/\d/);
+  if (start < 0) return { value: '', reason: 'no digits' };
+
+  // Everything before the first digit is a prefix ("$", "USD", "from"). A
+  // minus sign or a second number means this is a range or a delta, not a price.
+  const prefix = raw.slice(0, start);
+  if (/[-\u2013\u2014]/.test(prefix)) return { value: '', reason: 'negative or range' };
+  if (/[.,]$/.test(prefix)) return { value: '', reason: 'starts with a separator' };
+
+  // A second digit group after the number ("19.99 - 24.99", "was 29.99 now
+  // 19.99") cannot be told apart from the price itself, so it is refused.
+  const body = raw.slice(start).replace(/\s+/g, '');
+  if (!/^[\d.,]+$/.test(body)) return { value: '', reason: 'more than one number' };
+  if (/[.,]$/.test(body)) return { value: '', reason: 'ends with a separator' };
+
+  const dots = (body.match(/\./g) || []).length;
+  const commas = (body.match(/,/g) || []).length;
+  const groupsOfThree = (s, sep) => new RegExp('^\\d{1,3}(' + sep + '\\d{3})+$').test(s);
+
+  let intPart = body;
+  let fracPart = '';
+
+  if (dots && commas) {
+    // Both separators present: whichever comes last is the decimal point. This
+    // is the only case where the convention is unambiguous on its own.
+    const decSep = body.lastIndexOf('.') > body.lastIndexOf(',') ? '.' : ',';
+    const thousands = decSep === '.' ? ',' : '.';
+    const at = body.lastIndexOf(decSep);
+    intPart = body.slice(0, at);
+    fracPart = body.slice(at + 1);
+    if (!groupsOfThree(intPart, thousands)) return { value: '', reason: 'thousands grouping does not add up' };
+    if (!/^\d+$/.test(fracPart)) return { value: '', reason: 'decimal part is not digits' };
+    intPart = intPart.split(thousands).join('');
+  } else if (dots || commas) {
+    const sep = dots ? '.' : ',';
+    if (dots + commas > 1) {
+      // A separator cannot appear twice as a decimal point, so it is grouping.
+      if (!groupsOfThree(body, sep)) return { value: '', reason: 'thousands grouping does not add up' };
+      intPart = body.split(sep).join('');
+    } else {
+      const [head, tail] = body.split(sep);
+      if (!/^\d+$/.test(head) || !/^\d+$/.test(tail)) return { value: '', reason: 'not a single number' };
+      // "1,299" is 1299 in the US and 1.299 in the EU. The two readings differ
+      // by a factor of a thousand, so neither is chosen.
+      if (tail.length === 3) return { value: '', reason: 'ambiguous: 1,299 could be 1299 or 1.299' };
+      if (tail.length > 2) return { value: '', reason: 'more than two decimal places' };
+      intPart = head;
+      fracPart = tail;
+    }
+  }
+
+  if (!/^\d+$/.test(intPart)) return { value: '', reason: 'not a single number' };
+  const n = Number(intPart + '.' + (fracPart || '0'));
+  if (!Number.isFinite(n) || n < 0) return { value: '', reason: 'not a number' };
+  return { value: n.toFixed(2), reason: '' };
+}
+
+/** "1,299.00" -> "1299.00"; anything ambiguous or unparseable -> ''. */
 export function normalizePrice(value) {
-  const raw = String(value == null ? '' : value).replace(/[,\s]/g, '').replace(/^[^\d.]+/, '');
-  if (!raw) return '';
-  const n = Number(raw);
-  if (!Number.isFinite(n) || n < 0) return '';
-  return n.toFixed(2);
+  return parsePrice(value).value;
 }
 
 /**
@@ -177,9 +250,16 @@ export function decodeEntities(text) {
   return String(text == null ? '' : text).replace(/&(#x?[0-9a-f]+|[a-z]+);/gi, (m, code) => {
     const key = code.toLowerCase();
     if (ENTITIES[key]) return ENTITIES[key];
-    if (/^#x[0-9a-f]+$/.test(key)) return String.fromCodePoint(parseInt(key.slice(2), 16));
-    if (/^#[0-9]+$/.test(key)) return String.fromCodePoint(parseInt(key.slice(1), 10));
-    return m;
+    let cp = NaN;
+    if (/^#x[0-9a-f]+$/.test(key)) cp = parseInt(key.slice(2), 16);
+    else if (/^#[0-9]+$/.test(key)) cp = parseInt(key.slice(1), 10);
+    if (!Number.isFinite(cp)) return m;
+    // A numeric reference can name a code point that does not exist, and
+    // String.fromCodePoint throws on those — one malformed entity in a
+    // merchant's title would have crashed the whole run. NUL is dropped
+    // because it silently truncates a file for anything that reads it as C.
+    if (cp <= 0 || cp > 0x10ffff || (cp >= 0xd800 && cp <= 0xdfff)) return m;
+    return String.fromCodePoint(cp);
   });
 }
 
@@ -278,15 +358,31 @@ export function extractProduct(html, pageUrl) {
   }
 
   // Offers: price, currency, availability. Each may come from a different source.
-  const jsonLdPrice = normalizePrice(offer && offer.price);
+  //
+  // A price that exists but cannot be read exactly one way is not the same as a
+  // missing price: the first needs "which of these readings is right", the
+  // second needs "what is the price". Keeping the reason lets us ask the right
+  // question instead of claiming the page had no price on it.
+  const unreadable = [];
+  const readPrice = (rawValue, source) => {
+    const p = parsePrice(rawValue);
+    const shown = String(rawValue == null ? '' : rawValue).trim();
+    if (!p.value && p.reason && p.reason !== 'empty' && shown) {
+      unreadable.push({ field: 'price', raw: shown, reason: p.reason, source });
+    }
+    return p.value;
+  };
+
+  const jsonLdPrice = readPrice(offer && offer.price, 'jsonld');
   const jsonLdCurrency = normalizeCurrency(offer && offer.priceCurrency);
   const jsonLdAvailability = normalizeAvailability(offer && offer.availability);
 
-  const ogPrice = normalizePrice(metaContent(page, 'product:price:amount') || metaContent(page, 'og:price:amount'));
+  const ogPriceRaw = metaContent(page, 'product:price:amount') || metaContent(page, 'og:price:amount');
+  const ogPrice = readPrice(ogPriceRaw, 'og');
   const ogCurrency = normalizeCurrency(metaContent(page, 'product:price:currency') || metaContent(page, 'og:price:currency'));
   const ogAvailability = normalizeAvailability(metaContent(page, 'product:availability'));
 
-  const microPrice = normalizePrice(itemprop(page, 'price'));
+  const microPrice = readPrice(itemprop(page, 'price'), 'microdata');
   const microCurrency = normalizeCurrency(itemprop(page, 'priceCurrency'));
   const microAvailability = normalizeAvailability(itemprop(page, 'availability'));
 
@@ -301,6 +397,23 @@ export function extractProduct(html, pageUrl) {
   take('availability', jsonLdAvailability, 'jsonld');
   take('availability', ogAvailability, 'og');
   take('availability', microAvailability, 'microdata');
+
+  // A variant list carries one price per variant, and every one of them is real.
+  // Taking the first silently publishes a price the merchant never chose for
+  // this page, so the whole range is kept and emitted as an AggregateOffer.
+  const variantPrices = [];
+  for (const o of offers) {
+    const v = normalizePrice(o && o.price);
+    if (v && !variantPrices.includes(v)) variantPrices.push(v);
+  }
+  if (variantPrices.length > 1) {
+    const asNumbers = variantPrices.map(Number);
+    fields.priceLow = Math.min(...asNumbers).toFixed(2);
+    fields.priceHigh = Math.max(...asNumbers).toFixed(2);
+    fields.offerCount = offers.filter((o) => normalizePrice(o && o.price)).length;
+    sources.priceLow = 'jsonld';
+    sources.priceHigh = 'jsonld';
+  }
 
   take('url', normalizeUrl(firstString(node && node.url), pageUrl), 'jsonld');
   take('url', normalizeUrl(metaContent(page, 'og:url'), pageUrl), 'og');
@@ -320,22 +433,35 @@ export function extractProduct(html, pageUrl) {
   const missing = REQUIRED.filter((f) => !fields[f]);
   if (!hasIdentifier) missing.push('identifier');
 
+  // The identifier that matters for "is the existing node already complete" is
+  // the one inside that node. `fields.sku` can come from microdata elsewhere on
+  // the page, and counting it made an incomplete node look finished.
+  const nodeHasIdentifier = !!node && IDENTIFIERS.some((f) => {
+    const v = node[f];
+    return v != null && String(v).trim() !== '';
+  });
+
   return {
     fields,
     sources,
     missing,
     conflicts,
+    unreadable,
     hasIdentifier,
     existing: {
       node: node || null,
       present: !!node,
       propertyCount: node ? Object.keys(node).length : 0,
+      hasIdentifier: nodeHasIdentifier,
+      // Presence is not enough: `"price": "Call for price"` is a field that is
+      // there and still cannot be read, and treating it as present withheld the
+      // file the buyer paid for while claiming everything was in place.
       requiredPresent: REQUIRED.filter((f) => {
         if (f === 'image') return imagesOf(node && node.image).length > 0;
         if (f === 'name') return !!firstString(node && node.name);
-        if (f === 'price') return !!(offer && offer.price);
-        if (f === 'priceCurrency') return !!(offer && offer.priceCurrency);
-        if (f === 'availability') return !!(offer && offer.availability);
+        if (f === 'price') return !!normalizePrice(offer && offer.price);
+        if (f === 'priceCurrency') return !!normalizeCurrency(offer && offer.priceCurrency);
+        if (f === 'availability') return !!normalizeAvailability(offer && offer.availability);
         return false;
       }),
     },
@@ -381,6 +507,35 @@ export function parseRobots(text) {
 
 const disallowsEverything = (g) => g.rules.some((r) => r.type === 'disallow' && r.path === '/');
 
+/** RFC 9309 path matching: `*` is any run of characters, `$` anchors the end. */
+export function robotsRuleMatches(rule, targetPath) {
+  const raw = String(rule || '');
+  if (!raw) return false; // an empty Disallow matches nothing
+  const anchored = raw.endsWith('$');
+  const pattern = anchored ? raw.slice(0, -1) : raw;
+  const body = pattern
+    .split('*')
+    .map((part) => part.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
+    .join('[\\s\\S]*');
+  return new RegExp('^' + body + (anchored ? '$' : '')).test(targetPath);
+}
+
+/** The rule that decides one path: the longest match, and Allow wins a tie. */
+function decidingRule(group, targetPath) {
+  let best = null;
+  for (const r of group.rules) {
+    if (!robotsRuleMatches(r.path, targetPath)) continue;
+    if (!best || r.path.length > best.path.length) best = r;
+    else if (r.path.length === best.path.length && r.type === 'allow') best = r;
+  }
+  return best;
+}
+
+const groupBlocks = (group, targetPath) => {
+  const r = decidingRule(group, targetPath);
+  return !!r && r.type === 'disallow';
+};
+
 /**
  * What does this robots.txt actually do to AI crawlers?
  *
@@ -389,48 +544,78 @@ const disallowsEverything = (g) => g.rules.some((r) => r.type === 'disallow' && 
  * four biggest crawlers, so for a normal Shopify store there is nothing to fix
  * — and rewriting the file anyway would be a change with no benefit and some
  * risk.
+ *
+ * The answer depends on the URL, not just the file: `Disallow: /products` blocks
+ * every crawler on the page we are auditing while leaving the rest of the site
+ * open. Reporting that as "already allows AI crawlers" was false, so the target
+ * path is a parameter and the wildcard's verdict on it is its own field.
  */
-export function analyzeRobotsForAi(text) {
-  const groups = parseRobots(text);
+export function analyzeRobotsForAi(text, targetPath) {
+  const raw = String(text == null ? '' : text);
+  const groups = parseRobots(raw);
+  const path = String(targetPath || '') || '/';
+
+  // An empty response is not the same as a permissive one. A 404 for
+  // /robots.txt does mean "everything allowed", but a timeout or an empty 200
+  // means we do not know — and the pack must not pretend otherwise.
+  const readable = raw.trim().length > 0;
+
   const star = groups.filter((g) => g.agents.includes('*'));
   const blocksAll = star.some(disallowsEverything);
+  const wildcardBlocksPath = star.some((g) => groupBlocks(g, path));
 
   const blockedByName = [];
   const allowedByName = [];
+  const ownGrouped = new Set();
   for (const bot of AI_CRAWLERS) {
     const own = groups.filter((g) => g.agents.includes(bot.toLowerCase()));
     if (!own.length) continue;
-    if (own.some(disallowsEverything)) blockedByName.push(bot);
-    else if (own.some((g) => g.rules.some((r) => r.type === 'allow' && r.path === '/'))) allowedByName.push(bot);
+    ownGrouped.add(bot);
+    if (own.some((g) => groupBlocks(g, path))) blockedByName.push(bot);
+    else allowedByName.push(bot);
   }
 
-  const implicit = AI_CRAWLERS.filter((b) => !blockedByName.includes(b) && !allowedByName.includes(b));
-  const needed = !blocksAll && blockedByName.length > 0;
+  const implicit = AI_CRAWLERS.filter((b) => !ownGrouped.has(b));
+  // A wildcard that closes this path is the owner's decision about the path, not
+  // a per-crawler block. Appending `Allow: /` for one bot would silently reopen
+  // the whole site to it, so it is reported and not patched.
+  const needed = !blocksAll && !wildcardBlocksPath && blockedByName.length > 0;
 
-  return { groups, blocksAll, blockedByName, allowedByName, implicit, needed };
+  return {
+    groups, readable, path, blocksAll, wildcardBlocksPath,
+    blockedByName, allowedByName, implicit, needed,
+  };
 }
 
 /**
  * A patch block, not a rewritten file.
  *
- * Each unblocked crawler gets its own group, and that group repeats every
- * Disallow from the site's `*` group. Without the copy, a specific group would
- * *replace* the wildcard rules rather than add to them, quietly opening paths
- * such as /admin that the owner had closed for everyone.
+ * Each blocked crawler gets its own group, and that group repeats every Disallow
+ * from the site's `*` group **and** from the site's own group for that crawler.
+ * Without the copy, a specific group would *replace* the rules rather than add
+ * to them, quietly opening paths such as /admin that the owner had closed —
+ * either for everyone, or for that one bot.
+ *
+ * `sitemapUrl` is passed in only when a sitemap was actually found. The earlier
+ * version wrote `Sitemap: <origin>/sitemap.xml` whenever the file had none, which
+ * invented a URL on any site that does not publish one.
  */
-export function buildRobotsPatch(existing, analysis, origin) {
-  const star = analysis.groups.filter((g) => g.agents.includes('*'));
-  const inherited = [];
-  const seen = new Set();
-  for (const g of star) {
-    for (const r of g.rules) {
-      if (r.type !== 'disallow' || !r.path) continue;
-      const key = r.path;
-      if (seen.has(key)) continue;
-      seen.add(key);
-      inherited.push(r.path);
+export function buildRobotsPatch(existing, analysis, origin, sitemapUrl) {
+  const disallowedPaths = (groups) => {
+    const out = [];
+    for (const g of groups) {
+      for (const r of g.rules) {
+        // `/` is dropped on purpose: the block below is the reversal of that
+        // rule, and repeating it next to `Allow: /` states two contradictory
+        // things in the same group.
+        if (r.type !== 'disallow' || !r.path || r.path === '/') continue;
+        if (!out.includes(r.path)) out.push(r.path);
+      }
     }
-  }
+    return out;
+  };
+
+  const starPaths = disallowedPaths(analysis.groups.filter((g) => g.agents.includes('*')));
 
   const lines = [];
   lines.push('');
@@ -440,13 +625,16 @@ export function buildRobotsPatch(existing, analysis, origin) {
   lines.push('# existing ones so a specific group cannot open paths your wildcard closed.');
   lines.push('');
   for (const bot of analysis.blockedByName) {
+    const own = analysis.groups.filter((g) => g.agents.includes(bot.toLowerCase()));
+    const paths = starPaths.slice();
+    for (const p of disallowedPaths(own)) if (!paths.includes(p)) paths.push(p);
     lines.push('User-agent: ' + bot);
     lines.push('Allow: /');
-    for (const p of inherited) lines.push('Disallow: ' + p);
+    for (const p of paths) lines.push('Disallow: ' + p);
     lines.push('');
   }
-  if (!/^\s*sitemap:/im.test(existing)) {
-    lines.push('Sitemap: ' + origin + '/sitemap.xml');
+  if (sitemapUrl && !/^\s*sitemap:/im.test(existing)) {
+    lines.push('Sitemap: ' + sitemapUrl);
     lines.push('');
   }
   return lines.join('\n');
@@ -478,13 +666,29 @@ export function buildProductJsonLd(product, pageUrl) {
   // An Offer needs both halves. Half an offer is worse than none: a price with
   // no currency cannot be read as a price by anything.
   if (f.price && f.priceCurrency) {
-    node.offers = {
-      '@type': 'Offer',
-      url: f.url || pageUrl,
-      price: f.price,
-      priceCurrency: f.priceCurrency,
-    };
-    if (f.availability) node.offers.availability = 'https://schema.org/' + f.availability;
+    const ranged = f.priceLow && f.priceHigh && f.priceLow !== f.priceHigh;
+    if (ranged) {
+      // A page selling several variants has several real prices. Publishing one
+      // of them as "the" price is a statement the merchant never made; the
+      // honest shape is the range Google documents for exactly this case.
+      node.offers = {
+        '@type': 'AggregateOffer',
+        url: f.url || pageUrl,
+        priceCurrency: f.priceCurrency,
+        lowPrice: f.priceLow,
+        highPrice: f.priceHigh,
+      };
+      if (f.offerCount > 1) node.offers.offerCount = f.offerCount;
+      if (f.availability) node.offers.availability = 'https://schema.org/' + f.availability;
+    } else {
+      node.offers = {
+        '@type': 'Offer',
+        url: f.url || pageUrl,
+        price: f.price,
+        priceCurrency: f.priceCurrency,
+      };
+      if (f.availability) node.offers.availability = 'https://schema.org/' + f.availability;
+    }
   }
 
   if (f.ratingValue && f.reviewCount) {
@@ -513,7 +717,7 @@ export function extractSections(html, origin) {
   let m;
   while ((m = re.exec(page)) !== null) {
     const href = m[1].trim();
-    const text = m[2].replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+    const text = decodeEntities(m[2].replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim());
     if (!text || text.length < 2 || text.length > 60) continue;
     if (/^(mailto:|tel:|javascript:)/i.test(href)) continue;
     if (/\.(png|jpe?g|webp|svg|gif|pdf|zip|css|js)$/i.test(href)) continue;
@@ -547,7 +751,7 @@ export function extractSections(html, origin) {
  * operator is told to review it before it ships.
  */
 export function buildLlmsDraft(input) {
-  const { origin, siteName, summary, sections, productUrl, productName } = input;
+  const { origin, siteName, summary, sections, productUrl, productName, sitemapUrl, hasRobots } = input;
   const lines = [];
   lines.push('# ' + (siteName || origin.replace(/^https?:\/\//, '')));
   lines.push('');
@@ -568,11 +772,14 @@ export function buildLlmsDraft(input) {
     lines.push('');
   }
 
+  // Only links that were checked. The first version listed
+  // `sitemap.xml — every page` on every site, including sites that publish no
+  // sitemap, which turns a curated file into a broken one.
   lines.push('## Machine-readable');
   lines.push('');
   lines.push('- [llms.txt](' + origin + '/llms.txt) — this file');
-  lines.push('- [robots.txt](' + origin + '/robots.txt) — crawler rules');
-  lines.push('- [sitemap.xml](' + origin + '/sitemap.xml) — every page');
+  if (hasRobots) lines.push('- [robots.txt](' + origin + '/robots.txt) — crawler rules');
+  if (sitemapUrl) lines.push('- [' + (sitemapUrl.split('/').pop() || 'sitemap.xml') + '](' + sitemapUrl + ') — page list');
   lines.push('');
   return lines.join('\n');
 }
@@ -664,8 +871,12 @@ const INSTALL = {
   },
 };
 
-export function buildInstall(platform, extra, robots) {
+export function buildInstall(platform, extra, robots, pageUrl) {
   const p = INSTALL[platform] || INSTALL.custom;
+  // `extra` is a list of sentences. An earlier call site passed an object into
+  // it, and every INSTALL.md went out with `- [object Object]` in it.
+  const notes = Array.isArray(extra) ? extra.filter((x) => typeof x === 'string' && x.trim()) : [];
+  const targetUrl = String(pageUrl || '');
   const lines = ['# Install steps — ' + p.label, ''];
   lines.push('Three files, in the order that matters: Product JSON-LD first, then robots.txt, then llms.txt.');
   lines.push('');
@@ -677,6 +888,19 @@ export function buildInstall(platform, extra, robots) {
   lines.push('');
   if (robots && robots.blocksAll) {
     lines.push('**No change was made.** Your robots.txt closes the whole site (`User-agent: *` + `Disallow: /`). That is a deliberate choice, and adding `Allow: /` here would silently override it. Remove that rule first if you actually want AI crawlers in.');
+  } else if (robots && !robots.readable) {
+    lines.push('**No file is included, and I cannot tell you why.** No robots.txt could be read at `' + (robots.origin || '<your-domain>') + '/robots.txt` — the request came back empty, refused, or timed out.');
+    lines.push('');
+    lines.push('If the file is genuinely absent, every crawler is allowed by default and there is nothing to do. If it exists but would not load, open it in a browser and check it yourself before you touch anything. I will not describe a file I could not read.');
+  } else if (robots && robots.wildcardBlocksPath) {
+    lines.push('**No change was made, and this one needs your decision.** Your wildcard group closes `' + robots.path + '` to every crawler — the exact page this pack is about:');
+    lines.push('');
+    lines.push('```');
+    lines.push('User-agent: *');
+    lines.push('Disallow: ' + robots.path);
+    lines.push('```');
+    lines.push('');
+    lines.push('Adding `Allow: /` for one crawler would reopen your whole site to it, which is a bigger change than you asked for. If that rule is a mistake, delete it and every AI crawler is back. If it is deliberate, leave it — and this file has nothing for you.');
   } else if (robots && !robots.needed) {
     lines.push('**No change was needed, so no file is included.** Your robots.txt already lets AI crawlers in:');
     lines.push('');
@@ -691,7 +915,9 @@ export function buildInstall(platform, extra, robots) {
   } else if (robots && robots.needed) {
     lines.push('Your robots.txt blocks ' + robots.blockedByName.length + ' AI crawler' + (robots.blockedByName.length === 1 ? '' : 's') + ' by name: ' + robots.blockedByName.join(', ') + '.');
     lines.push('');
-    lines.push('The included file is your original text with a block appended at the end — nothing above the marker line is changed. The appended groups repeat your existing `Disallow` rules, because a crawler-specific group replaces the wildcard group rather than adding to it.');
+    lines.push('**Read this before pasting.** Applying the file reverses a block you set yourself. If you blocked those crawlers on purpose, do not paste it — the pack is still useful for the other two files, and tell me and I will refund this part.');
+    lines.push('');
+    lines.push('The included file is your original text with a block appended at the end — nothing above the marker line is changed. The appended groups repeat your existing `Disallow` rules, including the ones you set for that crawler specifically, because a crawler-specific group replaces every other group rather than adding to it.');
     lines.push('');
     lines.push(...p.robots);
   } else {
@@ -702,10 +928,10 @@ export function buildInstall(platform, extra, robots) {
   lines.push('');
   lines.push(...p.llms);
   lines.push('');
-  if (extra && extra.length) {
+  if (notes.length) {
     lines.push('## Specific to your site');
     lines.push('');
-    for (const note of extra) lines.push('- ' + note);
+    for (const note of notes) lines.push('- ' + note);
     lines.push('');
   }
   lines.push('## Checking your work');
@@ -713,7 +939,7 @@ export function buildInstall(platform, extra, robots) {
   lines.push('After pasting, run this and paste the result back to me:');
   lines.push('');
   lines.push('```');
-  lines.push('node tools/diagnose.mjs ' + (extra && extra.pageUrl ? extra.pageUrl : '<your-product-url>'));
+  lines.push('node tools/diagnose.mjs ' + (targetUrl || '<your-product-url>'));
   lines.push('```');
   lines.push('');
   return lines.join('\n');
@@ -748,7 +974,7 @@ export function buildNeedsConfirmation(product, context = {}) {
     return lines.join('\n');
   }
 
-  if (!missing.length && !(product.conflicts || []).length) {
+  if (!missing.length && !(product.conflicts || []).length && !(product.unreadable || []).length) {
     lines.push('# Nothing to confirm');
     lines.push('');
     lines.push('Every field a shopping surface needs was found on the page. Re-read the product.jsonld file once before shipping it.');
@@ -760,6 +986,21 @@ export function buildNeedsConfirmation(product, context = {}) {
   lines.push('');
   lines.push('These are the things the page did not tell us. Ask the buyer, do not guess — a wrong price in a delivered file is a dispute.');
   lines.push('');
+
+  // A value that exists but cannot be read one way is a different question from
+  // a value that is absent, and the buyer can only answer the right one if we
+  // say which it is.
+  const unreadable = (product && product.unreadable) || [];
+  if (unreadable.length) {
+    lines.push('## On the page, but not readable');
+    lines.push('');
+    lines.push('The page states these values in a form that can be read more than one way. I did not pick one:');
+    lines.push('');
+    for (const u of unreadable) {
+      lines.push('- **' + u.field + '** — `' + u.raw + '` (from ' + u.source + '): ' + u.reason + '. Which number is right?');
+    }
+    lines.push('');
+  }
 
   if (missing.length) {
     lines.push('## Missing from the page');
@@ -806,7 +1047,10 @@ export function buildManifest(input) {
     product_jsonld_needed: !input.sufficient && !!input.isProductPage,
     robots_change_needed: !!(input.robots && input.robots.needed),
     robots: input.robots ? {
+      readable: input.robots.readable !== false,
+      checked_path: input.robots.path || null,
       blocks_all: input.robots.blocksAll,
+      wildcard_blocks_path: !!input.robots.wildcardBlocksPath,
       blocked_by_name: input.robots.blockedByName,
       allowed_by_name: input.robots.allowedByName,
       covered_by_wildcard: input.robots.implicit.length,
@@ -817,10 +1061,12 @@ export function buildManifest(input) {
       sources: product.sources,
       missing,
       conflicts: product.conflicts || [],
+      unreadable: product.unreadable || [],
       existing_node: {
         present: product.existing.present,
         property_count: product.existing.propertyCount,
         required_present: product.existing.requiredPresent,
+        has_identifier: !!product.existing.hasIdentifier,
         sufficient: !!input.sufficient,
       },
     },
@@ -845,7 +1091,7 @@ export function buildManifest(input) {
 export function productNodeSufficient(product) {
   if (!product || !product.existing || !product.existing.present) return false;
   const allRequired = REQUIRED.every((f) => product.existing.requiredPresent.includes(f));
-  return allRequired && !!product.hasIdentifier;
+  return allRequired && !!product.existing.hasIdentifier;
 }
 
 /**
@@ -863,7 +1109,10 @@ export function looksLikeProductPage(pageUrl, html, product) {
 
   try {
     const { pathname } = new URL(pageUrl);
-    if (/\/(products?|p|item|dp|goods|shop)\/[^/]+/i.test(pathname)) return true;
+    // `/shop/<anything>` was in this list and it matched `/shop/gift-cards` and
+    // `/shop/new-arrivals` — collection pages, whose title and hero image would
+    // have become a Product node.
+    if (/\/(products?|item|dp|p)\/[^/]+/i.test(pathname)) return true;
   } catch { /* fall through to the content signals */ }
 
   const fields = (product && product.fields) || {};
@@ -897,11 +1146,19 @@ export function siteNameOf(html, host) {
 
 export function buildPack(input) {
   const {
-    pageUrl, host, html, siteHtml, robotsTxt, platform, sections, warnings,
+    pageUrl, host, html, siteHtml, robotsTxt, platform, sections, warnings, sitemapUrl,
   } = input;
 
   let origin;
-  try { origin = new URL(pageUrl).origin; } catch { origin = 'https://' + host; }
+  let pagePath;
+  try {
+    const u = new URL(pageUrl);
+    origin = u.origin;
+    pagePath = u.pathname + (u.search || '');
+  } catch {
+    origin = 'https://' + host;
+    pagePath = '/';
+  }
 
   // llms.txt describes the SITE, so its name, summary and sections come from the
   // homepage. Taking them from the product page produced the product name as the
@@ -923,10 +1180,12 @@ export function buildPack(input) {
 
   // robots.txt is only shipped when something is actually blocked. Rewriting a
   // file that already allows these crawlers is a change with no benefit.
-  const robots = analyzeRobotsForAi(robotsTxt || '');
+  const robots = { ...analyzeRobotsForAi(robotsTxt || '', pagePath), origin };
   if (robots.needed) {
-    const body = String(robotsTxt || '').replace(/\s+$/, '');
-    files['robots.txt'] = body + '\n' + buildRobotsPatch(body, robots, origin);
+    // Byte-identical above the marker: no trailing-whitespace tidy-up, only the
+    // guarantee of a newline so the appended block starts on its own line.
+    const body = String(robotsTxt || '');
+    files['robots.txt'] = body + (body.endsWith('\n') || !body ? '' : '\n') + buildRobotsPatch(body, robots, origin, sitemapUrl);
   }
 
   files['llms.txt'] = buildLlmsDraft({
@@ -936,15 +1195,21 @@ export function buildPack(input) {
     sections: secs,
     productUrl: product.fields.url || pageUrl,
     productName: product.fields.name || '',
+    sitemapUrl,
+    hasRobots: robots.readable,
   });
 
   const allWarnings = warnings ? warnings.slice() : [];
   if (robots.blocksAll) {
     allWarnings.push('robots.txt closes the whole site to every crawler. It was left exactly as it is — adding Allow: / would override a deliberate choice.');
+  } else if (!robots.readable) {
+    allWarnings.push('No robots.txt could be read at ' + origin + '/robots.txt, so I cannot say whether AI crawlers are allowed. No file was shipped for it. If the file is absent, everything is allowed by default; if it exists but would not load, check it yourself.');
+  } else if (robots.wildcardBlocksPath) {
+    allWarnings.push('robots.txt closes ' + robots.path + ' to every crawler via the wildcard group. That page cannot be read by any AI crawler. It was reported, not changed — reopening it would mean overriding a rule you wrote.');
   } else if (!robots.needed) {
-    allWarnings.push('robots.txt already allows AI crawlers (' + robots.allowedByName.length + ' named, ' + robots.implicit.length + ' covered by the wildcard). No file was shipped for it.');
+    allWarnings.push('robots.txt already allows AI crawlers on this page (' + robots.allowedByName.length + ' named, ' + robots.implicit.length + ' covered by the wildcard). No file was shipped for it.');
   } else {
-    allWarnings.push('robots.txt blocked ' + robots.blockedByName.length + ' AI crawler(s) by name; a patch was appended and the original text is unchanged above it.');
+    allWarnings.push('robots.txt blocked ' + robots.blockedByName.length + ' AI crawler(s) by name; a patch was appended and the original text is unchanged above it. Applying it reverses a block the owner set — say so to the buyer.');
   }
   if (sufficient) {
     allWarnings.push('The page already carries a complete Product node. product.jsonld was NOT generated — the value of this pack here is robots.txt and llms.txt. Consider refunding the schema portion.');
@@ -958,8 +1223,14 @@ export function buildPack(input) {
   for (const c of product.conflicts || []) {
     allWarnings.push('Sources disagree on ' + c.field + '; nothing was chosen automatically.');
   }
+  for (const u of product.unreadable || []) {
+    allWarnings.push('The page states ' + u.field + ' as `' + u.raw + '`, which can be read more than one way (' + u.reason + '). Nothing was chosen — ask the buyer.');
+  }
+  if (product.fields.priceLow && product.fields.priceHigh) {
+    allWarnings.push('This product has ' + product.fields.offerCount + ' priced variants, ' + product.fields.priceLow + '–' + product.fields.priceHigh + '. product.jsonld uses an AggregateOffer with that range rather than picking one.');
+  }
 
-  files['INSTALL.md'] = buildInstall(platform, [{ ...(input.extra || {}), pageUrl }].filter(Boolean), robots);
+  files['INSTALL.md'] = buildInstall(platform, input.extra || [], robots, pageUrl);
   files['NEEDS-CONFIRMATION.md'] = buildNeedsConfirmation(product, { notes: allWarnings, sufficient });
 
   const manifest = buildManifest({
@@ -992,6 +1263,25 @@ function localDate() {
   return d.getFullYear() + '-' + p2(d.getMonth() + 1) + '-' + p2(d.getDate());
 }
 
+/**
+ * Find a sitemap that actually exists.
+ *
+ * llms.txt and robots.txt both point at one, and the previous version wrote
+ * `Sitemap: <origin>/sitemap.xml` whether or not the site published one — a
+ * broken link inside a paid file. Only a response that parses as a urlset or a
+ * sitemapindex counts.
+ */
+async function probeSitemap(origin) {
+  for (const candidate of ['/sitemap.xml', '/sitemap_index.xml', '/sitemap-index.xml']) {
+    try {
+      const r = await fetchPageWithHeaders(origin + candidate);
+      const body = (r && r.body) || '';
+      if (/<urlset[\s>]|<sitemapindex[\s>]/i.test(body)) return origin + candidate;
+    } catch { /* try the next candidate */ }
+  }
+  return '';
+}
+
 async function main() {
   const args = process.argv.slice(2);
   const target = args.find((a) => !a.startsWith('--'));
@@ -1020,26 +1310,29 @@ async function main() {
   const home = await fetchPageWithHeaders(origin + '/').catch(() => null);
   const siteHtml = (home && home.body) || '';
 
+  // `null` means the request came back 4xx or not at all; `''` means a real 200
+  // with an empty body. The pack says which, instead of describing a file it
+  // never read as permissive.
   const robotsTxt = await fetchPageWithHeaders(origin + '/robots.txt')
-    .then((r) => (r && r.body) || '')
+    .then((r) => (r && typeof r.body === 'string' ? r.body : ''))
     .catch(() => '');
+
+  const sitemapUrl = await probeSitemap(origin);
 
   const html = page.body;
   const platform = detectPlatform(siteHtml || html);
   const sections = extractSections(siteHtml || html, origin);
 
   const warnings = [];
-  const closesEverything = /User-agent:\s*\*/i.test(robotsTxt)
-    && /^Disallow:\s*\/\s*$/im.test(robotsTxt);
-  if (robotsTxt && closesEverything) {
-    warnings.push('robots.txt closes the whole site to every crawler. The generated file is deliberately left unchanged — see its comments.');
-  }
   if (!siteHtml) {
     warnings.push('The homepage could not be fetched, so the site name and summary came from the product page. Check llms.txt before shipping.');
   }
+  if (!sitemapUrl) {
+    warnings.push('No sitemap could be found at ' + origin + '/sitemap.xml, so llms.txt does not link one. If the site publishes a sitemap somewhere else, add the link before shipping.');
+  }
 
   const { files, manifest, sufficient } = buildPack({
-    pageUrl, host, html, siteHtml, robotsTxt, platform, sections, warnings,
+    pageUrl, host, html, siteHtml, robotsTxt, platform, sections, warnings, sitemapUrl,
   });
 
   const outDir = outArg || path.join('out', 'packs', host + '-' + localDate());
@@ -1059,9 +1352,15 @@ async function main() {
     ? 'yes'
     : (manifest.product.existing_node.sufficient ? 'NO — the page already has a complete node' : 'NO — this is not a product page');
   console.log('  schema needed ' + schemaWhy);
+  console.log('  robots.txt    ' + (manifest.robots.readable ? 'read' : 'COULD NOT READ')
+    + (manifest.robots_change_needed ? ', patch appended' : ', no change'));
+  console.log('  sitemap       ' + (sitemapUrl || 'none found'));
   console.log('  complete      ' + (manifest.complete ? 'yes' : 'NO — see NEEDS-CONFIRMATION.md'));
   if (manifest.product.missing.length) {
     console.log('  missing       ' + manifest.product.missing.join(', '));
+  }
+  for (const u of manifest.product.unreadable) {
+    console.log('  ? ' + u.field + ' = "' + u.raw + '" — ' + u.reason);
   }
   for (const w of manifest.warnings) console.log('  ! ' + w);
 }
