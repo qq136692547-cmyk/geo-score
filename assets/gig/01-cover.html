@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1280px; height: 769px; }
+  body {
+    font-family: "Segoe UI", -apple-system, "Helvetica Neue", Arial, sans-serif;
+    background: #0b1220;
+    color: #f8fafc;
+    position: relative;
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+  .glow {
+    position: absolute; width: 900px; height: 900px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(16,185,129,.22) 0%, rgba(16,185,129,0) 62%);
+    top: -380px; right: -240px;
+  }
+  .glow2 {
+    position: absolute; width: 700px; height: 700px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(59,130,246,.16) 0%, rgba(59,130,246,0) 65%);
+    bottom: -420px; left: -180px;
+  }
+  .wrap { position: relative; padding: 62px 72px; height: 100%; display: flex; flex-direction: column; }
+  .kicker {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-size: 15px; font-weight: 700; letter-spacing: .18em;
+    color: #34d399; text-transform: uppercase;
+  }
+  .kicker .dot { width: 8px; height: 8px; border-radius: 50%; background: #34d399; }
+  h1 {
+    margin-top: 26px;
+    font-size: 66px; line-height: 1.06; font-weight: 800; letter-spacing: -.025em;
+    max-width: 900px;
+  }
+  h1 em { font-style: normal; color: #34d399; }
+  .sub {
+    margin-top: 24px; font-size: 23px; line-height: 1.45; color: #94a3b8; max-width: 780px;
+  }
+  .files { margin-top: 40px; display: flex; gap: 16px; }
+  .file {
+    display: flex; align-items: center; gap: 13px;
+    padding: 17px 24px; border-radius: 14px;
+    background: rgba(255,255,255,.055);
+    border: 1px solid rgba(255,255,255,.11);
+  }
+  .file .tick {
+    width: 24px; height: 24px; border-radius: 50%;
+    background: rgba(52,211,153,.16); color: #34d399;
+    font-size: 14px; font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+    flex: 0 0 auto;
+  }
+  .file code {
+    font-family: "Cascadia Mono", Consolas, monospace;
+    font-size: 19px; color: #e2e8f0; letter-spacing: -.01em;
+  }
+  .spacer { flex: 1; }
+  .stats {
+    display: flex; align-items: center; gap: 0;
+    padding: 22px 0 26px;
+  }
+  .stat { padding-right: 38px; }
+  .stat .n { font-size: 34px; font-weight: 800; letter-spacing: -.03em; color: #f8fafc; }
+  .stat .n small { font-size: 19px; font-weight: 700; color: #94a3b8; letter-spacing: 0; }
+  .stat .l { margin-top: 3px; font-size: 14.5px; color: #7c8ba1; line-height: 1.35; max-width: 190px; }
+  .vsep { width: 1px; height: 46px; background: rgba(255,255,255,.11); margin-right: 38px; }
+  .bar {
+    display: flex; align-items: center; gap: 0;
+    border-top: 1px solid rgba(255,255,255,.1); padding-top: 26px;
+  }
+  .price { font-size: 46px; font-weight: 800; letter-spacing: -.03em; }
+  .price span { font-size: 20px; font-weight: 600; color: #94a3b8; letter-spacing: 0; margin-left: 10px; }
+  .sep { width: 1px; height: 42px; background: rgba(255,255,255,.13); margin: 0 34px; }
+  .meta { font-size: 18px; color: #cbd5e1; line-height: 1.5; }
+  .meta b { color: #f8fafc; font-weight: 700; }
+</style>
+</head>
+<body>
+  <div class="glow"></div>
+  <div class="glow2"></div>
+  <div class="wrap">
+    <div class="kicker"><span class="dot"></span>AI visibility fix pack</div>
+
+    <h1>Your product data,<br>made <em>machine-readable</em>.</h1>
+
+    <p class="sub">
+      Three files that change what AI crawlers and shopping agents can actually read
+      from your store — written, checked against your live page, and handed over in 48 hours.
+    </p>
+
+    <div class="files">
+      <div class="file"><span class="tick">✓</span><code>Product JSON-LD</code></div>
+      <div class="file"><span class="tick">✓</span><code>robots.txt</code></div>
+      <div class="file"><span class="tick">✓</span><code>llms.txt</code></div>
+    </div>
+
+    <div class="spacer"></div>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="n">324</div>
+        <div class="l">sites audited in our study</div>
+      </div>
+      <div class="vsep"></div>
+      <div class="stat">
+        <div class="n">41<small>/100</small></div>
+        <div class="l">median score in that sample</div>
+      </div>
+      <div class="vsep"></div>
+      <div class="stat">
+        <div class="n">76<small>%</small></div>
+        <div class="l">have no llms.txt at all</div>
+      </div>
+    </div>
+
+    <div class="bar">
+      <div class="price">$49<span>flat</span></div>
+      <div class="sep"></div>
+      <div class="meta">
+        <b>48-hour delivery</b><br>
+        Files you can paste — no plugin, no migration
+      </div>
+    </div>
+  </div>
+</body>
+</html>

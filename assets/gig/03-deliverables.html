@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1280px; height: 769px; }
+  body {
+    font-family: "Segoe UI", -apple-system, "Helvetica Neue", Arial, sans-serif;
+    background: #0b1220; color: #f8fafc; overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+  .glow {
+    position: absolute; width: 900px; height: 900px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(59,130,246,.16) 0%, rgba(59,130,246,0) 62%);
+    top: -480px; right: -260px;
+  }
+  .wrap { position: relative; padding: 52px 68px 44px; height: 100%; display: flex; flex-direction: column; }
+  .kicker {
+    font-size: 14px; font-weight: 700; letter-spacing: .18em;
+    color: #60a5fa; text-transform: uppercase;
+  }
+  h1 { margin-top: 13px; font-size: 42px; font-weight: 800; letter-spacing: -.025em; }
+  h1 em { font-style: normal; color: #60a5fa; }
+
+  .cards { margin-top: 30px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .card {
+    background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1);
+    border-radius: 16px; padding: 24px 22px 26px; display: flex; flex-direction: column;
+  }
+  .num {
+    font-family: "Cascadia Mono", Consolas, monospace;
+    font-size: 13px; font-weight: 700; color: #64748b; letter-spacing: .08em;
+  }
+  .fname {
+    margin-top: 12px;
+    font-family: "Cascadia Mono", Consolas, monospace;
+    font-size: 20px; font-weight: 700; color: #f8fafc; letter-spacing: -.01em;
+  }
+  .rule { height: 3px; width: 38px; border-radius: 2px; background: #3b82f6; margin: 14px 0 15px; }
+  .desc { font-size: 16px; line-height: 1.52; color: #a9b6c8; }
+  .desc b { color: #e2e8f0; font-weight: 600; }
+
+  .spacer { flex: 1; }
+
+  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; margin-bottom: 34px; }
+  .step { padding-right: 26px; position: relative; }
+  .step + .step { padding-left: 26px; border-left: 1px solid rgba(255,255,255,.09); }
+  .step .sn {
+    font-family: "Cascadia Mono", Consolas, monospace;
+    font-size: 12.5px; font-weight: 700; color: #3b82f6; letter-spacing: .12em;
+  }
+  .step .st { margin-top: 8px; font-size: 17.5px; font-weight: 700; color: #f1f5f9; }
+  .step .sd { margin-top: 6px; font-size: 15px; line-height: 1.45; color: #8fa0b5; }
+
+  .foot {
+    border-top: 1px solid rgba(255,255,255,.1); padding-top: 22px;
+    display: flex; gap: 18px; align-items: flex-start;
+  }
+  .foot .mark {
+    flex: 0 0 auto; width: 30px; height: 30px; border-radius: 50%;
+    background: rgba(251,191,36,.14); color: #fbbf24;
+    font-size: 17px; font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .foot p { font-size: 16.5px; line-height: 1.5; color: #94a3b8; }
+  .foot p b { color: #e2e8f0; font-weight: 600; }
+</style>
+</head>
+<body>
+  <div class="glow"></div>
+  <div class="wrap">
+    <div class="kicker">Deliverables</div>
+    <h1>Three files. <em>No plugin, no migration.</em></h1>
+
+    <div class="cards">
+      <div class="card">
+        <div class="num">01</div>
+        <div class="fname">Product JSON-LD</div>
+        <div class="rule"></div>
+        <div class="desc">
+          Variant offers, price, currency, stock and identifiers — <b>the properties a shopping surface needs</b> to read a product at all.
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="num">02</div>
+        <div class="fname">robots.txt</div>
+        <div class="rule"></div>
+        <div class="desc">
+          A mergeable snippet that stops blocking AI crawlers. <b>Your existing rules stay exactly as they are</b> — nothing is overwritten.
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="num">03</div>
+        <div class="fname">llms.txt</div>
+        <div class="rule"></div>
+        <div class="desc">
+          <b>Hand-curated, not a generated dump.</b> Written for your catalogue, with the install steps for your platform spelled out.
+        </div>
+      </div>
+    </div>
+
+    <div class="spacer"></div>
+
+    <div class="steps">
+      <div class="step">
+        <div class="sn">STEP 1</div>
+        <div class="st">Send one product URL</div>
+        <div class="sd">No access to your store or theme is needed.</div>
+      </div>
+      <div class="step">
+        <div class="sn">STEP 2</div>
+        <div class="st">I audit the live page</div>
+        <div class="sd">Then write the three files against what is actually there.</div>
+      </div>
+      <div class="step">
+        <div class="sn">STEP 3</div>
+        <div class="st">Files back within 48h</div>
+        <div class="sd">With the install steps for your platform, ready to paste.</div>
+      </div>
+    </div>
+
+    <div class="foot">
+      <div class="mark">!</div>
+      <p>
+        <b>No promises about rankings or citations</b> — I can't control what an AI engine decides to do, and nobody selling you this can.
+        What I can promise: the files are correct, and checked against your live page before you get them.
+      </p>
+    </div>
+  </div>
+</body>
+</html>
