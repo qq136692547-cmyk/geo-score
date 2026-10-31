@@ -1,0 +1,12 @@
+# Cloudflare Pages response headers.
+#
+# Referrer-Policy: pages that run an audit receive the audited domain through
+# ?audit=. boot.js clears it with history.replaceState, but a share link is
+# still a URL other people's pages may link to. strict-origin-when-cross-origin
+# means a third-party page only ever learns "geoscore.help", never the path or
+# query string that carried the audited site.
+#
+# X-Content-Type-Options: nothing on this site relies on MIME sniffing.
+/*
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Content-Type-Options: nosniff
