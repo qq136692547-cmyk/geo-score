@@ -170,8 +170,12 @@ export function parsePrice(value) {
   if (/[.,]$/.test(prefix)) return { value: '', reason: 'starts with a separator' };
 
   // A second digit group after the number ("19.99 - 24.99", "was 29.99 now
-  // 19.99") cannot be told apart from the price itself, so it is refused.
-  const body = raw.slice(start).replace(/\s+/g, '');
+  // 19.99") cannot be told apart from the price itself, so it is refused. A
+  // trailing currency is different: "19.99 USD" and "19.99€" are one number and
+  // the format Google Merchant publishes.
+  let body = raw.slice(start).replace(/\s+/g, ' ');
+  body = body.replace(/\s*(?:[A-Za-z]{3}|[$€£¥₹₽₩₪₫₴₦₱])\s*$/, '');
+  body = body.replace(/\s+/g, '');
   if (!/^[\d.,]+$/.test(body)) return { value: '', reason: 'more than one number' };
   if (/[.,]$/.test(body)) return { value: '', reason: 'ends with a separator' };
 
@@ -203,8 +207,11 @@ export function parsePrice(value) {
       const [head, tail] = body.split(sep);
       if (!/^\d+$/.test(head) || !/^\d+$/.test(tail)) return { value: '', reason: 'not a single number' };
       // "1,299" is 1299 in the US and 1.299 in the EU. The two readings differ
-      // by a factor of a thousand, so neither is chosen.
-      if (tail.length === 3) return { value: '', reason: 'ambiguous: 1,299 could be 1299 or 1.299' };
+      // by a factor of a thousand, so neither is chosen — and the reason quotes
+      // the input rather than a hardcoded example.
+      if (tail.length === 3) {
+        return { value: '', reason: 'ambiguous: three digits after the separator in "' + body + '", so it could be a thousands separator or a decimal point' };
+      }
       if (tail.length > 2) return { value: '', reason: 'more than two decimal places' };
       intPart = head;
       fracPart = tail;
@@ -214,6 +221,9 @@ export function parsePrice(value) {
   if (!/^\d+$/.test(intPart)) return { value: '', reason: 'not a single number' };
   const n = Number(intPart + '.' + (fracPart || '0'));
   if (!Number.isFinite(n) || n < 0) return { value: '', reason: 'not a number' };
+  // Beyond this, toFixed(2) switches to exponent notation and the "price" stops
+  // being a price.
+  if (n >= 1e15) return { value: '', reason: 'larger than any real price' };
   return { value: n.toFixed(2), reason: '' };
 }
 
@@ -314,7 +324,17 @@ export function extractProduct(html, pageUrl) {
   const nodes = page ? extractJsonLd(page) : [];
   const node = nodes.find(isProductNode) || null;
   const offers = node ? offersOf(node) : [];
-  const offer = offers.find((o) => o.price != null && o.price !== '') || offers[0] || null;
+  // An AggregateOffer has no `price` — it has lowPrice/highPrice. Reading only
+  // `price` made a page that already publishes a correct range look like a page
+  // with no price at all, and the pack then shipped a Product node with no
+  // offers: strictly worse than what the buyer already had.
+  const priceFieldOf = (o) => {
+    if (!o) return '';
+    if (o.price != null && o.price !== '') return o.price;
+    if (o.lowPrice != null && o.lowPrice !== '') return o.lowPrice;
+    return '';
+  };
+  const offer = offers.find((o) => normalizePrice(priceFieldOf(o))) || offers[0] || null;
 
   const fields = {};
   const sources = {};
@@ -373,7 +393,7 @@ export function extractProduct(html, pageUrl) {
     return p.value;
   };
 
-  const jsonLdPrice = readPrice(offer && offer.price, 'jsonld');
+  const jsonLdPrice = readPrice(priceFieldOf(offer), 'jsonld');
   const jsonLdCurrency = normalizeCurrency(offer && offer.priceCurrency);
   const jsonLdAvailability = normalizeAvailability(offer && offer.availability);
 
@@ -403,14 +423,20 @@ export function extractProduct(html, pageUrl) {
   // this page, so the whole range is kept and emitted as an AggregateOffer.
   const variantPrices = [];
   for (const o of offers) {
-    const v = normalizePrice(o && o.price);
+    const v = normalizePrice(priceFieldOf(o));
     if (v && !variantPrices.includes(v)) variantPrices.push(v);
+  }
+  // A published AggregateOffer states the range itself; its own highPrice is
+  // part of that statement and must not be dropped.
+  const aggregateHigh = normalizePrice(offer && offer.highPrice);
+  if (aggregateHigh && jsonLdPrice && aggregateHigh !== jsonLdPrice) {
+    variantPrices.push(aggregateHigh);
   }
   if (variantPrices.length > 1) {
     const asNumbers = variantPrices.map(Number);
     fields.priceLow = Math.min(...asNumbers).toFixed(2);
     fields.priceHigh = Math.max(...asNumbers).toFixed(2);
-    fields.offerCount = offers.filter((o) => normalizePrice(o && o.price)).length;
+    fields.offerCount = offers.filter((o) => normalizePrice(priceFieldOf(o))).length;
     sources.priceLow = 'jsonld';
     sources.priceHigh = 'jsonld';
   }
@@ -459,7 +485,7 @@ export function extractProduct(html, pageUrl) {
       requiredPresent: REQUIRED.filter((f) => {
         if (f === 'image') return imagesOf(node && node.image).length > 0;
         if (f === 'name') return !!firstString(node && node.name);
-        if (f === 'price') return !!normalizePrice(offer && offer.price);
+        if (f === 'price') return !!normalizePrice(priceFieldOf(offer));
         if (f === 'priceCurrency') return !!normalizeCurrency(offer && offer.priceCurrency);
         if (f === 'availability') return !!normalizeAvailability(offer && offer.availability);
         return false;
@@ -561,8 +587,12 @@ export function analyzeRobotsForAi(text, targetPath) {
   const readable = raw.trim().length > 0;
 
   const star = groups.filter((g) => g.agents.includes('*'));
-  const blocksAll = star.some(disallowsEverything);
+  // "Closes the whole site" is a statement about the URL we are auditing. A file
+  // that says `Disallow: /` and then `Allow: /products` does not close this
+  // product page, and telling the buyer it does would be wrong.
+  const starClosesRoot = star.some(disallowsEverything);
   const wildcardBlocksPath = star.some((g) => groupBlocks(g, path));
+  const blocksAll = starClosesRoot && wildcardBlocksPath;
 
   const blockedByName = [];
   const allowedByName = [];
@@ -576,10 +606,9 @@ export function analyzeRobotsForAi(text, targetPath) {
   }
 
   const implicit = AI_CRAWLERS.filter((b) => !ownGrouped.has(b));
-  // A wildcard that closes this path is the owner's decision about the path, not
-  // a per-crawler block. Appending `Allow: /` for one bot would silently reopen
-  // the whole site to it, so it is reported and not patched.
-  const needed = !blocksAll && !wildcardBlocksPath && blockedByName.length > 0;
+  // `needed` now means "the buyer has to change this file", not "we ship a
+  // patch". There is no patch we can safely ship: see buildRobotsGuidance.
+  const needed = blockedByName.length > 0 || (wildcardBlocksPath && !blocksAll);
 
   return {
     groups, readable, path, blocksAll, wildcardBlocksPath,
@@ -588,55 +617,89 @@ export function analyzeRobotsForAi(text, targetPath) {
 }
 
 /**
- * A patch block, not a rewritten file.
+ * What to delete, and why we are not deleting it for you.
  *
- * Each blocked crawler gets its own group, and that group repeats every Disallow
- * from the site's `*` group **and** from the site's own group for that crawler.
- * Without the copy, a specific group would *replace* the rules rather than add
- * to them, quietly opening paths such as /admin that the owner had closed —
- * either for everyone, or for that one bot.
+ * The previous version appended a group per blocked crawler:
  *
- * `sitemapUrl` is passed in only when a sitemap was actually found. The earlier
- * version wrote `Sitemap: <origin>/sitemap.xml` whenever the file had none, which
- * invented a URL on any site that does not publish one.
+ *     User-agent: GPTBot
+ *     Allow: /
+ *     Disallow: /products
+ *
+ * and told the buyer it reversed their block. It did not. RFC 9309 merges every
+ * group that names a crawler, and the longest matching rule wins, so
+ * `Disallow: /products` (9 octets) still beat `Allow: /` (1 octet) on a product
+ * page — the file was a no-op that the buyer had paid for. The only way to make
+ * it work is to emit a longer `Allow:` than the owner's `Disallow:`, which is
+ * exactly the thing this tool promised never to do: re-allow a bot the owner
+ * blocked on purpose.
+ *
+ * So the fix is a deletion, the deletion is the owner's decision, and what the
+ * pack delivers is the exact text to delete.
  */
-export function buildRobotsPatch(existing, analysis, origin, sitemapUrl) {
-  const disallowedPaths = (groups) => {
+export function buildRobotsGuidance(analysis) {
+  const lines = [];
+
+  if (!analysis.readable) {
+    lines.push('No robots.txt could be read, so there is nothing to quote. If the file is absent, every crawler is allowed by default and there is nothing to do. If it exists but would not load, open it in a browser first.');
+    return lines.join('\n');
+  }
+
+  const groupText = (bot) => {
+    const own = analysis.groups.filter((g) => g.agents.includes(bot.toLowerCase()));
     const out = [];
-    for (const g of groups) {
+    for (const g of own) {
+      out.push('User-agent: ' + bot);
       for (const r of g.rules) {
-        // `/` is dropped on purpose: the block below is the reversal of that
-        // rule, and repeating it next to `Allow: /` states two contradictory
-        // things in the same group.
-        if (r.type !== 'disallow' || !r.path || r.path === '/') continue;
-        if (!out.includes(r.path)) out.push(r.path);
+        if (!r.path) continue;
+        out.push((r.type === 'allow' ? 'Allow: ' : 'Disallow: ') + r.path);
       }
+      out.push('');
     }
-    return out;
+    return out.join('\n').trim();
   };
 
-  const starPaths = disallowedPaths(analysis.groups.filter((g) => g.agents.includes('*')));
+  if (analysis.blocksAll) {
+    lines.push('Your robots.txt closes the whole site to every crawler:');
+    lines.push('');
+    lines.push('```');
+    lines.push('User-agent: *');
+    lines.push('Disallow: /');
+    lines.push('```');
+    lines.push('');
+    lines.push('Every AI crawler is shut out, and so is everything else. That is either a staging-site file that went live, or a decision — I cannot tell which from here, and it is not mine to reverse.');
+    return lines.join('\n');
+  }
 
-  const lines = [];
-  lines.push('');
-  lines.push('# --- AI crawlers: explicitly allowed (added by GeoScore) ---');
-  lines.push('# These groups only add permission for the named crawlers. Every rule');
-  lines.push('# above this line is unchanged, and the Disallow lines below repeat your');
-  lines.push('# existing ones so a specific group cannot open paths your wildcard closed.');
-  lines.push('');
-  for (const bot of analysis.blockedByName) {
-    const own = analysis.groups.filter((g) => g.agents.includes(bot.toLowerCase()));
-    const paths = starPaths.slice();
-    for (const p of disallowedPaths(own)) if (!paths.includes(p)) paths.push(p);
-    lines.push('User-agent: ' + bot);
-    lines.push('Allow: /');
-    for (const p of paths) lines.push('Disallow: ' + p);
+  if (analysis.wildcardBlocksPath) {
+    // The rule is matched against path + query, because that is what RFC 9309
+    // says to match. A robots.txt never contains a query string, so the rule we
+    // quote is the path alone.
+    const shown = String(analysis.path || '/').split('?')[0];
+    lines.push('Your wildcard group closes the page this pack is about — `' + shown + '` — to every crawler, so no AI crawler can read it at all:');
     lines.push('');
-  }
-  if (sitemapUrl && !/^\s*sitemap:/im.test(existing)) {
-    lines.push('Sitemap: ' + sitemapUrl);
+    lines.push('```');
+    lines.push('User-agent: *');
+    lines.push('Disallow: ' + shown);
+    lines.push('```');
     lines.push('');
+    lines.push('Deleting that one line reopens the page to everything, not only to AI crawlers, so it is your call rather than mine.');
+    return lines.join('\n');
   }
+
+  if (analysis.blockedByName.length) {
+    lines.push('These crawlers are blocked by name, and the page this pack is about is inside the block: **' + analysis.blockedByName.join(', ') + '**.');
+    lines.push('');
+    lines.push('Delete these groups from your robots.txt:');
+    lines.push('');
+    lines.push('```');
+    lines.push(analysis.blockedByName.map(groupText).join('\n\n'));
+    lines.push('```');
+    lines.push('');
+    lines.push('I have not written a replacement file. Anything I could write would either repeat the block — no change, and you would have paid for nothing — or use a longer `Allow:` to override a rule you wrote, which is the one thing this pack promises never to do. Deleting the group restores whatever your wildcard group already says.');
+    return lines.join('\n');
+  }
+
+  lines.push('Nothing here blocks AI crawlers on this page. ' + analysis.allowedByName.length + ' are named with `Allow: /`, and the other ' + analysis.implicit.length + ' fall under a wildcard group that does not close this path. There is nothing to delete and nothing to paste.');
   return lines.join('\n');
 }
 
@@ -826,9 +889,7 @@ const INSTALL = {
       '2. Shopify renders these templates in a restricted Liquid context: `shop`, `collections` and `pages` are blank. That is why this file is static, curated content and not a loop over your catalogue.',
     ],
     robots: [
-      'Do not replace your robots.txt — append this block to the end of the existing one, or paste the whole file if you have no custom rules.',
-      '',
-      'Shopify serves `/robots.txt` from a template; edits made in the admin under Online Store → Preferences → Robots.txt are the supported path.',
+      'Shopify serves `/robots.txt` from a template. The supported edit is Online Store → Preferences → Robots.txt — not a file you upload.',
     ],
   },
   woocommerce: {
@@ -842,7 +903,7 @@ const INSTALL = {
       'Upload this file to your web root as `/llms.txt` (FTP, SFTP, or your host\'s file manager). It is a static text file — no plugin needed.',
     ],
     robots: [
-      'Append this block to the existing `/robots.txt` in your web root. If WordPress manages it (Yoast or Rank Math), use the plugin\'s robots.txt editor instead of editing the file.',
+      'The file is in your web root. If Yoast or Rank Math manages it, use the plugin\'s robots.txt editor — a direct file edit gets overwritten on the next save.',
     ],
   },
   wordpress: {
@@ -851,7 +912,7 @@ const INSTALL = {
       'Paste immediately before `</head>` in your child theme\'s `header.php`, or through a code-snippets plugin.',
     ],
     llms: ['Upload this file to your web root as `/llms.txt`.'],
-    robots: ['Append to `/robots.txt`, or use your SEO plugin\'s robots.txt editor if it manages the file.'],
+    robots: ['Edit `/robots.txt` in your web root, or use your SEO plugin\'s editor if it manages the file.'],
   },
   webflow: {
     label: 'Webflow',
@@ -861,68 +922,38 @@ const INSTALL = {
     llms: [
       'Webflow cannot serve a static text file from the root without a redirect rule. Easiest path: put this file on any static host and add a 200 rewrite at `/llms.txt`.',
     ],
-    robots: ['Webflow generates `/robots.txt` from Site Settings → SEO. Add this block there rather than editing a file.'],
+    robots: ['Webflow generates `/robots.txt` from Site Settings → SEO. Edit it there — there is no file to upload.'],
   },
   custom: {
     label: 'custom build',
     product: ['Paste immediately before `</head>` on the product page, or render it server-side into the template.'],
     llms: ['Upload this file to the web root as `/llms.txt`.'],
-    robots: ['Append this block to the existing `/robots.txt`, or merge the rules into whatever generates it.'],
+    robots: ['Edit `/robots.txt` itself, or whatever generates it.'],
   },
 };
 
-export function buildInstall(platform, extra, robots, pageUrl) {
+export function buildInstall(platform, extra, robots, pageUrl, files) {
   const p = INSTALL[platform] || INSTALL.custom;
   // `extra` is a list of sentences. An earlier call site passed an object into
-  // it, and every INSTALL.md went out with `- [object Object]` in it.
-  const notes = Array.isArray(extra) ? extra.filter((x) => typeof x === 'string' && x.trim()) : [];
+  // it, and every INSTALL.md went out with `- [object Object]` in it. A single
+  // string is a list of one, not a mistake to throw away.
+  const notes = Array.isArray(extra)
+    ? extra.filter((x) => typeof x === 'string' && x.trim())
+    : (typeof extra === 'string' && extra.trim() ? [extra] : []);
   const targetUrl = String(pageUrl || '');
   const lines = ['# Install steps — ' + p.label, ''];
-  lines.push('Three files, in the order that matters: Product JSON-LD first, then robots.txt, then llms.txt.');
+  const shipped = Array.isArray(files) ? files.filter((x) => typeof x === 'string') : [];
+  lines.push('This pack contains: ' + (shipped.length ? shipped.join(', ') : '(no files apply to this page)') + '.');
   lines.push('');
   lines.push('## 1. product.jsonld');
   lines.push('');
   lines.push(...p.product);
   lines.push('');
-  lines.push('## 2. robots.txt');
+  lines.push('## 2. robots.txt — what to change, and why');
   lines.push('');
-  if (robots && robots.blocksAll) {
-    lines.push('**No change was made.** Your robots.txt closes the whole site (`User-agent: *` + `Disallow: /`). That is a deliberate choice, and adding `Allow: /` here would silently override it. Remove that rule first if you actually want AI crawlers in.');
-  } else if (robots && !robots.readable) {
-    lines.push('**No file is included, and I cannot tell you why.** No robots.txt could be read at `' + (robots.origin || '<your-domain>') + '/robots.txt` — the request came back empty, refused, or timed out.');
-    lines.push('');
-    lines.push('If the file is genuinely absent, every crawler is allowed by default and there is nothing to do. If it exists but would not load, open it in a browser and check it yourself before you touch anything. I will not describe a file I could not read.');
-  } else if (robots && robots.wildcardBlocksPath) {
-    lines.push('**No change was made, and this one needs your decision.** Your wildcard group closes `' + robots.path + '` to every crawler — the exact page this pack is about:');
-    lines.push('');
-    lines.push('```');
-    lines.push('User-agent: *');
-    lines.push('Disallow: ' + robots.path);
-    lines.push('```');
-    lines.push('');
-    lines.push('Adding `Allow: /` for one crawler would reopen your whole site to it, which is a bigger change than you asked for. If that rule is a mistake, delete it and every AI crawler is back. If it is deliberate, leave it — and this file has nothing for you.');
-  } else if (robots && !robots.needed) {
-    lines.push('**No change was needed, so no file is included.** Your robots.txt already lets AI crawlers in:');
-    lines.push('');
-    if (robots.allowedByName.length) {
-      lines.push('- named explicitly with `Allow: /`: ' + robots.allowedByName.join(', '));
-    }
-    if (robots.implicit.length) {
-      lines.push('- ' + robots.implicit.length + ' more are covered by your wildcard group, which does not block them: ' + robots.implicit.slice(0, 6).join(', ') + (robots.implicit.length > 6 ? '…' : ''));
-    }
-    lines.push('');
-    lines.push('Nothing to paste. If someone tells you this file is broken, show them those lines.');
-  } else if (robots && robots.needed) {
-    lines.push('Your robots.txt blocks ' + robots.blockedByName.length + ' AI crawler' + (robots.blockedByName.length === 1 ? '' : 's') + ' by name: ' + robots.blockedByName.join(', ') + '.');
-    lines.push('');
-    lines.push('**Read this before pasting.** Applying the file reverses a block you set yourself. If you blocked those crawlers on purpose, do not paste it — the pack is still useful for the other two files, and tell me and I will refund this part.');
-    lines.push('');
-    lines.push('The included file is your original text with a block appended at the end — nothing above the marker line is changed. The appended groups repeat your existing `Disallow` rules, including the ones you set for that crawler specifically, because a crawler-specific group replaces every other group rather than adding to it.');
-    lines.push('');
-    lines.push(...p.robots);
-  } else {
-    lines.push(...p.robots);
-  }
+  lines.push(...buildRobotsGuidance(robots || { readable: false }).split(/\n/));
+  lines.push('');
+  lines.push(...p.robots);
   lines.push('');
   lines.push('## 3. llms.txt');
   lines.push('');
@@ -969,7 +1000,7 @@ export function buildNeedsConfirmation(product, context = {}) {
     lines.push('');
     lines.push('The page already carries a complete Product node — name, image, price, currency, availability and an identifier are all present. product.jsonld was deliberately **not** generated: a second Product node next to a complete one is ambiguous, and you should not be charged for a file you do not need.');
     lines.push('');
-    lines.push('What is left in this pack: `robots.txt` and `llms.txt`. Tell the buyer plainly.');
+    lines.push('What is left in this pack: the robots.txt diagnosis and `llms.txt`. Tell the buyer plainly.');
     lines.push('');
     return lines.join('\n');
   }
@@ -1146,8 +1177,11 @@ export function siteNameOf(html, host) {
 
 export function buildPack(input) {
   const {
-    pageUrl, host, html, siteHtml, robotsTxt, platform, sections, warnings, sitemapUrl,
+    pageUrl: rawPageUrl, host, html, siteHtml, robotsTxt, platform, sections, warnings, sitemapUrl,
   } = input;
+
+  // A bare host produced relative links in llms.txt ("[Wool Runner](shop.example)").
+  const pageUrl = /^https?:\/\//i.test(String(rawPageUrl || '')) ? rawPageUrl : 'https://' + String(rawPageUrl || host || '').replace(/^\/+/, '');
 
   let origin;
   let pagePath;
@@ -1178,15 +1212,11 @@ export function buildPack(input) {
 
   if (node) files['product.jsonld'] = productJsonLdFile(node);
 
-  // robots.txt is only shipped when something is actually blocked. Rewriting a
-  // file that already allows these crawlers is a change with no benefit.
+  // No robots.txt is ever shipped. Every patch shape we tried either repeated
+  // the owner's block (a no-op we would have charged for) or overrode a rule
+  // they wrote on purpose. What the pack delivers here is the diagnosis and the
+  // exact text to delete — see buildRobotsGuidance.
   const robots = { ...analyzeRobotsForAi(robotsTxt || '', pagePath), origin };
-  if (robots.needed) {
-    // Byte-identical above the marker: no trailing-whitespace tidy-up, only the
-    // guarantee of a newline so the appended block starts on its own line.
-    const body = String(robotsTxt || '');
-    files['robots.txt'] = body + (body.endsWith('\n') || !body ? '' : '\n') + buildRobotsPatch(body, robots, origin, sitemapUrl);
-  }
 
   files['llms.txt'] = buildLlmsDraft({
     origin,
@@ -1201,18 +1231,18 @@ export function buildPack(input) {
 
   const allWarnings = warnings ? warnings.slice() : [];
   if (robots.blocksAll) {
-    allWarnings.push('robots.txt closes the whole site to every crawler. It was left exactly as it is — adding Allow: / would override a deliberate choice.');
+    allWarnings.push('robots.txt closes the whole site to every crawler, including this page. Nothing was changed: that is a deliberate choice and not mine to reverse. INSTALL.md quotes the rule to delete.');
   } else if (!robots.readable) {
-    allWarnings.push('No robots.txt could be read at ' + origin + '/robots.txt, so I cannot say whether AI crawlers are allowed. No file was shipped for it. If the file is absent, everything is allowed by default; if it exists but would not load, check it yourself.');
+    allWarnings.push('No robots.txt could be read at ' + origin + '/robots.txt, so I cannot say whether AI crawlers are allowed. If the file is absent, everything is allowed by default; if it exists but would not load, check it yourself.');
   } else if (robots.wildcardBlocksPath) {
-    allWarnings.push('robots.txt closes ' + robots.path + ' to every crawler via the wildcard group. That page cannot be read by any AI crawler. It was reported, not changed — reopening it would mean overriding a rule you wrote.');
-  } else if (!robots.needed) {
-    allWarnings.push('robots.txt already allows AI crawlers on this page (' + robots.allowedByName.length + ' named, ' + robots.implicit.length + ' covered by the wildcard). No file was shipped for it.');
+    allWarnings.push('robots.txt closes ' + robots.path + ' to every crawler via the wildcard group, so no AI crawler can read this page. It was reported, not changed — reopening it would mean overriding a rule you wrote.');
+  } else if (robots.blockedByName.length) {
+    allWarnings.push('robots.txt blocks ' + robots.blockedByName.length + ' AI crawler(s) by name on this page: ' + robots.blockedByName.join(', ') + '. No replacement file was written — INSTALL.md quotes the groups to delete, and deleting them is the buyer\'s decision.');
   } else {
-    allWarnings.push('robots.txt blocked ' + robots.blockedByName.length + ' AI crawler(s) by name; a patch was appended and the original text is unchanged above it. Applying it reverses a block the owner set — say so to the buyer.');
+    allWarnings.push('robots.txt already allows AI crawlers on this page (' + robots.allowedByName.length + ' named, ' + robots.implicit.length + ' covered by the wildcard). Nothing to change there.');
   }
   if (sufficient) {
-    allWarnings.push('The page already carries a complete Product node. product.jsonld was NOT generated — the value of this pack here is robots.txt and llms.txt. Consider refunding the schema portion.');
+    allWarnings.push('The page already carries a complete Product node. product.jsonld was NOT generated — the value of this pack here is the robots.txt diagnosis and llms.txt. Consider refunding the schema portion.');
   } else if (!isProductPage) {
     allWarnings.push('This URL does not look like a product page (no /products/ path, no og:type=product, no price). product.jsonld was NOT generated — re-run it against the product URL you want done.');
   } else if (!node) {
@@ -1230,7 +1260,7 @@ export function buildPack(input) {
     allWarnings.push('This product has ' + product.fields.offerCount + ' priced variants, ' + product.fields.priceLow + '–' + product.fields.priceHigh + '. product.jsonld uses an AggregateOffer with that range rather than picking one.');
   }
 
-  files['INSTALL.md'] = buildInstall(platform, input.extra || [], robots, pageUrl);
+  files['INSTALL.md'] = buildInstall(platform, input.extra || [], robots, pageUrl, Object.keys(files));
   files['NEEDS-CONFIRMATION.md'] = buildNeedsConfirmation(product, { notes: allWarnings, sufficient });
 
   const manifest = buildManifest({
@@ -1353,7 +1383,7 @@ async function main() {
     : (manifest.product.existing_node.sufficient ? 'NO — the page already has a complete node' : 'NO — this is not a product page');
   console.log('  schema needed ' + schemaWhy);
   console.log('  robots.txt    ' + (manifest.robots.readable ? 'read' : 'COULD NOT READ')
-    + (manifest.robots_change_needed ? ', patch appended' : ', no change'));
+    + (manifest.robots_change_needed ? ', buyer must change it' : ', no change needed'));
   console.log('  sitemap       ' + (sitemapUrl || 'none found'));
   console.log('  complete      ' + (manifest.complete ? 'yes' : 'NO — see NEEDS-CONFIRMATION.md'));
   if (manifest.product.missing.length) {

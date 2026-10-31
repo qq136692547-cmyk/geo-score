@@ -31,7 +31,7 @@ import {
   decodeEntities,
   normalizeUrl,
   analyzeRobotsForAi,
-  buildRobotsPatch,
+  buildRobotsGuidance,
   parseRobots,
   AI_CRAWLERS,
   REQUIRED,
@@ -319,9 +319,10 @@ describe('buildInstall', () => {
     expect(text).toContain('restricted Liquid context');
   });
 
-  it('tells a custom build to append rather than overwrite robots.txt', () => {
+  it('tells a custom build where robots.txt is edited, because no file is shipped', () => {
     const text = buildInstall('custom', []);
-    expect(text).toContain('Append this block to the existing');
+    expect(text).toContain('Edit `/robots.txt` itself');
+    expect(text).not.toContain('Append this block');
   });
 });
 
@@ -373,21 +374,22 @@ describe('buildPack — assembly', () => {
     expect(pack.manifest.files).toContain('manifest.json');
   });
 
-  it('ships an appended patch, leaving the original text intact, when a crawler is blocked', () => {
+  it('reports a blocked crawler and ships no robots.txt at all', () => {
     const blocked = buildPack({
       pageUrl: URL, host: 'shop.example', html: SHOPIFY_HTML,
       siteHtml: '<meta property="og:site_name" content="Example">',
       robotsTxt: 'User-agent: *\nDisallow: /admin\n\nUser-agent: GPTBot\nDisallow: /\n',
       platform: 'shopify', sections: [], warnings: [],
     });
-    const file = blocked.files['robots.txt'];
     expect(blocked.manifest.robots_change_needed).toBe(true);
     expect(blocked.manifest.robots.blocked_by_name).toEqual(['GPTBot']);
-    // Their original rules survive verbatim above the marker.
-    expect(file).toContain('Disallow: /admin');
-    expect(file.indexOf('Disallow: /admin')).toBeLessThan(file.indexOf('added by GeoScore'));
-    // The new group repeats their Disallow, so /admin is not opened by accident.
-    expect(file).toContain('User-agent: GPTBot\nAllow: /\nDisallow: /admin');
+    // No file is written. Every patch shape we can generate either repeats the
+    // owner's block (a no-op we would have charged for) or overrides a rule they
+    // wrote on purpose.
+    expect(blocked.files['robots.txt']).toBeUndefined();
+    expect(blocked.files['INSTALL.md']).toContain('Delete these groups from your robots.txt');
+    expect(blocked.files['INSTALL.md']).toContain('User-agent: GPTBot');
+    expect(blocked.files['INSTALL.md']).not.toContain('a block appended');
   });
 
   it('flags that the page already had a Product node, so nothing is pasted twice', () => {
@@ -416,7 +418,7 @@ describe('buildPack — assembly', () => {
     });
     expect(closed.files['robots.txt']).toBeUndefined();
     expect(closed.manifest.robots.blocks_all).toBe(true);
-    expect(closed.manifest.warnings.join(' ')).toContain('left exactly as it is');
+    expect(closed.manifest.warnings.join(' ')).toContain('closes the whole site');
   });
 });
 
@@ -479,33 +481,35 @@ Disallow: /checkout
   });
 });
 
-describe('buildRobotsPatch — a specific group replaces the wildcard, so rules are copied', () => {
-  it('repeats every wildcard Disallow inside the new group', () => {
-    const existing = 'User-agent: *\nDisallow: /admin\nDisallow: /cart\n\nUser-agent: GPTBot\nDisallow: /\n';
-    const a = analyzeRobotsForAi(existing);
-    const patch = buildRobotsPatch(existing, a, 'https://s.example');
-    expect(patch).toContain('User-agent: GPTBot');
-    expect(patch).toContain('Disallow: /admin');
-    expect(patch).toContain('Disallow: /cart');
+describe('buildRobotsGuidance — the fix is a deletion, and the deletion is the owner\'s call', () => {
+  it('quotes the exact group to delete, including the crawler\'s own rules', () => {
+    const existing = 'User-agent: *\nDisallow: /admin\n\nUser-agent: GPTBot\nDisallow: /private\nDisallow: /\n';
+    const text = buildRobotsGuidance(analyzeRobotsForAi(existing, '/products/x'));
+    expect(text).toContain('Delete these groups from your robots.txt');
+    expect(text).toContain('User-agent: GPTBot');
+    expect(text).toContain('Disallow: /private');
+    expect(text).toContain('Disallow: /');
   });
 
-  it('writes a Sitemap line only for a sitemap that was found, never one it invented', () => {
-    const without = 'User-agent: *\nAllow: /\n\nUser-agent: GPTBot\nDisallow: /\n';
-    // No sitemap was probed: nothing is written. The earlier version invented
-    // `<origin>/sitemap.xml` for every site, including sites that publish none.
-    expect(buildRobotsPatch(without, analyzeRobotsForAi(without), 'https://s.example'))
-      .not.toContain('Sitemap:');
+  it('says plainly that it did not write a replacement file, and why', () => {
+    const existing = 'User-agent: *\nAllow: /\n\nUser-agent: GPTBot\nDisallow: /\n';
+    const text = buildRobotsGuidance(analyzeRobotsForAi(existing, '/products/x'));
+    expect(text).toContain('I have not written a replacement file');
+    expect(text).toContain('no change, and you would have paid for nothing');
+  });
 
-    // A sitemap that actually answered is linked.
-    expect(buildRobotsPatch(without, analyzeRobotsForAi(without), 'https://s.example', 'https://s.example/sitemap.xml'))
-      .toContain('Sitemap: https://s.example/sitemap.xml');
+  it('quotes the wildcard rule when that is what closes the page, and only the path', () => {
+    const text = buildRobotsGuidance(analyzeRobotsForAi('User-agent: *\nDisallow: /products\n', '/products/x?utm_source=a'));
+    expect(text).toContain('Disallow: /products');
+    expect(text).not.toContain('utm_source');
+  });
 
-    // One the file already declares is not duplicated.
-    const withSitemap = without + '\nSitemap: https://s.example/sitemap.xml\n';
-    const patch = buildRobotsPatch(withSitemap, analyzeRobotsForAi(withSitemap), 'https://s.example', 'https://s.example/sitemap.xml');
-    expect(patch.match(/Sitemap:/g)).toBeNull();
+  it('does not quote a file it could not read', () => {
+    const text = buildRobotsGuidance(analyzeRobotsForAi(''));
+    expect(text).toContain('No robots.txt could be read');
   });
 });
+
 
 describe('buildManifest', () => {
   it('is complete only when nothing is missing and nothing conflicts', () => {
@@ -742,7 +746,13 @@ describe('robots.txt is judged against the page we are auditing', () => {
   it('sees that a wildcard path rule closes the audited URL', () => {
     const a = analyzeRobotsForAi('User-agent: *\nDisallow: /products\n', '/products/wool-runner');
     expect(a.wildcardBlocksPath).toBe(true);
-    expect(a.needed).toBe(false);
+    expect(a.needed).toBe(true);
+  });
+
+  it('does not treat Disallow: / plus Allow: /products as a closed site', () => {
+    const a = analyzeRobotsForAi('User-agent: *\nDisallow: /\nAllow: /products\n', '/products/wool-runner');
+    expect(a.wildcardBlocksPath).toBe(false);
+    expect(a.blocksAll).toBe(false);
   });
 
   it('does not claim the site allows AI crawlers when it closes the page', () => {
@@ -753,7 +763,8 @@ describe('robots.txt is judged against the page we are auditing', () => {
     });
     const text = pack.files['INSTALL.md'];
     expect(text).not.toContain('already lets AI crawlers in');
-    expect(text).toContain('closes `/products/wool-runner` to every crawler');
+    expect(text).toContain('closes the page this pack is about');
+    expect(text).toContain('/products/wool-runner');
     expect(pack.files['robots.txt']).toBeUndefined();
   });
 });
@@ -774,19 +785,19 @@ describe('an unreadable robots.txt is not a permissive one', () => {
     expect(pack.manifest.robots.readable).toBe(false);
     expect(warnings).toContain('No robots.txt could be read');
     expect(warnings).not.toContain('already allows AI crawlers');
-    expect(pack.files['INSTALL.md']).toContain('I cannot tell you why');
+    expect(pack.files['INSTALL.md']).toContain('No robots.txt could be read, so there is nothing to quote');
   });
 });
 
-describe('the appended group inherits the rules the owner set for that crawler', () => {
-  it('keeps a path the owner closed for that one bot', () => {
-    const existing = 'User-agent: *\nDisallow: /admin\n\nUser-agent: GPTBot\nDisallow: /private\nDisallow: /\n';
-    const patch = buildRobotsPatch(existing, analyzeRobotsForAi(existing), 'https://s.example');
-    expect(patch).toContain('Disallow: /admin');
-    expect(patch).toContain('Disallow: /private');
-    // `/` is dropped on purpose: the group below is the reversal of that rule,
-    // and repeating it next to `Allow: /` states two opposite things.
-    expect(patch).not.toMatch(/^Disallow: \/$/m);
+describe('the appended group never shipped, because no patch could work', () => {
+  it('proves the old patch was a no-op: the rule it copied still wins', () => {
+    // RFC 9309 merges every group naming a crawler, and the longest matching
+    // rule wins. `Disallow: /products` is longer than `Allow: /`, so appending
+    // the block left the crawler blocked — a file the buyer paid for that
+    // changed nothing.
+    const after = 'User-agent: *\nAllow: /\n\nUser-agent: GPTBot\nDisallow: /products\n'
+      + '\nUser-agent: GPTBot\nAllow: /\nDisallow: /products\n';
+    expect(analyzeRobotsForAi(after, '/products/wool-runner').blockedByName).toEqual(['GPTBot']);
   });
 });
 
@@ -834,5 +845,52 @@ describe('a page with several real prices gets a range, not a guess', () => {
     expect(node.offers.lowPrice).toBe('98.00');
     expect(node.offers.highPrice).toBe('104.00');
     expect(node.offers.offerCount).toBe(2);
+  });
+});
+
+describe('a page that already publishes a range is not a page with no price', () => {
+  // Round trip: this is the exact shape the tool itself emits, so a page using
+  // it must not read back as "price missing" — that produced a Product node
+  // with no offers at all, strictly worse than what the buyer already had.
+  const html = `<html><head><script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Product","name":"Mug","image":"https://c.example/m.jpg","sku":"M1",
+ "offers":{"@type":"AggregateOffer","lowPrice":"98.00","highPrice":"104.00","priceCurrency":"USD","availability":"https://schema.org/InStock"}}
+</script></head><body></body></html>`;
+
+  it('reads lowPrice as the price and keeps the high end', () => {
+    const p = extractProduct(html, URL);
+    expect(p.missing).toEqual([]);
+    expect(p.fields.price).toBe('98.00');
+    expect(p.fields.priceHigh).toBe('104.00');
+  });
+
+  it('does not ship a second node next to a complete one', () => {
+    const p = extractProduct(html, URL);
+    expect(productNodeSufficient(p)).toBe(true);
+    const pack = buildPack({
+      pageUrl: URL, host: 'shop.example', html,
+      robotsTxt: 'User-agent: *\nAllow: /\n', platform: 'custom', sections: [], warnings: [],
+    });
+    expect(pack.files['product.jsonld']).toBeUndefined();
+  });
+
+  it('reproduces the same range if it has to build the node', () => {
+    const node = buildProductJsonLd(extractProduct(html, URL), URL);
+    expect(node.offers['@type']).toBe('AggregateOffer');
+    expect(node.offers.lowPrice).toBe('98.00');
+    expect(node.offers.highPrice).toBe('104.00');
+  });
+});
+
+describe('a currency next to the number is not a second number', () => {
+  it('reads the formats Google Merchant publishes', () => {
+    expect(normalizePrice('19.99 USD')).toBe('19.99');
+    expect(normalizePrice('19.99€')).toBe('19.99');
+    expect(normalizePrice('USD 19.99')).toBe('19.99');
+  });
+
+  it('still refuses a range and a price too large to be one', () => {
+    expect(normalizePrice('19.99 - 24.99 USD')).toBe('');
+    expect(normalizePrice('999999999999999999999')).toBe('');
   });
 });
