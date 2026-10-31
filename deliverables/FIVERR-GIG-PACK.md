@@ -24,7 +24,7 @@ I will complete and validate the product structured data on one of your products
 
 What you get:
 - Product JSON-LD for your best-seller, completed and validated — every variant's offer with price, currency and availability, plus sku / gtin / mpn to match your product to the same product elsewhere
-- Explicit AI-crawler rules for robots.txt (GPTBot, ClaudeBot, PerplexityBot), merged without touching your existing rules
+- A robots.txt diagnosis: which AI crawlers your rules block on that page, and the exact lines to delete - I do not rewrite your file
 - A hand-written llms.txt based on your public pages
 - A 1-page audit with your 11-dimension scores
 - A re-audit after you deploy, with before and after
@@ -84,7 +84,7 @@ I will fix your robots.txt for AI crawlers and complete Product schema
 
 <!-- 粘贴到：Fiverr > Gigs > [你的 gig] > Edit > Description -->
 ```
-I rebuild the three files that decide what AI crawlers can read on your store - from your real catalog, not a template.
+I check the three things that decide what AI crawlers can read on your store - robots rules, schema, and llms.txt - and I write only the ones your store is actually missing, from your real catalog, not a template.
 
 In 48 hours you get:
 - robots.txt rules that explicitly allow GPTBot, ClaudeBot and PerplexityBot, merged so your existing rules stay intact
@@ -209,19 +209,19 @@ A: Two revisions are included. The post-deploy re-audit is exactly where a bad p
 ```
 Case A - 41/100
 Measured: aiCrawlability 12/12 (full marks), aiGuidance 0/12, structuredData 0/14, discoveryEndpoints 0/6. No llms.txt. No robots.txt at all, so every crawler is allowed by default and no file names GPTBot, ClaudeBot or PerplexityBot.
-Changed: three files - robots.txt with explicit AI-crawler rules, llms.txt built from the sitemap, Product JSON-LD for one best-selling product.
+Changed: llms.txt written from the sitemap, and Product JSON-LD for one best-selling product. robots.txt needed nothing - with no robots.txt at all, every crawler is already allowed, and adding a permissive one would have changed no access. I said so instead of billing for it.
 Re-audit: we re-run the audit after you deploy and send the four dimension scores side by side, before and after, on your own domain.
 ```
 ```
 Case B - 44/100
 Measured: aiCrawlability 12/12 (full marks), aiGuidance 0/12, structuredData 0/14, discoveryEndpoints 0/6, eeat 3/8. Both files missing again - and the site still gets full crawl marks, because no robots.txt means nothing is blocked.
-Changed: three files - AI-crawler rules in robots.txt, llms.txt from the sitemap, Product JSON-LD completed with price, availability and identifiers.
+Changed: llms.txt written from the sitemap, and Product JSON-LD completed with price, availability and identifiers. robots.txt again needed nothing, and was left alone.
 Re-audit: same four dimensions re-measured after deployment, with the before/after pair returned to you.
 ```
 ```
 Case C - 56/100 (the better one)
 Measured: aiCrawlability 12/12, structuredData 3/14, aiGuidance 0/12, discoveryEndpoints 0/6. Two of the five schema checks passed; llms.txt and robots.txt both missing.
-Changed: three files - robots.txt rules, llms.txt from the sitemap, Product JSON-LD completed and validated.
+Changed: llms.txt written from the sitemap, and Product JSON-LD completed and validated. robots.txt: no change needed.
 Re-audit: aiGuidance, structuredData and discoveryEndpoints re-measured after you deploy.
 ```
 
@@ -248,7 +248,7 @@ Our first paying client becomes our first published before/after case study. Tha
 
 <!-- 粘贴到：Fiverr > Profile > Description -->
 ```
-I build GeoScore, an open-source GEO audit tool (MIT licensed, github.com/qq136692547-cmyk/geo-score). The scoring logic is public: 11 dimensions, 85 weighted checks. Run it on your store free at geoscore.help before you pay, then read the code behind the number. Our 324-site study: median score 41, and only 2.5% of sites blocked an AI crawler - the gap is almost never access, it is the files nobody wrote. I write those three files from your real catalog. $49, 48 hours. I will not promise AI citations; I will deliver correct files and show you the re-audit.
+I build GeoScore, an open-source GEO audit tool (MIT licensed, github.com/qq136692547-cmyk/geo-score). The scoring logic is public: 11 dimensions, 85 weighted checks. Run it on your store free at geoscore.help before you pay, then read the code behind the number. Our 324-site study: median score 41, and only 2.5% of sites blocked an AI crawler - the gap is almost never access, it is the files nobody wrote. I write the files your store is actually missing, from your real catalog. $49, 48 hours. I will not promise AI citations; I will deliver correct files and show you the re-audit.
 ```
 **实际字符数：563**（Fiverr 上限 600）
 
