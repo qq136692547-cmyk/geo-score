@@ -308,9 +308,16 @@ describe('detectPlatform', () => {
 
 describe('buildInstall', () => {
   it('warns Shopify sellers that a second Product node is ambiguous', () => {
-    const text = buildInstall('shopify', []);
+    const text = buildInstall('shopify', [], null, '', ['product.jsonld', 'llms.txt']);
     expect(text).toContain('two Product nodes on one page is ambiguous');
     expect(text).toContain('Replace the theme snippet');
+  });
+
+  it('does not give paste instructions for a file it did not write', () => {
+    const text = buildInstall('shopify', [], null, '', ['llms.txt']);
+    expect(text).not.toContain('Replace the theme snippet');
+    expect(text).toContain('There is no `product.jsonld` in this pack, on purpose');
+    expect(text).toContain('The files for your site: llms.txt');
   });
 
   it('carries the Shopify llms.txt caveat: a custom template replaces, and Liquid is restricted', () => {
@@ -810,7 +817,8 @@ describe('INSTALL.md is a document, not a stringified object', () => {
     });
     const text = pack.files['INSTALL.md'];
     expect(text).not.toContain('[object Object]');
-    expect(text).toContain('node tools/diagnose.mjs ' + URL);
+    expect(text).toContain('https://geoscore.help');
+    expect(text).toContain(URL);
     expect(text).toContain('- Your theme prints two Product nodes.');
   });
 });
@@ -892,5 +900,78 @@ describe('a currency next to the number is not a second number', () => {
   it('still refuses a range and a price too large to be one', () => {
     expect(normalizePrice('19.99 - 24.99 USD')).toBe('');
     expect(normalizePrice('999999999999999999999')).toBe('');
+  });
+});
+
+describe('a protocol-relative image is still an image', () => {
+  const html = `<html><head><script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Product","name":"Dutchess","sku":"DUT-1",
+ "image":["//cdn.shopify.com/a.png","//cdn.shopify.com/b.png"],
+ "offers":{"@type":"Offer","price":"395.00","priceCurrency":"USD","availability":"https://schema.org/InStock"}}
+</script></head><body></body></html>`;
+
+  it('does not make a complete node look incomplete', () => {
+    const p = extractProduct(html, URL);
+    expect(p.existing.requiredPresent).toContain('image');
+    expect(productNodeSufficient(p)).toBe(true);
+  });
+
+  it('upgrades the scheme when it does have to write the node', () => {
+    const p = extractProduct(html.replace('"sku":"DUT-1",', ''), URL);
+    const node = buildProductJsonLd(p, URL);
+    expect(node.image).toEqual(['https://cdn.shopify.com/a.png', 'https://cdn.shopify.com/b.png']);
+  });
+});
+
+describe('the robots guidance quotes the file, not the URL', () => {
+  it('prints the rule that is actually in the file', () => {
+    const text = buildRobotsGuidance(analyzeRobotsForAi('User-agent: *\nDisallow: /products\n', '/products/wool-runner'));
+    expect(text).toContain('Disallow: /products');
+    expect(text).not.toContain('Disallow: /products/wool-runner');
+  });
+
+  it('merges the groups that name the same crawler, the way the spec does', () => {
+    const a = analyzeRobotsForAi('User-agent: GPTBot\nDisallow: /\n\nUser-agent: GPTBot\nAllow: /products\n', '/products/x');
+    expect(a.blockedByName).toEqual([]);
+  });
+
+  it('prints a shared group once', () => {
+    const text = buildRobotsGuidance(analyzeRobotsForAi('User-agent: *\nAllow: /\n\nUser-agent: GPTBot\nUser-agent: CCBot\nDisallow: /\n', '/products/x'));
+    expect(text.match(/User-agent: GPTBot/g)).toHaveLength(1);
+    expect(text.match(/User-agent: CCBot/g)).toHaveLength(1);
+  });
+});
+
+describe('an AggregateOffer without an upper bound stays an aggregate', () => {
+  const html = `<html><head><script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Product","name":"Mug","image":"https://c.example/m.jpg","sku":"M1",
+ "offers":{"@type":"AggregateOffer","lowPrice":"98.00","priceCurrency":"USD","availability":"https://schema.org/InStock"}}
+</script></head><body></body></html>`;
+
+  it('does not assert a "from" price as the price', () => {
+    const node = buildProductJsonLd(extractProduct(html, URL), URL);
+    expect(node.offers['@type']).toBe('AggregateOffer');
+    expect(node.offers.lowPrice).toBe('98.00');
+    expect(node.offers.price).toBeUndefined();
+    expect(node.offers.highPrice).toBeUndefined();
+  });
+});
+
+describe('INSTALL.md only instructs on files that exist', () => {
+  it('says so plainly when product.jsonld was withheld', () => {
+    const pack = buildPack({
+      pageUrl: URL, host: 'shop.example', html: SHOPIFY_HTML,
+      robotsTxt: 'User-agent: *\nAllow: /\n', platform: 'shopify', sections: [], warnings: [],
+    });
+    // SHOPIFY_HTML has no sku, so the file is generated — check the other case.
+    const complete = buildPack({
+      pageUrl: URL, host: 'shop.example',
+      html: SHOPIFY_HTML.replace('"brand"', '"sku": "WR-1", "brand"'),
+      robotsTxt: 'User-agent: *\nAllow: /\n', platform: 'shopify', sections: [], warnings: [],
+    });
+    expect(complete.files['product.jsonld']).toBeUndefined();
+    expect(complete.files['INSTALL.md']).toContain('There is no `product.jsonld` in this pack');
+    expect(complete.files['INSTALL.md']).not.toContain('Replace the theme snippet');
+    expect(pack.files['INSTALL.md']).toContain('Replace the theme snippet');
   });
 });

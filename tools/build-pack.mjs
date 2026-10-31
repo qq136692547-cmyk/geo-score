@@ -94,7 +94,11 @@ function imagesOf(value) {
   const walk = (x) => {
     if (Array.isArray(x)) { x.forEach(walk); return; }
     const s = firstString(x);
-    if (s && /^https?:\/\//i.test(s) && !raw.includes(s)) raw.push(s);
+    // Protocol-relative URLs ("//cdn.shopify.com/…") are valid and common in
+    // theme markup. Requiring http(s):// dropped every image on such a page,
+    // which made a complete Product node look incomplete and shipped a
+    // replacement with fewer images than the merchant already had.
+    if (s && /^(?:https?:)?\/\//i.test(s) && !raw.includes(s)) raw.push(s);
   };
   walk(value);
 
@@ -244,6 +248,7 @@ export function normalizeUrl(url, pageUrl) {
   const u = String(url || '').trim();
   if (!u) return '';
   const pageIsHttps = /^https:/i.test(String(pageUrl || ''));
+  if (pageIsHttps && u.startsWith('//')) return 'https:' + u;
   if (pageIsHttps && /^http:/i.test(u) && u.startsWith('http://')) return 'https://' + u.slice('http://'.length);
   return u;
 }
@@ -428,17 +433,26 @@ export function extractProduct(html, pageUrl) {
   }
   // A published AggregateOffer states the range itself; its own highPrice is
   // part of that statement and must not be dropped.
+  const offerIsAggregate = typeList(offer).some((t) => t === 'aggregateoffer');
   const aggregateHigh = normalizePrice(offer && offer.highPrice);
   if (aggregateHigh && jsonLdPrice && aggregateHigh !== jsonLdPrice) {
     variantPrices.push(aggregateHigh);
   }
   if (variantPrices.length > 1) {
     const asNumbers = variantPrices.map(Number);
-    fields.priceLow = Math.min(...asNumbers).toFixed(2);
-    fields.priceHigh = Math.max(...asNumbers).toFixed(2);
+    const low = Math.min(...asNumbers).toFixed(2);
+    const high = Math.max(...asNumbers).toFixed(2);
+    fields.priceLow = low;
+    fields.priceHigh = high;
     fields.offerCount = offers.filter((o) => normalizePrice(priceFieldOf(o))).length;
     sources.priceLow = 'jsonld';
     sources.priceHigh = 'jsonld';
+  } else if (offerIsAggregate && jsonLdPrice) {
+    // An AggregateOffer with only a lowPrice is a "from" price. Emitting it as
+    // a plain Offer would assert that every variant costs exactly that.
+    fields.priceLow = jsonLdPrice;
+    fields.isAggregate = true;
+    sources.priceLow = 'jsonld';
   }
 
   take('url', normalizeUrl(firstString(node && node.url), pageUrl), 'jsonld');
@@ -586,12 +600,19 @@ export function analyzeRobotsForAi(text, targetPath) {
   // means we do not know — and the pack must not pretend otherwise.
   const readable = raw.trim().length > 0;
 
+  // RFC 9309 merges every group that names a crawler, so the rules that apply
+  // are the union, not the first group found. Judging groups one at a time made
+  // `GPTBot: Disallow: /` + `GPTBot: Allow: /products` read as blocked on a page
+  // the spec says is allowed.
+  const merge = (list) => ({ rules: list.flatMap((g) => g.rules) });
+
   const star = groups.filter((g) => g.agents.includes('*'));
+  const starRules = merge(star);
   // "Closes the whole site" is a statement about the URL we are auditing. A file
   // that says `Disallow: /` and then `Allow: /products` does not close this
   // product page, and telling the buyer it does would be wrong.
   const starClosesRoot = star.some(disallowsEverything);
-  const wildcardBlocksPath = star.some((g) => groupBlocks(g, path));
+  const wildcardBlocksPath = groupBlocks(starRules, path);
   const blocksAll = starClosesRoot && wildcardBlocksPath;
 
   const blockedByName = [];
@@ -601,7 +622,7 @@ export function analyzeRobotsForAi(text, targetPath) {
     const own = groups.filter((g) => g.agents.includes(bot.toLowerCase()));
     if (!own.length) continue;
     ownGrouped.add(bot);
-    if (own.some((g) => groupBlocks(g, path))) blockedByName.push(bot);
+    if (groupBlocks(merge(own), path)) blockedByName.push(bot);
     else allowedByName.push(bot);
   }
 
@@ -644,18 +665,19 @@ export function buildRobotsGuidance(analysis) {
     return lines.join('\n');
   }
 
-  const groupText = (bot) => {
-    const own = analysis.groups.filter((g) => g.agents.includes(bot.toLowerCase()));
+  // A group can name several agents ("User-agent: GPTBot" + "User-agent: CCBot"
+  // in one block). Printing it once per bot shows the buyer two blocks that do
+  // not exist in the file, and invites them to delete only one.
+  const canonical = new Map(AI_CRAWLERS.map((b) => [b.toLowerCase(), b]));
+  const showAgent = (a) => (a === '*' ? '*' : (canonical.get(a) || a));
+  const renderGroup = (g) => {
     const out = [];
-    for (const g of own) {
-      out.push('User-agent: ' + bot);
-      for (const r of g.rules) {
-        if (!r.path) continue;
-        out.push((r.type === 'allow' ? 'Allow: ' : 'Disallow: ') + r.path);
-      }
-      out.push('');
+    for (const a of g.agents) out.push('User-agent: ' + showAgent(a));
+    for (const r of g.rules) {
+      if (!r.path) continue;
+      out.push((r.type === 'allow' ? 'Allow: ' : 'Disallow: ') + r.path);
     }
-    return out.join('\n').trim();
+    return out.join('\n');
   };
 
   if (analysis.blocksAll) {
@@ -672,14 +694,23 @@ export function buildRobotsGuidance(analysis) {
 
   if (analysis.wildcardBlocksPath) {
     // The rule is matched against path + query, because that is what RFC 9309
-    // says to match. A robots.txt never contains a query string, so the rule we
-    // quote is the path alone.
+    // says to match, but the line we quote has to be the line that is actually
+    // in the file. Quoting the audited URL instead invented a rule the merchant
+    // could not find — `Disallow: /products/wool-runner` when the file says
+    // `Disallow: /products`.
+    const star = analysis.groups.filter((g) => g.agents.includes('*'));
+    let rule = null;
+    for (const g of star) {
+      const r = decidingRule(g, analysis.path);
+      if (r && (!rule || r.path.length > rule.path.length)) rule = r;
+    }
+    const rulePath = rule ? rule.path : '/';
     const shown = String(analysis.path || '/').split('?')[0];
-    lines.push('Your wildcard group closes the page this pack is about — `' + shown + '` — to every crawler, so no AI crawler can read it at all:');
+    lines.push('Your wildcard group closes the page this pack is about — `' + shown + '` — to every crawler, so no AI crawler can read it at all. The rule that does it is this one:');
     lines.push('');
     lines.push('```');
     lines.push('User-agent: *');
-    lines.push('Disallow: ' + shown);
+    lines.push('Disallow: ' + rulePath);
     lines.push('```');
     lines.push('');
     lines.push('Deleting that one line reopens the page to everything, not only to AI crawlers, so it is your call rather than mine.');
@@ -691,15 +722,29 @@ export function buildRobotsGuidance(analysis) {
     lines.push('');
     lines.push('Delete these groups from your robots.txt:');
     lines.push('');
+    const blocked = new Set(analysis.blockedByName.map((b) => b.toLowerCase()));
+    const seen = new Set();
+    const blocks = [];
+    for (const g of analysis.groups) {
+      if (seen.has(g)) continue;
+      if (!g.agents.some((a) => blocked.has(a))) continue;
+      seen.add(g);
+      blocks.push(renderGroup(g));
+    }
     lines.push('```');
-    lines.push(analysis.blockedByName.map(groupText).join('\n\n'));
+    lines.push(blocks.join('\n\n'));
     lines.push('```');
     lines.push('');
     lines.push('I have not written a replacement file. Anything I could write would either repeat the block — no change, and you would have paid for nothing — or use a longer `Allow:` to override a rule you wrote, which is the one thing this pack promises never to do. Deleting the group restores whatever your wildcard group already says.');
     return lines.join('\n');
   }
 
-  lines.push('Nothing here blocks AI crawlers on this page. ' + analysis.allowedByName.length + ' are named with `Allow: /`, and the other ' + analysis.implicit.length + ' fall under a wildcard group that does not close this path. There is nothing to delete and nothing to paste.');
+  const named = analysis.allowedByName.length;
+  lines.push('Nothing here blocks AI crawlers on this page. '
+    + (named
+      ? named + ' crawler' + (named === 1 ? ' is' : 's are') + ' named in your file and not blocked here, and the other '
+      : 'No crawler is named in your file, and the ')
+    + analysis.implicit.length + ' fall under a wildcard group that does not close this path. There is nothing to delete and nothing to paste.');
   return lines.join('\n');
 }
 
@@ -730,17 +775,18 @@ export function buildProductJsonLd(product, pageUrl) {
   // no currency cannot be read as a price by anything.
   if (f.price && f.priceCurrency) {
     const ranged = f.priceLow && f.priceHigh && f.priceLow !== f.priceHigh;
-    if (ranged) {
+    if (ranged || f.isAggregate) {
       // A page selling several variants has several real prices. Publishing one
       // of them as "the" price is a statement the merchant never made; the
-      // honest shape is the range Google documents for exactly this case.
+      // honest shape is the range Google documents for exactly this case. An
+      // AggregateOffer with only a lowPrice is a "from" price and stays one.
       node.offers = {
         '@type': 'AggregateOffer',
         url: f.url || pageUrl,
         priceCurrency: f.priceCurrency,
-        lowPrice: f.priceLow,
-        highPrice: f.priceHigh,
+        lowPrice: f.priceLow || f.price,
       };
+      if (f.priceHigh) node.offers.highPrice = f.priceHigh;
       if (f.offerCount > 1) node.offers.offerCount = f.offerCount;
       if (f.availability) node.offers.availability = 'https://schema.org/' + f.availability;
     } else {
@@ -932,6 +978,16 @@ const INSTALL = {
   },
 };
 
+/**
+ * Fallback for a direct call with no analysis. Only reachable from tests:
+ * `buildPack` always passes the real analysis. It says it could not read a file
+ * rather than pretending one was read and was permissive.
+ */
+const EMPTY_ROBOTS = {
+  readable: false, groups: [], path: '/', blocksAll: false,
+  wildcardBlocksPath: false, blockedByName: [], allowedByName: [], implicit: [],
+};
+
 export function buildInstall(platform, extra, robots, pageUrl, files) {
   const p = INSTALL[platform] || INSTALL.custom;
   // `extra` is a list of sentences. An earlier call site passed an object into
@@ -943,15 +999,24 @@ export function buildInstall(platform, extra, robots, pageUrl, files) {
   const targetUrl = String(pageUrl || '');
   const lines = ['# Install steps — ' + p.label, ''];
   const shipped = Array.isArray(files) ? files.filter((x) => typeof x === 'string') : [];
-  lines.push('This pack contains: ' + (shipped.length ? shipped.join(', ') : '(no files apply to this page)') + '.');
+  const has = (name) => shipped.includes(name);
+  const artifacts = shipped.filter((n) => n !== 'INSTALL.md');
+  lines.push('The files for your site: ' + (artifacts.length ? artifacts.join(', ') : '(none — see below)')
+    + '. This document, `NEEDS-CONFIRMATION.md` and `manifest.json` come with them.');
   lines.push('');
   lines.push('## 1. product.jsonld');
   lines.push('');
-  lines.push(...p.product);
+  if (has('product.jsonld')) {
+    lines.push(...p.product);
+  } else {
+    // Instructions for a file that is not in the folder is how a pack sells
+    // something it did not deliver. Say what is missing, and why, instead.
+    lines.push('**There is no `product.jsonld` in this pack, on purpose.** This page already carries a Product node that covers what the file would have added, or the URL is not a product page. `NEEDS-CONFIRMATION.md` says which, and why a second node next to a complete one is worse than none. Nothing to paste here.');
+  }
   lines.push('');
   lines.push('## 2. robots.txt — what to change, and why');
   lines.push('');
-  lines.push(...buildRobotsGuidance(robots || { readable: false }).split(/\n/));
+  lines.push(...buildRobotsGuidance(robots || EMPTY_ROBOTS).split(/\n/));
   lines.push('');
   lines.push(...p.robots);
   lines.push('');
@@ -967,11 +1032,7 @@ export function buildInstall(platform, extra, robots, pageUrl, files) {
   }
   lines.push('## Checking your work');
   lines.push('');
-  lines.push('After pasting, run this and paste the result back to me:');
-  lines.push('');
-  lines.push('```');
-  lines.push('node tools/diagnose.mjs ' + (targetUrl || '<your-product-url>'));
-  lines.push('```');
+  lines.push('After you apply the changes, audit the page again at https://geoscore.help' + (targetUrl ? ' — use `' + targetUrl + '`' : '') + '. The two things to look for are `structuredData` (does it find the product) and `discoveryEndpoints` (does it find `/llms.txt`). Paste me the before and after and I will read them.');
   lines.push('');
   return lines.join('\n');
 }
@@ -1257,7 +1318,10 @@ export function buildPack(input) {
     allWarnings.push('The page states ' + u.field + ' as `' + u.raw + '`, which can be read more than one way (' + u.reason + '). Nothing was chosen — ask the buyer.');
   }
   if (product.fields.priceLow && product.fields.priceHigh) {
-    allWarnings.push('This product has ' + product.fields.offerCount + ' priced variants, ' + product.fields.priceLow + '–' + product.fields.priceHigh + '. product.jsonld uses an AggregateOffer with that range rather than picking one.');
+    const n = product.fields.offerCount;
+    allWarnings.push('This product has ' + n + ' priced variant' + (n === 1 ? '' : 's') + ', ' + product.fields.priceLow + '–' + product.fields.priceHigh + '. product.jsonld uses an AggregateOffer with that range rather than picking one.');
+  } else if (product.fields.isAggregate) {
+    allWarnings.push('The page publishes a price range without an upper bound, so product.jsonld keeps it as an AggregateOffer with only a lowPrice — not as a fixed price it never stated.');
   }
 
   files['INSTALL.md'] = buildInstall(platform, input.extra || [], robots, pageUrl, Object.keys(files));
