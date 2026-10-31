@@ -119,6 +119,11 @@ function createConsentEnv(options = {}) {
   elements[AD_WRAPPER_ID].setAttribute('hidden', '');
 
   const window = { dataLayer: undefined, gtag: undefined };
+  // Default: a share link that carries the audited URL. The GA page_view must
+  // never see it (privacy.astro section 2).
+  window.location = {
+    href: options.href || 'https://geoscore.help/?audit=https%3A%2F%2Fexample.com%2F&src=tool_page&tool=seo'
+  };
 
   // Record the queue state at the exact moment each loader is appended, so the
   // "gtag is ready before the library is requested" contract is provable.
@@ -142,6 +147,11 @@ function createConsentEnv(options = {}) {
   const context = {
     document: doc,
     window,
+    // consent.js sanitises the page URL before handing it to GA4. The vm
+    // sandbox has no browser globals, so the real ones must be provided or the
+    // sanitiser silently falls into its catch branch.
+    URL,
+    URLSearchParams,
     localStorage: {
       getItem(key) {
         return store.has(key) ? store.get(key) : null;
@@ -224,11 +234,23 @@ describe('consent gate — accept all', () => {
     const env = createConsentEnv();
     env.click('consent-accept-all');
     const ga = env.injected.find((entry) => entry.id === GA_LOADER_ID);
-    expect(ga.dataLayerLen).toBe(2);
+    expect(ga.dataLayerLen).toBe(3);
     expect(ga.gtagType).toBe('function');
-    expect(ga.queue.map((args) => args[0])).toEqual(['js', 'config']);
+    expect(ga.queue.map((args) => args[0])).toEqual(['js', 'config', 'event']);
     expect(ga.queue[1][1]).toBe('G-98LLHZ0GDM');
-    expect(ga.queue[1][2]).toEqual({ anonymize_ip: true });
+    expect(ga.queue[1][2]).toEqual({ anonymize_ip: true, send_page_view: false });
+    // The audited URL in ?audit= must be stripped before it reaches Google.
+    expect(ga.queue[2][1]).toBe('page_view');
+    expect(ga.queue[2][2].page_location).toBe('https://geoscore.help/');
+  });
+
+  it('keeps utm_* on the page_view but drops the audited URL', () => {
+    const env = createConsentEnv({
+      href: 'https://geoscore.help/pricing/?audit=https%3A%2F%2Fsecret.example%2F&utm_source=x&utm_campaign=y'
+    });
+    env.click('consent-accept-all');
+    const ga = env.injected.find((entry) => entry.id === GA_LOADER_ID);
+    expect(ga.queue[2][2].page_location).toBe('https://geoscore.help/pricing/?utm_source=x&utm_campaign=y');
   });
 
   it('persists the choice and hides the panel', () => {

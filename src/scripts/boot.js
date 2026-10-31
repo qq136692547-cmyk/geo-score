@@ -694,6 +694,24 @@ document.addEventListener("DOMContentLoaded", function() {
 
   // --- URL parameter: auto-start audit from ?audit=url ---
   var params = new URLSearchParams(window.location.search);
+  // Privacy: ?audit= / ?url= leave the audited site sitting in the address bar,
+  // where analytics and ad scripts can read it. Everything below reads `params`,
+  // which is already parsed, so the visible URL can be cleaned immediately.
+  // A pasted share link still works; it just does not linger in the address bar
+  // or in browser history.
+  if (window.history && window.history.replaceState &&
+      (params.has('audit') || params.has('url'))) {
+    try {
+      var leftover = new URLSearchParams(window.location.search);
+      leftover.delete('audit');
+      leftover.delete('url');
+      leftover.delete('src');
+      leftover.delete('tool');
+      var leftoverQs = leftover.toString();
+      window.history.replaceState(null, '',
+        window.location.pathname + (leftoverQs ? '?' + leftoverQs : '') + (window.location.hash || ''));
+    } catch (e) { /* never block an audit on a history failure */ }
+  }
   var auditParam = params.get('audit');
   if (auditParam) {
     var cleanUrl = decodeURIComponent(auditParam);
