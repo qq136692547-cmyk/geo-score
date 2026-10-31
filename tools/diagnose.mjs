@@ -50,8 +50,15 @@ export function pickDefects(dimensions, count) {
   for (const [key, dim] of Object.entries(dims)) {
     masked[key] = { ...dim, checks: Array.isArray(dim && dim.checks) ? dim.checks.slice() : [] };
   }
+  // Budget on real work, not on `count * 4`: a site whose robots.txt blocks all
+  // twenty crawlers would otherwise burn the whole budget inside one dimension
+  // and never reach the llms.txt and schema gaps behind it.
+  let budget = 0;
+  for (const dim of Object.values(masked)) {
+    budget += dim.checks.filter((c) => c && !c.passed).length;
+  }
   const seen = new Set();
-  for (let i = 0; i < count * 4 && found.length < count; i++) {
+  for (let i = 0; i < budget && found.length < count; i++) {
     const top = pickTopDefect(masked);
     if (!top) break;
     const dim = masked[top.dimension];
@@ -84,27 +91,31 @@ const SELLABLE = new Set(['aiCrawlability', 'aiGuidance', 'structuredData']);
  * Mask every dimension the paragraph is not allowed to talk about, so the
  * existing ranking can be reused instead of restated.
  *
- * Three things get masked:
+ * Two things get masked:
  *   1. dimensions outside SELLABLE — we cannot fix them;
- *   2. dimensions that lost no points. A sub-check can fail at zero cost
- *      (citationReadiness measures 8/8 while carrying 14 failing checks), and
- *      naming such a check directly beneath "94/100" reads as a contradiction
- *      the merchant can disprove by looking at the line above it;
- *   3. structuredData unless `props` is what failed. The pack delivers Product
+ *   2. structuredData unless `props` is what failed. The pack delivers Product
  *      JSON-LD; when only `article`/`faq`/`howto` fail the real gap is blog
  *      markup, and offering a Product file for it would be selling the wrong
  *      thing.
+ *
+ * The test is "does any check in here fail", NOT "did this dimension lose
+ * points". Those differ: blocking a single weight-1 crawler leaves
+ * aiCrawlability at 12/12 after rounding, so a score-based test reported no
+ * defect while robots.txt was literally blocking PetalBot at the root — and the
+ * refusal letter then told the merchant we found nothing wrong with their
+ * crawler rules, which they could disprove by opening the file. A failing check
+ * in a sellable dimension is a real, fixable gap whether or not the rounding
+ * shows it.
  */
 export function maskUnsellable(dimensions) {
   const dims = dimensions || {};
   const out = {};
   for (const [key, dim] of Object.entries(dims)) {
     const checks = Array.isArray(dim && dim.checks) ? dim.checks : [];
-    const lost = dim && typeof dim.score === 'number' && typeof dim.maxScore === 'number'
-      && dim.score < dim.maxScore;
+    const anyFailing = checks.some((c) => c && !c.passed);
     const propsFailing = key === 'structuredData'
       && checks.some((c) => c && c.id === 'props' && !c.passed);
-    const usable = SELLABLE.has(key) && lost && (key !== 'structuredData' || propsFailing);
+    const usable = SELLABLE.has(key) && anyFailing && (key !== 'structuredData' || propsFailing);
     if (usable && key === 'structuredData') {
       // `props` is the gap the pack closes. If `org` or `article` also fail they
       // outrank it, and we would end up offering a Product file for a blog
@@ -137,7 +148,13 @@ function crawlerName(id) {
     bytespider: 'Bytespider',
     'applebot-extended': 'Applebot-Extended',
     'meta-externalagent': 'meta-externalagent',
-    cohere: 'cohere-ai',
+    // Ids that actually appear in the crawler checks; a missing entry prints a
+    // bare lowercase id mid-sentence ("blocks petalbot from the site root").
+    amazonbot: 'Amazonbot',
+    'claude-searchbot': 'Claude-SearchBot',
+    'cohere-ai': 'cohere-ai',
+    duckassistbot: 'DuckAssistBot',
+    petalbot: 'PetalBot',
     'diffbot': 'Diffbot',
     'ai2bot': 'AI2Bot',
     'xi-bot': 'xAI-Bot',
@@ -188,7 +205,11 @@ function defectSentence(defect, evidence, zh, index, siblings = 0) {
       ? `${ordinal}robots.txt 把 ${name} 挡在根路径外，等于全站不让它进`
       : `${ordinal} your robots.txt blocks ${name} from the site root, which keeps that crawler off everything`;
     const more = siblings > 0
-      ? (zh ? `（另外还有 ${siblings} 个 AI 爬虫被同样挡住）` : ` (and ${siblings} other AI crawler${siblings === 1 ? '' : 's'} are blocked the same way)`)
+      ? (zh
+        ? `（另外还有 ${siblings} 个 AI 爬虫被同样挡住）`
+        : (siblings === 1
+          ? ' (and one other AI crawler is blocked the same way)'
+          : ` (and ${siblings} other AI crawlers are blocked the same way)`))
       : '';
     const quote = evidence.evidenceLine && evidence.evidenceLine !== 'unknown'
       ? (zh ? `（原文：${evidence.evidenceLine}）` : ` (the rule reads: ${evidence.evidenceLine})`)
@@ -197,16 +218,20 @@ function defectSentence(defect, evidence, zh, index, siblings = 0) {
   }
 
   if (defect.dimension === 'aiGuidance') {
-    const missing = evidence.evidenceLine === 'GET /llms.txt -> 404';
+    // We know only that nothing came back — not that it was a 404. See
+    // llmsEvidenceLine: the fetcher collapses 403, 429, 5xx, timeouts and an
+    // empty 200 into the same null.
+    const missing = evidence.evidenceLine === 'GET /llms.txt -> nothing returned';
     if (missing) {
       return zh
-        ? `${ordinal}站点没有 llms.txt（404），AI 代理进来时没有任何文件说明这是什么 — ${evidence.evidenceUrl}`
-        : `${ordinal} there is no llms.txt at all (404), so an agent arriving has nothing describing the site — ${evidence.evidenceUrl}`;
+        ? `${ordinal}我们在 /llms.txt 上什么也没读到，AI 代理进来时没有任何文件说明这是什么 — ${evidence.evidenceUrl}`
+        : `${ordinal} nothing came back from /llms.txt, so an agent arriving has nothing describing the site — ${evidence.evidenceUrl}`;
     }
     // The length label reads "Under 200 lines (403)" — a pass-state statement
     // carrying the number that failed. Use the number, not the claim.
     if (defect.id === 'length') {
-      const lines = (String(defect.label).match(/\((\d+)\)/) || [])[1];
+      const label = String(defect.label);
+      const lines = label.match(/Under 200 lines \((\d+)\)/) ? label.match(/Under 200 lines \((\d+)\)/)[1] : '';
       if (lines) {
         return zh
           ? `${ordinal}llms.txt 有 ${lines} 行，超过我们采用的 200 行上限 — ${evidence.evidenceUrl}`
@@ -226,6 +251,13 @@ function defectSentence(defect, evidence, zh, index, siblings = 0) {
     // one whose label carries a number worth quoting.
     if (defect.id === 'props') {
       const n = (String(defect.label).match(/Avg (\d+) properties/) || [])[1];
+      // Zero properties means there is no JSON-LD to complete, so "too thin"
+      // would imply a schema block that does not exist.
+      if (n === '0') {
+        return zh
+          ? `${ordinal}页面上没有可读的 JSON-LD 结构化数据，购物端读不到价格、库存和标识符 — ${evidence.evidenceUrl}`
+          : `${ordinal} there is no readable JSON-LD on the page at all, so a shopping surface cannot read price, stock or identifiers — ${evidence.evidenceUrl}`;
+      }
       if (n) {
         return zh
           ? `${ordinal}结构化数据太薄，每个 schema 平均只有 ${n} 项属性，购物端要 5 项以上才读得全价格、库存和标识符 — ${evidence.evidenceUrl}`
@@ -256,6 +288,23 @@ function fixSummary(defects, zh) {
     : `To fix these we would ${parts.join(', and ')}.`;
 }
 
+/**
+ * Long hosts are written as paths, not URLs.
+ *
+ * The greeting already names the site, and a 60-character domain repeated in
+ * two evidence links costs ~150 characters — enough to blow the budget on its
+ * own. `/robots.txt` is unambiguous once the domain has been stated, and it
+ * keeps the guarantee absolute instead of scaling the limit until it means
+ * nothing.
+ */
+const DISPLAY_HOST_MAX = 24;
+
+function displayUrl(url, host) {
+  const base = 'https://' + host;
+  if (host.length <= DISPLAY_HOST_MAX || !String(url).startsWith(base)) return url;
+  return String(url).slice(base.length) || '/';
+}
+
 function wordCount(s) {
   return s.trim().split(/\s+/).filter(Boolean).length;
 }
@@ -282,40 +331,78 @@ export function buildDiagnosis(result, opts = {}) {
       : `Hi — I ran ${host} through our audit before replying; it scores ${result.score}/100. This pack only covers three things: Product structured data, the crawler rules in robots.txt, and llms.txt. I could not find a defect in any of the three, so I should not take your $49 — your money is better spent elsewhere. If you want the fuller picture, the audit itself is free: https://geoscore.help/`;
   }
 
-  const lines = [];
-  lines.push(zh
-    ? `你好——回复前我跑了 ${host} 的审计，下面都是针对你这个站，不是模板。`
-    : `Hi — I ran ${host} through our audit before replying, so this is specific to your page, not a template.`);
-  lines.push('');
-  lines.push(zh
-    ? `得分 ${result.score}/100${result.level ? `（${result.level}）` : ''}。`
-    : `It scores ${result.score}/100${result.level ? ` (${result.level})` : ''}.`);
-  defects.forEach((d, i) => {
-    const dim = (result.dimensions || {})[d.dimension];
-    const siblings = d.dimension === 'aiCrawlability' && dim && Array.isArray(dim.checks)
-      ? dim.checks.filter((c) => c && !c.passed && c.id !== d.id).length
-      : 0;
-    lines.push(defectSentence(d, evidence[i], zh, i, siblings));
-  });
-  const fix = fixSummary(defects, zh);
-  if (fix) { lines.push(''); lines.push(fix); }
-  lines.push('');
-  lines.push(zh
-    ? '说清楚一点：没有人能承诺这让 AI 引用你或排名上升，我也不承诺。我能承诺的是文件正确、且对着你的线上页面校验过。'
-    : 'One thing I want to be straight about: nobody can promise this gets you cited or ranked by an AI engine, and I will not pretend otherwise. What I can promise is the files being correct and checked against your live page.');
-  lines.push('');
   // Ask for a product URL only when the gap is product data. On a publisher or
   // a SaaS site that question makes no sense and reads as a template.
   const productGap = defects.some((d) => d.dimension === 'structuredData');
-  lines.push(zh
-    ? (productGap
-      ? '想先做哪款商品，把链接发我，我告诉你还缺哪几项。'
-      : '想先从哪个页面开始，把链接发我，我告诉你还缺哪几项。')
-    : (productGap
-      ? 'If you want, send me the product URL you would like done first and I will tell you exactly what is missing from it.'
-      : 'If you want, send me the page you would like done first and I will tell you exactly what is missing from it.'));
 
-  return lines.join('\n');
+  const blocks = [];
+  blocks.push({
+    optional: false,
+    text: zh
+      ? `你好——回复前我跑了 ${host} 的审计，下面都是针对你这个站，不是模板。`
+      : `Hi — I ran ${host} through our audit before replying, so this is specific to your page, not a template.`,
+  });
+  blocks.push({
+    optional: false,
+    text: zh
+      ? `得分 ${result.score}/100${result.level ? `（${result.level}）` : ''}。`
+      : `It scores ${result.score}/100${result.level ? ` (${result.level})` : ''}.`,
+  });
+  blocks.push({
+    optional: false,
+    text: defects.map((d, i) => {
+      const dim = (result.dimensions || {})[d.dimension];
+      const siblings = d.dimension === 'aiCrawlability' && dim && Array.isArray(dim.checks)
+        ? dim.checks.filter((c) => c && !c.passed && c.id !== d.id).length
+        : 0;
+      const ev = { ...evidence[i], evidenceUrl: displayUrl(evidence[i].evidenceUrl, host) };
+      return defectSentence(d, ev, zh, i, siblings);
+    }).join('\n'),
+  });
+  const fix = fixSummary(defects, zh);
+  if (fix) blocks.push({ optional: true, text: fix });
+  blocks.push({
+    optional: false,
+    text: zh
+      ? '说清楚一点：没有人能承诺这让 AI 引用你或排名上升，我也不承诺。我能承诺的是文件正确、且对着你的线上页面校验过。'
+      : 'One thing I want to be straight about: nobody can promise this gets you cited or ranked by an AI engine, and I will not pretend otherwise. What I can promise is the files being correct and checked against your live page.',
+  });
+  blocks.push({
+    optional: true,
+    text: zh
+      ? (productGap
+        ? '想先做哪款商品，把链接发我，我告诉你还缺哪几项。'
+        : '想先从哪个页面开始，把链接发我，我告诉你还缺几项。')
+      : (productGap
+        ? 'If you want, send me the product URL you would like done first and I will tell you exactly what is missing from it.'
+        : 'If you want, send me the page you would like done first and I will tell you exactly what is missing from it.'),
+  });
+
+  return fitToBudget(blocks, zh);
+}
+
+/** English is budgeted in words, Chinese in characters (it has no word breaks). */
+export const BUDGET = { zh: 400, en: 200 };
+
+function measure(text, zh) {
+  return zh ? text.length : wordCount(text);
+}
+
+/**
+ * Drop the optional paragraphs until the message fits.
+ *
+ * The budget is not decoration: a long Fiverr message does not get read, and a
+ * guard that only logs the overage is theatre. Optional blocks are dropped
+ * last-first, so the honesty sentence — the one thing that must never be
+ * traded away — is never a candidate.
+ */
+function fitToBudget(blocks, zh) {
+  const budget = zh ? BUDGET.zh : BUDGET.en;
+  let kept = blocks.slice();
+  for (let i = kept.length - 1; i >= 0 && measure(kept.map((b) => b.text).join('\n\n'), zh) > budget; i--) {
+    if (kept[i].optional) kept = kept.filter((_, j) => j !== i);
+  }
+  return kept.map((b) => b.text).join('\n\n');
 }
 
 /** Printed instead of a paragraph when the page could not be fetched. */

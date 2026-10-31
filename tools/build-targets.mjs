@@ -171,16 +171,20 @@ export function robotsEvidenceLine(robotsTxt, crawlerId) {
 /**
  * Evidence line for a /llms.txt defect.
  *
- * Only the missing case has a line we can stand behind: the analyzer hands us
- * null exactly when the fetch produced no body, which for /llms.txt means a 4xx
- * (the fetcher returns null on 4xx and on empty). A file that exists but is
- * malformed gets 'unknown' — writing "404" there would be a lie, and the
- * topDefect label already says what is wrong with it.
+ * We must not claim a status code we did not observe. `fetchResource` returns
+ * null for *any* 4xx (403, 404, 429, 451), for 5xx, for a timeout, and for a
+ * network error; it returns '' for a 200 with an empty body. Writing "404" over
+ * that would tell a merchant their file is missing when it is really rate-
+ * limiting us, and they can disprove it by opening the URL.
+ *
+ * So the line states only what we know: nothing came back. A file that does
+ * exist but is malformed gets 'unknown' — the topDefect label already says what
+ * is wrong with it.
  */
 export function llmsEvidenceLine(llmsTxt) {
   const missing = llmsTxt === null || llmsTxt === undefined
     || (typeof llmsTxt === 'string' && llmsTxt.trim() === '');
-  return missing ? 'GET /llms.txt -> 404' : 'unknown';
+  return missing ? 'GET /llms.txt -> nothing returned' : 'unknown';
 }
 
 /**

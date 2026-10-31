@@ -269,7 +269,7 @@ describe('buildEvidence — blocked crawler', () => {
 // --- buildEvidence: llms.txt ----------------------------------------------
 
 describe('buildEvidence — missing llms.txt', () => {
-  it('points at /llms.txt and states the 404 we observed', () => {
+  it('points at /llms.txt and states only that nothing came back', () => {
     const top = pickTopDefect({
       aiCrawlability: crawlability([], ['gptbot']),
       aiGuidance: guidanceMissing(),
@@ -278,10 +278,13 @@ describe('buildEvidence — missing llms.txt', () => {
 
     const ev = buildEvidence('example-shop.test', top, { llmsTxt: null });
     expect(ev.evidenceUrl).toBe('https://example-shop.test/llms.txt');
-    expect(ev.evidenceLine).toBe('GET /llms.txt -> 404');
+    // The fetcher returns null for any 4xx, 5xx, timeout or empty body, so a
+    // literal "404" would be a status we never observed.
+    expect(ev.evidenceLine).toBe('GET /llms.txt -> nothing returned');
+    expect(ev.evidenceLine).not.toContain('404');
   });
 
-  it('does not claim 404 when the file exists but is malformed', () => {
+  it('does not claim a status when the file exists but is malformed', () => {
     // The fetch returned a body, so a 404 in the email would be false. The
     // topDefect label already says what is wrong with it.
     const ev = buildEvidence('example-shop.test',
@@ -292,9 +295,9 @@ describe('buildEvidence — missing llms.txt', () => {
   });
 
   it('llmsEvidenceLine treats null, undefined and blank as missing', () => {
-    expect(llmsEvidenceLine(null)).toBe('GET /llms.txt -> 404');
-    expect(llmsEvidenceLine(undefined)).toBe('GET /llms.txt -> 404');
-    expect(llmsEvidenceLine('   ')).toBe('GET /llms.txt -> 404');
+    expect(llmsEvidenceLine(null)).toBe('GET /llms.txt -> nothing returned');
+    expect(llmsEvidenceLine(undefined)).toBe('GET /llms.txt -> nothing returned');
+    expect(llmsEvidenceLine('   ')).toBe('GET /llms.txt -> nothing returned');
     expect(llmsEvidenceLine('# Title\n\n> blurb')).toBe('unknown');
   });
 });

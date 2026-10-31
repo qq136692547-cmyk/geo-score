@@ -156,10 +156,14 @@ describe('buildDiagnosis — evidence', () => {
     expect(text).not.toContain('Disallow: /');
   });
 
-  it('says 404 only when llms.txt is genuinely absent', () => {
+  it('does not claim a 404 it never observed', () => {
+    // The fetcher returns null for any 4xx (403, 429, 451), any 5xx, a timeout
+    // and an empty 200 — so "404" would be a status we did not see, and the
+    // merchant can disprove it by opening the URL.
     const text = buildDiagnosis(BLOCKED, { host: 'example.com' });
-    expect(text).toContain('no llms.txt at all (404)');
+    expect(text).toContain('nothing came back from /llms.txt');
     expect(text).toContain('https://example.com/llms.txt');
+    expect(text).not.toContain('404');
   });
 
   it('refuses to sell anything when the site has no defects', () => {
@@ -332,6 +336,143 @@ describe('buildDiagnosis — labels are quoted, never asserted', () => {
     const text = buildDiagnosis(STORE_WITH_TWO_GAPS, { host: 'allbirds.com', zh: true });
     expect(text).toContain('结构化数据太薄');
     expect(text).not.toContain('Organization schema present');
+  });
+});
+
+/**
+ * Regressions for the defects an independent review found after the first
+ * version shipped green. Each one produced a sentence a merchant could refute
+ * in one click, which is worse than producing nothing.
+ */
+describe('regressions — sentences a merchant could refute', () => {
+  it('reports a crawler blocked at the root even when rounding leaves the dimension at full marks', () => {
+    // Blocking one weight-1 crawler out of twenty leaves aiCrawlability at
+    // 12/12. A score-based filter therefore found no defect, and the refusal
+    // letter told the merchant their crawler rules were clean while robots.txt
+    // was blocking PetalBot at the root.
+    const ROUNDED_AWAY = {
+      url: 'https://shop.example/',
+      score: 92,
+      level: 'Excellent',
+      dimensions: {
+        aiCrawlability: {
+          score: 12, maxScore: 12, checks: [
+            { id: 'petalbot', label: 'PetalBot (Huawei)', passed: false, weight: 1 },
+            { id: 'gptbot', label: 'GPTBot (OpenAI/ChatGPT)', passed: true, weight: 3 },
+          ],
+        },
+        aiGuidance: { score: 12, maxScore: 12, checks: [{ id: 'exists', label: 'llms.txt exists at root', passed: true, weight: 1 }] },
+        structuredData: { score: 14, maxScore: 14, checks: [{ id: 'props', label: 'Avg 9 properties per schema (need 5+)', passed: true, weight: 3 }] },
+      },
+      raw: { robotsTxt: 'User-agent: PetalBot\nDisallow: /', llmsTxt: '# Fine' },
+    };
+    const text = buildDiagnosis(ROUNDED_AWAY, { host: 'shop.example' });
+    expect(text).toContain('PetalBot');
+    expect(text).not.toMatch(/could not find a defect/i);
+    // A named crawler must never print as a bare lowercase id.
+    expect(text).not.toContain('blocks petalbot');
+  });
+
+  it('still reaches the llms.txt and schema gaps when every crawler is blocked', () => {
+    // Twenty failing checks in one dimension used to eat the whole search
+    // budget, so the message named robots.txt and nothing else.
+    const allBlocked = [];
+    for (let i = 0; i < 20; i++) {
+      allBlocked.push({ id: 'bot' + i, label: 'Bot ' + i, passed: false, weight: 1 });
+    }
+    const WALL = {
+      url: 'https://walled.example/',
+      score: 30,
+      level: 'Critical',
+      dimensions: {
+        aiCrawlability: { score: 0, maxScore: 12, checks: allBlocked },
+        aiGuidance: { score: 0, maxScore: 12, checks: [{ id: 'exists', label: 'llms.txt exists at root', passed: false, weight: 1 }] },
+        structuredData: { score: 0, maxScore: 14, checks: [{ id: 'props', label: 'Avg 0 properties per schema (need 5+)', passed: false, weight: 3 }] },
+      },
+      raw: { robotsTxt: 'User-agent: *\nDisallow: /', llmsTxt: null },
+    };
+    const picked = pickDefects(maskUnsellable(WALL.dimensions), 2);
+    expect(picked.length).toBe(2);
+    expect(picked[0].dimension).toBe('aiCrawlability');
+    expect(picked[1].dimension).toBe('aiGuidance');
+
+    const text = buildDiagnosis(WALL, { host: 'walled.example' });
+    expect(text).toContain('robots.txt');
+    expect(text).toContain('/llms.txt');
+  });
+
+  it('says there is no JSON-LD rather than calling zero properties thin', () => {
+    const NO_SCHEMA = {
+      url: 'https://nue.example/',
+      score: 40,
+      level: 'Critical',
+      dimensions: {
+        structuredData: { score: 0, maxScore: 14, checks: [{ id: 'props', label: 'Avg 0 properties per schema (need 5+)', passed: false, weight: 3 }] },
+      },
+      raw: { robotsTxt: 'User-agent: *\nAllow: /', llmsTxt: '# Fine' },
+    };
+    const text = buildDiagnosis(NO_SCHEMA, { host: 'nue.example' });
+    expect(text).toContain('no readable JSON-LD');
+    expect(text).not.toContain('0 properties per schema');
+  });
+
+  it('gets the singular right when exactly one other crawler is blocked', () => {
+    const ONE_SIBLING = {
+      url: 'https://two.example/',
+      score: 80,
+      level: 'Good',
+      dimensions: {
+        aiCrawlability: {
+          score: 6, maxScore: 12, checks: [
+            { id: 'claudebot', label: 'ClaudeBot', passed: false, weight: 3 },
+            { id: 'amazonbot', label: 'Amazonbot', passed: false, weight: 1 },
+          ],
+        },
+      },
+      raw: { robotsTxt: 'User-agent: ClaudeBot\nDisallow: /', llmsTxt: '# Fine' },
+    };
+    const text = buildDiagnosis(ONE_SIBLING, { host: 'two.example' });
+    expect(text).toContain('and one other AI crawler is blocked the same way');
+    expect(text).not.toContain('1 other AI crawler');
+  });
+
+  it('never names a dimension the pack cannot fix, even when it is the only gap', () => {
+    // The review's mutation test showed adding discoveryEndpoints back to the
+    // sellable set broke no test at all. This pins it.
+    const ENDPOINTS_ONLY = {
+      url: 'https://api.example/',
+      score: 88,
+      level: 'Good',
+      dimensions: {
+        aiCrawlability: { score: 12, maxScore: 12, checks: [{ id: 'gptbot', label: 'GPTBot', passed: true, weight: 3 }] },
+        aiGuidance: { score: 12, maxScore: 12, checks: [{ id: 'exists', label: 'llms.txt exists at root', passed: true, weight: 1 }] },
+        structuredData: { score: 14, maxScore: 14, checks: [{ id: 'props', label: 'Avg 9 properties per schema (need 5+)', passed: true, weight: 3 }] },
+        discoveryEndpoints: {
+          score: 0, maxScore: 6, checks: [
+            { id: 'ai-txt', label: '.well-known/ai.txt endpoint', passed: false, weight: 2 },
+            { id: 'ai-summary', label: '/ai/summary.json endpoint', passed: false, weight: 2 },
+          ],
+        },
+      },
+      raw: { robotsTxt: 'User-agent: *\nAllow: /', llmsTxt: '# Fine' },
+    };
+    const text = buildDiagnosis(ENDPOINTS_ONLY, { host: 'api.example' });
+    expect(text).not.toContain('ai.txt');
+    expect(text).not.toContain('discoveryEndpoints');
+    expect(text).toMatch(/should not take your \$49/i);
+  });
+
+  it('keeps the message inside the budget for a long host, and never drops the honesty line', () => {
+    const LONG_HOST = 'a-very-long-subdomain.another-subdomain.some-shop.example.com';
+    const zh = buildDiagnosis(BLOCKED, { host: LONG_HOST, zh: true });
+    expect(zh.length).toBeLessThanOrEqual(400);
+    // The no-promise sentence is the one thing that must survive trimming.
+    expect(zh).toContain('没有人能承诺');
+
+    const en = buildDiagnosis(BLOCKED, { host: LONG_HOST });
+    const words = en.trim().split(/\s+/).filter(Boolean).length;
+    expect(words).toBeLessThanOrEqual(200);
+    expect(en).toContain('nobody can promise');
   });
 });
 
