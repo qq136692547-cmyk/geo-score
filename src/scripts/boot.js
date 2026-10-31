@@ -403,7 +403,7 @@ function renderReport(r) {
     // actionable list first, then ask.
     renderFixesPanel(r.recommendations),
     renderFixFilesPanel(r),
-    renderUpgradeCta(r, 'primary'),
+    renderUpgradeCta(r, 'primary', !!(r && r.raw)),
     renderSeoSupplement(r.seoSupplement),
     renderUpgradeCta(r, 'lead'),
     renderExportButtons(),
@@ -421,7 +421,12 @@ function renderReport(r) {
     window.geoTrack('result_cta_impression', {
       score: r.score,
       score_bucket: scoreBucket(r.score),
-      cta_id: scoreBucket(r.score) === 'low' ? 'result_monitor' : 'result_visibility',
+      // Must name the CTA that is actually rendered. A low scorer's primary ask
+      // became result_fixpack on 2026-11-01; while this still said
+      // result_monitor the funnel reported impressions for a button that was no
+      // longer primary, so result_fixpack showed clicks with zero impressions
+      // and the CTA reversal looked like a failure it never got measured for.
+      cta_id: scoreBucket(r.score) === 'low' ? 'result_fixpack' : 'result_visibility',
       source_type: getGeoSource()
     });
   }
@@ -583,7 +588,7 @@ function handleReportCtaClick(e) {
   var action = cta.getAttribute('data-cta-action');
   var r = null;
   try { r = JSON.parse(localStorage.getItem('geoscope_last_result') || 'null'); } catch (err) { r = null; }
-  var params = { cta_id: ctaId, source_type: getGeoSource() };
+  var params = { cta_id: ctaId, source_type: getGeoSource(), transport_type: 'beacon' };
   if (r && typeof r.score === 'number') { params.score = r.score; params.score_bucket = scoreBucket(r.score); }
   if (typeof window.geoTrack === 'function') window.geoTrack('upgrade_cta_clicked', params);
   if (action === 'lead-toggle') {

@@ -22,18 +22,25 @@ function ctaShell(title, bodyHtml, btnHtml) {
     '</div>';
 }
 
-function renderPrimary(r) {
+function renderPrimary(r, hasFixFiles) {
   var b = bucket(r.score);
   var pricingHref = IS_ZH ? '/zh/pricing/' : '/pricing/';
 
   if (b === 'low') {
     var n = priorityFixCount(r);
     var title = n > 0
-      ? t('Your site has ' + n + ' priority fixes this run', '你的站这次有 ' + n + ' 项优先修复项')
+      ? t('Your site has ' + n + ' priority ' + (n === 1 ? 'fix' : 'fixes') + ' this run', '你的站这次有 ' + n + ' 项优先修复项')
       : t('There are still items worth verifying', '仍有需要验证的项');
-    var body = t(
-      'You can fix these yourself with the free fix files above — that path costs nothing. If you would rather not touch robots.txt, Product schema and llms.txt on a live store, we rebuild them from your actual catalog and re-audit after you deploy.',
-      '这些你可以用上面的免费修复文件自己改，那条路不花钱。如果你不想在正在营业的店上动 robots.txt、Product schema 和 llms.txt，我们按你的真实商品目录重做这些文件，并在你部署后重新审计。'
+    // Only point at the fix files if they actually rendered. fixFilesPanel
+    // returns nothing when the stored result has no `raw` payload, and then
+    // "the free fix files above" would be a claim about a panel that is not on
+    // the page.
+    var freePath = hasFixFiles === false
+      ? t('You can fix these yourself — the checks that failed and the exact items to change are listed above.', '这些你可以自己改——上面列了失败的检查和具体要改的项。')
+      : t('You can fix these yourself with the free fix files above — that path costs nothing.', '这些你可以用上面的免费修复文件自己改，那条路不花钱。');
+    var body = freePath + ' ' + t(
+      'If you would rather not touch robots.txt, Product schema and llms.txt on a live store, we rebuild them from your actual catalog and re-audit after you deploy.',
+      '如果你不想在正在营业的店上动 robots.txt、Product schema 和 llms.txt，我们按你的真实商品目录重做这些文件，并在你部署后重新审计。'
     );
     // The primary ask for a low scorer is the done-for-you service, not the
     // subscription. A site that just failed 20+ checks needs work performed, and
@@ -70,10 +77,22 @@ function renderPrimary(r) {
 }
 
 function renderLead(r) {
+  // For a low scorer the primary ask above is already "we do it for $49". Two
+  // cards both offering to "help me fix it" split the same intent, and the free
+  // one is the softer option, so it wins — against the money path. Reframe the
+  // lead card as the fallback for people who are not ready to spend, so it
+  // captures the email without competing with the paid offer.
+  var isLow = r.score < 60;
+  var prompt = isLow
+    ? t('Not ready to spend $49? Leave your email — anan will tell you the first 3 things to fix, free.', '还不想花 $49？留下邮箱，anan 会免费告诉你先改哪 3 项。')
+    : t('Got the files, but not sure how to put them on your site?', '文件拿到了，但不确定怎么放到网站上？');
+  var toggleLabel = isLow
+    ? t('Get the free 3-item review', '免费看先改哪 3 项')
+    : t('Help me fix it', '我来帮你修');
   return '<div class="stagger-section card p-6 mb-8">' +
     '<div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">' +
-      '<div class="text-sm font-semibold">' + t('Got the files, but not sure how to put them on your site?', '文件拿到了，但不确定怎么放到网站上？') + '</div>' +
-      '<button type="button" data-cta-id="result_lead" data-cta-action="lead-toggle" class="' + BTN_CLS + ' whitespace-nowrap">' + t('Help me fix it', '我来帮你修') + '</button>' +
+      '<div class="text-sm font-semibold">' + prompt + '</div>' +
+      '<button type="button" data-cta-id="result_lead" data-cta-action="lead-toggle" class="' + BTN_CLS + ' whitespace-nowrap">' + toggleLabel + '</button>' +
     '</div>' +
     '<div id="lead-entry-form" class="hidden mt-5 pt-5 border-t border-gray-700/50">' +
       '<p class="text-sm text-gray-400 mb-3">' + t('Leave your email — anan will look at this run and tell you the first 3 things to fix.', '留下邮箱，anan 会看你的这次结果，告诉你先改哪 3 项。') + '</p>' +
@@ -90,9 +109,9 @@ function renderLead(r) {
     '</div>';
 }
 
-export function renderUpgradeCta(r, placement) {
+export function renderUpgradeCta(r, placement, hasFixFiles) {
   if (!r || typeof r.score !== 'number') return '';
-  if (placement === 'primary') return renderPrimary(r);
+  if (placement === 'primary') return renderPrimary(r, hasFixFiles);
   if (placement === 'lead') return renderLead(r);
   return '';
 }

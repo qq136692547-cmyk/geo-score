@@ -11,7 +11,7 @@ export function renderFixFilesPanel(result) {
 
   var html = '<div class="stagger-section fade-in-delay-6 card p-6 mb-8">' +
     '<h2 class="text-lg font-bold mb-2">' + t('Auto-Generated Fix Files', '自动生成修复文件') + '</h2>' +
-    '<p class="text-sm text-gray-500 mb-5">' + t('Download these files and upload them to your website root to instantly improve your GEO score.', '下载这些文件并上传到网站根目录，即可立即提升你的 GEO 分数。') + '</p>' +
+    '<p class="text-sm text-gray-500 mb-5">' + t('Download these files and upload them to your website root. They change what AI crawlers can read — a re-audit shows you what actually moved.', '下载这些文件并上传到网站根目录。它们改变的是 AI 爬虫能读到什么——重新审计一次，看实际变了哪些。') + '</p>' +
     '<div class="grid grid-cols-1 md:grid-cols-3 gap-4">';
 
   keys.forEach(function(key) {

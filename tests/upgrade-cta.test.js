@@ -21,6 +21,8 @@
  * language, so each language needs a fresh module instance (vi.resetModules).
  */
 import { describe, it, expect, afterEach, vi } from 'vitest';
+import fs from 'node:fs';
+import { fileURLToPath } from 'node:url';
 
 const MODULE = '../src/components/upgradeCta.js';
 
@@ -106,6 +108,64 @@ describe('renderUpgradeCta — low score (the done-for-you buyers)', () => {
     // "guaranteed", "will improve", "+X points" are all claims we cannot back.
     expect(html).not.toMatch(/guarantee/i);
     expect(html).not.toMatch(/\+\s*\d+\s*(points|pts)/i);
+  });
+
+  it('says "1 priority fix", not "1 priority fixes"', async () => {
+    const { renderUpgradeCta } = await load('en');
+    const one = { ...LOW, recommendations: [{ priority: 'high' }] };
+    expect(renderUpgradeCta(one, 'primary')).toMatch(/1 priority fix this run/);
+    expect(renderUpgradeCta(one, 'primary')).not.toMatch(/1 priority fixes/);
+    expect(renderUpgradeCta(LOW, 'primary')).toMatch(/3 priority fixes this run/);
+  });
+
+  it('drops the "free fix files above" claim when that panel did not render', async () => {
+    // fixFilesPanel returns '' when the stored result has no `raw`, so the
+    // panel can be absent from a page whose CTA still points at it.
+    const { renderUpgradeCta } = await load('en');
+    const without = renderUpgradeCta(LOW, 'primary', false);
+    expect(without).not.toMatch(/free fix files/i);
+    expect(without).toMatch(/listed above/i);
+
+    const withFiles = renderUpgradeCta(LOW, 'primary', true);
+    expect(withFiles).toMatch(/free fix files/i);
+  });
+
+  it('does not let the free lead card compete with the paid ask', async () => {
+    const { renderUpgradeCta } = await load('en');
+    const low = renderUpgradeCta(LOW, 'lead');
+    // The low-score lead card must acknowledge the $49 offer and offer itself
+    // as the fallback, not as a second equally-weighted "help me fix it".
+    expect(low).toMatch(/\$49/);
+    expect(low).not.toMatch(/Got the files, but not sure/);
+
+    // High scorers never saw the $49 ask, so their lead card keeps the
+    // "got the files" framing.
+    const high = renderUpgradeCta(HIGH, 'lead');
+    expect(high).toMatch(/Got the files, but not sure/);
+    expect(high).not.toMatch(/\$49/);
+  });
+});
+
+describe('result_cta_impression names the CTA that is actually primary', () => {
+  // Source-level guard. The impression event is fired from boot.js, which
+  // cannot be imported here (it touches `document` at load time), and slicing
+  // the surrounding render function would pin the test to that function's
+  // internals. What went wrong was simpler than that: the cta_id was hardcoded
+  // to result_monitor while the button had become result_fixpack, so the
+  // funnel reported clicks for a CTA with zero impressions. A string check on
+  // the shipping source is the cheapest thing that would have caught it.
+  const BOOT_SRC = fs.readFileSync(
+    fileURLToPath(new URL('../src/scripts/boot.js', import.meta.url)),
+    'utf8'
+  );
+
+  it('reports result_fixpack, not result_monitor, for the low bucket', () => {
+    expect(BOOT_SRC).toMatch(/cta_id:\s*scoreBucket\(r\.score\)\s*===\s*'low'\s*\?\s*'result_fixpack'\s*:\s*'result_visibility'/);
+    expect(BOOT_SRC).not.toMatch(/cta_id:\s*scoreBucket\(r\.score\)\s*===\s*'low'\s*\?\s*'result_monitor'/);
+  });
+
+  it('passes the fix-file availability through to the CTA', () => {
+    expect(BOOT_SRC).toMatch(/renderUpgradeCta\(r,\s*'primary',\s*!!\(r\s*&&\s*r\.raw\)\)/);
   });
 });
 
