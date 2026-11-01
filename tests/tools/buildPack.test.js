@@ -20,6 +20,7 @@ import {
   extractSections,
   buildLlmsDraft,
   detectPlatform,
+  wooPrice,
   buildInstall,
   buildNeedsConfirmation,
   buildManifest,
@@ -973,5 +974,139 @@ describe('INSTALL.md only instructs on files that exist', () => {
     expect(complete.files['INSTALL.md']).toContain('There is no `product.jsonld` in this pack');
     expect(complete.files['INSTALL.md']).not.toContain('Replace the theme snippet');
     expect(pack.files['INSTALL.md']).toContain('Replace the theme snippet');
+  });
+});
+
+describe('a price one level down is still a price', () => {
+  // schema.org allows the number inside a UnitPriceSpecification, and IKEA
+  // publishes exactly this shape. Reading only `price`/`lowPrice` reported a
+  // page that states its price as a page that states none.
+  const SPEC_HTML = `<html><head><script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Product","name":"BILLY Bookcase","image":"https://i.example/billy.jpg","sku":"00263850",
+ "offers":{"@type":"Offer","priceSpecification":[{"@type":"UnitPriceSpecification","price":79,"priceCurrency":"USD"}],
+           "availability":"https://schema.org/InStock"}}
+</script></head><body></body></html>`;
+  const SPEC_URL = 'https://www.ikea.com/us/en/p/billy-bookcase-white-00263850/';
+
+  it('reads 79 and USD out of priceSpecification', () => {
+    const p = extractProduct(SPEC_HTML, SPEC_URL);
+    expect(p.fields.price).toBe('79.00');
+    expect(p.fields.priceCurrency).toBe('USD');
+    expect(p.sources.price).toBe('jsonld');
+    expect(p.missing).toEqual([]);
+  });
+
+  it('counts it as present on the existing node, so no worse node replaces it', () => {
+    const p = extractProduct(SPEC_HTML, SPEC_URL);
+    expect(p.existing.requiredPresent).toContain('price');
+    expect(p.existing.requiredPresent).toContain('priceCurrency');
+    expect(productNodeSufficient(p)).toBe(true);
+  });
+
+  it('reads a single specification given as an object, not an array', () => {
+    const html = SPEC_HTML.replace('[{"@type":"UnitPriceSpecification","price":79,"priceCurrency":"USD"}]',
+      '{"@type":"UnitPriceSpecification","price":79,"priceCurrency":"USD"}');
+    expect(extractProduct(html, SPEC_URL).fields.price).toBe('79.00');
+  });
+});
+
+describe('WooCommerce states its price only in the theme markup', () => {
+  // The real nalgene.com markup: no itemprop, no og:price, and the currency is
+  // a bare symbol. The symbol is USD/CAD/AUD alike, so it is never converted.
+  const AMOUNT = '<span class="woocommerce-Price-amount amount"><bdi><span class="woocommerce-Price-currencySymbol" translate="no" dir="auto">&#36;</span>18.99</bdi></span>';
+  const wooPage = (body, extra = '') => `<html class="woocommerce"><body>
+<div class="summary entry-summary"><h1>22oz Fitness Draft</h1>${body}</div>${extra}</body></html>`;
+  const WOO_URL = 'https://nalgene.com/product/22oz-fitness-draft/';
+
+  it('reads 18.99 and leaves the currency empty rather than guessing USD from $', () => {
+    const p = extractProduct(wooPage(`<span class="price">${AMOUNT}</span>`), WOO_URL);
+    expect(p.fields.price).toBe('18.99');
+    expect(p.sources.price).toBe('woocommerce');
+    expect(p.fields.priceCurrency).toBeUndefined();
+    expect(p.missing).toContain('priceCurrency');
+  });
+
+  it('takes the currency from an explicit ISO code on the page', () => {
+    const p = extractProduct(
+      wooPage(`<span class="price">${AMOUNT}</span>`, '<script>var wc = {"currency_code":"USD"};</script>'),
+      WOO_URL,
+    );
+    expect(p.fields.price).toBe('18.99');
+    expect(p.fields.priceCurrency).toBe('USD');
+  });
+
+  it('does not run on a page that is not WooCommerce', () => {
+    const html = `<html><head><link href="https://cdn.shopify.com/s/x.css"></head><body>
+<div class="summary entry-summary"><span class="price">${AMOUNT}</span></div></body></html>`;
+    expect(detectPlatform(html)).toBe('shopify');
+    expect(extractProduct(html, WOO_URL).fields.price).toBeUndefined();
+  });
+
+  it('takes the first amount inside the product summary', () => {
+    const second = AMOUNT.replace('18.99', '24.00');
+    const p = extractProduct(wooPage(`${AMOUNT}${second}`), WOO_URL);
+    expect(p.fields.price).toBe('18.99');
+  });
+
+  it('ignores the crossed-out original price of a sale', () => {
+    const html = wooPage(`<p class="price"><del><span class="screen-reader-text">Original price: </span>${AMOUNT}</del>
+      <ins>${AMOUNT.replace('18.99', '12.99')}</ins></p>`);
+    expect(extractProduct(html, WOO_URL).fields.price).toBe('12.99');
+  });
+
+  it('refuses a price that belongs to a card in the mega-menu', () => {
+    // The real page puts a "popular products" strip inside <nav>, before the
+    // product. The first amount in the document belongs to another bottle, and
+    // the product itself is out of stock with no price at all — so the honest
+    // answer is "no price", not 18.99.
+    const html = `<html class="woocommerce"><body>
+<nav class="main-menu-wrapper"><div class="menu-item-content">
+  <div class="popular-product-description__title">32oz Wide Mouth Surrealist Bottles</div>
+  <span class="price">${AMOUNT}</span>
+</div></nav>
+<div class="summary entry-summary"><h1>22oz Fitness Draft</h1>
+  <p class="stock out-of-stock">This product is currently out of stock and unavailable.</p>
+</div></body></html>`;
+    const p = extractProduct(html, WOO_URL);
+    expect(p.fields.price).toBeUndefined();
+    expect(p.missing).toContain('price');
+  });
+
+  it('still reads a price on a theme without .summary when the page shows only one', () => {
+    const html = `<html class="woocommerce"><body><h1>Mug</h1>${AMOUNT}</body></html>`;
+    expect(extractProduct(html, WOO_URL).fields.price).toBe('18.99');
+
+    const two = `<html class="woocommerce"><body><h1>Mug</h1>${AMOUNT}${AMOUNT.replace('18.99', '24.00')}</body></html>`;
+    expect(extractProduct(two, WOO_URL).fields.price).toBeUndefined();
+  });
+
+  it('reports a disagreement with JSON-LD instead of picking one', () => {
+    const html = wooPage(`<span class="price">${AMOUNT}</span>`).replace('<body>',
+      `<body><script type="application/ld+json">{"@type":"Product","name":"Mug","offers":{"@type":"Offer","price":"19.99","priceCurrency":"USD"}}</script>`);
+    const p = extractProduct(html, WOO_URL);
+    expect(p.fields.price).toBe('19.99');
+    const c = p.conflicts.find((x) => x.field === 'price');
+    expect(c).toEqual({ field: 'price', jsonld: '19.99', woocommerce: '18.99' });
+  });
+});
+
+describe('a bare .price on a Webflow page is not a price', () => {
+  // bondandgrace.com renders <div class="price">$59.00</div> for every card in
+  // the related-products row, and the first one belongs to another garment.
+  // Reading `.price` generically would publish a competitor product's price on
+  // the buyer's page, which is worse than publishing none.
+  const html = `<html data-wf-page="65f0"><body>
+<div class="price">$59.00</div>
+<div class="price">$2,500.00</div>
+</body></html>`;
+
+  it('is not read, and the platform is not mistaken for Shopify', () => {
+    const p = extractProduct(html, 'https://www.bondandgrace.com/products/a-distant-hope');
+    expect(p.fields.price).toBeUndefined();
+    expect(p.missing).toContain('price');
+  });
+
+  it('detects a Webflow storefront with a Shopify checkout as webflow', () => {
+    expect(detectPlatform('<html data-wf-page="abc"><script src="https://cdn.shopify.com/x.js"></script><a href="https://shop.myshopify.com">buy</a>')).toBe('webflow');
   });
 });

@@ -278,6 +278,137 @@ export function decodeEntities(text) {
   });
 }
 
+/* ------------------------------------------------------------------ *
+ * WooCommerce's price, which lives only in the theme markup
+ * ------------------------------------------------------------------ */
+
+/**
+ * The markup of the element that starts at `tagStart`, without its own tags.
+ *
+ * A regex cannot match a nested element (`<span><bdi><span>$</span>18.99</bdi></span>`),
+ * so the closing tag is found by counting opens of the same element name. Other
+ * tags are copied through untouched.
+ */
+function innerOf(html, tagStart) {
+  const open = html.slice(tagStart).match(/^<([a-z][a-z0-9-]*)/i);
+  if (!open) return '';
+  const name = open[1].toLowerCase();
+  const openEnd = html.indexOf('>', tagStart);
+  if (openEnd < 0) return '';
+  const opens = new RegExp('^<\\s*' + name + '\\b', 'i');
+  const closes = new RegExp('^<\\s*/\\s*' + name + '\\b', 'i');
+
+  let depth = 1;
+  let i = openEnd + 1;
+  let out = '';
+  while (i < html.length) {
+    const lt = html.indexOf('<', i);
+    if (lt < 0) break;
+    out += html.slice(i, lt);
+    const gt = html.indexOf('>', lt);
+    if (gt < 0) break;
+    const tag = html.slice(lt, gt + 1);
+    if (closes.test(tag)) {
+      depth -= 1;
+      if (depth === 0) return out;
+    } else if (opens.test(tag)) {
+      depth += 1;
+    }
+    out += tag;
+    i = gt + 1;
+  }
+  return out;
+}
+
+const WOO_AMOUNT = /<[a-z][a-z0-9-]*\b[^>]*class=["'][^"']*\bwoocommerce-Price-amount\b[^"']*["']/i;
+
+/**
+ * Positions of every `woocommerce-Price-amount` element, with the text it shows.
+ *
+ * `struck` records whether the element sits inside a `<del>`. WooCommerce marks
+ * a sale by wrapping the old price in `<del>` and the current one in `<ins>`, so
+ * the first amount on a discounted product is the price that is no longer
+ * charged. Reading it would put a number on the page that the merchant has
+ * explicitly crossed out.
+ */
+function wooAmounts(html) {
+  const out = [];
+  const re = new RegExp(WOO_AMOUNT.source, 'gi');
+  let m;
+  while ((m = re.exec(html)) !== null) {
+    const tagStart = m.index;
+    const struck = html.lastIndexOf('<del', tagStart) > html.lastIndexOf('</del>', tagStart);
+    const tag = html.slice(tagStart, html.indexOf('>', tagStart) + 1);
+    out.push({
+      text: decodeEntities(innerOf(html, tagStart).replace(/<[^>]*>/g, ' ')).replace(/\s+/g, ' ').trim(),
+      tag,
+      struck,
+    });
+  }
+  return out;
+}
+
+/**
+ * The single-product summary, which is where WooCommerce's own templates put
+ * the price that belongs to this page.
+ */
+function summaryOf(html) {
+  const m = html.match(/<[a-z][a-z0-9-]*\b[^>]*class=["'][^"']*\bsummary\b[^"']*["']/i);
+  return m ? innerOf(html, m.index) : '';
+}
+
+/**
+ * An ISO currency code stated outright, or ''.
+ *
+ * The symbol next to the number is deliberately never converted: `$` is USD,
+ * CAD, AUD and a dozen others. A currency guessed from a symbol turns a correct
+ * number into a wrong price.
+ */
+function explicitCurrency(html) {
+  for (const re of [
+    /"currency_code"\s*:\s*"([A-Za-z]{3})"/,
+    /"currency"\s*:\s*"([A-Za-z]{3})"/,
+    /data-currency=["']([A-Za-z]{3})["']/i,
+  ]) {
+    const m = html.match(re);
+    const code = normalizeCurrency(m && m[1]);
+    if (code) return code;
+  }
+  return '';
+}
+
+/**
+ * WooCommerce's visible price, which it publishes nowhere else.
+ *
+ * WooCommerce emits no `itemprop` and no `og:price` for the price it renders;
+ * the only stable handle is the `woocommerce-Price-amount` class. That class is
+ * also a trap, because every card in the shop uses it: on nalgene.com the first
+ * match in the document is a bottle in the mega-menu, and a shop's "related
+ * products" strip is full of them. Publishing one of those numbers as this
+ * product's price is worse than publishing none, so the search is scoped to
+ * `.summary` — the container WooCommerce's own single-product template opens —
+ * and only the first non-struck amount inside it is read.
+ *
+ * When a theme has no `.summary`, a price is accepted only if the whole page
+ * shows exactly one value. Two different numbers on one page cannot be told
+ * apart without knowing which card is this product, and guessing is the one
+ * thing this file does not do.
+ *
+ * Returns the element's own text, unparsed: the caller runs it through
+ * `parsePrice`, so an ambiguous format is refused with a reason instead of
+ * silently dropped. `currency` is '' unless the page states a code.
+ */
+export function wooPrice(html) {
+  const page = String(html || '');
+  const summary = summaryOf(page);
+  const amounts = wooAmounts(summary || page).filter((a) => !a.struck);
+  const first = summary ? amounts[0] : (amounts.length === 1 ? amounts[0] : null);
+  if (!first) return { text: '', currency: '' };
+
+  const own = (first.tag.match(/data-currency=["']([A-Za-z]{3})["']/i) || [])[1];
+  return { text: first.text, currency: normalizeCurrency(own) || explicitCurrency(page) };
+}
+
 function metaContent(html, prop) {
   const escaped = prop.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   const patterns = [
@@ -333,11 +464,31 @@ export function extractProduct(html, pageUrl) {
   // `price` made a page that already publishes a correct range look like a page
   // with no price at all, and the pack then shipped a Product node with no
   // offers: strictly worse than what the buyer already had.
+  //
+  // schema.org also allows the number one level down, in a
+  // UnitPriceSpecification (`offers.priceSpecification[].price`). Reading only
+  // the two flat fields reported a page that does state its price as a page
+  // that states none.
+  const priceSpecOf = (o) => {
+    if (!o || !o.priceSpecification) return null;
+    const list = Array.isArray(o.priceSpecification) ? o.priceSpecification : [o.priceSpecification];
+    return list.find((s) => s && s.price != null && s.price !== '') || null;
+  };
   const priceFieldOf = (o) => {
     if (!o) return '';
     if (o.price != null && o.price !== '') return o.price;
     if (o.lowPrice != null && o.lowPrice !== '') return o.lowPrice;
-    return '';
+    const spec = priceSpecOf(o);
+    return spec ? spec.price : '';
+  };
+  // The currency can sit inside the same specification as the number. If the
+  // two are read from different places, "is the price complete" and "what is the
+  // price" disagree, and a complete node gets replaced with a worse one.
+  const currencyFieldOf = (o) => {
+    const own = normalizeCurrency(o && o.priceCurrency);
+    if (own) return own;
+    const spec = priceSpecOf(o);
+    return normalizeCurrency(spec && spec.priceCurrency);
   };
   const offer = offers.find((o) => normalizePrice(priceFieldOf(o))) || offers[0] || null;
 
@@ -399,7 +550,7 @@ export function extractProduct(html, pageUrl) {
   };
 
   const jsonLdPrice = readPrice(priceFieldOf(offer), 'jsonld');
-  const jsonLdCurrency = normalizeCurrency(offer && offer.priceCurrency);
+  const jsonLdCurrency = currencyFieldOf(offer);
   const jsonLdAvailability = normalizeAvailability(offer && offer.availability);
 
   const ogPriceRaw = metaContent(page, 'product:price:amount') || metaContent(page, 'og:price:amount');
@@ -411,13 +562,24 @@ export function extractProduct(html, pageUrl) {
   const microCurrency = normalizeCurrency(itemprop(page, 'priceCurrency'));
   const microAvailability = normalizeAvailability(itemprop(page, 'availability'));
 
+  // WooCommerce states its price in the theme markup only. The reader is gated
+  // on the platform because the class it keys on is WooCommerce's own: on a
+  // Webflow page a `.price`-shaped element is more often a related-product card
+  // than this product's price, and that is the one number this tool must never
+  // get wrong.
+  const platform = detectPlatform(page);
+  const woo = platform === 'woocommerce' ? wooPrice(page) : { text: '', currency: '' };
+  const wooPriceValue = readPrice(woo.text, 'woocommerce');
+
   take('price', jsonLdPrice, 'jsonld');
   take('price', ogPrice, 'og');
   take('price', microPrice, 'microdata');
+  take('price', wooPriceValue, 'woocommerce');
 
   take('priceCurrency', jsonLdCurrency, 'jsonld');
   take('priceCurrency', ogCurrency, 'og');
   take('priceCurrency', microCurrency, 'microdata');
+  take('priceCurrency', woo.currency, 'woocommerce');
 
   take('availability', jsonLdAvailability, 'jsonld');
   take('availability', ogAvailability, 'og');
@@ -466,7 +628,10 @@ export function extractProduct(html, pageUrl) {
   };
   disagree('price', jsonLdPrice, ogPrice, 'jsonld', 'og');
   disagree('price', jsonLdPrice, microPrice, 'jsonld', 'microdata');
+  disagree('price', jsonLdPrice, wooPriceValue, 'jsonld', 'woocommerce');
+  disagree('price', ogPrice, wooPriceValue, 'og', 'woocommerce');
   disagree('priceCurrency', jsonLdCurrency, ogCurrency, 'jsonld', 'og');
+  disagree('priceCurrency', jsonLdCurrency, woo.currency, 'jsonld', 'woocommerce');
   disagree('availability', jsonLdAvailability, ogAvailability, 'jsonld', 'og');
 
   const hasIdentifier = IDENTIFIERS.some((f) => fields[f]);
@@ -500,7 +665,7 @@ export function extractProduct(html, pageUrl) {
         if (f === 'image') return imagesOf(node && node.image).length > 0;
         if (f === 'name') return !!firstString(node && node.name);
         if (f === 'price') return !!normalizePrice(priceFieldOf(offer));
-        if (f === 'priceCurrency') return !!normalizeCurrency(offer && offer.priceCurrency);
+        if (f === 'priceCurrency') return !!currencyFieldOf(offer);
         if (f === 'availability') return !!normalizeAvailability(offer && offer.availability);
         return false;
       }),
@@ -899,6 +1064,12 @@ export function buildLlmsDraft(input) {
 
 export function detectPlatform(html) {
   const page = String(html || '').toLowerCase();
+  // A Webflow site can take payments through Shopify's checkout, so its markup
+  // contains `*.myshopify.com` too. The theme — and therefore the place the
+  // buyer edits the <head> — is Webflow. Detecting Shopify first sent that buyer
+  // to `theme.liquid`, a file their site does not have. A store that really runs
+  // on Shopify never emits `data-wf-page`.
+  if (/webflow\.(io|com)|data-wf-page/.test(page)) return 'webflow';
   if (/cdn\.shopify\.com|shopify\.theme|myshopify\.com/.test(page)) return 'shopify';
   if (/woocommerce|wp-content\/plugins\/woocommerce/.test(page)) return 'woocommerce';
   if (/wp-content|wp-includes/.test(page)) return 'wordpress';
