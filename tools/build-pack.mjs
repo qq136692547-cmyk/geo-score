@@ -1491,11 +1491,25 @@ export function buildPack(input) {
   if (product.fields.priceLow && product.fields.priceHigh) {
     const n = product.fields.offerCount;
     allWarnings.push('This product has ' + n + ' priced variant' + (n === 1 ? '' : 's') + ', ' + product.fields.priceLow + '–' + product.fields.priceHigh + '. product.jsonld uses an AggregateOffer with that range rather than picking one.');
+    // Google's merchant-listing documentation is explicit: "Product snippets
+    // accept an Offer or AggregateOffer but merchant listings require an Offer."
+    // An AggregateOffer is valid schema.org and earns a product snippet, but it
+    // does not qualify for merchant listings — and a buyer who does not know
+    // that will think the file is broken when nothing changes in Shopping.
+    allWarnings.push('An AggregateOffer earns a product snippet but not a merchant listing — Google requires one Offer per variant URL for that. Tell the buyer this plainly, and offer per-variant Offers if they send the variant URLs.');
   } else if (product.fields.isAggregate) {
     allWarnings.push('The page publishes a price range without an upper bound, so product.jsonld keeps it as an AggregateOffer with only a lowPrice — not as a fixed price it never stated.');
+    allWarnings.push('Same limit applies: an AggregateOffer does not qualify for merchant listings. Say so, do not let the buyer assume otherwise.');
   }
 
-  files['INSTALL.md'] = buildInstall(platform, input.extra || [], robots, pageUrl, Object.keys(files));
+  // The buyer reads INSTALL.md, not the manifest. A limit that changes what the
+  // file can achieve has to be in the document they open.
+  const installNotes = (input.extra || []).slice();
+  if (product.fields.priceLow) {
+    installNotes.push('**What this file can and cannot do.** The product page sells more than one variant, so the markup carries an `AggregateOffer` with a price range. That is valid schema.org and earns a product snippet. It does **not** qualify for Google merchant listings: Google requires one `Offer` per variant URL. If you want that, send me the variant URLs and I will write them.');
+  }
+
+  files['INSTALL.md'] = buildInstall(platform, installNotes, robots, pageUrl, Object.keys(files));
   files['NEEDS-CONFIRMATION.md'] = buildNeedsConfirmation(product, { notes: allWarnings, sufficient });
 
   const manifest = buildManifest({

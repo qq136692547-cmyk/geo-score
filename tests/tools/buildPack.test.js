@@ -1110,3 +1110,34 @@ describe('a bare .price on a Webflow page is not a price', () => {
     expect(detectPlatform('<html data-wf-page="abc"><script src="https://cdn.shopify.com/x.js"></script><a href="https://shop.myshopify.com">buy</a>')).toBe('webflow');
   });
 });
+
+describe('the merchant-listing limit is stated, not hidden', () => {
+  // Google: "Product snippets accept an Offer or AggregateOffer but merchant
+  // listings require an Offer." Shipping an AggregateOffer without saying that
+  // is how a buyer concludes the file did nothing when Shopping does not change.
+  const html = `<html><head><script type="application/ld+json">
+{"@context":"https://schema.org","@type":"ProductGroup","name":"Wool Runner","image":"https://c.example/w.jpg","sku":"WR-1",
+ "hasVariant":[
+   {"@type":"Product","name":"42","offers":{"@type":"Offer","price":"98.00","priceCurrency":"USD","availability":"https://schema.org/InStock"}},
+   {"@type":"Product","name":"44","offers":{"@type":"Offer","price":"104.00","priceCurrency":"USD","availability":"https://schema.org/InStock"}}
+ ]}
+</script></head><body></body></html>`;
+
+  it('tells the buyer in INSTALL.md, not only in the operator manifest', () => {
+    const pack = buildPack({
+      pageUrl: URL, host: 'shop.example', html,
+      robotsTxt: 'User-agent: *\nAllow: /\n', platform: 'woocommerce', sections: [], warnings: [],
+    });
+    expect(pack.files['INSTALL.md']).toContain('does **not** qualify for Google merchant listings');
+    expect(pack.files['INSTALL.md']).toContain('one `Offer` per variant URL');
+    expect(pack.manifest.warnings.join(' ')).toContain('merchant listing');
+  });
+
+  it('says nothing about it when there is no range', () => {
+    const pack = buildPack({
+      pageUrl: URL, host: 'shop.example', html: SHOPIFY_HTML,
+      robotsTxt: 'User-agent: *\nAllow: /\n', platform: 'shopify', sections: [], warnings: [],
+    });
+    expect(pack.files['INSTALL.md']).not.toContain('merchant listings');
+  });
+});
