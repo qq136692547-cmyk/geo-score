@@ -1,0 +1,16 @@
+group,url,platform,platform_matches_group,page_kind,has_product_node,node_type,missing_required,has_brand,price_source,price_value,price_currency,verdict,note
+woocommerce,https://www.jimmynelson.com/product/premium-card-box-before-they-pass-away-jimmy-nelson/,woocommerce,1,product,0,,,,none,,,needs-product-schema,jsonld-but-no-product
+woocommerce,https://nalgene.com/product/22oz-fitness-draft/,custom,0,product,0,,,,,,,fetch-blocked,http-403
+woocommerce,https://www.brodo.com/product/organic-chicken-bone-broth/,woocommerce,1,product,0,,,,text-single-symbol,99,,needs-product-schema,jsonld-but-no-product
+webflow,https://www.bondandgrace.com/products/a-distant-hope,webflow,1,product,1,Product,offers;offers.price;offers.priceCurrency;offers.availability;sku/gtin/mpn,1,ambiguous,,,incomplete-schema,8 distinct figures
+webflow,https://clicks.tech/products/clicks-keyboard-for-iphone-16,webflow,1,product,0,,,,ambiguous,,,needs-product-schema,no-jsonld; 3 distinct figures
+webflow,https://www.ziprunning.com/product/commutepack,webflow,1,product,0,,,,ambiguous,,,needs-product-schema,no-jsonld; 8 distinct figures
+custom,https://www.apple.com/shop/buy-iphone/iphone-16,custom,1,product,1,Product,offers.price;offers.availability;sku/gtin/mpn,0,ambiguous,,,incomplete-schema,24 distinct figures
+custom,https://www.sonos.com/en-us/shop/era-100,custom,1,product,1,ProductGroup,,1,jsonld,219,USD,no-gap,
+custom,https://www.ikea.com/us/en/p/billy-bookcase-white-00263850/,custom,1,product,1,Product,offers.price;offers.priceCurrency;offers.availability;sku/gtin/mpn,0,jsonld-no-currency,79,,incomplete-schema,
+shopify,https://greatjonesgoods.com/products/the-dutchess,shopify,1,product,1,Product,,1,jsonld,250,USD,no-gap,
+shopify,https://ripplefoods.com/products/ripple-chocolate-plant-based-protein-shake-12-pack,shopify,1,product,1,Product,,1,jsonld,37.99,USD,no-gap,
+saas,https://postmarkapp.com/pricing,custom,0,pricing,0,,,,,,,not-applicable,"pricing page, not a product page"
+saas,https://stripe.com/pricing,custom,0,pricing,0,,,,,,,not-applicable,"pricing page, not a product page"
+shopify,https://allbirds.com/products/mens-tree-runner-nz-medium-grey,shopify,1,product,1,ProductGroup,,1,jsonld,100,USD,no-gap,
+saas,https://vercel.com/pricing,custom,0,pricing,0,,,,,,,not-applicable,"pricing page, not a product page"
