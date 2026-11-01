@@ -2,7 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 ---
 <Layout title="AI Visibility Fix Pack — Product Schema, robots.txt and llms.txt, $49 | GeoScore"
-  description="Done-for-you GEO fixes for one product: Product JSON-LD completed and validated (variant offers, price, currency, availability, identifiers), explicit AI-crawler rules for robots.txt, a hand-written llms.txt, and a re-audit after you deploy. $49 one-time, 48-hour delivery."
+  description="Done-for-you GEO fixes for one product: Product JSON-LD completed and validated (variant offers, price, currency, availability, identifiers), a robots.txt diagnosis naming the AI crawlers your rules block and the exact lines to delete, a hand-written llms.txt, and a re-audit after you deploy. $49 one-time, 48-hour delivery."
   schema={{
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
@@ -10,7 +10,7 @@ import Layout from '../layouts/Layout.astro';
       {
         '@type': 'Question',
         name: 'What does the Fix Pack include?',
-        acceptedAnswer: { '@type': 'Answer', text: 'Product JSON-LD for one best-seller, completed and validated: every variant offer with price, currency and availability, plus the sku, gtin or mpn identifiers a shopping surface uses to match your product elsewhere. Plus AI-crawler rules for robots.txt that welcome GPTBot, ClaudeBot and PerplexityBot without touching your existing rules, a curated llms.txt written by hand from what your site publishes publicly (not a platform template), a 1-page audit summary, and a re-audit with before/after scores once you have deployed the files.' }
+        acceptedAnswer: { '@type': 'Answer', text: 'Product JSON-LD for one best-seller, completed and validated: every variant offer with price, currency and availability, plus the sku, gtin or mpn identifiers a shopping surface uses to match your product elsewhere. Plus a robots.txt diagnosis: which AI crawlers your rules block on that page and the exact lines to delete — I do not rewrite your file. Plus a curated llms.txt written by hand from what your site publishes publicly (not a platform template), a 1-page audit summary, and a re-audit with before/after scores once you have deployed the files.' }
       },
       {
         '@type': 'Question',
@@ -20,7 +20,7 @@ import Layout from '../layouts/Layout.astro';
       {
         '@type': 'Question',
         name: 'Does llms.txt actually get read by AI engines?',
-        acceptedAnswer: { '@type': 'Answer', text: 'Rarely, on current evidence. Ahrefs\' June 2026 study of 137,210 domains found 97% of published llms.txt files got zero requests in May 2026, and Google says it ignores the file. We include a hand-written llms.txt because it is free, harmless, and read by some agents and tools — but the measurable parts of this pack are the robots.txt access rules and the Product schema. We will never promise you citations.' }
+        acceptedAnswer: { '@type': 'Answer', text: 'Rarely, on current evidence. Ahrefs\' June 2026 study of 137,210 domains found 97% of published llms.txt files got zero requests in May 2026, and Google says it ignores the file. We include a hand-written llms.txt because it is free, harmless, and read by some agents and tools — but the measurable parts of this pack are the robots.txt diagnosis and the Product schema. We will never promise you citations.' }
       },
       {
         '@type': 'Question',
@@ -97,7 +97,7 @@ import Layout from '../layouts/Layout.astro';
       <h2 class="text-xl font-bold mb-4">What you get</h2>
       <ul class="text-sm text-gray-300 space-y-3">
         <li class="flex gap-2"><span class="text-brand-500">✓</span><span><strong class="text-white">Product JSON-LD, completed and validated</strong> — for your best-seller: every variant's offer with price, currency and availability, plus the identifiers (sku, gtin, mpn) a shopping surface uses to match your product to the same product elsewhere. Validated before delivery, and we tell you exactly which properties were missing when we started.</span></li>
-        <li class="flex gap-2"><span class="text-brand-500">✓</span><span><strong class="text-white">robots.txt AI-crawler rules</strong> — explicit rules welcoming GPTBot, ClaudeBot and PerplexityBot, merged so your existing rules stay exactly as they are.</span></li>
+        <li class="flex gap-2"><span class="text-brand-500">✓</span><span><strong class="text-white">robots.txt diagnosis</strong> — which AI crawlers your current rules block on that page, and the exact lines to delete so they can get in. <strong class="text-white">I do not rewrite your file</strong>: appending an <code class="text-gray-200">Allow:</code> never overrides a longer <code class="text-gray-200">Disallow:</code>, so a merged "patch" would silently do nothing — and re-allowing a bot you deliberately blocked is your call, not mine.</span></li>
         <li class="flex gap-2"><span class="text-brand-500">✓</span><span><strong class="text-white">A curated llms.txt</strong> — written by hand from what your site publishes publicly: categories, best-sellers, the pages worth reading. On Shopify this ships as a theme template that keeps your UCP and MCP discovery links intact. Included because it is free and harmless, not because we can promise it gets read — see the FAQ below.</span></li>
         <li class="flex gap-2"><span class="text-brand-500">✓</span><span><strong class="text-white">1-page audit summary</strong> — your 11-dimension scores and the exact gaps the files address, in plain language.</span></li>
         <li class="flex gap-2"><span class="text-brand-500">✓</span><span><strong class="text-white">Post-deploy re-audit</strong> — once the template or files are live, we re-run the audit and send before/after scores. If the override did not take effect, you see it here, not months later.</span></li>
@@ -122,7 +122,7 @@ import Layout from '../layouts/Layout.astro';
           Why include one at all? It costs nothing, does no harm, and some AI agents and developer tools do
           fetch it — and if anything reads yours, a file that actually describes what you sell beats the
           platform's protocol guide. The parts of this pack with machine-verifiable effect are the Product
-          schema and the robots.txt crawler access, and the post-deploy re-audit shows you exactly what changed.
+          schema and the robots.txt diagnosis, and the post-deploy re-audit shows you exactly what changed.
         </p>
       </div>
     </div>
@@ -153,7 +153,7 @@ import Layout from '../layouts/Layout.astro';
       <div class="space-y-4">
         <div class="card p-5">
           <h3 class="font-semibold mb-2">What does the Fix Pack include?</h3>
-          <p class="text-sm text-gray-400">Product JSON-LD for one best-seller, completed and validated: every variant offer with price, currency and availability, plus the sku, gtin or mpn identifiers a shopping surface uses to match your product elsewhere. Plus AI-crawler rules for robots.txt that welcome GPTBot, ClaudeBot and PerplexityBot without touching your existing rules, a curated llms.txt written by hand from what your site publishes publicly (not a platform template), a 1-page audit summary, and a re-audit with before/after scores once you have deployed the files.</p>
+          <p class="text-sm text-gray-400">Product JSON-LD for one best-seller, completed and validated: every variant offer with price, currency and availability, plus the sku, gtin or mpn identifiers a shopping surface uses to match your product elsewhere. Plus a robots.txt diagnosis: which AI crawlers your rules block on that page and the exact lines to delete — I do not rewrite your file. Plus a curated llms.txt written by hand from what your site publishes publicly (not a platform template), a 1-page audit summary, and a re-audit with before/after scores once you have deployed the files.</p>
         </div>
         <div class="card p-5">
           <h3 class="font-semibold mb-2">How is this different from the free fix file generator?</h3>
@@ -185,7 +185,7 @@ import Layout from '../layouts/Layout.astro';
     name: 'AI Visibility Fix Pack',
     serviceType: 'GEO (Generative Engine Optimization) remediation',
     provider: { '@type': 'Organization', name: 'GeoScore', url: 'https://geoscore.help' },
-    description: 'Done-for-you GEO fix package: Product JSON-LD completed and validated for your best-seller, AI-crawler robots.txt rules, a curated llms.txt, a 1-page audit, and a post-deploy re-audit.',
+    description: 'Done-for-you GEO fix package: Product JSON-LD completed and validated for your best-seller, a robots.txt diagnosis, a curated llms.txt, a 1-page audit, and a post-deploy re-audit.',
     offers: { '@type': 'Offer', price: '49', priceCurrency: 'USD', name: 'AI Visibility Fix Pack (one-time)', availability: 'https://schema.org/InStock', url: 'https://geoscore.help/fixpack/' }
   })} />
 </Layout>

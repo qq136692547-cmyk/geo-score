@@ -9,7 +9,7 @@ import LayoutZh from '../../layouts/LayoutZh.astro';
       {
         '@type': 'Question',
         name: 'Fix Pack 包含什么？',
-        acceptedAnswer: { '@type': 'Answer', text: '一款畅销商品的 Product JSON-LD，补全并通过校验：每个变体的报价都带价格、币种与库存状态，加上购物端用来匹配同一件商品的 sku、gtin 或 mpn 标识符。另含显式放行 GPTBot、ClaudeBot、PerplexityBot 的 robots.txt 规则（不改动你现有的任何规则）、一份人工整理的 llms.txt（按你站点公开内容手写，不是平台模板）、一页纸审计摘要，以及部署后的复检报告（含前后分数对比）。' }
+        acceptedAnswer: { '@type': 'Answer', text: '一款畅销商品的 Product JSON-LD，补全并通过校验：每个变体的报价都带价格、币种与库存状态，加上购物端用来匹配同一件商品的 sku、gtin 或 mpn 标识符。另含一份 robots.txt 诊断：指出你当前的规则屏蔽了哪些 AI 爬虫、该删哪几行——我不改写你的文件。另含一份人工整理的 llms.txt（按你站点公开内容手写，不是平台模板）、一页纸审计摘要，以及部署后的复检报告（含前后分数对比）。' }
       },
       {
         '@type': 'Question',
@@ -19,7 +19,7 @@ import LayoutZh from '../../layouts/LayoutZh.astro';
       {
         '@type': 'Question',
         name: 'llms.txt 真的会被 AI 引擎读取吗？',
-        acceptedAnswer: { '@type': 'Answer', text: '按目前证据：很少。Ahrefs 2026 年 6 月对 137,210 个域名的研究显示，97% 已发布的 llms.txt 在 2026 年 5 月零请求，Google 也明确表示会忽略它。我们仍会人工整理一份，因为它免费、无害，且确有部分代理与工具会读——但这个包里可度量的部分是 robots.txt 放行规则与 Product schema。我们永远不会向你承诺“被引用”。' }
+        acceptedAnswer: { '@type': 'Answer', text: '按目前证据：很少。Ahrefs 2026 年 6 月对 137,210 个域名的研究显示，97% 已发布的 llms.txt 在 2026 年 5 月零请求，Google 也明确表示会忽略它。我们仍会人工整理一份，因为它免费、无害，且确有部分代理与工具会读——但这个包里可度量的部分是 robots.txt 诊断与 Product schema。我们永远不会向你承诺“被引用”。' }
       },
       {
         '@type': 'Question',
@@ -85,7 +85,7 @@ import LayoutZh from '../../layouts/LayoutZh.astro';
       <h2 class="text-xl font-bold mb-4">交付内容</h2>
       <ul class="text-sm text-gray-300 space-y-3">
         <li class="flex gap-2"><span class="text-brand-500">✓</span><span><strong class="text-white">1 款畅销商品的 Product JSON-LD，补全并通过校验</strong>——每个变体的报价都带价格、币种与库存状态，加上 sku、gtin 或 mpn 这类标识符（购物端靠它把你的商品和别处的同一件商品对上）。交付前跑过校验，并告诉你我们接手时缺了哪几项。</span></li>
-        <li class="flex gap-2"><span class="text-brand-500">✓</span><span><strong class="text-white">robots.txt AI 爬虫规则</strong>——显式放行 GPTBot、ClaudeBot、PerplexityBot，合并方式保证你现有规则原样保留。</span></li>
+        <li class="flex gap-2"><span class="text-brand-500">✓</span><span><strong class="text-white">robots.txt 诊断</strong>——指出你当前的规则在该页屏蔽了哪些 AI 爬虫，以及该删哪几行才能放它们进来。<strong class="text-white">我不改写你的文件</strong>：追加一条 <code class="text-gray-200">Allow:</code> 永远压不过更长的 <code class="text-gray-200">Disallow:</code>，所以"合并式补丁"会静默失效；而要不要重新放行你主动屏蔽的爬虫，是你自己的决定，不是我替你决定。</span></li>
         <li class="flex gap-2"><span class="text-brand-500">✓</span><span><strong class="text-white">一份人工整理的 llms.txt</strong>——按你站点公开可见的内容手写：类目、畅销款、值得读的页面。Shopify 上以主题模板形式交付，保留你原有的 UCP 与 MCP 发现链接。附送它是因为它免费且无害，不是因为我们能保证它会被读——见下面的常见问题。</span></li>
         <li class="flex gap-2"><span class="text-brand-500">✓</span><span><strong class="text-white">一页纸审计摘要</strong>——11 维分数与这几个文件对应的缺口，用人话写清。</span></li>
         <li class="flex gap-2"><span class="text-brand-500">✓</span><span><strong class="text-white">部署后复检</strong>——模板或文件上线后重跑审计，发送前后分数对比。若覆盖没生效，在这里就能看出来，不用等几个月。</span></li>
@@ -107,7 +107,7 @@ import LayoutZh from '../../layouts/LayoutZh.astro';
         <p>
           它为什么还在交付清单里？因为它成本为零、无害，而且确有部分 AI 代理与开发工具会抓取它；
           真有东西来读时，一份按你真实目录写的文件，总比 Shopify 的空模板强。这个包里效果可被机器验证的部分，
-          是 robots.txt 的爬虫放行与 Product schema——部署后复检会把具体变化摆给你看。
+          是 robots.txt 诊断与 Product schema——部署后复检会把具体变化摆给你看。
         </p>
       </div>
     </div>
@@ -136,7 +136,7 @@ import LayoutZh from '../../layouts/LayoutZh.astro';
       <div class="space-y-4">
         <div class="card p-5">
           <h3 class="font-semibold mb-2">Fix Pack 包含什么？</h3>
-          <p class="text-sm text-gray-400">一款畅销商品的 Product JSON-LD，补全并通过校验：每个变体的报价都带价格、币种与库存状态，加上购物端用来匹配同一件商品的 sku、gtin 或 mpn 标识符。另含显式放行 GPTBot、ClaudeBot、PerplexityBot 的 robots.txt 规则（不改动你现有的任何规则）、一份人工整理的 llms.txt（按你站点公开内容手写，不是平台模板）、一页纸审计摘要，以及部署后的复检报告（含前后分数对比）。</p>
+          <p class="text-sm text-gray-400">一款畅销商品的 Product JSON-LD，补全并通过校验：每个变体的报价都带价格、币种与库存状态，加上购物端用来匹配同一件商品的 sku、gtin 或 mpn 标识符。另含一份 robots.txt 诊断：指出你当前的规则屏蔽了哪些 AI 爬虫、该删哪几行——我不改写你的文件。另含一份人工整理的 llms.txt（按你站点公开内容手写，不是平台模板）、一页纸审计摘要，以及部署后的复检报告（含前后分数对比）。</p>
         </div>
         <div class="card p-5">
           <h3 class="font-semibold mb-2">和免费的修复文件生成器有什么区别？</h3>
@@ -144,7 +144,7 @@ import LayoutZh from '../../layouts/LayoutZh.astro';
         </div>
         <div class="card p-5">
           <h3 class="font-semibold mb-2">llms.txt 真的会被 AI 引擎读取吗？</h3>
-          <p class="text-sm text-gray-400">按目前证据：很少。Ahrefs 2026 年 6 月对 137,210 个域名的研究显示，97% 已发布的 llms.txt 在 2026 年 5 月零请求，Google 也明确表示会忽略它。我们仍会人工整理一份，因为它免费、无害，且确有部分代理与工具会读——但这个包里可度量的部分是 robots.txt 放行规则与 Product schema。我们永远不会向你承诺“被引用”。</p>
+          <p class="text-sm text-gray-400">按目前证据：很少。Ahrefs 2026 年 6 月对 137,210 个域名的研究显示，97% 已发布的 llms.txt 在 2026 年 5 月零请求，Google 也明确表示会忽略它。我们仍会人工整理一份，因为它免费、无害，且确有部分代理与工具会读——但这个包里可度量的部分是 robots.txt 诊断与 Product schema。我们永远不会向你承诺“被引用”。</p>
         </div>
         <div class="card p-5">
           <h3 class="font-semibold mb-2">保证排名或被 AI 引用吗？</h3>
@@ -168,7 +168,7 @@ import LayoutZh from '../../layouts/LayoutZh.astro';
     name: 'AI 可见度 Fix Pack',
     serviceType: 'GEO（生成式引擎优化）修复代做',
     provider: { '@type': 'Organization', name: 'GeoScore', url: 'https://geoscore.help' },
-    description: 'GEO 修复代做包：畅销商品的 Product JSON-LD 补全与校验、AI 爬虫 robots.txt 规则、人工整理的 llms.txt、一页纸审计与部署后复检。',
+    description: 'GEO 修复代做包：畅销商品的 Product JSON-LD 补全与校验、robots.txt 诊断、人工整理的 llms.txt、一页纸审计与部署后复检。',
     offers: { '@type': 'Offer', price: '49', priceCurrency: 'USD', name: 'AI 可见度 Fix Pack（一次性）', availability: 'https://schema.org/InStock', url: 'https://geoscore.help/zh/fixpack/' }
   })} />
 </LayoutZh>
