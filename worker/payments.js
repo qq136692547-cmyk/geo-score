@@ -144,7 +144,7 @@ async function handleSendCode(request, env, corsHeaders) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: env.RESEND_FROM_EMAIL || 'GeoScore <onboarding@resend.dev>',
+        from: env.RESEND_FROM_EMAIL || 'GeoScore <verify@geoscore.help>',
         to: [email],
         subject: 'Your GeoScore Login Code',
         html: `
