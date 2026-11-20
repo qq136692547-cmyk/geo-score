@@ -1,0 +1,135 @@
+<!DOCTYPE html><html lang="zh-CN" class="dark"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="description" content="检测你的网站对 AI 搜索引擎的可见性。免费 GEO 审计工具。"><meta name="author" content="anan"><link rel="author" href="https://geoscore.help/zh/methodology"><meta property="og:title" content="GeoScore 官方 Chrome 扩展正式上线：突破 WAF 限制，在浏览器侧边栏一键深度审计 AI 就绪度 | GeoScore"><meta property="og:description" content="检测你的网站对 ChatGPT、Perplexity、Claude、Gemini 等 AI 搜索引擎的 GEO 就绪分数。"><meta property="og:type" content="website"><meta property="og:image" content="https://geoscore.help/og-image.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:type" content="image/png"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="https://geoscore.help/og-image.png"><link rel="sitemap" type="application/xml" href="/sitemap.xml"><link rel="canonical" href="https://geoscore.help/zh/blog/geoscore-chrome-extension-launch/"><link rel="alternate" hreflang="en" href="https://geoscore.help/blog/geoscore-chrome-extension-launch/"><link rel="alternate" hreflang="zh-CN" href="https://geoscore.help/zh/blog/geoscore-chrome-extension-launch/"><link rel="alternate" hreflang="x-default" href="https://geoscore.help/blog/geoscore-chrome-extension-launch/"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="dns-prefetch" href="https://github.com"><title>GeoScore 官方 Chrome 扩展正式上线：突破 WAF 限制，在浏览器侧边栏一键深度审计 AI 就绪度 | GeoScore</title><!-- Consent state. Runs before first paint so the banner never flashes: a
+       parsable stored record = the visitor already decided, banner stays hidden
+       and scripts/consent.js replays the choice. Same predicate as consent.js,
+       so an unreadable record falls back to "undecided" on both sides. --><script>
+    (function () {
+      var decided = false;
+      try {
+        var raw = localStorage.getItem('geoscore-consent-v1');
+        if (raw) decided = !!JSON.parse(raw);
+      } catch (e) { decided = false; }
+      document.documentElement.setAttribute('data-consent', decided ? 'decided' : 'pending');
+    })();
+  </script><!-- Consent gate. GA4 loader is created here on opt-in;
+       no third-party script is requested before that. Calls made before consent
+       are queued and flushed once gtag appears (see __geoFlushPending below);
+       a visitor who never consents never flushes. --><script src="/scripts/consent.js" defer></script><script>
+    function geoAuthed() {
+      try {
+        if (window.geoscoreAuth && typeof window.geoscoreAuth.getCurrentUser === 'function') {
+          return !!window.geoscoreAuth.getCurrentUser();
+        }
+        return !!localStorage.getItem('geoscore_token');
+      } catch (e) {
+        return false;
+      }
+    }
+    // 2026-10-23 (P0.2): geoTrack used to be a SILENT NO-OP until gtag existed
+    // (consent.js injects it), with no queue and no replay. Events fired while
+    // the page was still parsing were therefore dropped for every visitor who
+    // had not consented yet -- and for returning visitors too, because
+    // consent.js is deferred, so gtag does not exist at parse time either.
+    // That killed pricing_viewed (on /pricing/) and fixpack_viewed (on
+    // /fixpack/), which are exactly the two events the funnel top is measured
+    // by. Now: queue while gtag is missing, flush in order the moment it
+    // exists. A visitor who never consents never flushes -- that is the
+    // compliance requirement, not a defect.
+    window.__geoPending = [];
+    window.__geoFlushPending = function () {
+      if (typeof gtag !== 'function') return;
+      var pending = window.__geoPending.splice(0);
+      for (var i = 0; i < pending.length; i++) {
+        var params = pending[i].params || {};
+        if (params.authed === undefined) params.authed = geoAuthed();
+        gtag('event', pending[i].action, params);
+      }
+    };
+    window.geoTrack = function(action, params) {
+      if (typeof gtag === 'function') {
+        params = params || {};
+        if (params.authed === undefined) params.authed = geoAuthed();
+        gtag('event', action, params);
+        return;
+      }
+      window.__geoPending.push({ action: action, params: params || {} });
+    };
+    function geoCrossSource() {
+      try {
+        const params = new URLSearchParams(location.search);
+        const source = (params.get('utm_source') || '').toLowerCase();
+        const medium = (params.get('utm_medium') || '').toLowerCase();
+        if (source === 'ttcalc' && medium === 'site') return 'cross_site';
+        if (source) return 'external';
+        if (!document.referrer) return 'direct';
+        const host = new URL(document.referrer).hostname.toLowerCase();
+        if (/(^|\.)(google|bing|baidu|duckduckgo|yandex|ecosia|startpage|brave)\.[a-z.]+$/.test(host)) return 'search';
+        return 'external';
+      } catch (e) {
+        return 'other';
+      }
+    }
+    window.geoSource = geoCrossSource;
+    document.addEventListener('click', function(event) {
+      const link = event.target.closest('a[data-cross-site]');
+      if (!link || typeof window.geoTrack !== 'function') return;
+      window.geoTrack('cross_site_click', { target_site: link.getAttribute('data-cross-site'), source_type: geoCrossSource() });
+    });
+  </script><!-- JSON-LD: Organization (全站实体) --><script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","@id":"https://geoscore.help/#organization","name":"GeoScore","url":"https://geoscore.help","logo":"https://geoscore.help/og-image.png","description":"开源 GEO 审计工具，检测你的网站对 AI 搜索引擎的可见性。","sameAs":["https://github.com/qq136692547-cmyk/geo-score","https://github.com/qq136692547-cmyk/geo-score/tree/main/docs/handbook","https://github.com/qq136692547-cmyk","https://ttcalc.shop","https://geoscore.help/zh/methodology"],"contactPoint":{"@type":"ContactPoint","contactType":"technical support","url":"https://github.com/qq136692547-cmyk/geo-score/issues","email":"qq136692547@gmail.com","availableLanguage":"Chinese"}}</script><!-- JSON-LD: WebSite (中文版) --><script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","@id":"https://geoscore.help/zh/#website","url":"https://geoscore.help/zh/","name":"GeoScore - GEO 审计工具","description":"免费 GEO 审计工具 —— 检测你的网站对 AI 搜索引擎的可见性。","publisher":{"@id":"https://geoscore.help/#organization"},"inLanguage":"zh-CN"}</script><!-- JSON-LD: Person (作者) --><script type="application/ld+json">{"@context":"https://schema.org","@type":"Person","@id":"https://geoscore.help/#author","name":"anan","email":"qq136692547@gmail.com","url":"https://geoscore.help/zh/methodology","jobTitle":"GEO 研究员","worksFor":{"@type":"Organization","name":"GeoScore","url":"https://geoscore.help"},"knowsAbout":["Generative Engine Optimization","AI 搜索","llms.txt","Schema.org","Robots.txt","SEO","Web 开发"],"sameAs":["https://github.com/qq136692547-cmyk"]}</script><!-- JSON-LD: WebApplication (中文版全站) + 页面级 schema --><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@context":"https://schema.org","@type":"Article","headline":"GeoScore 官方 Chrome 扩展正式上线：突破 WAF 限制，在浏览器侧边栏一键深度审计 AI 就绪度","description":"告别云端爬虫被 Cloudflare 拦截与内网无法测试的困扰。基于 Manifest V3 与 Chrome Side Panel，零配置在任意前台网页一键审计 11 维 85 项 AI 引文关键指标。","url":"https://geoscore.help/zh/blog/geoscore-chrome-extension-launch/","datePublished":"2026-11-18","dateModified":"2026-11-18","author":{"@type":"Organization","name":"GeoScore"},"publisher":{"@type":"Organization","name":"GeoScore","url":"https://geoscore.help"}},{"@context":"https://schema.org","@type":"WebApplication","name":"GeoScore","description":"GEO 审计工具：单次浏览器审计免费，可选 Pro 监控付费。","url":"https://geoscore.help/zh/","applicationCategory":"SEO Tool","operatingSystem":"Any","offers":{"@type":"AggregateOffer","lowPrice":"0","highPrice":"9","priceCurrency":"USD","offerCount":2},"features":["11 维度 GEO 评分","AI 搜索可见性审计","llms.txt 检测","robots.txt AI 爬虫分析","结构化数据审计","E-E-A-T 信号"],"author":{"@type":"Person","name":"anan","url":"https://geoscore.help/zh/methodology"},"publisher":{"@type":"Organization","name":"GeoScore","url":"https://geoscore.help"},"dateModified":"2026-08-11"}]}</script><link rel="stylesheet" href="/_astro/ai-crawler-robots-txt-templates.BAis6GJ9.css"></head> <body class="min-h-[100dvh] text-gray-100 antialiased"> <header class="border-b border-gray-700/50 sticky top-0 z-50" style="background:rgba(15,23,42,0.85);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)"> <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"> <div class="flex flex-wrap items-center justify-between gap-x-4 min-h-16 py-2"> <a href="/zh/" class="flex items-center text-lg font-bold"> <span><span class="text-geo-500">Geo</span><span class="text-brand-500">Score</span></span> </a> <input type="checkbox" id="zh-nav-toggle" class="peer sr-only"> <label for="zh-nav-toggle" class="md:hidden cursor-pointer text-gray-300 hover:text-white transition select-none text-2xl leading-none" aria-label="菜单">☰</label> <div class="w-full hidden peer-checked:flex flex-col gap-3 pt-3 pb-1 md:w-auto md:flex md:flex-row md:items-center md:gap-4 md:pt-0 md:pb-0 text-sm"> <a href="/zh/tools/llms-txt-checker/" class="text-gray-400 hover:text-white transition">llms.txt 检测</a> <a href="/zh/tools/robots-txt-ai-checker/" class="text-gray-400 hover:text-white transition">Robots.txt 检测</a> <a href="/zh/tools/ai-readiness-score/" class="text-gray-400 hover:text-white transition">AI 就绪评分</a> <a href="/zh/#chrome-extension" class="text-gray-400 hover:text-white transition">Chrome 插件</a> <a href="/zh/blog/" class="text-gray-400 hover:text-white transition">博客</a> <a href="/zh/methodology/" class="text-gray-400 hover:text-white transition">方法论</a> <a href="/zh/pricing/" class="text-gray-400 hover:text-white transition">定价</a> <a href="/" class="text-gray-500 hover:text-gray-300 transition text-xs">EN</a> <a href="https://github.com/qq136692547-cmyk/geo-score" target="_blank" rel="noopener" class="text-gray-500 hover:text-white transition flex items-center gap-1.5"> <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"></path></svg> <span class="font-mono text-[10px] px-1.5 py-0.5 rounded bg-white/10 text-gray-400">v1.8.0</span> </a> </div> <div id="nav-auth" class="ml-0 md:ml-2"></div> </div> </nav> </header> <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 min-h-[calc(100dvh-8rem)]">  <section class="max-w-3xl mx-auto py-8"> <article class="prose prose-invert max-w-none"> <div class="text-center mb-10"> <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-geo-500/10 text-geo-400 border border-geo-500/20 mb-4">
+产品重磅发布 · 官方 Chrome 扩展
+</div> <h1 class="text-3xl sm:text-4xl font-extrabold mb-3 text-white leading-tight">
+GeoScore 官方 Chrome 扩展正式上线：突破 WAF 限制，在浏览器侧边栏一键深度审计 AI 就绪度
+</h1> <p class="text-gray-400">发布于 2026 年 11 月 18 日 · 阅读时间约 8 分钟</p> </div> <div class="card p-6 sm:p-8 mb-6 border border-brand-500/30 bg-gradient-to-br from-brand-950/20 to-geo-950/30"> <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4"> <div> <h2 class="text-xl font-bold text-white mb-1">现已上架 Chrome 网上应用店</h2> <p class="text-sm text-gray-300">纯前端零数据外传，完全免费，基于 Chrome 现代 Manifest V3 与 Side Panel 原生架构。</p> </div> <a href="https://chromewebstore.google.com/detail/geoscore-free-geo-aeo-llm/cboppgehhkhaamcgfcikhekkdaelichn" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-white bg-gradient-to-r from-geo-600 to-brand-600 hover:from-geo-500 hover:to-brand-500 transition shadow-lg shadow-geo-600/20 shrink-0 text-sm">
+前往 Chrome 商店安装 →
+</a> </div> <p class="text-gray-200 text-base leading-relaxed">
+生成式引擎优化（GEO，Generative Engine Optimization）已经成为 2026 年技术出海、独立站以及国内企业获客的核心阵地。然而，很多工程师与站长在使用传统云端扫描工具时，常常陷入三大无法回避的现实困境：Cloudflare 5 秒盾 WAF 误杀拦截、本地开发环境（Localhost）无法跨网审计、以及登录态页面与单页应用客户端渲染（CSR）导致的“扫描黑盒”。
+</p> <p class="text-gray-400 text-sm mt-3">
+今天，我们正式向全球开发者与 SEO/GEO 团队发布 <strong class="text-white">GeoScore 官方 Chrome 浏览器扩展</strong>！无需复制粘贴网址，无需等待云端排队，直接在 Chrome 侧边栏（Side Panel）中对当前打开的任何标签页执行 11 维 85 项 AI 就绪度实时深度体检。
+</p> </div> <div class="card p-6 sm:p-8 mb-6"> <h2 class="text-xl font-bold mb-4 text-white">云端扫描器的四大“阿喀琉斯之踵”</h2> <p class="text-gray-300 mb-4 text-sm leading-relaxed">
+过去，站长大多依赖 SaaS 平台的云端爬虫对网址进行抓取。但随着 Web 安全边界与前端技术栈演进，云端审计手段的局限性暴露无遗：
+</p> <div class="space-y-4 text-sm mb-4"> <div class="p-4 rounded-xl bg-gray-900/60 border border-gray-800"> <h3 class="font-bold text-red-400 mb-1">1. Cloudflare 5 秒盾与边缘 WAF 拦截（验证码阻断）</h3> <p class="text-gray-400">
+云端扫描服务器的机房 IP 经常触发 Cloudflare Turnstile、AWS WAF 或 Akamai 机器行为风控，导致扫描器仅能抓取到 403 页面或带有 JavaScript 挑战跳转的骨架页，误报为“网站不可达”或“空内容”。
+</p> </div> <div class="p-4 rounded-xl bg-gray-900/60 border border-gray-800"> <h3 class="font-bold text-red-400 mb-1">2. Localhost 与内网测试环境的“信息孤岛”</h3> <p class="text-gray-400">
+工程师在本地通过 Vite、Next.js 或 Astro 构建新功能或重构结构化数据时，运行环境是 <code class="text-geo-400">http://localhost:3000</code> 或内部 VPN Staging 域名。云端爬虫根本无法触达内网私有 IP，迫使开发团队只能“先上线、再发现问题”。
+</p> </div> <div class="p-4 rounded-xl bg-gray-900/60 border border-gray-800"> <h3 class="font-bold text-red-400 mb-1">3. 登录态与受保护界面的审计盲区</h3> <p class="text-gray-400">
+许多关键的 SaaS 产品文档、客户后台或付费知识库存在鉴权隔离，云端无状态爬虫无法持有用户的 Cookie 与 Authorization Token，根本无法分析授权后的完整渲染树。
+</p> </div> <div class="p-4 rounded-xl bg-gray-900/60 border border-gray-800"> <h3 class="font-bold text-red-400 mb-1">4. 源码外泄与隐私数据顾虑</h3> <p class="text-gray-400">
+将未公开发布的内网页面 HTML 发送到第三方云端解析，存在企业敏感代码与内部数据外泄合规风险。
+</p> </div> </div> </div> <div class="card p-6 sm:p-8 mb-6"> <h2 class="text-xl font-bold mb-4 text-white">GeoScore Chrome 扩展的三大核心突破</h2> <h3 class="text-lg font-semibold text-brand-400 mb-2">1. 原生会话穿透：自然绕过 WAF 边缘防线</h3> <p class="text-gray-300 mb-4 text-sm leading-relaxed">
+作为安装在浏览器内部的前端扩展，GeoScore 运行在当前已经过身份验证的宿主页面上下文中。当你能顺畅浏览网页时，说明 Cloudflare 等防爬屏障已合法通过。插件直接读取渲染后的 DOM 树与运行状态，无需发起额外的伪造爬虫请求，真正做到“零风控阻断、零误报、秒级反馈”。
+</p> <h3 class="text-lg font-semibold text-brand-400 mb-2">2. Localhost 抢先审计：在上线前扼杀所有 GEO 缺陷</h3> <p class="text-gray-300 mb-4 text-sm leading-relaxed">
+无论你的本地服务运行在 <code class="text-geo-400">localhost:3000</code>、<code class="text-geo-400">localhost:5173</code> 还是 <code class="text-geo-400">127.0.0.1:8080</code>，只需在 Chrome 中打开页面并调出 Side Panel，点击“一键体检”，3 秒即可得到涵盖 Schema、H 标签骨架、LLM 机器友好度的全维诊断，在 Git Commit 前即可完成全部 GEO 修复。
+</p> <h3 class="text-lg font-semibold text-brand-400 mb-2">3. SSR 服务端渲染 vs CSR 客户端渲染双层 Diff 与页面 X 光透视</h3> <p class="text-gray-300 mb-4 text-sm leading-relaxed">
+AI 搜索爬虫（如 GPTBot、ClaudeBot、Bytespider）为了节省全网数亿页面的计算成本，优先解析初始服务端 HTML，对于耗费算力的客户端 JavaScript 动态水合常常直接忽略或降权。插件内置双层 Diff 引擎：
+</p> <ul class="space-y-2.5 text-gray-300 text-sm mb-4"> <li>• <strong>空壳页面预警（CSR Shell Warning）：</strong> 精确侦测页面是否仅返回 <code class="text-geo-400">&lt;div id="root"&gt;&lt;/div&gt;</code> 而没有在初始 HTML 注入首屏核心文本与语义层。</li> <li>• <strong>结构化数据注入时机检测：</strong> 揪出依赖客户端异步请求才注入的 JSON-LD 标签，避免大模型爬虫抓到“空包”。</li> <li>• <strong>页面 X 光透视（Visual X-Ray）：</strong> 在页面中高亮缺失的语义标题层级、未标注的出处引文，以及隐藏在代码角落的 Prompt 注入安全隐患。</li> </ul> </div> <div class="card p-6 sm:p-8 mb-6"> <h2 class="text-xl font-bold mb-4 text-white">11 维 85 项核心指标全方位覆盖</h2> <p class="text-gray-300 mb-4 text-sm">
+扩展完整继承了 GeoScore 引擎的 11 大核心维度评估体系，并同步支持国内主流 AI 搜索与海外大模型的双重评估：
+</p> <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm mb-4"> <div class="p-3.5 rounded-lg bg-gray-900/60 border border-gray-800"> <span class="font-bold text-geo-400">1. AI 爬虫准入协议（RFC 9309）</span> <p class="text-xs text-gray-400 mt-1">自动测试当前站点的 robots.txt，覆盖 GPTBot、ClaudeBot、Bytespider、MoonshotBot 等 10+ 爬虫规则。</p> </div> <div class="p-3.5 rounded-lg bg-gray-900/60 border border-gray-800"> <span class="font-bold text-geo-400">2. Agent 友好度与语义层级</span> <p class="text-xs text-gray-400 mt-1">评估 H1~H3 层级完整性、表格结构化程度与去除样式的机器可读性。</p> </div> <div class="p-3.5 rounded-lg bg-gray-900/60 border border-gray-800"> <span class="font-bold text-geo-400">3. Schema.org 结构化知识图谱</span> <p class="text-xs text-gray-400 mt-1">解析 Organization、Article、Product、FAQPage，校验实体关联一致性。</p> </div> <div class="p-3.5 rounded-lg bg-gray-900/60 border border-gray-800"> <span class="font-bold text-geo-400">4. E-E-A-T 专家与权威信任背书</span> <p class="text-xs text-gray-400 mt-1">作者简介、官方出处凭证、ICP 备案号、统一社会信用代码与安全证书。</p> </div> <div class="p-3.5 rounded-lg bg-gray-900/60 border border-gray-800"> <span class="font-bold text-geo-400">5. 内容时效性与明确时间戳</span> <p class="text-xs text-gray-400 mt-1">校验 ISO 8601 格式的发布与更新时间戳，助推大模型时效性排序。</p> </div> <div class="p-3.5 rounded-lg bg-gray-900/60 border border-gray-800"> <span class="font-bold text-geo-400">6. llms.txt 专属知识库入口</span> <p class="text-xs text-gray-400 mt-1">实时探测 <code class="text-brand-400">/llms.txt</code> 与 <code class="text-brand-400">/llms-full.txt</code>，构建最轻量的 AI 快速摘要管道。</p> </div> <div class="p-3.5 rounded-lg bg-gray-900/60 border border-gray-800"> <span class="font-bold text-geo-400">7. 双层软 404（Soft-404）隔离</span> <p class="text-xs text-gray-400 mt-1">严防无内容或下架商品返回 200 假状态码，避免索引资源被大模型拉黑。</p> </div> <div class="p-3.5 rounded-lg bg-gray-900/60 border border-gray-800"> <span class="font-bold text-geo-400">8. Prompt 注入与负向安全防线</span> <p class="text-xs text-gray-400 mt-1">扫描页面隐藏指令与恶意文字注入，确保站内引文内容安全无污染。</p> </div> </div> </div> <div class="card p-6 sm:p-8 mb-6"> <h2 class="text-xl font-bold mb-4 text-white">研发闭环：一键生成 Cursor / Claude / Copilot 修复 Prompt</h2> <p class="text-gray-300 mb-3 text-sm leading-relaxed">
+仅仅指出问题远远不够，高效修复才是企业提效的关键。扩展内置了专门针对 AI 编程助手量身定制的 <strong class="text-white">一键 Prompt 导出功能</strong>。
+</p> <p class="text-gray-400 text-sm mb-4">
+点击侧边栏的 <strong class="text-geo-400">“复制修复 Prompt”</strong>，扩展会自动将检测出的问题项、对应的 HTML 选择器与改进规范打包为标准的 Markdown 提示词，直接粘贴进 Cursor、Claude Code、GitHub Copilot 或 ChatGPT 中：
+</p> <div class="bg-gray-900/80 rounded-xl p-4 font-mono text-xs text-gray-300 mb-4 overflow-x-auto border border-gray-800"> <pre>请帮我针对当前页面进行生成式引擎优化（GEO）代码改造：
+页面地址：http://localhost:3000/products/ai-analytics
+GeoScore 扩展检测到以下 3 项关键缺陷：
+1. [结构化数据] 缺少 Product 与 Organization Schema，且缺少 AggregateRating 评分实体。
+2. [SSR 预警] 首屏核心描述文字由前端 JS 异步渲染，初始 HTML 缺少关键特征文本。
+3. [爬虫协议] robots.txt 中未声明对 Bytespider 与 ClaudeBot 的爬取规则。
+
+请输出：
+1. 符合 Schema.org 规范的标准 JSON-LD 注入代码片段。
+2. 兼容 RFC 9309 规范的 robots.txt 推荐配置。
+3. 优化首屏服务端直出（SSR/SSG）的组件改动建议。</pre> </div> </div> <div class="card p-6 sm:p-8 mb-6"> <h2 class="text-xl font-bold mb-4 text-white">30 秒极速安装与使用指南</h2> <ol class="space-y-3 text-gray-300 text-sm list-decimal list-inside mb-4"> <li>访问 <a href="https://chromewebstore.google.com/detail/geoscore-free-geo-aeo-llm/cboppgehhkhaamcgfcikhekkdaelichn" target="_blank" rel="noopener noreferrer" class="text-brand-400 hover:underline font-medium">Chrome 网上应用店官方安装页</a>。</li> <li>点击右上角 <strong>“添加至 Chrome”</strong> 并确认权限授权。</li> <li>在 Chrome 工具栏中将 GeoScore 图标固定显示（Pin），方便日常随时调用。</li> <li>打开任何前台网页、企业官网、在线文档或本地 Localhost 服务。</li> <li>点击扩展图标即可在右侧侧边栏唤出面板，实时掌握当前网页在各大主流 AI 搜索中的引文权重。</li> </ol> <p class="text-gray-400 text-xs">
+本扩展完全遵循 Google Chrome 官方安全审查规范，不抓取任何个人私密浏览历史，代码审计与 DOM 分析均在本地浏览器隔离环境中运行。
+</p> </div> <div class="card p-6 sm:p-8 mb-6 bg-gradient-to-r from-geo-500/10 to-brand-500/10 border border-brand-500/30"> <h2 class="text-xl font-bold mb-3 text-white">立即体验浏览器侧边栏体检</h2> <p class="text-gray-300 text-sm mb-5 leading-relaxed">
+抢占 Kimi、豆包、秘塔、ChatGPT 和 Claude 的第一引文源。立即安装免费官方扩展，或使用在线版扫描器。
+</p> <div class="flex flex-wrap items-center gap-4"> <a href="https://chromewebstore.google.com/detail/geoscore-free-geo-aeo-llm/cboppgehhkhaamcgfcikhekkdaelichn" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-geo-600 to-brand-600 hover:from-geo-500 hover:to-brand-500 transition shadow-lg shadow-geo-600/20">
+免费安装 Chrome 扩展 →
+</a> <a href="/zh/" class="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-gray-300 bg-gray-800/80 hover:bg-gray-700/80 hover:text-white transition border border-gray-700">
+使用在线扫描器
+</a> </div> </div> </article> </section>  </main> <footer class="border-t border-gray-700/50"> <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"> <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-6"> <div> <h4 class="text-sm font-bold text-white mb-3">工具</h4> <ul class="space-y-2 text-sm text-gray-400"> <li><a href="/zh/tools/llms-txt-checker/" class="hover:text-brand-500 transition">llms.txt 检测</a></li> <li><a href="/zh/tools/robots-txt-ai-checker/" class="hover:text-brand-500 transition">Robots.txt AI 检测</a></li> <li><a href="/zh/tools/ai-readiness-score/" class="hover:text-brand-500 transition">AI 就绪评分</a></li> <li><a href="/zh/#chrome-extension" class="hover:text-brand-500 transition">Chrome 插件</a></li> </ul> </div> <div> <h4 class="text-sm font-bold text-white mb-3">学习</h4> <ul class="space-y-2 text-sm text-gray-400"> <li><a href="/zh/blog/" class="hover:text-brand-500 transition">中文博客</a></li> <li><a href="/zh/blog/geoscore-update-multi-page-security/" class="hover:text-brand-500 transition">引擎升级：多页面扫描</a></li> <li><a href="/zh/methodology/" class="hover:text-brand-500 transition">方法论</a></li> <li><a href="/blog/" class="hover:text-brand-500 transition">英文指南全集</a></li> <li><a href="https://github.com/qq136692547-cmyk/geo-score/tree/main/docs/handbook" target="_blank" rel="noopener" class="hover:text-brand-500 transition">GEO 手册</a></li> <li><a href="https://ttcalc.shop/?utm_source=geoscore&utm_medium=site&utm_campaign=ttcalc-funnel" data-cross-site="ttcalc" target="_blank" rel="noopener" class="hover:text-brand-500 transition">TTCalc 卖家工具</a></li> </ul> </div> <div> <h4 class="text-sm font-bold text-white mb-3">项目</h4> <ul class="space-y-2 text-sm text-gray-400"> <li><a href="https://github.com/qq136692547-cmyk/geo-score" target="_blank" rel="noopener" class="hover:text-brand-500 transition">GitHub</a></li> <li><a href="https://geoscore.help/sitemap.xml" class="hover:text-brand-500 transition">Sitemap</a></li> <li><a href="https://geoscore.help/llms.txt" class="hover:text-brand-500 transition">llms.txt</a></li> <li><a href="/zh/privacy/" class="hover:text-brand-500 transition">隐私政策</a></li> <li><a href="/zh/terms/" class="hover:text-brand-500 transition">使用条款</a></li> <li><a href="mailto:qq136692547@gmail.com" class="hover:text-brand-500 transition">联系支持</a></li> <li><button type="button" id="consent-open" class="cursor-pointer text-left hover:text-brand-500 transition">Cookie 设置</button></li> <li><span class="text-gray-500">开源 — MIT 许可证</span></li> </ul> </div> </div> <p class="text-xs text-gray-500 text-center">© 2026 GeoScore. MIT 许可证。❤️ 为 AI 搜索时代构建.</p> </div> </footer> <!-- Consent panel. Server-rendered so it is on screen at first paint; shown
+       only while <html data-consent="pending">. Deliberately non-modal —
+       role=region, no focus trap — and every control is a native focusable
+       element (checkbox + label, real buttons). --> <div id="geoscore-consent-banner" class="consent-banner fixed bottom-0 left-0 right-0 z-[60] p-3 sm:p-4" role="region" aria-label="Cookie 设置"> <div class="max-w-4xl mx-auto card p-4 sm:p-5" style="background:rgba(15,23,42,0.97);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:0 8px 30px rgba(0,0,0,0.35)"> <p class="text-sm font-semibold text-white mb-1">GeoScore 的 Cookie 使用</p> <p class="text-xs text-gray-400 mb-3">
+只有在你允许之后，我们才会加载分析统计脚本 —— 在此之前不会向任何第三方发起请求。详见
+<a href="/zh/privacy/" class="text-brand-400 hover:underline">隐私政策</a>。
+</p> <div class="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4"> <div class="flex flex-col sm:flex-row sm:items-center gap-x-6 gap-y-2 sm:flex-1"> <label for="consent-analytics" class="flex items-center gap-2 text-sm text-gray-300 cursor-pointer"> <input type="checkbox" id="consent-analytics" class="h-4 w-4 accent-geo-500 cursor-pointer">
+分析统计
+</label> </div> <div class="flex flex-wrap gap-2"> <button type="button" id="consent-accept-all" class="cursor-pointer px-4 py-2 rounded-lg text-sm font-semibold text-white bg-gradient-to-r from-geo-600 to-brand-600 hover:from-geo-500 hover:to-brand-500 transition">接受全部</button> <button type="button" id="consent-essential" class="cursor-pointer px-4 py-2 rounded-lg text-sm font-semibold bg-white/10 hover:bg-white/20 transition">仅必要</button> <button type="button" id="consent-save" class="cursor-pointer px-4 py-2 rounded-lg text-sm font-semibold bg-white/10 hover:bg-white/20 transition">保存选择</button> </div> </div> </div> </div> <script type="module" src="/scripts/auth.js"></script> </body> </html>

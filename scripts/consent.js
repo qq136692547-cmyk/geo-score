@@ -2,9 +2,9 @@
  * GeoScore consent gate (M4-b)
  *
  * Nothing from a third party is requested until the visitor says so. The GA4
- * library and both Adsterra loaders used to sit in the page as eager
- * <script async src> tags; they are now created here and only after the
- * matching consent flag is true.
+ * library is created here and only after the matching consent flag is true.
+ * GeoScore displays no third-party commercial advertisements and loads no
+ * advertising trackers.
  *
  * Two pieces work together:
  *   1. a tiny inline script in <head> flips <html data-consent> to "pending"
@@ -27,21 +27,11 @@
 
   // Third-party endpoints, injected only after the matching consent flag.
   var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID;
-  var AD_NATIVE_SRC = 'https://pl31399123.profitableratecpmnetwork.com/817fcedcc7910b47268adaf373773c40/invoke.js';
-  var AD_SOCIAL_SRC = 'https://pl31398814.profitableratecpmnetwork.com/46/04/d0/4604d02cf773095b4a63e7ac55239136.js';
 
-  var NATIVE_WRAPPER_ID = 'geoscore-ad-native';
-  var NATIVE_SLOT_ID = 'container-817fcedcc7910b47268adaf373773c40';
-
-  // Ids of the <script> elements this module creates. They are deliberately
-  // different from every markup id (e.g. the ad wrapper is "geoscore-ad-native"),
-  // because injectScript() dedupes on getElementById.
+  // Ids of the <script> elements this module creates.
   var GA_SCRIPT_ID = 'geoscore-script-ga';
-  var AD_NATIVE_SCRIPT_ID = 'geoscore-script-ad-native';
-  var AD_SOCIAL_SCRIPT_ID = 'geoscore-script-ad-social';
 
   var analyticsLoaded = false;
-  var adsLoaded = false;
 
   function readStored() {
     try {
@@ -175,30 +165,9 @@
     injectScript(GA_SCRIPT_ID, GA_SRC, null, flushWhenGaReady);
   }
 
-  function loadAds() {
-    if (adsLoaded) return;
-    adsLoaded = true;
-
-    // Reveal the slot before the loader runs, otherwise Adsterra finds an
-    // empty/hidden container and renders nothing.
-    var wrapper = document.getElementById(NATIVE_WRAPPER_ID);
-    if (wrapper) wrapper.hidden = false;
-    if (!document.getElementById(NATIVE_SLOT_ID)) {
-      // Adsterra's invoke.js looks the slot up by id; recreate it if a page
-      // ever drops the wrapper.
-      var slot = document.createElement('div');
-      slot.id = NATIVE_SLOT_ID;
-      (wrapper || document.body).appendChild(slot);
-    }
-
-    injectScript(AD_NATIVE_SCRIPT_ID, AD_NATIVE_SRC, { 'data-cfasync': 'false' });
-    injectScript(AD_SOCIAL_SCRIPT_ID, AD_SOCIAL_SRC);
-  }
-
   function applyConsent(state) {
     if (!state) return;
     if (state.analytics) loadAnalytics();
-    if (state.ads) loadAds();
   }
 
   function syncSwitches(state) {
@@ -232,7 +201,7 @@
       syncSwitches(null);
     }
 
-    onClick('consent-accept-all', function () { commit(true, true); });
+    onClick('consent-accept-all', function () { commit(true, false); });
     onClick('consent-essential', function () { commit(false, false); });
     onClick('consent-save', function () {
       var analytics = document.getElementById('consent-analytics');

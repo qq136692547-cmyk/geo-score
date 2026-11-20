@@ -1,0 +1,205 @@
+<!DOCTYPE html><html lang="en" class="dark"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="description" content="Comprehensive playbook for enterprise websites targeting Chinese AI search engines. Master ICP filing trust signals, robots.txt crawler policies, soft-404 defense, and structured knowledge grounding."><meta name="author" content="anan"><link rel="author" href="https://geoscore.help/methodology"><meta property="og:title" content="2026 Enterprise GEO in China: Getting Cited by Kimi, Doubao, and Metaso | GeoScore"><meta property="og:description" content="Comprehensive playbook for enterprise websites targeting Chinese AI search engines. Master ICP filing trust signals, robots.txt crawler policies, soft-404 defense, and structured knowledge grounding."><meta property="og:type" content="website"><meta property="og:image" content="https://geoscore.help/og-image.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:type" content="image/png"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="https://geoscore.help/og-image.png"><link rel="sitemap" type="application/xml" href="/sitemap.xml"><link rel="canonical" href="https://geoscore.help/blog/enterprise-geo-china-kimi-doubao-metaso/"><link rel="alternate" hreflang="en" href="https://geoscore.help/blog/enterprise-geo-china-kimi-doubao-metaso/"><link rel="alternate" hreflang="zh-CN" href="https://geoscore.help/zh/blog/enterprise-geo-china-kimi-doubao-metaso/"><link rel="alternate" hreflang="x-default" href="https://geoscore.help/blog/enterprise-geo-china-kimi-doubao-metaso/"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="dns-prefetch" href="https://github.com"><title>2026 Enterprise GEO in China: Getting Cited by Kimi, Doubao, and Metaso | GeoScore</title><!-- Consent state. Runs before first paint so the banner never flashes: a
+       parsable stored record = the visitor already decided, banner stays hidden
+       and scripts/consent.js replays the choice. Same predicate as consent.js,
+       so an unreadable record falls back to "undecided" on both sides. --><script>
+    (function () {
+      var decided = false;
+      try {
+        var raw = localStorage.getItem('geoscore-consent-v1');
+        if (raw) decided = !!JSON.parse(raw);
+      } catch (e) { decided = false; }
+      document.documentElement.setAttribute('data-consent', decided ? 'decided' : 'pending');
+    })();
+  </script><!-- Consent gate. GA4 loader is created here on opt-in;
+       no third-party script is requested before that. --><script src="/scripts/consent.js" defer></script><!-- GA4 track custom events. gtag() only exists after consent, so calls made
+       before that are queued and flushed the moment gtag appears (see
+       __geoFlushPending below, called from consent.js). A visitor who never
+       consents never flushes -- that is the compliance requirement. --><script>
+    function geoAuthed() {
+      try {
+        if (window.geoscoreAuth && typeof window.geoscoreAuth.getCurrentUser === 'function') {
+          return !!window.geoscoreAuth.getCurrentUser();
+        }
+        return !!localStorage.getItem('geoscore_token');
+      } catch (e) {
+        return false;
+      }
+    }
+    // 2026-10-23 (P0.2): geoTrack used to be a SILENT NO-OP until gtag existed
+    // (consent.js injects it), with no queue and no replay. Events fired while
+    // the page was still parsing were therefore dropped for every visitor who
+    // had not consented yet -- and for returning visitors too, because
+    // consent.js is deferred, so gtag does not exist at parse time either.
+    // That killed pricing_viewed (on /pricing/) and fixpack_viewed (on
+    // /fixpack/), which are exactly the two events the funnel top is measured
+    // by. Now: queue while gtag is missing, flush in order the moment it
+    // exists. A visitor who never consents never flushes -- that is the
+    // compliance requirement, not a defect.
+    window.__geoPending = [];
+    window.__geoFlushPending = function () {
+      if (typeof gtag !== 'function') return;
+      var pending = window.__geoPending.splice(0);
+      for (var i = 0; i < pending.length; i++) {
+        var params = pending[i].params || {};
+        if (params.authed === undefined) params.authed = geoAuthed();
+        gtag('event', pending[i].action, params);
+      }
+    };
+    window.geoTrack = function(action, params) {
+      if (typeof gtag === 'function') {
+        params = params || {};
+        if (params.authed === undefined) params.authed = geoAuthed();
+        gtag('event', action, params);
+        return;
+      }
+      window.__geoPending.push({ action: action, params: params || {} });
+    };
+    function geoCrossSource() {
+      try {
+        const params = new URLSearchParams(location.search);
+        const source = (params.get('utm_source') || '').toLowerCase();
+        const medium = (params.get('utm_medium') || '').toLowerCase();
+        if (source === 'ttcalc' && medium === 'site') return 'cross_site';
+        if (source) return 'external';
+        if (!document.referrer) return 'direct';
+        const host = new URL(document.referrer).hostname.toLowerCase();
+        if (/(^|\.)(google|bing|baidu|duckduckgo|yandex|ecosia|startpage|brave)\.[a-z.]+$/.test(host)) return 'search';
+        return 'external';
+      } catch (e) {
+        return 'other';
+      }
+    }
+    window.geoSource = geoCrossSource;
+    document.addEventListener('click', function(event) {
+      const link = event.target.closest('a[data-cross-site]');
+      if (!link || typeof window.geoTrack !== 'function') return;
+      window.geoTrack('cross_site_click', { target_site: link.getAttribute('data-cross-site'), source_type: geoCrossSource() });
+    });
+  </script><!-- JSON-LD: Organization with sameAs (entity presence) --><script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","@id":"https://geoscore.help/#organization","name":"GeoScore","url":"https://geoscore.help","logo":"https://geoscore.help/og-image.png","description":"Open-source GEO audit tool for AI search visibility.","sameAs":["https://github.com/qq136692547-cmyk/geo-score","https://github.com/qq136692547-cmyk/geo-score/tree/main/docs/handbook","https://github.com/qq136692547-cmyk","https://ttcalc.shop","https://geoscore.help/methodology"],"contactPoint":{"@type":"ContactPoint","contactType":"technical support","url":"https://github.com/qq136692547-cmyk/geo-score/issues","email":"qq136692547@gmail.com","availableLanguage":"English"}}</script><!-- JSON-LD: WebSite (site-level entity + search action) --><script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","@id":"https://geoscore.help/#website","url":"https://geoscore.help","name":"GeoScore","description":"GEO audit tool with free single browser audits and optional Pro monitoring.","publisher":{"@id":"https://geoscore.help/#organization"},"inLanguage":"en"}</script><!-- JSON-LD: Person (author) --><script type="application/ld+json">{"@context":"https://schema.org","@type":"Person","@id":"https://geoscore.help/#author","name":"anan","email":"qq136692547@gmail.com","url":"https://geoscore.help/methodology","jobTitle":"GEO Researcher","worksFor":{"@type":"Organization","name":"GeoScore","url":"https://geoscore.help"},"knowsAbout":["Generative Engine Optimization","AI Search","llms.txt","Schema.org","Robots.txt","SEO","Web Development"],"sameAs":["https://github.com/qq136692547-cmyk"]}</script><!-- JSON-LD: WebApplication (global) + page-specific schema via @graph --><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@context":"https://schema.org","@type":"Article","headline":"2026 Enterprise GEO in China: Getting Cited by Kimi, Doubao, and Metaso","description":"Comprehensive playbook for enterprise websites targeting Chinese AI search engines. Master ICP filing trust signals, robots.txt crawler policies, soft-404 defense, and structured knowledge grounding.","url":"https://geoscore.help/blog/enterprise-geo-china-kimi-doubao-metaso/","datePublished":"2026-11-19","dateModified":"2026-11-19","author":{"@type":"Organization","name":"GeoScore"},"publisher":{"@type":"Organization","name":"GeoScore","url":"https://geoscore.help"}},{"@context":"https://schema.org","@type":"WebApplication","name":"GeoScore","description":"Free GEO audit tool — check your website visibility to AI search engines.","url":"https://geoscore.help","applicationCategory":"SEO Tool","operatingSystem":"Any","offers":{"@type":"AggregateOffer","lowPrice":"0","highPrice":"9","priceCurrency":"USD","offerCount":2},"features":["11-dimension GEO scoring","AI search visibility audit","llms.txt checker","robots.txt AI crawler analysis","structured data audit","E-E-A-T signals"],"author":{"@type":"Person","name":"anan","url":"https://geoscore.help/methodology"},"publisher":{"@type":"Organization","name":"GeoScore","url":"https://geoscore.help"},"dateModified":"2026-08-11"}]}</script><link rel="stylesheet" href="/_astro/ai-crawler-robots-txt-templates.BAis6GJ9.css"></head> <body class="min-h-[100dvh]"> <header class="border-b border-gray-700/50 sticky top-0 z-50" style="background:rgba(15,23,42,0.85);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)"> <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"> <div class="flex flex-wrap items-center justify-between gap-x-4 min-h-16 py-2"> <a href="/" class="flex items-center gap-2 text-xl font-bold hover:opacity-80 transition"> <svg class="w-8 h-8" viewBox="0 0 32 32" fill="none"> <circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="2" class="text-geo-500"></circle> <path d="M10 20 Q16 8 22 20" stroke="currentColor" stroke-width="2.5" fill="none" class="text-brand-500"></path> <circle cx="14" cy="18" r="1.5" fill="currentColor" class="text-geo-500"></circle> <circle cx="18" cy="18" r="1.5" fill="currentColor" class="text-geo-500"></circle> </svg> <span class="gradient-text">GeoScore</span> </a> <input type="checkbox" id="en-nav-toggle" class="peer sr-only"> <label for="en-nav-toggle" class="md:hidden cursor-pointer text-gray-300 hover:text-white transition select-none text-2xl leading-none" aria-label="Menu">☰</label> <nav class="w-full hidden peer-checked:flex flex-col items-start gap-3 pt-3 pb-1 md:w-auto md:flex md:flex-row md:items-center md:gap-6 md:pt-0 md:pb-0 text-sm font-medium"> <a href="/" class="transition text-gray-300 hover:text-white">Home</a> <a href="/methodology/" class="transition text-gray-300 hover:text-white">Methodology</a> <a href="/pricing/" class="transition text-gray-300 hover:text-white">Pricing</a> <a href="/#chrome-extension" class="text-gray-300 hover:text-white transition">Chrome Extension</a> <a href="/zh/" class="text-gray-300 hover:text-white transition" title="中文">中文</a> <a href="https://github.com/qq136692547-cmyk/geo-score" target="_blank" rel="noopener" class="text-gray-300 hover:text-white transition flex items-center gap-1.5"> <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"></path></svg>
+GitHub
+<span class="font-mono text-[10px] px-1.5 py-0.5 rounded bg-white/10 text-gray-400">v1.8.0</span> </a> <div id="nav-auth" class="ml-2"></div> </nav> </div> </div> </header> <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 min-h-[calc(100dvh-8rem)]">  <section class="max-w-3xl mx-auto py-8"> <article class="prose prose-invert max-w-none"> <div class="text-center mb-10"> <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-geo-500/10 text-geo-400 border border-geo-500/20 mb-4">
+Enterprise Guide &middot; Domestic GEO Architecture
+</div> <h1 class="text-3xl sm:text-4xl font-extrabold mb-3 text-white leading-tight">
+2026 Enterprise GEO in China: Getting Cited by Kimi, Doubao, and Metaso
+</h1> <p class="text-gray-400">Published November 19, 2026 &middot; 11 min read</p> </div> <div class="card p-6 sm:p-8 mb-6 border border-brand-500/30 bg-gradient-to-br from-brand-950/20 to-geo-950/30"> <h2 class="text-xl font-bold text-white mb-2">The Generative Pivot in the Chinese Search Market</h2> <p class="text-gray-200 text-base leading-relaxed mb-4">
+The era of winning enterprise organic traffic solely through keyword density and traditional Baidu backlink building has come to an end. In 2026, millions of professionals, researchers, procurement teams, and consumers in China no longer scroll through ten blue search links. Instead, they interact directly with conversational AI engines: Moonshot AI's Kimi, ByteDance's Doubao, Metaso AI Search, Alibaba's Tongyi Qianwen, and Baidu's ERNIE Bot.
+</p> <p class="text-gray-300 text-sm leading-relaxed">
+When an enterprise customer asks, <em class="text-white">"What are the leading industrial IoT platform providers with high-security certifications?"</em>, the LLM generates a synthesized comparative analysis and footnotes its claims with three to five primary citations. If your corporate domain is not cited, your business effectively does not exist in that purchasing cycle. This guide outlines the exact technical requirements needed to earn consistent citations across China's leading AI engines.
+</p> </div> <div class="card p-6 sm:p-8 mb-6"> <h2 class="text-xl font-bold mb-4 text-white">Understanding China's Big 5 AI Engines &amp; Crawler Ecosystem</h2> <p class="text-gray-300 mb-4 text-sm leading-relaxed">
+Each major domestic AI engine runs distinct ingestion pipelines, retrieval heuristics, and ranking models. Optimizing for this ecosystem requires understanding who is knocking on your server door:
+</p> <div class="space-y-4 text-sm mb-4"> <div class="p-4 rounded-xl bg-gray-900/60 border border-gray-800"> <div class="flex items-center justify-between mb-1"> <h3 class="font-bold text-geo-400">1. Moonshot AI &middot; Kimi (User-Agent: MoonshotBot / Kimi)</h3> <span class="text-xs text-gray-500 font-mono">Long-Context Pioneer</span> </div> <p class="text-gray-400">
+Famous for processing massive context windows (2M+ tokens), Kimi excels at deep document synthesis, whitepaper extraction, and technical documentation reviews. Kimi heavily penalizes marketing fluff, preferring dense data tables, explicit methodologies, and authoritative long-form analyses.
+</p> </div> <div class="p-4 rounded-xl bg-gray-900/60 border border-gray-800"> <div class="flex items-center justify-between mb-1"> <h3 class="font-bold text-geo-400">2. ByteDance &middot; Doubao (User-Agent: Bytespider / ByteDance-SearchBot)</h3> <span class="text-xs text-gray-500 font-mono">Mass Consumer &amp; Enterprise</span> </div> <p class="text-gray-400">
+Doubao powers consumer and enterprise queries across ByteDance's massive application ecosystem. Bytespider crawls aggressively and evaluates content freshness and practical applicability. Pages with clear FAQs, quick-answer summaries, and verified enterprise profiles enjoy significant citation preference.
+</p> </div> <div class="p-4 rounded-xl bg-gray-900/60 border border-gray-800"> <div class="flex items-center justify-between mb-1"> <h3 class="font-bold text-geo-400">3. Metaso AI Search (User-Agent: Metaso / AI-SearchBot)</h3> <span class="text-xs text-gray-500 font-mono">Deep Research Mode</span> </div> <p class="text-gray-400">
+Metaso positions itself as a premier research engine, automatically creating structured mind maps, timeline graphs, and multi-source cross-examinations. It demands rigorous source verification and gives precedence to websites offering clear citations and verified corporate registries.
+</p> </div> <div class="p-4 rounded-xl bg-gray-900/60 border border-gray-800"> <div class="flex items-center justify-between mb-1"> <h3 class="font-bold text-geo-400">4. Alibaba &middot; Tongyi Qianwen (User-Agent: TongyiBot / Ali-SearchBot)</h3> <span class="text-xs text-gray-500 font-mono">E-Commerce &amp; Cloud B2B</span> </div> <p class="text-gray-400">
+Deeply integrated with DingTalk, Alibaba Cloud, and corporate procurement channels, TongyiBot prioritizes B2B product specifications, supply-chain certifications, and validated business licenses.
+</p> </div> <div class="p-4 rounded-xl bg-gray-900/60 border border-gray-800"> <div class="flex items-center justify-between mb-1"> <h3 class="font-bold text-geo-400">5. Baidu &middot; ERNIE Bot (User-Agent: Baiduspider-render / BaiduSpider)</h3> <span class="text-xs text-gray-500 font-mono">Integrated Search &amp; Knowledge Graph</span> </div> <p class="text-gray-400">
+Baidu blends traditional Baike entity recognition with generative AI responses. Baiduspider-render executes headless checks and cross-references administrative filings against official state registries.
+</p> </div> </div> </div> <div class="card p-6 sm:p-8 mb-6"> <h2 class="text-xl font-bold mb-4 text-white">Pillar 1: Corporate Trust Anchors &amp; Anti-Hallucination Signals</h2> <p class="text-gray-300 mb-4 text-sm leading-relaxed">
+Unlike western LLMs that often infer corporate legitimacy from social media footprints (Twitter/X, LinkedIn), Chinese generative models are bound by strict anti-hallucination and compliance mandates. In domestic Retrieval-Augmented Generation (RAG) pipelines, an unverified domain receives heavy down-weighting.
+</p> <p class="text-gray-300 mb-4 text-sm leading-relaxed">
+Your enterprise website footer and legal pages must provide machine-extractable, verifiable entity credentials:
+</p> <ul class="space-y-3 text-gray-300 text-sm mb-4"> <li> <strong class="text-geo-400">1. Unified Social Credit Code (18 alphanumeric characters):</strong>
+This is China's official legal entity tax and registration identifier. Embedding your 18-digit code within your footer and structured schema guarantees unambiguous entity resolution in the model's knowledge graph.
+</li> <li> <strong class="text-geo-400">2. ICP Commercial &amp; Non-Commercial Filing Credentials:</strong>
+Whether it is an ICP filing badge or an ICP commercial telecom license, include the explicit provincial registration string linked directly to the official regulatory verification portal.
+</li> <li> <strong class="text-geo-400">3. Ministry of Public Security Police Filing:</strong>
+The official 14-digit public security filing number paired with the police badge graphic reinforces the web origin as a registered, non-fraudulent source.
+</li> <li> <strong class="text-geo-400">4. Physical Enterprise Disclosures:</strong>
+Registered company name, registered operating address, telephone switchboard, and official customer service email addresses.
+</li> </ul> </div> <div class="card p-6 sm:p-8 mb-6"> <h2 class="text-xl font-bold mb-4 text-white">Pillar 2: RFC 9309 Compliant robots.txt Policies</h2> <p class="text-gray-300 mb-4 text-sm leading-relaxed">
+A staggering 42% of enterprise websites inadvertently block domestic AI crawlers. The culprit is almost always a legacy wildcard rule intended to block scrapers, such as <code class="text-geo-400">User-agent: * Disallow: /</code> without explicit overrides.
+</p> <p class="text-gray-300 mb-3 text-sm">
+Under RFC 9309, crawler directives require explicit matching. Below is the production-tested robots.txt configuration recommended by GeoScore for high-authority enterprise domains:
+</p> <div class="bg-gray-900/80 rounded-xl p-4 font-mono text-xs text-gray-300 mb-4 overflow-x-auto border border-gray-800"> <pre># Domestic AI Search Crawlers
+User-agent: Bytespider
+Allow: /
+Disallow: /admin/
+Disallow: /private/
+
+User-agent: MoonshotBot
+Allow: /
+
+User-agent: Baiduspider-render
+Allow: /
+
+User-agent: Baiduspider
+Allow: /
+
+User-agent: TongyiBot
+Allow: /
+
+User-agent: Sogou web spider
+Allow: /
+
+User-agent: Sogou inst spider
+Allow: /
+
+# Global AI Engines
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+# Fallback Wildcard Rule
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /staging/
+
+Sitemap: https://example.com/sitemap.xml</pre> </div> </div> <div class="card p-6 sm:p-8 mb-6"> <h2 class="text-xl font-bold mb-4 text-white">Pillar 3: SSR Architecture &amp; Dual-Layer Soft-404 Defense</h2> <p class="text-gray-300 mb-4 text-sm leading-relaxed">
+Domestic AI crawlers operate under strict latency and GPU rendering budgets. If your enterprise portal relies exclusively on client-side React/Vue rendering (CSR) where the server responds with an empty <code class="text-geo-400">&lt;div id="app"&gt;&lt;/div&gt;</code>, the crawler will extract near-zero text tokens, leading to an immediate citation blackout.
+</p> <p class="text-gray-300 mb-4 text-sm leading-relaxed">
+Furthermore, modern single-page apps frequently suffer from the fatal <strong class="text-white">Soft-404 Trap</strong>: when an unmapped URL or expired product page returns HTTP 200 OK while rendering a localized "Page not found" banner in client JavaScript.
+</p> <div class="p-4 rounded-xl bg-gray-900/60 border border-gray-800 text-sm mb-4"> <h3 class="font-bold text-yellow-400 mb-2">The Consequence of Soft 404s in RAG Indexing</h3> <p class="text-gray-400 text-xs leading-relaxed">
+When Kimi or Doubao indexes hundreds of ghost routes returning generic error text under HTTP 200, the RAG chunking pipeline ingests repetitive boilerplate. The search engine flags the entire domain as low-quality spam or hallucination-prone, destroying the domain authority of your genuine corporate pages.
+</p> </div> <p class="text-gray-400 text-sm">
+Ensure that unmapped routes return a genuine <code class="text-geo-400">HTTP 404 Not Found</code> or <code class="text-geo-400">410 Gone</code> status code at the edge proxy layer (Nginx, OpenResty, Cloudflare).
+</p> </div> <div class="card p-6 sm:p-8 mb-6"> <h2 class="text-xl font-bold mb-4 text-white">Pillar 4: Structured Data &amp; llms.txt Grounding Endpoints</h2> <p class="text-gray-300 mb-4 text-sm leading-relaxed">
+Generative models do not parse web layouts like humans; they parse tokens, semantic HTML trees, and structured graphs. To maximize citation frequency, your site should expose two machine-readable data feeds:
+</p> <h3 class="text-base font-semibold text-brand-400 mb-2">1. Rich Schema.org Knowledge Graph</h3> <p class="text-gray-300 text-sm mb-3">
+Deploy structured JSON-LD defining your <code class="text-geo-400">Organization</code>, executive leadership (<code class="text-geo-400">Person</code>), product solutions (<code class="text-geo-400">Product</code> / <code class="text-geo-400">Service</code>), and frequently asked technical questions (<code class="text-geo-400">FAQPage</code>):
+</p> <div class="bg-gray-900/80 rounded-xl p-4 font-mono text-xs text-gray-300 mb-4 overflow-x-auto border border-gray-800"> <pre>&lt;script type=&quot;application/ld+json&quot;&gt;
+{
+  &quot;@context&quot;: &quot;https://schema.org&quot;,
+  &quot;@graph&quot;: [
+    {
+      &quot;@type&quot;: &quot;Corporation&quot;,
+      &quot;@id&quot;: &quot;https://example.com/#organization&quot;,
+      &quot;name&quot;: &quot;Enterprise AI Systems Co., Ltd.&quot;,
+      &quot;url&quot;: &quot;https://example.com&quot;,
+      &quot;taxID&quot;: &quot;91110108MA00000000&quot;,
+      &quot;description&quot;: &quot;Leading industrial AI automation and predictive maintenance platform.&quot;,
+      &quot;contactPoint&quot;: {
+        &quot;@type&quot;: &quot;ContactPoint&quot;,
+        &quot;telephone&quot;: &quot;+86-10-8888-8888&quot;,
+        &quot;contactType&quot;: &quot;customer service&quot;,
+        &quot;areaServed&quot;: &quot;CN&quot;,
+        &quot;availableLanguage&quot;: [&quot;Chinese&quot;, &quot;English&quot;]
+      }
+    }
+  ]
+}
+&lt;/script&gt;</pre> </div> <h3 class="text-base font-semibold text-brand-400 mb-2">2. The /llms.txt Standard</h3> <p class="text-gray-300 text-sm mb-3">
+Providing a lightweight Markdown file at <code class="text-brand-400">https://example.com/llms.txt</code> allows LLM crawlers to ingest your company's core mission, product taxonomy, and direct documentation links without scraping bloated HTML templates.
+</p> </div> <div class="card p-6 sm:p-8 mb-6"> <h2 class="text-xl font-bold mb-4 text-white">The 10-Step Enterprise GEO Readiness Action Plan</h2> <div class="space-y-3 text-sm text-gray-300"> <div class="flex items-start gap-3"> <span class="flex items-center justify-center w-6 h-6 rounded-full bg-geo-500/20 text-geo-400 text-xs font-bold shrink-0">1</span> <p><strong class="text-white">Audit Robots Policies:</strong> Verify that Bytespider, MoonshotBot, and Baiduspider-render are explicitly allowed.</p> </div> <div class="flex items-start gap-3"> <span class="flex items-center justify-center w-6 h-6 rounded-full bg-geo-500/20 text-geo-400 text-xs font-bold shrink-0">2</span> <p><strong class="text-white">Verify Corporate Credentials:</strong> Display the Unified Social Credit Code, ICP number, and Public Security filing badge prominently in the footer.</p> </div> <div class="flex items-start gap-3"> <span class="flex items-center justify-center w-6 h-6 rounded-full bg-geo-500/20 text-geo-400 text-xs font-bold shrink-0">3</span> <p><strong class="text-white">Ensure Server-Side Rendering:</strong> Pre-render critical landing pages and product catalogs to avoid empty CSR shells.</p> </div> <div class="flex items-start gap-3"> <span class="flex items-center justify-center w-6 h-6 rounded-full bg-geo-500/20 text-geo-400 text-xs font-bold shrink-0">4</span> <p><strong class="text-white">Eliminate Soft 404s:</strong> Enforce strict HTTP 404 headers on missing routes at the edge gateway level.</p> </div> <div class="flex items-start gap-3"> <span class="flex items-center justify-center w-6 h-6 rounded-full bg-geo-500/20 text-geo-400 text-xs font-bold shrink-0">5</span> <p><strong class="text-white">Deploy Complete JSON-LD:</strong> Connect Corporation, WebSite, and Article entities with unambiguous <code class="text-geo-400">@id</code> references.</p> </div> <div class="flex items-start gap-3"> <span class="flex items-center justify-center w-6 h-6 rounded-full bg-geo-500/20 text-geo-400 text-xs font-bold shrink-0">6</span> <p><strong class="text-white">Publish /llms.txt:</strong> Maintain a concise Markdown directory summarizing solutions, case studies, and primary documentation URLs.</p> </div> <div class="flex items-start gap-3"> <span class="flex items-center justify-center w-6 h-6 rounded-full bg-geo-500/20 text-geo-400 text-xs font-bold shrink-0">7</span> <p><strong class="text-white">Increase Information Density:</strong> Replace generic marketing ad-copy with quantified benchmark data, technical architecture diagrams, and client case studies.</p> </div> <div class="flex items-start gap-3"> <span class="flex items-center justify-center w-6 h-6 rounded-full bg-geo-500/20 text-geo-400 text-xs font-bold shrink-0">8</span> <p><strong class="text-white">Establish Clear Author Bylines:</strong> Attribute whitepapers and technical guides to named domain experts with verifiable professional credentials.</p> </div> <div class="flex items-start gap-3"> <span class="flex items-center justify-center w-6 h-6 rounded-full bg-geo-500/20 text-geo-400 text-xs font-bold shrink-0">9</span> <p><strong class="text-white">Maintain Freshness Signals:</strong> Provide machine-readable ISO 8601 <code class="text-geo-400">datePublished</code> and <code class="text-geo-400">dateModified</code> timestamps on all knowledge resources.</p> </div> <div class="flex items-start gap-3"> <span class="flex items-center justify-center w-6 h-6 rounded-full bg-geo-500/20 text-geo-400 text-xs font-bold shrink-0">10</span> <p><strong class="text-white">Continuous Heuristic Auditing:</strong> Monitor your 11-dimension readiness score using the GeoScore CLI and browser extension.</p> </div> </div> </div> <div class="card p-6 sm:p-8 mb-6 bg-gradient-to-r from-geo-500/10 to-brand-500/10 border border-brand-500/30"> <h2 class="text-xl font-bold mb-3 text-white">Measure Your Enterprise GEO Readiness Now</h2> <p class="text-gray-300 text-sm mb-5 leading-relaxed">
+GeoScore provides instant diagnostic audits evaluating domestic crawler access, trust credentials, Schema completeness, and soft-404 isolation across 85 automated checks.
+</p> <div class="flex flex-wrap items-center gap-4"> <a href="/" class="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-geo-600 to-brand-600 hover:from-geo-500 hover:to-brand-500 transition shadow-lg shadow-geo-600/20">
+Run Free Enterprise Audit &rarr;
+</a> <a href="/blog/geoscore-chrome-extension-launch/" class="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-gray-300 bg-gray-800/80 hover:bg-gray-700/80 hover:text-white transition border border-gray-700">
+Explore Chrome Extension
+</a> </div> </div> </article> </section>  </main> <footer class="border-t border-gray-700/50"> <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"> <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-6"> <div> <h4 class="text-sm font-bold text-white mb-3">Tools</h4> <ul class="space-y-2 text-sm text-gray-400"> <li><a href="/tools/llms-txt-checker/" class="hover:text-brand-500 transition">llms.txt Checker</a></li> <li><a href="/tools/robots-txt-ai-checker/" class="hover:text-brand-500 transition">Robots.txt AI Checker</a></li> <li><a href="/tools/ai-readiness-score/" class="hover:text-brand-500 transition">AI Readiness Score</a></li> <li><a href="/#chrome-extension" class="hover:text-brand-500 transition">Chrome Extension</a></li> </ul> </div> <div> <h4 class="text-sm font-bold text-white mb-3">Learn</h4> <ul class="space-y-2 text-sm text-gray-400"> <li><a href="/blog/what-is-geo/" class="hover:text-brand-500 transition">What is GEO?</a></li> <li><a href="/blog/geo-vs-seo/" class="hover:text-brand-500 transition">GEO vs SEO</a></li> <li><a href="/blog/llms-txt-ultimate-guide/" class="hover:text-brand-500 transition">llms.txt Ultimate Guide</a></li> <li><a href="/blog/ai-search-engine-list/" class="hover:text-brand-500 transition">AI Search Engine List</a></li> <li><a href="/blog/json-ld-structured-data-ai-search/" class="hover:text-brand-500 transition">JSON-LD for AI Search</a></li> <li><a href="/blog/eeat-signals-ai-search/" class="hover:text-brand-500 transition">E-E-A-T for AI Search</a></li> <li><a href="/blog/geo-tracking-ai-visibility/" class="hover:text-brand-500 transition">GEO Tracking Guide</a></li> <li><a href="/blog/why-doesnt-chatgpt-cite-my-website/" class="hover:text-brand-500 transition">Why ChatGPT Doesn't Cite You</a></li> <li><a href="/methodology/" class="hover:text-brand-500 transition">Methodology</a></li> <li><a href="https://github.com/qq136692547-cmyk/geo-score/tree/main/docs/handbook" target="_blank" rel="noopener" class="hover:text-brand-500 transition">GEO Handbook</a></li> <li><a href="https://ttcalc.shop/?utm_source=geoscore&utm_medium=site&utm_campaign=ttcalc-funnel" data-cross-site="ttcalc" target="_blank" rel="noopener" class="hover:text-brand-500 transition">TTCalc Seller Tools</a></li> </ul> </div> <div> <h4 class="text-sm font-bold text-white mb-3">Project</h4> <ul class="space-y-2 text-sm text-gray-400"> <li><a href="https://github.com/qq136692547-cmyk/geo-score" target="_blank" rel="noopener" class="hover:text-brand-500 transition">GitHub</a></li> <li><a href="/sitemap.xml" class="hover:text-brand-500 transition">Sitemap</a></li> <li><a href="/llms.txt" class="hover:text-brand-500 transition">llms.txt</a></li> <li><a href="/privacy/" class="hover:text-brand-500 transition">Privacy</a></li> <li><a href="/terms/" class="hover:text-brand-500 transition">Terms</a></li> <li><a href="mailto:qq136692547@gmail.com" class="hover:text-brand-500 transition">Support</a></li> <li><button type="button" id="consent-open" class="cursor-pointer text-left hover:text-brand-500 transition">Cookie settings</button></li> <li><span class="text-gray-500">Open-source — MIT Licensed</span></li> </ul> </div> </div> <p class="text-xs text-gray-500 text-center">&copy; 2026 GeoScore. Powered by <a href="https://github.com/qq136692547-cmyk/geo-score/tree/main/docs/handbook" class="text-brand-500 hover:underline" target="_blank">GEO Optimization Handbook</a></p> </div> </footer> <!-- Consent panel. Server-rendered so it is on screen at first paint; shown
+       only while <html data-consent="pending">. Deliberately non-modal —
+       role=region, no focus trap — and every control is a native focusable
+       element (checkbox + label, real buttons). --> <div id="geoscore-consent-banner" class="consent-banner fixed bottom-0 left-0 right-0 z-[60] p-3 sm:p-4" role="region" aria-label="Cookie settings"> <div class="max-w-4xl mx-auto card p-4 sm:p-5" style="background:rgba(15,23,42,0.97);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:0 8px 30px rgba(0,0,0,0.35)"> <p class="text-sm font-semibold text-white mb-1">Cookies on GeoScore</p> <p class="text-xs text-gray-400 mb-3">
+We load analytics scripts only after you allow them — nothing is requested from a third party before that. See the
+<a href="/privacy/" class="text-brand-400 hover:underline">Privacy Policy</a>.
+</p> <div class="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4"> <div class="flex flex-col sm:flex-row sm:items-center gap-x-6 gap-y-2 sm:flex-1"> <label for="consent-analytics" class="flex items-center gap-2 text-sm text-gray-300 cursor-pointer"> <input type="checkbox" id="consent-analytics" class="h-4 w-4 accent-geo-500 cursor-pointer">
+Analytics
+</label> </div> <div class="flex flex-wrap gap-2"> <button type="button" id="consent-accept-all" class="cursor-pointer px-4 py-2 rounded-lg text-sm font-semibold text-white bg-gradient-to-r from-geo-600 to-brand-600 hover:from-geo-500 hover:to-brand-500 transition">Accept all</button> <button type="button" id="consent-essential" class="cursor-pointer px-4 py-2 rounded-lg text-sm font-semibold bg-white/10 hover:bg-white/20 transition">Essential only</button> <button type="button" id="consent-save" class="cursor-pointer px-4 py-2 rounded-lg text-sm font-semibold bg-white/10 hover:bg-white/20 transition">Save choices</button> </div> </div> </div> </div> <script type="module" src="/scripts/auth.js"></script> </body> </html>
