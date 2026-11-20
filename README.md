@@ -9,6 +9,12 @@
 [![GitHub Pages](https://img.shields.io/badge/Deploy-GitHub%20Pages-222?logo=githubpages)](https://pages.github.com)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
+<p align="center">
+  <a href="https://chromewebstore.google.com/detail/geoscore-free-geo-aeo-llm/cboppgehhkhaamcgfcikhekkdaelichn">
+    <img src="extension/store-assets/screenshot-1-hero-85-checks.png" alt="GeoScore - 11 Dimensions 85 Strict Checks" width="880">
+  </a>
+</p>
+
 ---
 
 ## 🚀 Try It & Ecosystem Quickstart
@@ -62,6 +68,10 @@ GeoScore synthesizes frameworks from the leading GEO/AEO open-source projects:
 
 ## 🏗 Architecture & Ecosystem
 
+<p align="center">
+  <img src="extension/store-assets/screenshot-5-ecosystem-bilingual.png" alt="Unified GEO Engine Across All Your Tools - Web, Extension, CLI, MCP" width="880">
+</p>
+
 GeoScore delivers a comprehensive 4-in-1 toolchain covering the full GEO optimization lifecycle:
 
 ```
@@ -108,6 +118,16 @@ GeoScore operates under an **Open-Core** philosophy: standard audit algorithms a
 | **Core Open-Source**<br/>*(MIT License)* | • 11-Dimension / 85-Check Engine<br/>• Terminal CLI Scanner<br/>• Chrome Extension MV3<br/>• MCP Server for AI Agents | Full diagnostic breakdown, 0–100 score, negative signal analysis, and prompt injection detection | **100% Free**<br/>(`npx geoscore` / GitHub) |
 | **Automated Fix Pack**<br/>*(Commercial SaaS)* | • 1-Click Code Generation<br/>• Deploy-Ready Config Bundles<br/>• Schema Syntax Guarantee | Tailored `llms.txt`, hardened `robots.txt`, and validated JSON-LD schema snippets to paste directly | **$49 / site**<br/>([geoscore.help](https://geoscore.help/)) |
 | **Enterprise Cloud**<br/>*(Commercial SaaS)* | • Multi-Engine Citation Tracking<br/>• AI Search Answer Share Alerts<br/>• Bespoke Consulting | Weekly automated queries on ChatGPT, Perplexity, Claude, Gemini & Google AI Overviews with trend history | **Custom / Retainer**<br/>([geoscore.help](https://geoscore.help/)) |
+
+### 🔬 Visual Diagnostics: In-Page X-Ray & SSR vs CSR Reality Check
+
+| SSR Raw HTML vs CSR Live DOM Analysis | In-Page Visual DOM X-Ray |
+| :---: | :---: |
+| <img src="extension/store-assets/screenshot-2-ssr-vs-csr-diff.png" alt="SSR vs CSR Diff" width="440"> | <img src="extension/store-assets/screenshot-3-inpage-xray.png" alt="In-Page X-Ray" width="440"> |
+
+<p align="center">
+  <img src="extension/store-assets/screenshot-4-cursor-prompt-localhost.png" alt="Instant AI Prompts for Cursor Composer & Claude Code" width="880">
+</p>
 
 ## 🛠 Tech Stack
 
