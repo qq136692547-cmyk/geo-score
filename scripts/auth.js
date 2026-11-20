@@ -15,6 +15,12 @@ const API_BASE = 'https://geoscore-payments.geo-score.workers.dev';
   gisScript.src = 'https://accounts.google.com/gsi/client';
   gisScript.async = true;
   gisScript.defer = true;
+  gisScript.onload = () => {
+    renderGoogleButton();
+  };
+  gisScript.onerror = () => {
+    console.warn('Google Identity Services script failed to load (blocked by network/firewall)');
+  };
   document.head.appendChild(gisScript);
 
   // State
@@ -239,16 +245,62 @@ const API_BASE = 'https://geoscore-payments.geo-score.workers.dev';
     function showInfo(msg) { infoEl.textContent = msg; infoEl.classList.remove('hidden'); }
   }
 
+  function renderGoogleButton() {
+    if (window.google && window.google.accounts && window.google.accounts.id) {
+      try {
+        google.accounts.id.initialize({
+          client_id: '154080569698-1e94rhuipkvgboc6fqfp94fndkodmtea.apps.googleusercontent.com',
+          callback: handleGoogleCallback,
+          auto_select: false,
+          cancel_on_tap_outside: true
+        });
+        const container = document.getElementById('g-btn-container');
+        if (container) {
+          container.innerHTML = '';
+          google.accounts.id.renderButton(container, {
+            theme: 'outline',
+            size: 'large',
+            type: 'standard',
+            text: 'continue_with',
+            shape: 'rectangular',
+            width: 320,
+            logo_alignment: 'left'
+          });
+        }
+      } catch (e) {
+        console.warn('Google renderButton error:', e);
+      }
+    }
+  }
+
   function triggerGoogleLogin() {
-    if (window.google && window.google.accounts) {
-      google.accounts.id.initialize({
-        client_id: '154080569698-1e94rhuipkvgboc6fqfp94fndkodmtea.apps.googleusercontent.com',
-        callback: handleGoogleCallback
-      });
-      google.accounts.id.prompt();
+    const errorEl = document.querySelector('#auth-error');
+    if (!window.google || !window.google.accounts || !window.google.accounts.id) {
+      if (errorEl) {
+        errorEl.textContent = t(
+          'Unable to connect to Google (network blocked). Please enable a VPN/proxy and reload, or use features directly without signing in.',
+          '无法连接 Google 登录服务（国内网络可能被拦截）。请开启科学上网/VPN后刷新页面重试，或直接免登录使用核心功能。'
+        );
+        errorEl.classList.remove('hidden');
+      }
+      return;
+    }
+    renderGoogleButton();
+    const gBtn = document.querySelector('#g-btn-container div[role="button"]');
+    if (gBtn) {
+      gBtn.click();
     } else {
-      // Fallback: wait for script to load
-      setTimeout(triggerGoogleLogin, 500);
+      google.accounts.id.prompt((notification) => {
+        if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+          if (errorEl) {
+            errorEl.textContent = t(
+              'Google login prompt suppressed. Please check your browser popup settings.',
+              'Google 登录弹窗被浏览器拦截，请检查浏览器的弹窗权限设置。'
+            );
+            errorEl.classList.remove('hidden');
+          }
+        }
+      });
     }
   }
 
@@ -286,6 +338,7 @@ const API_BASE = 'https://geoscore-payments.geo-score.workers.dev';
     if (modal) {
       modal.classList.remove('hidden');
       modal.classList.add('flex');
+      renderGoogleButton();
     }
   }
 
