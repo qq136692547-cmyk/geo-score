@@ -44,8 +44,8 @@ const API_BASE = 'https://geoscore-payments.geo-score.workers.dev';
   // Init on DOM ready
   document.addEventListener('DOMContentLoaded', initAuth);
 
-  // Fetch with timeout (5s) to avoid hanging on unreachable Worker
-  async function fetchWithTimeout(url, options = {}, timeoutMs = 5000) {
+  // Fetch with timeout (15s) to allow cross-border Worker connections
+  async function fetchWithTimeout(url, options = {}, timeoutMs = 15000) {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
     try {
@@ -328,7 +328,13 @@ const API_BASE = 'https://geoscore-payments.geo-score.workers.dev';
         if (infoEl) { infoEl.classList.add('hidden'); }
       }
     } catch (e) {
-      if (errorEl) { errorEl.textContent = t('Network error during Google login', 'Google 登录时网络错误'); errorEl.classList.remove('hidden'); }
+      if (errorEl) {
+        errorEl.textContent = t(
+          'Network error connecting to backend. If using a VPN in China, please switch to Global Mode.',
+          '网络错误：无法连接后端服务。若在境内，请将科学上网/代理软件切换为「全局模式 (Global)」后重试。'
+        );
+        errorEl.classList.remove('hidden');
+      }
       if (infoEl) { infoEl.classList.add('hidden'); }
     }
   }
