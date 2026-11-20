@@ -29,7 +29,7 @@ import LayoutZh from '../../layouts/LayoutZh.astro';
       {
         '@type': 'Question',
         name: '如何下单和付款？',
-        acceptedAnswer: { '@type': 'Answer', text: '先在 Fiverr 上把店铺网址发给我们，免费拿一段诊断结论。若诊断显示确有缺口，再在同一个 Fiverr gig 里下 $49 的 Custom Offer——款项由 Fiverr 托管，你确认交付后才放款。' }
+        acceptedAnswer: { '@type': 'Answer', text: '把店铺网址邮件发送至 qq136692547@gmail.com，先免费获取一段诊断结论。若诊断确认确有缺口且你认可方案，我们将在 48 小时内完成文件制作与交付，部署后复检。' }
       },
       {
         '@type': 'Question',
@@ -91,7 +91,7 @@ import LayoutZh from '../../layouts/LayoutZh.astro';
         <li class="flex gap-2"><span class="text-brand-500">✓</span><span><strong class="text-white">部署后复检</strong>——模板或文件上线后重跑审计，发送前后分数对比。若覆盖没生效，在这里就能看出来，不用等几个月。</span></li>
       </ul>
       <p class="text-xs text-gray-500 mt-4">
-        需要更多商品或全站 schema？扩展包（$129）覆盖最多 10 款商品——在同一个 Fiverr 对话里问即可。
+        需要更多商品或全站 schema？扩展包（$129）覆盖最多 10 款商品——在邮件中说明需求即可。
       </p>
     </div>
 
@@ -115,17 +115,14 @@ import LayoutZh from '../../layouts/LayoutZh.astro';
     <div class="card p-6 md:p-8 mb-8">
       <h2 class="text-xl font-bold mb-4">流程</h2>
       <ol class="text-sm text-gray-300 space-y-3 list-none">
-        <li class="flex gap-3"><span class="font-bold text-brand-400">1.</span><span><strong class="text-white">先免费诊断。</strong>通过下方 Fiverr gig 把店铺网址发来，你会收到一段诊断：AI 爬虫在你的站上到底看到了什么。免费、无义务。</span></li>
-        <li class="flex gap-3"><span class="font-bold text-brand-400">2.</span><span><strong class="text-white">下 $49 Custom Offer。</strong>款项由 Fiverr 托管。全程不索取后台权限或密码。</span></li>
+        <li class="flex gap-3"><span class="font-bold text-brand-400">1.</span><span><strong class="text-white">先免费诊断。</strong>把店铺网址发送邮件至 <a href="mailto:qq136692547@gmail.com?subject=Fix%20Pack%20%E5%92%A8%E8%AF%A2%E4%B8%8E%E8%AF%8A%E6%96%AD%20%E2%80%94%20%E6%88%91%E7%9A%84%E5%BA%97%E9%93%BA%E7%BD%91%E5%9D%80" class="text-brand-400 hover:underline">qq136692547@gmail.com</a>，你会收到一段诊断：AI 爬虫在你的站上到底看到了什么。免费、无任何附加义务。</span></li>
+        <li class="flex gap-3"><span class="font-bold text-brand-400">2.</span><span><strong class="text-white">确认方案与 $49 交付。</strong>若诊断确认确有缺口且你决定开展，邮件确认后直接制作。全程不索取后台权限或密码。</span></li>
         <li class="flex gap-3"><span class="font-bold text-brand-400">3.</span><span><strong class="text-white">48 小时内交付。</strong>一份 Shopify 主题模板（<span class="font-mono text-gray-300">llms.txt.liquid</span>，保留你原有的 UCP/MCP 发现链接），或普通 HTML 站点的可直接放入文件——两种都附安装说明。</span></li>
-        <li class="flex gap-3"><span class="font-bold text-brand-400">4.</span><span><strong class="text-white">你部署，我们复检。</strong>把模板加上或把文件放上去（也可交给你的开发者），告诉我们已生效，即可收到前后对比复检。</span></li>
+        <li class="flex gap-3"><span class="font-bold text-brand-400">4.</span><span><strong class="text-white">你部署，我们复检。</strong>把模板加上或把文件放上去（也可交给你的开发者），告诉我们已生效，即可收到前后对比复检报告。</span></li>
       </ol>
-      <div class="mt-6 flex flex-col sm:flex-row gap-3">
-        <a id="fixpack-fiverr-cta" href="https://www.fiverr.com/chinesefood885/audit-your-website-for-ai-search-visibility-and-implement-geo-fixes" target="_blank" rel="noopener" class="flex-1 text-center px-6 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-geo-600 to-brand-600 hover:from-geo-500 hover:to-brand-500 transition">
-          去 Fiverr 拿免费诊断 →
-        </a>
-        <a href="mailto:qq136692547@gmail.com?subject=Fix%20Pack%20—%20我的店铺网址" class="flex-1 text-center px-6 py-3 rounded-xl font-semibold text-sm border border-gray-600 text-gray-300 hover:border-brand-500 hover:text-white transition">
-          或邮件发送店铺网址
+      <div class="mt-6">
+        <a id="fixpack-email-cta" href="mailto:qq136692547@gmail.com?subject=Fix%20Pack%20%E5%92%A8%E8%AF%A2%E4%B8%8E%E8%AF%8A%E6%96%AD%20%E2%80%94%20%E6%88%91%E7%9A%84%E5%BA%97%E9%93%BA%E7%BD%91%E5%9D%80" class="block w-full text-center px-6 py-3.5 rounded-xl font-semibold text-white bg-gradient-to-r from-geo-600 to-brand-600 hover:from-geo-500 hover:to-brand-500 shadow-md shadow-brand-500/20 hover:shadow-brand-500/30 transition text-base">
+          发送邮件获取免费诊断 (qq136692547@gmail.com) →
         </a>
       </div>
       <p class="text-xs text-gray-500 mt-3 text-center">由 GeoScore 开发者 Deng Li 本人制作交付——同一引擎给本站的自审分数是 94/100。</p>
@@ -152,7 +149,7 @@ import LayoutZh from '../../layouts/LayoutZh.astro';
         </div>
         <div class="card p-5">
           <h3 class="font-semibold mb-2">如何下单和付款？</h3>
-          <p class="text-sm text-gray-400">先在 Fiverr 上把店铺网址发给我们，免费拿一段诊断结论。若诊断显示确有缺口，再在同一个 Fiverr gig 里下 $49 的 Custom Offer——款项由 Fiverr 托管，你确认交付后才放款。</p>
+          <p class="text-sm text-gray-400">把店铺网址邮件发送至 qq136692547@gmail.com，先免费获取一段诊断结论。若诊断确认确有缺口且你认可方案，我们将在 48 小时内完成文件制作与交付，部署后复检。</p>
         </div>
         <div class="card p-5">
           <h3 class="font-semibold mb-2">需要我提供什么？</h3>
@@ -177,7 +174,7 @@ import LayoutZh from '../../layouts/LayoutZh.astro';
   if (window.geoTrack) {
     window.geoTrack('fixpack_viewed', { source_type: window.geoSource ? window.geoSource() : 'other' });
   }
-  var cta = document.getElementById('fixpack-fiverr-cta');
+  var cta = document.getElementById('fixpack-email-cta');
   if (cta) {
     cta.addEventListener('click', function () {
       if (window.geoTrack) window.geoTrack('fixpack_cta_clicked', { placement: 'fixpack_page', transport_type: 'beacon' });
