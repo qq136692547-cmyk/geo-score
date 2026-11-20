@@ -17,7 +17,10 @@
     "build": "astro build",
     "preview": "astro preview",
     "test": "node --experimental-vm-modules node_modules/vitest/vitest.mjs run",
-    "test:watch": "node --experimental-vm-modules node_modules/vitest/vitest.mjs"
+    "test:watch": "node --experimental-vm-modules node_modules/vitest/vitest.mjs",
+    "ext:build": "node extension/build.mjs",
+    "ext:zip": "node extension/scripts/package-zip.mjs",
+    "ext:package": "node extension/build.mjs && node extension/scripts/package-zip.mjs"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.0.0",

@@ -1,6 +1,5 @@
 ---
 import '../styles/global.css';
-import Adsterra from '../components/Adsterra.astro';
 import { alternates } from '../lib/hreflang.js';
 export interface Props {
   title?: string;
@@ -54,7 +53,7 @@ const alt = alternates(Astro.site, path);
       document.documentElement.setAttribute('data-consent', decided ? 'decided' : 'pending');
     })();
   </script>
-  <!-- Consent gate. GA4 and both Adsterra loaders are created here on opt-in;
+  <!-- Consent gate. GA4 loader is created here on opt-in;
        no third-party script is requested before that. -->
   <script src="/scripts/consent.js" defer></script>
   <!-- GA4 track custom events. gtag() only exists after consent, so calls made
@@ -229,6 +228,7 @@ const alt = alternates(Astro.site, path);
           <a href="/" class={"transition " + (path === "/" ? "text-brand-500" : "text-gray-300 hover:text-white")}>Home</a>
           <a href="/methodology/" class={"transition " + (path === "/methodology" || path.startsWith("/methodology/") ? "text-brand-500" : "text-gray-300 hover:text-white")}>Methodology</a>
           <a href="/pricing/" class={"transition " + (path === "/pricing" || path.startsWith("/pricing/") ? "text-brand-500" : "text-gray-300 hover:text-white")}>Pricing</a>
+          <a href="/#chrome-extension" class="text-gray-300 hover:text-white transition">Chrome Extension</a>
           <a href="/zh/" class="text-gray-300 hover:text-white transition" title="中文">中文</a>
           <a href="https://github.com/qq136692547-cmyk/geo-score" target="_blank" rel="noopener" class="text-gray-300 hover:text-white transition flex items-center gap-1.5">
             <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
@@ -243,7 +243,6 @@ const alt = alternates(Astro.site, path);
 
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 min-h-[calc(100dvh-8rem)]">
     <slot />
-    <Adsterra format="native" />
   </main>
 
   <footer class="border-t border-gray-700/50">
@@ -255,6 +254,7 @@ const alt = alternates(Astro.site, path);
             <li><a href="/tools/llms-txt-checker/" class="hover:text-brand-500 transition">llms.txt Checker</a></li>
             <li><a href="/tools/robots-txt-ai-checker/" class="hover:text-brand-500 transition">Robots.txt AI Checker</a></li>
             <li><a href="/tools/ai-readiness-score/" class="hover:text-brand-500 transition">AI Readiness Score</a></li>
+            <li><a href="/#chrome-extension" class="hover:text-brand-500 transition">Chrome Extension</a></li>
           </ul>
         </div>
         <div>
@@ -299,7 +299,7 @@ const alt = alternates(Astro.site, path);
     <div class="max-w-4xl mx-auto card p-4 sm:p-5" style="background:rgba(15,23,42,0.97);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:0 8px 30px rgba(0,0,0,0.35)">
       <p class="text-sm font-semibold text-white mb-1">Cookies on GeoScore</p>
       <p class="text-xs text-gray-400 mb-3">
-        We load analytics and advertising scripts only after you allow them — nothing is requested from a third party before that. See the
+        We load analytics scripts only after you allow them — nothing is requested from a third party before that. See the
         <a href="/privacy/" class="text-brand-400 hover:underline">Privacy Policy</a>.
       </p>
       <div class="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
@@ -307,10 +307,6 @@ const alt = alternates(Astro.site, path);
           <label for="consent-analytics" class="flex items-center gap-2 text-sm text-gray-300 cursor-pointer">
             <input type="checkbox" id="consent-analytics" class="h-4 w-4 accent-geo-500 cursor-pointer" />
             Analytics
-          </label>
-          <label for="consent-ads" class="flex items-center gap-2 text-sm text-gray-300 cursor-pointer">
-            <input type="checkbox" id="consent-ads" class="h-4 w-4 accent-geo-500 cursor-pointer" />
-            Advertising
           </label>
         </div>
         <div class="flex flex-wrap gap-2">

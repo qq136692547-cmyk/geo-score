@@ -126,6 +126,14 @@ import demo from '../../data/demo-report.json';
         <span class="text-gray-400" style="display:none">|</span>
         <a href="/report/demo/" class="text-gray-500 hover:text-geo-400 transition underline underline-offset-2">View a sample report: <span class="text-geo-400 font-semibold">{demo.score}/100 ({demo.level})</span> on {demo.host} &mdash; run your own</a>
       </div>
+      <div id="chrome-ext-cta" class="mt-4 inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-medium bg-white/5 border border-gray-700 hover:border-brand-500/50 hover:bg-white/10 transition text-gray-300">
+        <svg class="w-4 h-4 text-brand-400 shrink-0" viewBox="0 0 24 24" fill="currentColor">
+          <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none"/>
+          <path d="M12 7v5l3 3" stroke="currentColor" stroke-width="2" fill="none"/>
+        </svg>
+        <span>Auditing <strong>localhost</strong> or facing WAF blocks?</span>
+        <a href="#chrome-extension" class="text-brand-400 hover:text-brand-300 font-semibold underline underline-offset-2">Use Chrome Extension &rarr;</a>
+      </div>
       <div id="batch-section" class="hidden max-w-lg mx-auto mt-4 card p-4">
         <h3 class="text-sm font-semibold mb-2 text-gray-300">Batch Audit from Sitemap</h3>
         <input id="sitemap-url" type="url" placeholder="e.g. example.com/sitemap.xml" aria-label="Sitemap URL" class="w-full px-4 py-2 rounded-lg bg-white/5 text-white placeholder-gray-500 border border-gray-600 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 text-sm transition mb-3" />
@@ -152,6 +160,43 @@ import demo from '../../data/demo-report.json';
         <p class="text-sm text-gray-400">The <strong class="text-gray-200">AI Visibility Fix Pack</strong> rebuilds your llms.txt from your real catalog, adds explicit AI-crawler rules and Product schema — then re-audits after you deploy. $49 one-time, 48 hours.</p>
       </div>
       <a href="/fixpack/" class="shrink-0 text-center px-5 py-2.5 rounded-lg font-semibold text-sm text-white bg-gradient-to-r from-geo-600 to-brand-600 hover:from-geo-500 hover:to-brand-500 transition">Get it done for me →</a>
+    </div>
+  </section>
+
+  <!-- Chrome Extension Feature Card -->
+  <section id="chrome-extension" class="max-w-4xl mx-auto mb-8 scroll-mt-20">
+    <div class="card p-6 border-brand-500/30 bg-gradient-to-br from-brand-950/20 via-transparent to-geo-950/20">
+      <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+        <div class="flex-1 text-left">
+          <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-md text-xs font-semibold bg-brand-500/10 text-brand-400 border border-brand-500/20 mb-3">
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>
+            Chrome Extension (MV3)
+          </div>
+          <h2 class="text-xl font-bold text-white mb-2">Audit Behind Firewalls, Localhost &amp; Rendered DOM</h2>
+          <p class="text-sm text-gray-300 mb-4 leading-relaxed">
+            Directly audit any open tab from Chrome's Side Panel. Bypass Cloudflare WAF, audit private staging / <code class="text-brand-300">localhost:3000</code>, compare raw SSR HTML vs browser-rendered CSR DOM, and inspect schema issues on-page with zero network barriers.
+          </p>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs text-gray-400">
+            <div class="flex items-center gap-2">
+              <span class="text-geo-400 font-bold">✓</span> Localhost &amp; Dev Servers
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-geo-400 font-bold">✓</span> Bypass WAF &amp; Anti-Bot
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-geo-400 font-bold">✓</span> SSR vs CSR DOM Diff
+            </div>
+          </div>
+        </div>
+        <div class="shrink-0 flex flex-col sm:flex-row md:flex-col gap-3 w-full md:w-auto">
+          <a href="https://chromewebstore.google.com/detail/geoscore-free-geo-aeo-llm/cboppgehhkhaamcgfcikhekkdaelichn" target="_blank" rel="noopener" class="text-center px-5 py-2.5 rounded-lg font-semibold text-sm text-white bg-gradient-to-r from-geo-600 to-brand-600 hover:from-geo-500 hover:to-brand-500 transition shadow-md shadow-brand-500/20">
+            Add to Chrome — Free →
+          </a>
+          <a href="https://github.com/qq136692547-cmyk/geo-score/blob/main/extension/README.md#installation" target="_blank" rel="noopener" class="text-center px-5 py-2 rounded-lg font-medium text-xs text-gray-300 bg-white/5 hover:bg-white/10 transition border border-gray-700">
+            Source &amp; Local Build
+          </a>
+        </div>
+      </div>
     </div>
   </section>
 

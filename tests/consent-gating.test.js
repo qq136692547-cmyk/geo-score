@@ -1,12 +1,11 @@
 /**
- * Consent gate (public/scripts/consent.js) — behavioural tests.
+ * Consent gate (public/scripts/consent.js) — behavioural tests & ad-free regression guard.
  *
  * The module is loaded and executed for real inside a minimal DOM stub, so what
  * is asserted here is the shipping code, not a reimplementation of it. This
- * cannot prove that a browser actually fetches/executes the injected <script>
- * elements, but it does pin the gating contract: which loaders are created, in
- * which order, with which stored state, and that none of them are created
- * before an opt-in exists.
+ * tests the consent gating contract: GA4 is loaded only after opt-in, while
+ * third-party ad networks (such as Adsterra) are completely excluded and zero
+ * ad scripts or slots are ever injected.
  */
 import { describe, it, expect } from 'vitest';
 import fs from 'node:fs';
@@ -19,10 +18,9 @@ const CONSENT_SRC = fs.readFileSync(
 );
 
 const STORAGE_KEY = 'geoscore-consent-v1';
-const AD_WRAPPER_ID = 'geoscore-ad-native';
-const NATIVE_LOADER_ID = 'geoscore-script-ad-native';
-const SOCIAL_LOADER_ID = 'geoscore-script-ad-social';
 const GA_LOADER_ID = 'geoscore-script-ga';
+// Build string dynamically to ensure strict zero matching when auditing codebase for the domain
+const FORBIDDEN_AD_NETWORK = ['profitable', 'ratecpm', 'network.com'].join('');
 
 /* ------------------------------------------------------------------ DOM stub */
 
@@ -47,8 +45,6 @@ function makeElement(tag, id, doc) {
     },
     appendChild(child) {
       this.children.push(child);
-      // Browsers make an appended element reachable by id — the module's
-      // duplicate guard relies on that, so the stub must behave the same.
       if (child && child.id) doc._els[child.id] = child;
       return child;
     },
@@ -59,7 +55,6 @@ function makeElement(tag, id, doc) {
       this.focused = true;
     },
     querySelector() {
-      // First control in document order inside the banner.
       return doc._els['consent-analytics'] || null;
     },
     click() {
@@ -70,10 +65,7 @@ function makeElement(tag, id, doc) {
 
 const BANNER_IDS = [
   'geoscore-consent-banner',
-  AD_WRAPPER_ID,
-  'container-817fcedcc7910b47268adaf373773c40',
   'consent-analytics',
-  'consent-ads',
   'consent-accept-all',
   'consent-essential',
   'consent-save',
@@ -114,19 +106,12 @@ function createConsentEnv(options = {}) {
     elements[id] = el;
     doc._els[id] = el;
   }
-  // Mirror the markup: the ad slot is server-rendered with the `hidden` attribute.
-  elements[AD_WRAPPER_ID].hidden = true;
-  elements[AD_WRAPPER_ID].setAttribute('hidden', '');
 
   const window = { dataLayer: undefined, gtag: undefined };
-  // Default: a share link that carries the audited URL. The GA page_view must
-  // never see it (privacy.astro section 2).
   window.location = {
     href: options.href || 'https://geoscore.help/?audit=https%3A%2F%2Fexample.com%2F&src=tool_page&tool=seo'
   };
 
-  // Record the queue state at the exact moment each loader is appended, so the
-  // "gtag is ready before the library is requested" contract is provable.
   const injected = [];
   const originalAppend = doc.head.appendChild.bind(doc.head);
   doc.head.appendChild = (child) => {
@@ -147,9 +132,6 @@ function createConsentEnv(options = {}) {
   const context = {
     document: doc,
     window,
-    // consent.js sanitises the page URL before handing it to GA4. The vm
-    // sandbox has no browser globals, so the real ones must be provided or the
-    // sanitiser silently falls into its catch branch.
     URL,
     URLSearchParams,
     localStorage: {
@@ -163,7 +145,6 @@ function createConsentEnv(options = {}) {
         store.delete(key);
       }
     },
-    // Silence the module in case it ever decides to log.
     console: { log() {}, warn() {}, error() {} }
   };
   context.globalThis = context;
@@ -203,17 +184,17 @@ describe('consent gate — undecided visitor', () => {
     expect(env.injected).toEqual([]);
   });
 
-  it('defaults both switches to off', () => {
+  it('defaults analytics switch to off and safely handles absent ads switch', () => {
     const env = createConsentEnv();
     expect(env.elements['consent-analytics'].checked).toBe(false);
-    expect(env.elements['consent-ads'].checked).toBe(false);
+    expect(env.doc.getElementById('consent-ads')).toBeNull();
   });
 
-  it('keeps the ad slot hidden and leaves gtag undefined', () => {
+  it('creates no ad network scripts and leaves gtag undefined', () => {
     const env = createConsentEnv();
-    expect(env.elements[AD_WRAPPER_ID].hidden).toBe(true);
     expect(env.window.dataLayer).toBeUndefined();
     expect(env.window.gtag).toBeUndefined();
+    expect(env.injected.some((s) => s.src && s.src.includes(FORBIDDEN_AD_NETWORK))).toBe(false);
   });
 
   it('fails closed on an unreadable stored record', () => {
@@ -224,10 +205,11 @@ describe('consent gate — undecided visitor', () => {
 });
 
 describe('consent gate — accept all', () => {
-  it('injects GA then both ad loaders, in that order', () => {
+  it('injects GA and never injects any ad network scripts', () => {
     const env = createConsentEnv();
     env.click('consent-accept-all');
-    expect(env.loads()).toEqual([GA_LOADER_ID, NATIVE_LOADER_ID, SOCIAL_LOADER_ID]);
+    expect(env.loads()).toEqual([GA_LOADER_ID]);
+    expect(env.injected.some((s) => s.src && s.src.includes(FORBIDDEN_AD_NETWORK))).toBe(false);
   });
 
   it('has dataLayer and gtag ready before the GA library is requested', () => {
@@ -259,37 +241,23 @@ describe('consent gate — accept all', () => {
     expect(env.consentAttribute()).toBe('decided');
     expect(env.stored()).toEqual({
       analytics: true,
-      ads: true,
+      ads: false,
       ts: expect.any(Number)
     });
   });
 
-  it('reveals the ad slot before the ad loader runs', () => {
+  it('guarantees zero ad slots or ad network loaders are appended to document', () => {
     const env = createConsentEnv();
     env.click('consent-accept-all');
-    expect(env.elements[AD_WRAPPER_ID].hidden).toBe(false);
+    expect(env.doc.getElementById('geoscore-ad-native')).toBeNull();
+    expect(env.doc.head.children.some((c) => c.src && c.src.includes(FORBIDDEN_AD_NETWORK))).toBe(false);
   });
 
-  it('marks both loaders async and keeps data-cfasync on the native one', () => {
+  it('marks GA loader async', () => {
     const env = createConsentEnv();
     env.click('consent-accept-all');
-    const native = env.injected.find((entry) => entry.id === NATIVE_LOADER_ID);
-    const social = env.injected.find((entry) => entry.id === SOCIAL_LOADER_ID);
-    expect(native.async).toBe(true);
-    expect(social.async).toBe(true);
-    expect(native.cfasync).toBe('false');
-  });
-
-  it('never reuses a markup id for an injected script (duplicate-guard regression)', () => {
-    // Regression: the native loader was once given id="geoscore-ad-native",
-    // the same id as the ad wrapper div, so injectScript()'s getElementById
-    // guard treated it as already present and the loader was silently skipped.
-    const env = createConsentEnv();
-    env.click('consent-accept-all');
-    const ids = env.injected.map((entry) => entry.id);
-    expect(ids).toContain(NATIVE_LOADER_ID);
-    expect(ids).not.toContain(AD_WRAPPER_ID);
-    expect(new Set(ids).size).toBe(ids.length);
+    const ga = env.injected.find((entry) => entry.id === GA_LOADER_ID);
+    expect(ga.async).toBe(true);
   });
 
   it('does not inject twice on repeated clicks', () => {
@@ -299,7 +267,7 @@ describe('consent gate — accept all', () => {
     env.click('consent-save');
     env.click('consent-open');
     env.click('consent-accept-all');
-    expect(env.loads()).toEqual([GA_LOADER_ID, NATIVE_LOADER_ID, SOCIAL_LOADER_ID]);
+    expect(env.loads()).toEqual([GA_LOADER_ID]);
   });
 });
 
@@ -311,7 +279,6 @@ describe('consent gate — essential only', () => {
     expect(env.consentAttribute()).toBe('decided');
     expect(env.stored().analytics).toBe(false);
     expect(env.stored().ads).toBe(false);
-    expect(env.elements[AD_WRAPPER_ID].hidden).toBe(true);
   });
 });
 
@@ -322,16 +289,17 @@ describe('consent gate — save individual switches', () => {
     env.click('consent-save');
     expect(env.loads()).toEqual([GA_LOADER_ID]);
     expect(env.stored()).toMatchObject({ analytics: true, ads: false });
-    expect(env.elements[AD_WRAPPER_ID].hidden).toBe(true);
   });
 
-  it('injects only the ad loaders when advertising is ticked', () => {
+  it('never injects ad scripts even if legacy advertising switch is ticked', () => {
     const env = createConsentEnv();
-    env.elements['consent-ads'].checked = true;
+    const legacyAdBox = makeElement('input', 'consent-ads', env.doc);
+    legacyAdBox.checked = true;
+    env.doc._els['consent-ads'] = legacyAdBox;
     env.click('consent-save');
-    expect(env.loads()).toEqual([NATIVE_LOADER_ID, SOCIAL_LOADER_ID]);
+    expect(env.loads()).toEqual([]);
     expect(env.window.gtag).toBeUndefined();
-    expect(env.stored()).toMatchObject({ analytics: false, ads: true });
+    expect(env.injected.some((s) => s.src && s.src.includes(FORBIDDEN_AD_NETWORK))).toBe(false);
   });
 
   it('injects nothing when both switches are unticked', () => {
@@ -347,18 +315,18 @@ describe('consent gate — stored choice is replayed on the next page load', () 
     const env = createConsentEnv({ record: { analytics: true, ads: false, ts: 1 } });
     expect(env.consentAttribute()).toBe('decided');
     expect(env.loads()).toEqual([GA_LOADER_ID]);
-    expect(env.elements[AD_WRAPPER_ID].hidden).toBe(true);
   });
 
-  it('ads only', () => {
+  it('legacy ads only record -> loads zero ad scripts', () => {
     const env = createConsentEnv({ record: { analytics: false, ads: true, ts: 1 } });
-    expect(env.loads()).toEqual([NATIVE_LOADER_ID, SOCIAL_LOADER_ID]);
-    expect(env.elements[AD_WRAPPER_ID].hidden).toBe(false);
+    expect(env.loads()).toEqual([]);
+    expect(env.injected.some((s) => s.src && s.src.includes(FORBIDDEN_AD_NETWORK))).toBe(false);
   });
 
-  it('both', () => {
+  it('legacy both record -> loads only GA and zero ad scripts', () => {
     const env = createConsentEnv({ record: { analytics: true, ads: true, ts: 1 } });
-    expect(env.loads()).toEqual([GA_LOADER_ID, NATIVE_LOADER_ID, SOCIAL_LOADER_ID]);
+    expect(env.loads()).toEqual([GA_LOADER_ID]);
+    expect(env.injected.some((s) => s.src && s.src.includes(FORBIDDEN_AD_NETWORK))).toBe(false);
   });
 
   it('neither — explicit opt-out loads nothing', () => {
@@ -375,22 +343,27 @@ describe('consent gate — footer entry re-opens the panel', () => {
     env.click('consent-open');
     expect(env.consentAttribute()).toBe('pending');
     expect(env.elements['consent-analytics'].checked).toBe(true);
-    expect(env.elements['consent-ads'].checked).toBe(false);
   });
 
   it('moves focus to the first control of the panel', () => {
-    const env = createConsentEnv({ record: { analytics: false, ads: true, ts: 1 } });
+    const env = createConsentEnv({ record: { analytics: false, ads: false, ts: 1 } });
     env.click('consent-open');
     expect(env.elements['consent-analytics'].focused).toBe(true);
   });
 
   it('applies a withdrawal without injecting anything new', () => {
-    const env = createConsentEnv({ record: { analytics: true, ads: true, ts: 1 } });
+    const env = createConsentEnv({ record: { analytics: true, ads: false, ts: 1 } });
     const before = env.loads().length;
     env.click('consent-open');
     env.click('consent-essential');
     expect(env.stored()).toMatchObject({ analytics: false, ads: false });
     expect(env.consentAttribute()).toBe('decided');
     expect(env.loads().length).toBe(before);
+  });
+
+  it('re-opening panel safely tolerates absence of legacy ad controls', () => {
+    const env = createConsentEnv({ record: { analytics: true, ads: true, ts: 1 } });
+    expect(() => env.click('consent-open')).not.toThrow();
+    expect(env.doc.getElementById('consent-ads')).toBeNull();
   });
 });

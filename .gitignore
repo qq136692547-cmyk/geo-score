@@ -58,3 +58,51 @@ gsc-scrape-*.json
 # Audit asset exception: review/_linkgraph.py is a deliverable, not a temp script
 # (must come after the "_*.py" rule above to take effect)
 !review/_linkgraph.py
+
+# Proprietary WorkBuddy Domestic Expert Team (Commercial Digital Assets)
+workbuddy-expert-team/
+
+# Local browser profiles & temporary dumps
+.tmp-gsc-profile/
+gsc-scrape-*.json
+
+# Open Source Physical Isolation: Proprietary WorkBuddy Assets & Tests
+tests/workbuddy/
+
+# Cache, Build & Runtime Logs
+.astro/
+.omx/
+.wrangler/
+*.log
+audit-*.html
+out/
+output/
+tools/rebuild-staging.py
+fix-analyzers.py
+extension/dist/
+extension/*.zip
+
+# Internal Strategic, Review & Handover Documents (Never commit to public repo)
+codex-ops-brief.md
+market-ceiling-*.md
+monetization-review-*.md
+panel-review-*.md
+retro-*.md
+promo-*.md
+promotional-*.md
+promotional-assets/
+action-*.md
+gsc-baseline-*.md
+HANDOVER_TO_ANTIGRAVITY.md
+CHROME_STORE_LISTING.md
+decision-*.md
+open-source-landscape-*.md
+p2p3-results-*.md
+ux-review-*.md
+assets/promotional/
+deliverables/AUTO-DEPLOY-FOR-ANTIGRAVITY.md
+deliverables/DEPLOY-REPORT-*.md
+deliverables/HANDOVER-*.md
+deliverables/REVIEW-*.md
+
+

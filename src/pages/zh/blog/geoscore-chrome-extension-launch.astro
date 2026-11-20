@@ -1,0 +1,213 @@
+---
+import LayoutZh from '../../../layouts/LayoutZh.astro';
+---
+<LayoutZh
+  title="GeoScore 官方 Chrome 扩展正式上线：突破 WAF 限制，在浏览器侧边栏一键深度审计 AI 就绪度 | GeoScore"
+  description="告别云端爬虫被 Cloudflare 拦截与内网无法测试的困扰。基于 Manifest V3 与 Chrome Side Panel，零配置在任意前台网页一键审计 11 维 85 项 AI 引文关键指标。"
+  schema={{
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: 'GeoScore 官方 Chrome 扩展正式上线：突破 WAF 限制，在浏览器侧边栏一键深度审计 AI 就绪度',
+    description: '告别云端爬虫被 Cloudflare 拦截与内网无法测试的困扰。基于 Manifest V3 与 Chrome Side Panel，零配置在任意前台网页一键审计 11 维 85 项 AI 引文关键指标。',
+    url: 'https://geoscore.help/zh/blog/geoscore-chrome-extension-launch/',
+    datePublished: '2026-11-18',
+    dateModified: '2026-11-18',
+    author: { '@type': 'Organization', name: 'GeoScore' },
+    publisher: { '@type': 'Organization', name: 'GeoScore', url: 'https://geoscore.help' }
+  }}
+>
+  <section class="max-w-3xl mx-auto py-8">
+    <article class="prose prose-invert max-w-none">
+      <div class="text-center mb-10">
+        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-geo-500/10 text-geo-400 border border-geo-500/20 mb-4">
+          产品重磅发布 · 官方 Chrome 扩展
+        </div>
+        <h1 class="text-3xl sm:text-4xl font-extrabold mb-3 text-white leading-tight">
+          GeoScore 官方 Chrome 扩展正式上线：突破 WAF 限制，在浏览器侧边栏一键深度审计 AI 就绪度
+        </h1>
+        <p class="text-gray-400">发布于 2026 年 11 月 18 日 · 阅读时间约 8 分钟</p>
+      </div>
+
+      <div class="card p-6 sm:p-8 mb-6 border border-brand-500/30 bg-gradient-to-br from-brand-950/20 to-geo-950/30">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
+          <div>
+            <h2 class="text-xl font-bold text-white mb-1">现已上架 Chrome 网上应用店</h2>
+            <p class="text-sm text-gray-300">纯前端零数据外传，完全免费，基于 Chrome 现代 Manifest V3 与 Side Panel 原生架构。</p>
+          </div>
+          <a
+            href="https://chromewebstore.google.com/detail/geoscore-free-geo-aeo-llm/cboppgehhkhaamcgfcikhekkdaelichn"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-white bg-gradient-to-r from-geo-600 to-brand-600 hover:from-geo-500 hover:to-brand-500 transition shadow-lg shadow-geo-600/20 shrink-0 text-sm"
+          >
+            前往 Chrome 商店安装 →
+          </a>
+        </div>
+        <p class="text-gray-200 text-base leading-relaxed">
+          生成式引擎优化（GEO，Generative Engine Optimization）已经成为 2026 年技术出海、独立站以及国内企业获客的核心阵地。然而，很多工程师与站长在使用传统云端扫描工具时，常常陷入三大无法回避的现实困境：Cloudflare 5 秒盾 WAF 误杀拦截、本地开发环境（Localhost）无法跨网审计、以及登录态页面与单页应用客户端渲染（CSR）导致的“扫描黑盒”。
+        </p>
+        <p class="text-gray-400 text-sm mt-3">
+          今天，我们正式向全球开发者与 SEO/GEO 团队发布 <strong class="text-white">GeoScore 官方 Chrome 浏览器扩展</strong>！无需复制粘贴网址，无需等待云端排队，直接在 Chrome 侧边栏（Side Panel）中对当前打开的任何标签页执行 11 维 85 项 AI 就绪度实时深度体检。
+        </p>
+      </div>
+
+      <div class="card p-6 sm:p-8 mb-6">
+        <h2 class="text-xl font-bold mb-4 text-white">云端扫描器的四大“阿喀琉斯之踵”</h2>
+        <p class="text-gray-300 mb-4 text-sm leading-relaxed">
+          过去，站长大多依赖 SaaS 平台的云端爬虫对网址进行抓取。但随着 Web 安全边界与前端技术栈演进，云端审计手段的局限性暴露无遗：
+        </p>
+        <div class="space-y-4 text-sm mb-4">
+          <div class="p-4 rounded-xl bg-gray-900/60 border border-gray-800">
+            <h3 class="font-bold text-red-400 mb-1">1. Cloudflare 5 秒盾与边缘 WAF 拦截（验证码阻断）</h3>
+            <p class="text-gray-400">
+              云端扫描服务器的机房 IP 经常触发 Cloudflare Turnstile、AWS WAF 或 Akamai 机器行为风控，导致扫描器仅能抓取到 403 页面或带有 JavaScript 挑战跳转的骨架页，误报为“网站不可达”或“空内容”。
+            </p>
+          </div>
+          <div class="p-4 rounded-xl bg-gray-900/60 border border-gray-800">
+            <h3 class="font-bold text-red-400 mb-1">2. Localhost 与内网测试环境的“信息孤岛”</h3>
+            <p class="text-gray-400">
+              工程师在本地通过 Vite、Next.js 或 Astro 构建新功能或重构结构化数据时，运行环境是 <code class="text-geo-400">http://localhost:3000</code> 或内部 VPN Staging 域名。云端爬虫根本无法触达内网私有 IP，迫使开发团队只能“先上线、再发现问题”。
+            </p>
+          </div>
+          <div class="p-4 rounded-xl bg-gray-900/60 border border-gray-800">
+            <h3 class="font-bold text-red-400 mb-1">3. 登录态与受保护界面的审计盲区</h3>
+            <p class="text-gray-400">
+              许多关键的 SaaS 产品文档、客户后台或付费知识库存在鉴权隔离，云端无状态爬虫无法持有用户的 Cookie 与 Authorization Token，根本无法分析授权后的完整渲染树。
+            </p>
+          </div>
+          <div class="p-4 rounded-xl bg-gray-900/60 border border-gray-800">
+            <h3 class="font-bold text-red-400 mb-1">4. 源码外泄与隐私数据顾虑</h3>
+            <p class="text-gray-400">
+              将未公开发布的内网页面 HTML 发送到第三方云端解析，存在企业敏感代码与内部数据外泄合规风险。
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card p-6 sm:p-8 mb-6">
+        <h2 class="text-xl font-bold mb-4 text-white">GeoScore Chrome 扩展的三大核心突破</h2>
+        
+        <h3 class="text-lg font-semibold text-brand-400 mb-2">1. 原生会话穿透：自然绕过 WAF 边缘防线</h3>
+        <p class="text-gray-300 mb-4 text-sm leading-relaxed">
+          作为安装在浏览器内部的前端扩展，GeoScore 运行在当前已经过身份验证的宿主页面上下文中。当你能顺畅浏览网页时，说明 Cloudflare 等防爬屏障已合法通过。插件直接读取渲染后的 DOM 树与运行状态，无需发起额外的伪造爬虫请求，真正做到“零风控阻断、零误报、秒级反馈”。
+        </p>
+
+        <h3 class="text-lg font-semibold text-brand-400 mb-2">2. Localhost 抢先审计：在上线前扼杀所有 GEO 缺陷</h3>
+        <p class="text-gray-300 mb-4 text-sm leading-relaxed">
+          无论你的本地服务运行在 <code class="text-geo-400">localhost:3000</code>、<code class="text-geo-400">localhost:5173</code> 还是 <code class="text-geo-400">127.0.0.1:8080</code>，只需在 Chrome 中打开页面并调出 Side Panel，点击“一键体检”，3 秒即可得到涵盖 Schema、H 标签骨架、LLM 机器友好度的全维诊断，在 Git Commit 前即可完成全部 GEO 修复。
+        </p>
+
+        <h3 class="text-lg font-semibold text-brand-400 mb-2">3. SSR 服务端渲染 vs CSR 客户端渲染双层 Diff 与页面 X 光透视</h3>
+        <p class="text-gray-300 mb-4 text-sm leading-relaxed">
+          AI 搜索爬虫（如 GPTBot、ClaudeBot、Bytespider）为了节省全网数亿页面的计算成本，优先解析初始服务端 HTML，对于耗费算力的客户端 JavaScript 动态水合常常直接忽略或降权。插件内置双层 Diff 引擎：
+        </p>
+        <ul class="space-y-2.5 text-gray-300 text-sm mb-4">
+          <li>• <strong>空壳页面预警（CSR Shell Warning）：</strong> 精确侦测页面是否仅返回 <code class="text-geo-400">&lt;div id="root"&gt;&lt;/div&gt;</code> 而没有在初始 HTML 注入首屏核心文本与语义层。</li>
+          <li>• <strong>结构化数据注入时机检测：</strong> 揪出依赖客户端异步请求才注入的 JSON-LD 标签，避免大模型爬虫抓到“空包”。</li>
+          <li>• <strong>页面 X 光透视（Visual X-Ray）：</strong> 在页面中高亮缺失的语义标题层级、未标注的出处引文，以及隐藏在代码角落的 Prompt 注入安全隐患。</li>
+        </ul>
+      </div>
+
+      <div class="card p-6 sm:p-8 mb-6">
+        <h2 class="text-xl font-bold mb-4 text-white">11 维 85 项核心指标全方位覆盖</h2>
+        <p class="text-gray-300 mb-4 text-sm">
+          扩展完整继承了 GeoScore 引擎的 11 大核心维度评估体系，并同步支持国内主流 AI 搜索与海外大模型的双重评估：
+        </p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm mb-4">
+          <div class="p-3.5 rounded-lg bg-gray-900/60 border border-gray-800">
+            <span class="font-bold text-geo-400">1. AI 爬虫准入协议（RFC 9309）</span>
+            <p class="text-xs text-gray-400 mt-1">自动测试当前站点的 robots.txt，覆盖 GPTBot、ClaudeBot、Bytespider、MoonshotBot 等 10+ 爬虫规则。</p>
+          </div>
+          <div class="p-3.5 rounded-lg bg-gray-900/60 border border-gray-800">
+            <span class="font-bold text-geo-400">2. Agent 友好度与语义层级</span>
+            <p class="text-xs text-gray-400 mt-1">评估 H1~H3 层级完整性、表格结构化程度与去除样式的机器可读性。</p>
+          </div>
+          <div class="p-3.5 rounded-lg bg-gray-900/60 border border-gray-800">
+            <span class="font-bold text-geo-400">3. Schema.org 结构化知识图谱</span>
+            <p class="text-xs text-gray-400 mt-1">解析 Organization、Article、Product、FAQPage，校验实体关联一致性。</p>
+          </div>
+          <div class="p-3.5 rounded-lg bg-gray-900/60 border border-gray-800">
+            <span class="font-bold text-geo-400">4. E-E-A-T 专家与权威信任背书</span>
+            <p class="text-xs text-gray-400 mt-1">作者简介、官方出处凭证、ICP 备案号、统一社会信用代码与安全证书。</p>
+          </div>
+          <div class="p-3.5 rounded-lg bg-gray-900/60 border border-gray-800">
+            <span class="font-bold text-geo-400">5. 内容时效性与明确时间戳</span>
+            <p class="text-xs text-gray-400 mt-1">校验 ISO 8601 格式的发布与更新时间戳，助推大模型时效性排序。</p>
+          </div>
+          <div class="p-3.5 rounded-lg bg-gray-900/60 border border-gray-800">
+            <span class="font-bold text-geo-400">6. llms.txt 专属知识库入口</span>
+            <p class="text-xs text-gray-400 mt-1">实时探测 <code class="text-brand-400">/llms.txt</code> 与 <code class="text-brand-400">/llms-full.txt</code>，构建最轻量的 AI 快速摘要管道。</p>
+          </div>
+          <div class="p-3.5 rounded-lg bg-gray-900/60 border border-gray-800">
+            <span class="font-bold text-geo-400">7. 双层软 404（Soft-404）隔离</span>
+            <p class="text-xs text-gray-400 mt-1">严防无内容或下架商品返回 200 假状态码，避免索引资源被大模型拉黑。</p>
+          </div>
+          <div class="p-3.5 rounded-lg bg-gray-900/60 border border-gray-800">
+            <span class="font-bold text-geo-400">8. Prompt 注入与负向安全防线</span>
+            <p class="text-xs text-gray-400 mt-1">扫描页面隐藏指令与恶意文字注入，确保站内引文内容安全无污染。</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card p-6 sm:p-8 mb-6">
+        <h2 class="text-xl font-bold mb-4 text-white">研发闭环：一键生成 Cursor / Claude / Copilot 修复 Prompt</h2>
+        <p class="text-gray-300 mb-3 text-sm leading-relaxed">
+          仅仅指出问题远远不够，高效修复才是企业提效的关键。扩展内置了专门针对 AI 编程助手量身定制的 <strong class="text-white">一键 Prompt 导出功能</strong>。
+        </p>
+        <p class="text-gray-400 text-sm mb-4">
+          点击侧边栏的 <strong class="text-geo-400">“复制修复 Prompt”</strong>，扩展会自动将检测出的问题项、对应的 HTML 选择器与改进规范打包为标准的 Markdown 提示词，直接粘贴进 Cursor、Claude Code、GitHub Copilot 或 ChatGPT 中：
+        </p>
+        <div class="bg-gray-900/80 rounded-xl p-4 font-mono text-xs text-gray-300 mb-4 overflow-x-auto border border-gray-800">
+<pre>请帮我针对当前页面进行生成式引擎优化（GEO）代码改造：
+页面地址：http://localhost:3000/products/ai-analytics
+GeoScore 扩展检测到以下 3 项关键缺陷：
+1. [结构化数据] 缺少 Product 与 Organization Schema，且缺少 AggregateRating 评分实体。
+2. [SSR 预警] 首屏核心描述文字由前端 JS 异步渲染，初始 HTML 缺少关键特征文本。
+3. [爬虫协议] robots.txt 中未声明对 Bytespider 与 ClaudeBot 的爬取规则。
+
+请输出：
+1. 符合 Schema.org 规范的标准 JSON-LD 注入代码片段。
+2. 兼容 RFC 9309 规范的 robots.txt 推荐配置。
+3. 优化首屏服务端直出（SSR/SSG）的组件改动建议。</pre>
+        </div>
+      </div>
+
+      <div class="card p-6 sm:p-8 mb-6">
+        <h2 class="text-xl font-bold mb-4 text-white">30 秒极速安装与使用指南</h2>
+        <ol class="space-y-3 text-gray-300 text-sm list-decimal list-inside mb-4">
+          <li>访问 <a href="https://chromewebstore.google.com/detail/geoscore-free-geo-aeo-llm/cboppgehhkhaamcgfcikhekkdaelichn" target="_blank" rel="noopener noreferrer" class="text-brand-400 hover:underline font-medium">Chrome 网上应用店官方安装页</a>。</li>
+          <li>点击右上角 <strong>“添加至 Chrome”</strong> 并确认权限授权。</li>
+          <li>在 Chrome 工具栏中将 GeoScore 图标固定显示（Pin），方便日常随时调用。</li>
+          <li>打开任何前台网页、企业官网、在线文档或本地 Localhost 服务。</li>
+          <li>点击扩展图标即可在右侧侧边栏唤出面板，实时掌握当前网页在各大主流 AI 搜索中的引文权重。</li>
+        </ol>
+        <p class="text-gray-400 text-xs">
+          本扩展完全遵循 Google Chrome 官方安全审查规范，不抓取任何个人私密浏览历史，代码审计与 DOM 分析均在本地浏览器隔离环境中运行。
+        </p>
+      </div>
+
+      <div class="card p-6 sm:p-8 mb-6 bg-gradient-to-r from-geo-500/10 to-brand-500/10 border border-brand-500/30">
+        <h2 class="text-xl font-bold mb-3 text-white">立即体验浏览器侧边栏体检</h2>
+        <p class="text-gray-300 text-sm mb-5 leading-relaxed">
+          抢占 Kimi、豆包、秘塔、ChatGPT 和 Claude 的第一引文源。立即安装免费官方扩展，或使用在线版扫描器。
+        </p>
+        <div class="flex flex-wrap items-center gap-4">
+          <a
+            href="https://chromewebstore.google.com/detail/geoscore-free-geo-aeo-llm/cboppgehhkhaamcgfcikhekkdaelichn"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-geo-600 to-brand-600 hover:from-geo-500 hover:to-brand-500 transition shadow-lg shadow-geo-600/20"
+          >
+            免费安装 Chrome 扩展 →
+          </a>
+          <a
+            href="/zh/"
+            class="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-gray-300 bg-gray-800/80 hover:bg-gray-700/80 hover:text-white transition border border-gray-700"
+          >
+            使用在线扫描器
+          </a>
+        </div>
+      </div>
+    </article>
+  </section>
+</LayoutZh>

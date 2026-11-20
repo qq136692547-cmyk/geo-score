@@ -150,6 +150,7 @@ function formatHumanReport(result) {
 
   lines.push('');
   lines.push('Run with --json for machine-readable output.');
+  lines.push('Tip: Audit localhost, behind-login pages, or SSR vs CSR DOM diffs with the GeoScore Chrome Extension: https://chromewebstore.google.com/detail/cboppgehhkhaamcgfcikhekkdaelichn');
 
   return lines.join('\n');
 }

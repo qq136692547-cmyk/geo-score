@@ -45,27 +45,26 @@ import Layout from '../layouts/Layout.astro';
           <li>Device type, browser, operating system</li>
           <li>Screen resolution and viewport size</li>
         </ul>
-        <p class="mt-2">IP anonymization is enabled. We do not enable Google Signals. Adsterra may use cookies or similar technologies to serve and measure ads.</p>
+        <p class="mt-2">IP anonymization is enabled. We do not enable Google Signals. GeoScore displays no third-party commercial advertisements and loads no advertising trackers.</p>
       </section>
 
       <section>
         <h2 class="text-xl font-bold text-white mb-3">4. Cookies</h2>
         <p>
-          GeoScore uses no first-party cookies. GA4 may set its own cookies for visitor identification; you can opt out via your browser's Do Not Track setting, the <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener" class="text-brand-400 hover:underline">Google Analytics Opt-out Browser Add-on</a>, or by blocking third-party cookies in your browser. Adsterra and its partners may set third-party cookies or device identifiers to serve and measure ads.
+          GeoScore uses no first-party cookies. GA4 may set its own cookies for visitor identification; you can opt out via your browser's Do Not Track setting, the <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener" class="text-brand-400 hover:underline">Google Analytics Opt-out Browser Add-on</a>, or by blocking third-party cookies in your browser. We load no advertising cookies or device identifiers.
         </p>
       </section>
 
       <section>
         <h2 class="text-xl font-bold text-white mb-3">5. Your Cookie Choices</h2>
         <p>
-          Analytics and advertising scripts are blocked until you allow them. On your first visit a panel at the bottom of the page asks which categories you accept; nothing is requested from Google Analytics or Adsterra before you make a choice.
+          Analytics scripts are blocked until you allow them. On your first visit a panel at the bottom of the page asks for your consent; nothing is requested from Google Analytics before you make a choice.
         </p>
         <ul class="list-disc list-inside space-y-1 mt-2">
           <li><strong>Analytics</strong> — Google Analytics 4 page-view measurement.</li>
-          <li><strong>Advertising</strong> — Adsterra ad slots.</li>
         </ul>
         <p class="mt-2">
-          Your choice is stored in your browser's local storage under the key <code class="text-gray-400 bg-white/5 px-1.5 py-0.5 rounded">geoscore-consent-v1</code>; it is not sent to us. To change or withdraw it, open <strong>Cookie settings</strong> in the footer and choose "Essential only", or turn both switches off. Newly granted categories load immediately; a withdrawal stops the scripts from being requested again on your next page load (scripts already running in the current page are not unloaded). Clearing your browser storage also deletes the choice and brings the panel back.
+          Your choice is stored in your browser's local storage under the key <code class="text-gray-400 bg-white/5 px-1.5 py-0.5 rounded">geoscore-consent-v1</code>; it is not sent to us. To change or withdraw it, open <strong>Cookie settings</strong> in the footer and choose "Essential only", or turn the switch off. Newly granted categories load immediately; a withdrawal stops the scripts from being requested again on your next page load (scripts already running in the current page are not unloaded). Clearing your browser storage also deletes the choice and brings the panel back.
         </p>
       </section>
 
@@ -75,7 +74,6 @@ import Layout from '../layouts/Layout.astro';
         <ul class="list-disc list-inside space-y-1 mt-2">
           <li><strong>Cloudflare</strong> (Pages hosting, our own CORS proxy, and the D1 database) — <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener" class="text-brand-400 hover:underline">Cloudflare Privacy Policy</a></li>
           <li><strong>Google Analytics 4</strong> (analytics) — <a href="https://policies.google.com/privacy" target="_blank" rel="noopener" class="text-brand-400 hover:underline">Google Privacy Policy</a></li>
-          <li><strong>Adsterra</strong> (advertising) — <a href="https://adsterra.com/privacy-policy/" target="_blank" rel="noopener" class="text-brand-400 hover:underline">Adsterra Privacy Policy</a></li>
           <li><strong>Google Sign-In</strong> (optional OAuth login for Pro) — <a href="https://policies.google.com/privacy" target="_blank" rel="noopener" class="text-brand-400 hover:underline">Google Privacy Policy</a></li>
           <li><strong>Creem</strong> (payments; acts as Merchant of Record, so it is the legal seller for paid plans) — <a href="https://www.creem.io/privacy" target="_blank" rel="noopener" class="text-brand-400 hover:underline">Creem Privacy Policy</a></li>
           <li><strong>Resend</strong> (transactional email: login codes and receipt notices) — <a href="https://resend.com/legal/privacy-policy" target="_blank" rel="noopener" class="text-brand-400 hover:underline">Resend Privacy Policy</a></li>

@@ -45,27 +45,26 @@ import LayoutZh from '../../layouts/LayoutZh.astro';
           <li>设备类型、浏览器、操作系统</li>
           <li>屏幕分辨率和视口大小</li>
         </ul>
-        <p class="mt-2">已启用 IP 匿名化。我们未启用 Google Signals。Adsterra 可能使用 Cookie 或类似技术来投放和衡量广告。</p>
+        <p class="mt-2">已启用 IP 匿名化。我们未启用 Google Signals。GeoScore 不投放任何第三方商业广告，亦不加载任何广告追踪脚本。</p>
       </section>
 
       <section>
         <h2 class="text-xl font-bold text-white mb-3">4. Cookie</h2>
         <p>
-          GeoScore 不使用第一方 Cookie。GA4 可能设置自己的 Cookie 用于访客识别；你可以通过浏览器的 Do Not Track 设置、<a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener" class="text-brand-400 hover:underline">Google Analytics 退测浏览器插件</a>，或在浏览器中阻止第三方 Cookie 来退出。Adsterra 及其合作伙伴可能设置第三方 Cookie 或设备标识符来投放和衡量广告。
+          GeoScore 不使用第一方 Cookie。GA4 可能设置自己的 Cookie 用于访客识别；你可以通过浏览器的 Do Not Track 设置、<a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener" class="text-brand-400 hover:underline">Google Analytics 退测浏览器插件</a>，或在浏览器中阻止第三方 Cookie 来退出。本站不加载任何广告 Cookie 或设备标识符。
         </p>
       </section>
 
       <section>
         <h2 class="text-xl font-bold text-white mb-3">5. 你的 Cookie 选择</h2>
         <p>
-          在你允许之前，统计与广告脚本都会被拦截。首次访问时页面底部会弹出选择面板，询问你接受哪些类别；在你做出选择之前，不会向 Google Analytics 或 Adsterra 发起任何请求。
+          在你允许之前，统计脚本会被拦截。首次访问时页面底部会弹出选择面板，征询你的同意；在你做出选择之前，不会向 Google Analytics 发起任何请求。
         </p>
         <ul class="list-disc list-inside space-y-1 mt-2">
           <li><strong>分析统计</strong> —— Google Analytics 4 页面浏览统计。</li>
-          <li><strong>广告</strong> —— Adsterra 广告位。</li>
         </ul>
         <p class="mt-2">
-          你的选择保存在浏览器本地存储中，键为 <code class="text-gray-400 bg-white/5 px-1.5 py-0.5 rounded">geoscore-consent-v1</code>，不会发送给我们。如需更改或撤回，请打开页脚的<strong>Cookie 设置</strong>，选择「仅必要」或关闭两个开关。新开启的类别会立即加载；撤回后，相应脚本在下次页面加载时不再被请求（当前页面中已运行的脚本不会被卸载）。清除浏览器存储也会删除该选择，并重新弹出面板。
+          你的选择保存在浏览器本地存储中，键为 <code class="text-gray-400 bg-white/5 px-1.5 py-0.5 rounded">geoscore-consent-v1</code>，不会发送给我们。如需更改或撤回，请打开页脚的<strong>Cookie 设置</strong>，选择「仅必要」或关闭开关。新开启的类别会立即加载；撤回后，相应脚本在下次页面加载时不再被请求（当前页面中已运行的脚本不会被卸载）。清除浏览器存储也会删除该选择，并重新弹出面板。
         </p>
       </section>
 
@@ -75,7 +74,6 @@ import LayoutZh from '../../layouts/LayoutZh.astro';
         <ul class="list-disc list-inside space-y-1 mt-2">
           <li><strong>Cloudflare</strong>（Pages 托管、自建 CORS 代理、D1 数据库）— <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener" class="text-brand-400 hover:underline">Cloudflare 隐私政策</a></li>
           <li><strong>Google Analytics 4</strong>（分析）— <a href="https://policies.google.com/privacy" target="_blank" rel="noopener" class="text-brand-400 hover:underline">Google 隐私政策</a></li>
-          <li><strong>Adsterra</strong>（广告）— <a href="https://adsterra.com/privacy-policy/" target="_blank" rel="noopener" class="text-brand-400 hover:underline">Adsterra 隐私政策</a></li>
           <li><strong>Google 登录</strong>（Pro 的可选 OAuth 登录）— <a href="https://policies.google.com/privacy" target="_blank" rel="noopener" class="text-brand-400 hover:underline">Google 隐私政策</a></li>
           <li><strong>Creem</strong>（支付；作为记录商户 MoR，付费方案的法律卖方是它）— <a href="https://www.creem.io/privacy" target="_blank" rel="noopener" class="text-brand-400 hover:underline">Creem 隐私政策</a></li>
           <li><strong>Resend</strong>（事务邮件：登录验证码与收据通知）— <a href="https://resend.com/legal/privacy-policy" target="_blank" rel="noopener" class="text-brand-400 hover:underline">Resend 隐私政策</a></li>

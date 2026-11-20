@@ -1,75 +1,151 @@
 {
-  "generatedAt": "2026-10-05T09:58:59.903Z",
+  "generatedAt": "2026-11-09T14:19:27.248Z",
   "propertyId": "546156702",
   "serviceAccount": "drive-uploader@cogent-tide-361602.iam.gserviceaccount.com",
   "range": {
-    "start": "7daysAgo",
+    "start": "30daysAgo",
     "end": "today"
   },
-  "toolPageSharePct": 0,
-  "toolPageEvents": 0,
-  "totalAuditStartedEvents": 2,
+  "toolPageSharePct": 10.5,
+  "toolPageEvents": 2,
+  "totalAuditStartedEvents": 19,
   "byEntryPoint": [
     {
-      "entry_point": "(not set)",
+      "entry_point": "home",
+      "eventCount": "16",
+      "totalUsers": "11"
+    },
+    {
+      "entry_point": "tool_page",
       "eventCount": "2",
-      "totalUsers": "2"
+      "totalUsers": "1"
+    },
+    {
+      "entry_point": "history",
+      "eventCount": "1",
+      "totalUsers": "1"
     }
   ],
   "byUrlDomain": [
     {
-      "url_domain": "(not set)",
+      "url_domain": "www.aimaji.top",
+      "eventCount": "4"
+    },
+    {
+      "url_domain": "visittorishikesh.com",
       "eventCount": "2"
+    },
+    {
+      "url_domain": "361sport.com",
+      "eventCount": "1"
+    },
+    {
+      "url_domain": "aimaji.top",
+      "eventCount": "1"
+    },
+    {
+      "url_domain": "app.base44.com",
+      "eventCount": "1"
+    },
+    {
+      "url_domain": "danika-unaimed-carlee.ngrok-free.dev",
+      "eventCount": "1"
+    },
+    {
+      "url_domain": "goeagleshots.com",
+      "eventCount": "1"
+    },
+    {
+      "url_domain": "greendotdot.com",
+      "eventCount": "1"
+    },
+    {
+      "url_domain": "ir.anta.com",
+      "eventCount": "1"
+    },
+    {
+      "url_domain": "triplerbars.com",
+      "eventCount": "1"
+    },
+    {
+      "url_domain": "www.klett-sprachen.de",
+      "eventCount": "1"
+    },
+    {
+      "url_domain": "www.modifycar.es",
+      "eventCount": "1"
+    },
+    {
+      "url_domain": "www.silq.com.au",
+      "eventCount": "1"
+    },
+    {
+      "url_domain": "www.wattetheria.com",
+      "eventCount": "1"
+    },
+    {
+      "url_domain": "www.wirth-horn.de",
+      "eventCount": "1"
     }
   ],
   "allEvents": [
     {
       "eventName": "page_view",
-      "eventCount": "47",
-      "totalUsers": "40"
-    },
-    {
-      "eventName": "user_engagement",
-      "eventCount": "43",
-      "totalUsers": "37"
-    },
-    {
-      "eventName": "scroll",
-      "eventCount": "41",
-      "totalUsers": "35"
-    },
-    {
-      "eventName": "first_visit",
-      "eventCount": "40",
-      "totalUsers": "40"
+      "eventCount": "37",
+      "totalUsers": "14"
     },
     {
       "eventName": "session_start",
-      "eventCount": "40",
-      "totalUsers": "40"
+      "eventCount": "29",
+      "totalUsers": "14"
     },
     {
-      "eventName": "audit_started",
-      "eventCount": "2",
-      "totalUsers": "2"
+      "eventName": "user_engagement",
+      "eventCount": "27",
+      "totalUsers": "8"
     },
     {
       "eventName": "audit_completed",
-      "eventCount": "1",
-      "totalUsers": "1"
+      "eventCount": "19",
+      "totalUsers": "11"
     },
     {
-      "eventName": "audit_failed",
-      "eventCount": "1",
-      "totalUsers": "1"
+      "eventName": "audit_started",
+      "eventCount": "19",
+      "totalUsers": "11"
     },
     {
       "eventName": "result_viewed",
-      "eventCount": "1",
+      "eventCount": "19",
+      "totalUsers": "10"
+    },
+    {
+      "eventName": "first_visit",
+      "eventCount": "14",
+      "totalUsers": "14"
+    },
+    {
+      "eventName": "result_cta_impression",
+      "eventCount": "14",
+      "totalUsers": "10"
+    },
+    {
+      "eventName": "scroll",
+      "eventCount": "9",
+      "totalUsers": "7"
+    },
+    {
+      "eventName": "click",
+      "eventCount": "2",
+      "totalUsers": "1"
+    },
+    {
+      "eventName": "tool_complete",
+      "eventCount": "2",
       "totalUsers": "1"
     }
   ],
-  "consentedUsers": "48",
-  "sessions": "48",
+  "consentedUsers": "14",
+  "sessions": "29",
   "caveat": "Consented users only. The consent-rate denominator is invisible by design."
 }

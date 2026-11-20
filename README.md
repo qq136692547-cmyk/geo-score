@@ -1,19 +1,26 @@
 ﻿# GeoScore 🌐 — GEO Audit Tool for AI Search Visibility
 
-**Check your website'\''s visibility to ChatGPT, Perplexity, Claude, Gemini, and Google AI Overviews.**
+**Check your website's visibility to ChatGPT, Perplexity, Claude, Gemini, and Google AI Overviews.**  
+*Audit locally via Chrome Extension or Terminal CLI; Generate 1-Click Code Fix Packs on [geoscore.help](https://geoscore.help/).*
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Chrome Web Store](https://img.shields.io/badge/Chrome_Web_Store-v1.8.0-blue?logo=google-chrome)](https://chromewebstore.google.com/detail/geoscore-free-geo-aeo-llm/cboppgehhkhaamcgfcikhekkdaelichn)
 [![Built with Astro](https://img.shields.io/badge/Built%20with-Astro-ff5a03?logo=astro)](https://astro.build)
 [![GitHub Pages](https://img.shields.io/badge/Deploy-GitHub%20Pages-222?logo=githubpages)](https://pages.github.com)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
 ---
 
-## 🚀 Try It
+## 🚀 Try It & Ecosystem Quickstart
 
-**[👉 geoscore.help](https://geoscore.help)**
+- **Web Audit & Remediation Hub**: [geoscore.help](https://geoscore.help) — Full instant audit, radar charts, and 1-click **$49 Fix Pack** download.
+- **Official Chrome Extension**: [Chrome Web Store](https://chromewebstore.google.com/detail/geoscore-free-geo-aeo-llm/cboppgehhkhaamcgfcikhekkdaelichn) — Audit open tabs, debug localhost, and inspect live DOM differences.
+- **Terminal CLI (Zero Install)**: `npx geoscore https://example.com` — Fast 11-dimension scan with JSON/CI gate support.
+- **MCP Server for AI Agents**: `npx geoscore-mcp` — Real-time GEO context and automatic remediation for Claude Desktop & Cursor.
 
-Enter any URL and get a comprehensive GEO readiness score across 11 dimensions.
+> 💡 **Open-Core Model**:
+> - **Free & Open-Source (MIT)**: Core 11-dimension 85-signal audit engine, CLI scanner (`npx geoscore`), Chrome Side Panel extension, and MCP Server.
+> - **Commercial Services on [geoscore.help](https://geoscore.help/)**: 1-Click **$49 Automated Code Fix Pack** (`llms.txt`, `robots.txt`, JSON-LD schemas), weekly automated AI search citation monitoring, and bespoke enterprise consulting.
 
 ## 📖 What is GeoScore?
 
@@ -53,28 +60,54 @@ GeoScore synthesizes frameworks from the leading GEO/AEO open-source projects:
 - **36–67** ⚠️ Basic — Significant work needed
 - **0–35** 🔴 Critical — Major overhaul required
 
-## 🏗 Architecture
+## 🏗 Architecture & Ecosystem
+
+GeoScore delivers a comprehensive 4-in-1 toolchain covering the full GEO optimization lifecycle:
 
 ```
-┌─────────────────────────────────────┐
-│       GeoScore Web App (Astro)       │
-├─────────────────────────────────────┤
-│  ┌─────────┐ ┌──────────┐ ┌──────┐  │
-│  │ Home    │ │ Audit    │ │About │  │
-│  │ (URL)   │ │(Dashboard)│ │     │  │
-│  └────┬────┘ └────┬─────┘ └──────┘  │
-│       │           │                  │
-│  ┌────▼───────────▼──────────────┐   │
-│  │     Scoring Engine (JS)        │   │
-│  │  13 analyzers → scoring.js    │   │
-│  └──────────┬────────────────────┘   │
-│             │                        │
-│  ┌──────────▼────────────────────┐   │
-│  │  Cloudflare Worker (CORS      │   │
-│  │  proxy for blocked resources) │   │
-│  └───────────────────────────────┘   │
-└─────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                            GeoScore Core Engine                             │
+│                  11 Dimensions · 20 AI Crawlers · 85 Checks                 │
+└───────┬──────────────────────┬──────────────────────┬────────────────┬──────┘
+        │                      │                      │                │
+        ▼                      ▼                      ▼                ▼
+┌────────────────┐    ┌─────────────────┐    ┌──────────────────┐   ┌─────────────────┐
+│    Web App     │    │ Chrome Extension│    │     CLI Tool     │   │   MCP Server    │
+│(geoscore.help) │    │  (Manifest V3)  │    │  (npx geoscore)  │   │ (geoscore-mcp)  │
+├────────────────┤    ├─────────────────┤    ├──────────────────┤   ├─────────────────┤
+│• Free browser  │    │• In-tab audit   │    │• Terminal audits │   │• Claude Desktop │
+│  instant audit │    │  (Side Panel)   │    │• CI/CD pipeline  │   │  & Cursor agent │
+│• Radar charts  │    │• Localhost/dev  │    │• JSON, HTML &    │   │• Zero-config    │
+│• Sitemap batch │    │• Bypass WAF/CORS│    │  quiet modes     │   │  agent tools    │
+│• Pro monitor   │    │• SSR vs CSR DOM │    │• Auto-fix export │   │• Real-time GEO  │
+│  & cloud sync  │    │  diff analysis  │    │  to ./geo-fixes/ │   │  context        │
+└────────────────┘    └─────────────────┘    └──────────────────┘   └─────────────────┘
 ```
+
+### Ecosystem Capability Matrix
+
+| Capability / Feature | Web App (`geoscore.help`) | Chrome Extension (MV3) | CLI (`npx geoscore`) | MCP Server (`geoscore-mcp`) |
+| :--- | :---: | :---: | :---: | :---: |
+| **Public Website Audit** | ✅ | ✅ | ✅ | ✅ |
+| **Localhost / Dev Server** | ❌ (Proxy blocked) | ✅ (Direct tab access) | ✅ (`http://localhost`) | ✅ |
+| **Bypass WAF / Cloudflare** | ❌ (Edge rate limited) | ✅ (Browser execution) | ⚠️ (Depends on IP/WAF) | ⚠️ |
+| **SSR vs CSR DOM Diff** | ❌ (Raw HTML only) | ✅ (Live DOM vs SSR) | ❌ (Node fetch) | ❌ |
+| **On-Page Visual Highlight** | ❌ | ✅ (Direct DOM inspect) | ❌ | ❌ |
+| **Sitemap Batch Scan** | ✅ | ↗️ (Redirects to Web) | ❌ | ❌ |
+| **Pro Weekly Monitoring** | ✅ | ↗️ (Links to Cloud) | ❌ | ❌ |
+| **CI / CD Pipeline Gate** | ❌ | ❌ | ✅ (`--quiet`, `--json`) | ❌ |
+| **AI Agent Integration** | ❌ | ❌ | ⚠️ (Subprocess) | ✅ (Native MCP) |
+| **Fix Files Generation** | ✅ (Download) | ✅ (Download/Copy) | ✅ (`--fix`) | ✅ (`generate_fixes`) |
+
+### 💎 Open-Core Architecture & Commercial Division
+
+GeoScore operates under an **Open-Core** philosophy: standard audit algorithms and developer tools are 100% free and open-source, while high-value automation and cloud intelligence are provided commercially on [geoscore.help](https://geoscore.help/).
+
+| Tier | Capability | Deliverables | Pricing & Access |
+| :--- | :--- | :--- | :--- |
+| **Core Open-Source**<br/>*(MIT License)* | • 11-Dimension / 85-Check Engine<br/>• Terminal CLI Scanner<br/>• Chrome Extension MV3<br/>• MCP Server for AI Agents | Full diagnostic breakdown, 0–100 score, negative signal analysis, and prompt injection detection | **100% Free**<br/>(`npx geoscore` / GitHub) |
+| **Automated Fix Pack**<br/>*(Commercial SaaS)* | • 1-Click Code Generation<br/>• Deploy-Ready Config Bundles<br/>• Schema Syntax Guarantee | Tailored `llms.txt`, hardened `robots.txt`, and validated JSON-LD schema snippets to paste directly | **$49 / site**<br/>([geoscore.help](https://geoscore.help/)) |
+| **Enterprise Cloud**<br/>*(Commercial SaaS)* | • Multi-Engine Citation Tracking<br/>• AI Search Answer Share Alerts<br/>• Bespoke Consulting | Weekly automated queries on ChatGPT, Perplexity, Claude, Gemini & Google AI Overviews with trend history | **Custom / Retainer**<br/>([geoscore.help](https://geoscore.help/)) |
 
 ## 🛠 Tech Stack
 
@@ -158,11 +191,43 @@ npm test
 
 ### CLI Audit (No Installation)
 
+Run a GEO audit directly from your terminal with zero global installation:
+
 ```bash
-npx geoscore audit https://example.com
+# Standard terminal report
+npx geoscore https://example.com
+
+# Machine-readable JSON output
+npx geoscore https://example.com --json
+
+# Generate fix files (llms.txt, robots.txt, JSON-LD) into ./geo-fixes/
+npx geoscore https://example.com --fix
+
+# Quiet mode (prints only numeric score 0-100 for CI/CD gates)
+npx geoscore https://example.com --quiet
 ```
 
-Run a GEO audit from your terminal. Zero dependencies, outputs Markdown report.
+### 🧩 Chrome Extension (Manifest V3)
+
+Audit any open browser tab, inspect rendered DOM, and debug localhost applications:
+- **Chrome Web Store**: [GeoScore: Free GEO, AEO & llms.txt Audit](https://chromewebstore.google.com/detail/geoscore-free-geo-aeo-llm/cboppgehhkhaamcgfcikhekkdaelichn)
+- **Source Code & Manual Install**: See [`extension/README.md`](extension/README.md).
+
+### 🤖 MCP Server (Model Context Protocol)
+
+Integrate GeoScore directly into Claude Desktop, Cursor, or any MCP-compatible agent:
+
+```json
+{
+  "mcpServers": {
+    "geoscore": {
+      "command": "npx",
+      "args": ["geoscore-mcp"]
+    }
+  }
+}
+```
+See [`MCP.md`](MCP.md) for full protocol specs and available tools (`audit_url`, `generate_fixes`).
 
 ### Deploying the Worker
 

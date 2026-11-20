@@ -271,7 +271,24 @@ window.startAudit = async function (entryPoint) {
     // geoUrlDomain() silently returns '' — the one audit event whose domain we
     // most need (the failure) was the only one reporting none.
     if (typeof window.geoTrack === 'function') window.geoTrack('audit_failed', { url_domain: geoUrlDomain(targetUrl), error_code: geoErrorCode(err), source_type: getGeoSource() });
-    document.getElementById("loading-section").innerHTML = '<div class="card p-8 text-center" role="alert"><div class="text-danger-500 text-lg font-semibold mb-2">' + t("Audit Failed", "审计失败") + '</div><p class="text-gray-400 text-sm">' + err.message + '</p><button id="audit-retry" class="mt-4 px-4 py-2 rounded-lg text-sm bg-white/10 hover:bg-white/20 transition">' + t("Try Again", "重试") + '</button></div>';
+    var extTipHtml = '<div class="mt-6 pt-5 border-t border-gray-700/60 text-left bg-brand-500/5 rounded-xl p-4 border border-brand-500/20">' +
+      '<div class="flex items-start gap-3">' +
+        '<span class="text-xl">🛡️</span>' +
+        '<div class="flex-1">' +
+          '<div class="font-semibold text-white text-sm mb-1">' +
+            t("Hit a WAF / CORS block or auditing Localhost?", "遇到 WAF / CORS 拦截或正在调试 Localhost？") +
+          '</div>' +
+          '<p class="text-xs text-gray-300 leading-relaxed mb-3">' +
+            t("Install the official GeoScore Chrome Extension to audit directly inside your current tab. It bypasses Cloudflare/anti-bot blocks, inspects live rendered DOM, and works on localhost and password-protected pages.",
+              "建议安装使用 GeoScore Chrome 官方插件，直接在当前标签页内完成审计。可绕过 Cloudflare 与 WAF 防火墙限制，支持本地 Localhost、登录态页面与真实渲染 DOM。") +
+          '</p>' +
+          '<a href="https://chromewebstore.google.com/detail/geoscore-free-geo-aeo-llm/cboppgehhkhaamcgfcikhekkdaelichn" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-white bg-gradient-to-r from-geo-600 to-brand-600 hover:from-geo-500 hover:to-brand-500 transition">' +
+            t("Get GeoScore Chrome Extension →", "安装 GeoScore 官方插件 →") +
+          '</a>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+    document.getElementById("loading-section").innerHTML = '<div class="card p-8 text-center" role="alert"><div class="text-danger-500 text-lg font-semibold mb-2">' + t("Audit Failed", "审计失败") + '</div><p class="text-gray-400 text-sm mb-4">' + err.message + '</p><button id="audit-retry" class="px-4 py-2 rounded-lg text-sm bg-white/10 hover:bg-white/20 transition">' + t("Try Again", "重试") + '</button>' + extTipHtml + '</div>';
     var retryBtn = document.getElementById("audit-retry");
     if (retryBtn) retryBtn.addEventListener("click", function() { window.startAudit(entryPoint); });
   }
@@ -388,12 +405,46 @@ function prefersReducedMotion() {
   return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
 }
 
+function renderSpaDomNotice(r) {
+  try {
+    var cq = r && r.dimensions && r.dimensions.contentQuality;
+    if (!cq || !Array.isArray(cq.checks)) return '';
+    var wcCheck = cq.checks.find(function(c) { return c && c.id === 'wordcount'; });
+    if (!wcCheck || wcCheck.passed) return '';
+    var match = /\b(\d+)\s+words\b/i.exec(wcCheck.label || '');
+    var wordCount = match ? parseInt(match[1], 10) : -1;
+    if (wordCount >= 100 && wordCount !== -1) return '';
+
+    var wordsDisplay = wordCount >= 0 ? wordCount : 0;
+    var zh = (document.documentElement.lang || 'en').toLowerCase().indexOf('zh') === 0;
+    return '<div class="card p-5 mb-8 border-brand-500/40 bg-brand-500/5 stagger-section">' +
+      '<div class="flex items-start gap-3 text-left">' +
+        '<span class="text-xl">💡</span>' +
+        '<div class="flex-1">' +
+          '<h3 class="text-sm font-semibold text-white mb-1">' +
+            (zh ? '疑似客户端 JS 渲染单页应用（SPA）— 字数极低（仅 ' + wordsDisplay + ' 词）' : 'Possible Client-Rendered App (SPA) — Low Word Count (' + wordsDisplay + ' words)') +
+          '</h3>' +
+          '<p class="text-xs text-gray-300 leading-relaxed mb-3">' +
+            (zh ? '服务端返回的原始静态 HTML 中有效正文过少。大多数 AI 搜索引擎爬虫（如 GPTBot、ClaudeBot）仅抓取初始 HTML，不执行客户端复杂脚本。建议使用 <strong class="text-brand-400">GeoScore Chrome 官方插件</strong> 对比 SSR 初始 HTML 与浏览器渲染后真实 DOM，排查可见性盲区。' : 'The raw server HTML contains very little readable text. Major AI crawlers (GPTBot, ClaudeBot, PerplexityBot) often index raw HTML without executing JavaScript. Use the <strong class="text-brand-400">GeoScore Chrome Extension</strong> to compare raw SSR HTML with the live browser-rendered DOM.') +
+          '</p>' +
+          '<a href="https://chromewebstore.google.com/detail/geoscore-free-geo-aeo-llm/cboppgehhkhaamcgfcikhekkdaelichn" target="_blank" rel="noopener" class="inline-flex items-center gap-1 text-xs text-geo-400 hover:text-geo-300 font-semibold underline underline-offset-2">' +
+            (zh ? '使用 Chrome 官方插件对比 DOM →' : 'Compare DOM with Chrome Extension →') +
+          '</a>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  } catch (e) {
+    return '';
+  }
+}
+
 function renderReport(r) {
   if (radarChartInstance) { radarChartInstance.destroy(); radarChartInstance = null; }
   if (trendChartInstance) { trendChartInstance.destroy(); trendChartInstance = null; }
   var root = document.getElementById("report-section");
   var parts = [
     renderScoreHeader(r),
+    renderSpaDomNotice(r),
     renderRadarContainer(),
     renderDimensionBreakdown(r.dimensions),
     renderNegativeSignals(r.negativeSignals),
@@ -699,19 +750,21 @@ document.addEventListener("DOMContentLoaded", function() {
 
   // --- URL parameter: auto-start audit from ?audit=url ---
   var params = new URLSearchParams(window.location.search);
+  var actionParam = params.get('action');
   // Privacy: ?audit= / ?url= leave the audited site sitting in the address bar,
   // where analytics and ad scripts can read it. Everything below reads `params`,
   // which is already parsed, so the visible URL can be cleaned immediately.
   // A pasted share link still works; it just does not linger in the address bar
   // or in browser history.
   if (window.history && window.history.replaceState &&
-      (params.has('audit') || params.has('url'))) {
+      (params.has('audit') || params.has('url') || params.has('action'))) {
     try {
       var leftover = new URLSearchParams(window.location.search);
       leftover.delete('audit');
       leftover.delete('url');
       leftover.delete('src');
       leftover.delete('tool');
+      leftover.delete('action');
       var leftoverQs = leftover.toString();
       window.history.replaceState(null, '',
         window.location.pathname + (leftoverQs ? '?' + leftoverQs : '') + (window.location.hash || ''));
@@ -742,6 +795,39 @@ document.addEventListener("DOMContentLoaded", function() {
         // and must not become markup.
         deepInput.value = prefill;
         deepInput.setAttribute('data-deeplink', 'filled');
+
+        if (actionParam === 'full_scan') {
+          var batchSec = document.getElementById('batch-section');
+          if (batchSec) {
+            batchSec.classList.remove('hidden');
+          }
+          var sitemapInput = document.getElementById('sitemap-url');
+          if (sitemapInput) {
+            try {
+              var originUrl = new URL(/^https?:\/\//i.test(prefill) ? prefill : 'https://' + prefill);
+              sitemapInput.value = originUrl.origin + '/sitemap.xml';
+            } catch (e) {
+              sitemapInput.value = 'https://' + prefill + '/sitemap.xml';
+            }
+          }
+          var tipMsg = t(
+            'Click Start Batch Scan to run a full-site audit, or upgrade to Pro for weekly automated monitoring.',
+            '点击「开始批量扫描」进行全站扫描，或升级 Pro 开启每周监控。'
+          );
+          showToast(tipMsg, 'info');
+          if (batchSec && !document.getElementById('batch-fullscan-hint')) {
+            var hintDiv = document.createElement('div');
+            hintDiv.id = 'batch-fullscan-hint';
+            hintDiv.className = 'mb-3 p-3 rounded-lg bg-brand-500/10 border border-brand-500/30 text-xs text-brand-300 font-medium flex items-center justify-between gap-2';
+            hintDiv.textContent = tipMsg;
+            var batchBtn = document.getElementById('batch-btn');
+            if (batchBtn && batchBtn.parentNode === batchSec) {
+              batchSec.insertBefore(hintDiv, batchBtn);
+            } else {
+              batchSec.prepend(hintDiv);
+            }
+          }
+        }
       } else {
         // Unusable value: stay on an empty input and say so without blocking.
         // showToast, not alert — M2 cleared alert() site-wide.

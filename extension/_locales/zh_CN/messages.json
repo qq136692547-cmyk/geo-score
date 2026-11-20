@@ -1,0 +1,11 @@
+{
+  "extName": {
+    "message": "GeoScore: 免费 GEO 审计与 llms.txt / AI 搜索优化检测工具"
+  },
+  "extDescription": {
+    "message": "本地一键检测 11 维度 GEO 评分、SSR/CSR 渲染盲区、软 404，支持网页原位高亮与修复文件生成。"
+  },
+  "actionTitle": {
+    "message": "使用 GeoScore 检测当前页面 GEO 就绪度"
+  }
+}

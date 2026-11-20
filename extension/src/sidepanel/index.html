@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GeoScore Side Panel</title>
+  <link rel="stylesheet" href="./sidepanel.css">
+  <script type="module" src="./sidepanel.js"></script>
+</head>
+<body>
+  <div id="app">
+    <!-- Header Bar -->
+    <header class="header-bar">
+      <div class="brand-wrapper">
+        <div class="brand-icon">G</div>
+        <span class="brand-title">GeoScore</span>
+        <span class="brand-badge">MV3</span>
+      </div>
+      <div class="header-actions">
+        <button id="btn-lang" class="icon-btn" title="Switch Language / 切换语言" aria-label="Language">EN</button>
+        <button id="btn-settings" class="icon-btn" title="Settings / 设置" aria-label="Settings">⚙️</button>
+        <button id="btn-rescan" class="rescan-btn" title="Rescan Current Tab / 重新扫描当前页">
+          <span class="rescan-icon">🔄</span>
+          <span id="label-rescan">Rescan</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- URL & Status Bar -->
+    <div id="url-bar" class="url-bar">
+      <div class="url-info">
+        <span id="status-dot" class="status-dot"></span>
+        <span id="url-text" class="url-text" title="Target URL">https://...</span>
+      </div>
+      <span id="staging-badge" class="auth-badge" style="display: none;">Staging / Auth</span>
+    </div>
+
+    <!-- Locked Tab Banner (Cross-tab notification) -->
+    <div id="locked-tab-banner" class="locked-tab-banner" style="display: none;">
+      <div class="locked-tab-content">
+        <span class="locked-tab-pin">📌</span>
+        <span id="locked-tab-text" class="locked-tab-text">Locked: --</span>
+      </div>
+      <button id="btn-scan-switched-tab" class="btn-scan-switched">
+        <span class="scan-switched-icon">🎯</span>
+        <span id="label-scan-switched">Scan Current Tab</span>
+      </button>
+    </div>
+
+    <!-- Settings Drawer (Hidden by default) -->
+    <div id="settings-drawer" class="settings-drawer">
+      <div class="drawer-header">
+        <span id="label-settings-title" class="drawer-title">Settings</span>
+        <button id="btn-close-settings" class="icon-btn" aria-label="Close">✕</button>
+      </div>
+
+      <div class="setting-item">
+        <div class="setting-row">
+          <label for="setting-auto-badge" id="label-auto-badge" class="setting-label">Auto-Badge on Navigation</label>
+          <label class="toggle-switch">
+            <input type="checkbox" id="setting-auto-badge">
+            <span class="slider"></span>
+          </label>
+        </div>
+        <p id="label-auto-badge-desc" class="setting-subtext">
+          Audit visited pages in background and show real-time score badges on extension icon (requires host permission).
+        </p>
+      </div>
+
+      <div class="setting-item">
+        <div class="setting-row">
+          <label for="setting-lang" id="label-language" class="setting-label">Language / 语言</label>
+          <select id="setting-lang" class="select-input">
+            <option value="auto">Auto (Browser Default)</option>
+            <option value="en">English</option>
+            <option value="zh_CN">简体中文</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="setting-item">
+        <button id="btn-clear-history" class="btn-danger">
+          <span id="label-clear-history">Clear Local History & Cache</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Alert Banners Area -->
+    <div id="banners-area" class="banner-container">
+      <div id="banner-auth" class="alert-banner info" style="display: none;">
+        <span>🔒</span>
+        <span id="banner-auth-text">Authenticated Staging Mode: Audited with session cookies.</span>
+      </div>
+      <div id="banner-jstrap" class="alert-banner danger" style="display: none;">
+        <span>⚠️</span>
+        <div id="banner-jstrap-text">
+          <strong>JS Rendering Trap:</strong> Page content or schema requires client-side JavaScript. AI search crawlers will miss it!
+        </div>
+      </div>
+      <div id="banner-soft404" class="alert-banner warning" style="display: none;">
+        <span>⚠️</span>
+        <div id="banner-soft404-text">
+          <strong>Soft 404 Detected:</strong> Some static discovery endpoints returned HTTP 200 with HTML SPA shells.
+        </div>
+      </div>
+    </div>
+
+    <!-- Main View State Containers -->
+    <main id="main-view">
+      <!-- 0. Standby State (Default initial view before audit) -->
+      <section id="view-standby" class="view-state">
+        <div class="guide-card standby-card">
+          <div class="guide-icon">⚡</div>
+          <h2 id="label-standby-title" class="guide-title">Ready to Audit</h2>
+          <p id="label-standby-desc" class="guide-desc">
+            Audit this page across 11 GEO dimensions, detect JS rendering traps, and generate AI-ready fix files.
+          </p>
+          <div class="standby-target-box">
+            <span id="label-standby-target" class="standby-target-label">Current Page:</span>
+            <span id="standby-target-url" class="standby-target-url">--</span>
+          </div>
+          <button id="btn-scan-current" class="btn-primary-gradient standby-scan-btn">
+            <span>🚀</span>
+            <span id="label-scan-current">Scan Current Page</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- 1. Scanning State -->
+      <section id="view-scanning" class="view-state">
+        <div class="skeleton-card">
+          <div class="radar-spinner"></div>
+          <div id="scanning-status-text" class="skeleton-text">Auditing page GEO readiness across 11 dimensions...</div>
+          <div class="skeleton-bar"></div>
+          <div class="skeleton-bar" style="width: 60%;"></div>
+        </div>
+      </section>
+
+      <!-- 2. Restricted Browser Page State -->
+      <section id="view-restricted" class="view-state">
+        <div class="guide-card">
+          <div class="guide-icon">🛡️</div>
+          <h2 id="label-restricted-title" class="guide-title">Restricted Browser Page</h2>
+          <p id="label-restricted-desc" class="guide-desc">
+            GeoScore cannot audit browser internal pages (chrome://), webstore pages, or empty tabs. Please open a regular web page or localhost project.
+          </p>
+          <button id="btn-open-geoscore" class="btn-secondary">Open geoscore.help</button>
+        </div>
+      </section>
+
+      <!-- 3. Needs Permission / Waiting Activation State -->
+      <section id="view-needs-permission" class="view-state">
+        <div class="guide-card">
+          <div class="guide-icon">🔑</div>
+          <h2 id="label-permission-title" class="guide-title">Access Permission Needed</h2>
+          <p id="label-permission-desc" class="guide-desc">
+            Click the GeoScore icon in your browser toolbar or grant access below to audit this tab.
+          </p>
+          <button id="btn-grant-permission" class="btn-primary-gradient" style="display: none;">
+            Grant Access & Rescan
+          </button>
+        </div>
+      </section>
+
+      <!-- 4. Error State -->
+      <section id="view-error" class="view-state">
+        <div class="guide-card">
+          <div class="guide-icon">⚠️</div>
+          <h2 id="label-error-title" class="guide-title">Audit Failed</h2>
+          <p id="error-message-text" class="guide-desc">An error occurred while auditing page.</p>
+          <button id="btn-retry" class="btn-secondary">Retry Audit</button>
+        </div>
+      </section>
+
+      <!-- 5. Report State -->
+      <section id="view-report" class="view-state">
+        <!-- Score Card -->
+        <div class="score-card">
+          <div class="score-gauge-wrapper">
+            <svg class="gauge-svg" viewBox="0 0 140 140">
+              <circle class="gauge-bg" cx="70" cy="70" r="58"></circle>
+              <circle id="gauge-progress" class="gauge-progress" cx="70" cy="70" r="58"
+                      stroke="#22c55e" stroke-dasharray="364.4" stroke-dashoffset="364.4"></circle>
+            </svg>
+            <div class="score-center-text">
+              <span id="score-value" class="score-number">--</span>
+              <span class="score-max">/ 100</span>
+            </div>
+          </div>
+
+          <div class="score-badges-row">
+            <span id="level-badge" class="level-badge" style="background: #22c55e; color: #fff;">GOOD</span>
+            <span id="diff-badge" class="diff-badge" style="display: none;"></span>
+          </div>
+
+          <!-- Collapsible Diff Details -->
+          <div id="diff-drawer" class="diff-drawer" style="display: none;">
+            <strong id="label-newly-fixed">Newly Fixed Checks:</strong>
+            <ul id="diff-list" class="diff-list"></ul>
+          </div>
+
+          <!-- Quick Stats Bar -->
+          <div class="quick-stats-bar">
+            <div class="stat-item">
+              <span id="stat-checks" class="stat-val">-- / 85</span>
+              <span id="label-stat-checks" class="stat-label">Passed Checks</span>
+            </div>
+            <div class="stat-item">
+              <span id="stat-survival" class="stat-val">100%</span>
+              <span id="label-stat-survival" class="stat-label">AI Visibility</span>
+            </div>
+            <div class="stat-item">
+              <span id="stat-duration" class="stat-val">--ms</span>
+              <span id="label-stat-duration" class="stat-label">Duration</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Primary Action Bar -->
+        <div class="actions-bar">
+          <button id="btn-copy-prompt" class="btn-primary-gradient">
+            <span>🤖</span>
+            <span id="label-copy-prompt">Copy Fix Prompt (Cursor / Claude)</span>
+          </button>
+          <div class="secondary-actions-row">
+            <button id="btn-export-md" class="btn-secondary">Export MD</button>
+            <button id="btn-export-json" class="btn-secondary">Export JSON</button>
+          </div>
+          <!-- In-Page X-Ray Clear Bar -->
+          <div id="xray-bar" class="xray-bar">
+            <span id="xray-status-text">🔍 In-Page X-Ray active</span>
+            <button id="btn-clear-xray" class="btn-secondary" style="padding: 2px 8px; font-size: 11px;">Clear</button>
+          </div>
+        </div>
+
+        <!-- SSR vs CSR Dual-Track Card (JS Trap Detector) -->
+        <div id="ssr-csr-card" class="comparison-card">
+          <div class="card-title-row">
+            <span class="card-title">
+              <span>⚡</span>
+              <span id="label-ssr-title">SSR vs. Live DOM (AI Crawler View)</span>
+            </span>
+            <span id="survival-rate-badge" class="rate-badge" style="background: rgba(34, 197, 94, 0.15); color: #4ade80;">100%</span>
+          </div>
+
+          <div class="comparison-grid">
+            <div class="comp-cell">
+              <span id="label-ssr-words" class="comp-label">SSR Raw Words</span>
+              <span id="stat-ssr-words" class="comp-val">0</span>
+            </div>
+            <div class="comp-cell">
+              <span id="label-csr-words" class="comp-label">Live DOM Words</span>
+              <span id="stat-csr-words" class="comp-val">0</span>
+            </div>
+            <div class="comp-cell">
+              <span id="label-ssr-schemas" class="comp-label">SSR Schema Types</span>
+              <span id="stat-ssr-schemas" class="comp-val">0</span>
+            </div>
+            <div class="comp-cell">
+              <span id="label-csr-schemas" class="comp-label">Live DOM Schema Types</span>
+              <span id="stat-csr-schemas" class="comp-val">0</span>
+            </div>
+          </div>
+
+          <div id="js-trap-alert" class="trap-callout" style="display: none;">
+            <div id="js-trap-detail"></div>
+          </div>
+        </div>
+
+        <!-- Soft 404 Warnings Card -->
+        <div id="soft404-card" class="comparison-card" style="display: none;">
+          <div class="card-title">
+            <span>⚠️</span>
+            <span id="label-soft404-title">Soft 404 Endpoint Warnings</span>
+          </div>
+          <div id="soft404-list" style="display: flex; flex-direction: column; gap: 6px; font-size: 11px;"></div>
+        </div>
+
+        <!-- 11 Dimensions Accordion -->
+        <div>
+          <h3 id="label-dimensions-heading" class="section-title">11 Audit Dimensions (85 Checks)</h3>
+          <div id="dimensions-container" class="dimensions-list"></div>
+        </div>
+
+        <!-- Fix Files Generator Card -->
+        <div id="fix-files-card" class="fix-files-card">
+          <div class="card-title-row">
+            <span class="card-title">
+              <span>🛠️</span>
+              <span id="label-fix-files-title">Generated Remediation Files</span>
+            </span>
+          </div>
+          <div class="tabs-header">
+            <button id="tab-llms" class="tab-btn active">llms.txt</button>
+            <button id="tab-robots" class="tab-btn">robots.txt</button>
+            <button id="tab-jsonld" class="tab-btn">JSON-LD</button>
+          </div>
+          <div class="code-preview-container">
+            <pre><code id="fix-code-preview" class="code-preview"></code></pre>
+          </div>
+          <div class="fix-actions-row">
+            <p id="fix-file-path-hint" class="disclaimer-note">Place at website root</p>
+            <div style="display: flex; gap: 6px;">
+              <button id="btn-copy-fix" class="btn-secondary" style="padding: 4px 10px;">Copy</button>
+              <button id="btn-download-fix" class="btn-secondary" style="padding: 4px 10px;">Download</button>
+            </div>
+          </div>
+          <p id="robots-disclaimer" class="disclaimer-note" style="display: none;">
+            Note: robots.txt recommendations preserve custom rules and only advise AI agent permissions without overreaching guarantees.
+          </p>
+        </div>
+
+        <!-- AI Citation Smoke-Test Launcher -->
+        <div id="smoke-test-card" class="smoke-card">
+          <div class="card-title-row">
+            <span class="card-title">
+              <span>🎯</span>
+              <span id="label-smoke-title">AI Engine Live Smoke Test</span>
+            </span>
+          </div>
+          <div class="entity-tags-row">
+            <span class="entity-tag">Brand: <strong id="smoke-brand">--</strong></span>
+            <span class="entity-tag">Topic: <strong id="smoke-topic">--</strong></span>
+          </div>
+          <div id="smoke-prompts-container" style="display: flex; flex-direction: column; gap: 8px;"></div>
+          <p id="smoke-disclaimer" class="disclaimer-note">
+            Assists manual verification across AI search engines. Does not simulate synthetic live traffic.
+          </p>
+        </div>
+
+        <!-- Commercial Funnel Cards -->
+        <div class="funnel-container">
+          <a id="link-pro-scan" href="https://geoscore.help/?utm_source=chrome_ext&action=full_scan" target="_blank" rel="noopener noreferrer" class="funnel-card">
+            <div class="funnel-header">
+              <span id="label-pro-title" class="funnel-title">Full Site Sitemap Scan & Monitoring</span>
+              <span class="funnel-price-badge">Pro $9/mo</span>
+            </div>
+            <p id="label-pro-desc" class="funnel-desc">
+              Single page score doesn't guarantee domain readiness. Scan all URLs via XML Sitemap and track weekly score trends.
+            </p>
+          </a>
+
+          <a id="link-fix-pack" href="https://geoscore.help/fixpack/?utm_source=chrome_ext" target="_blank" rel="noopener noreferrer" class="funnel-card">
+            <div class="funnel-header">
+              <span id="label-fixpack-title" class="funnel-title">Done-For-You AI Visibility Fix Pack</span>
+              <span class="funnel-price-badge">$49 One-Time</span>
+            </div>
+            <p id="label-fixpack-desc" class="funnel-desc">
+              Get customized llms.txt, validated JSON-LD schema, and AI agent discovery endpoints tailored by GEO specialists.
+            </p>
+          </a>
+
+          <a id="link-pricing" href="https://geoscore.help/pricing/?utm_source=chrome_ext" target="_blank" rel="noopener noreferrer" class="funnel-card">
+            <div class="funnel-header">
+              <span id="label-pricing-title" class="funnel-title">PDF Report Export & 30-Day History</span>
+              <span id="label-pricing-badge" class="funnel-price-badge">Pro $9/mo</span>
+            </div>
+            <p id="label-pricing-desc" class="funnel-desc">
+              Export audit PDF reports, monitor up to 5 domains with weekly alerts, and access 30-day cloud audit history.
+            </p>
+          </a>
+        </div>
+      </section>
+    </main>
+
+    <!-- Floating Toast Notification -->
+    <div id="toast" class="toast">
+      <span id="toast-icon">✓</span>
+      <span id="toast-message">Action completed</span>
+    </div>
+  </div>
+</body>
+</html>

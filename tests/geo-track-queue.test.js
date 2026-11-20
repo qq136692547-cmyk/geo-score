@@ -145,7 +145,7 @@ describe('P0.2 · geoTrack 事件队列', () => {
   it('consent.js 在加载 GA 后会触发补发（否则队列永远不落地）', () => {
     expect(CONSENT_JS).toMatch(/__geoFlushPending/);
     const a = CONSENT_JS.indexOf('function loadAnalytics()');
-    const b = CONSENT_JS.indexOf('function loadAds()');
+    const b = CONSENT_JS.indexOf('function applyConsent');
     expect(a).toBeGreaterThan(-1);
     expect(b).toBeGreaterThan(a);
     const sliceGA = CONSENT_JS.slice(a, b);

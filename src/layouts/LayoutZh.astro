@@ -1,6 +1,5 @@
 ---
 import '../styles/global.css';
-import Adsterra from '../components/Adsterra.astro';
 import { alternates } from '../lib/hreflang.js';
 export interface Props {
   title?: string;
@@ -54,7 +53,7 @@ const alt = alternates(Astro.site, path);
       document.documentElement.setAttribute('data-consent', decided ? 'decided' : 'pending');
     })();
   </script>
-  <!-- Consent gate. GA4 and both Adsterra loaders are created here on opt-in;
+  <!-- Consent gate. GA4 loader is created here on opt-in;
        no third-party script is requested before that. Calls made before consent
        are queued and flushed once gtag appears (see __geoFlushPending below);
        a visitor who never consents never flushes. -->
@@ -223,6 +222,7 @@ const alt = alternates(Astro.site, path);
         <a href="/zh/tools/llms-txt-checker/" class="text-gray-400 hover:text-white transition">llms.txt 检测</a>
         <a href="/zh/tools/robots-txt-ai-checker/" class="text-gray-400 hover:text-white transition">Robots.txt 检测</a>
         <a href="/zh/tools/ai-readiness-score/" class="text-gray-400 hover:text-white transition">AI 就绪评分</a>
+        <a href="/zh/#chrome-extension" class="text-gray-400 hover:text-white transition">Chrome 插件</a>
         <a href="/zh/blog/" class="text-gray-400 hover:text-white transition">博客</a>
         <a href="/zh/methodology/" class="text-gray-400 hover:text-white transition">方法论</a>
         <a href="/zh/pricing/" class="text-gray-400 hover:text-white transition">定价</a>
@@ -239,7 +239,6 @@ const alt = alternates(Astro.site, path);
 
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 min-h-[calc(100dvh-8rem)]">
     <slot />
-    <Adsterra format="native" />
   </main>
 
   <footer class="border-t border-gray-700/50">
@@ -251,6 +250,7 @@ const alt = alternates(Astro.site, path);
             <li><a href="/zh/tools/llms-txt-checker/" class="hover:text-brand-500 transition">llms.txt 检测</a></li>
             <li><a href="/zh/tools/robots-txt-ai-checker/" class="hover:text-brand-500 transition">Robots.txt AI 检测</a></li>
             <li><a href="/zh/tools/ai-readiness-score/" class="hover:text-brand-500 transition">AI 就绪评分</a></li>
+            <li><a href="/zh/#chrome-extension" class="hover:text-brand-500 transition">Chrome 插件</a></li>
           </ul>
         </div>
         <div>
@@ -290,7 +290,7 @@ const alt = alternates(Astro.site, path);
     <div class="max-w-4xl mx-auto card p-4 sm:p-5" style="background:rgba(15,23,42,0.97);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:0 8px 30px rgba(0,0,0,0.35)">
       <p class="text-sm font-semibold text-white mb-1">GeoScore 的 Cookie 使用</p>
       <p class="text-xs text-gray-400 mb-3">
-        只有在你允许之后，我们才会加载统计与广告脚本 —— 在此之前不会向任何第三方发起请求。详见
+        只有在你允许之后，我们才会加载分析统计脚本 —— 在此之前不会向任何第三方发起请求。详见
         <a href="/zh/privacy/" class="text-brand-400 hover:underline">隐私政策</a>。
       </p>
       <div class="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
@@ -298,10 +298,6 @@ const alt = alternates(Astro.site, path);
           <label for="consent-analytics" class="flex items-center gap-2 text-sm text-gray-300 cursor-pointer">
             <input type="checkbox" id="consent-analytics" class="h-4 w-4 accent-geo-500 cursor-pointer" />
             分析统计
-          </label>
-          <label for="consent-ads" class="flex items-center gap-2 text-sm text-gray-300 cursor-pointer">
-            <input type="checkbox" id="consent-ads" class="h-4 w-4 accent-geo-500 cursor-pointer" />
-            广告
           </label>
         </div>
         <div class="flex flex-wrap gap-2">

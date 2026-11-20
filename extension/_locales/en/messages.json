@@ -1,0 +1,11 @@
+{
+  "extName": {
+    "message": "GeoScore: Free GEO, AEO & llms.txt Audit (AI SEO Checker)"
+  },
+  "extDescription": {
+    "message": "Audit any page or localhost across 11 GEO dimensions, detect JS rendering traps, highlight DOM issues, and generate llms.txt."
+  },
+  "actionTitle": {
+    "message": "Audit GEO Readiness with GeoScore"
+  }
+}

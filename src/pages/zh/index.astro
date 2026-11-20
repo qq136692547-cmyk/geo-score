@@ -101,6 +101,14 @@ import demo from '../../../data/demo-report.json';
         <span class="text-gray-400" style="display:none">|</span>
         <a href="/zh/report/demo/" class="text-gray-500 hover:text-geo-400 transition underline underline-offset-2">查看样例报告：{demo.host} 得分 <span class="text-geo-400 font-semibold">{demo.score}/100（{demo.level}）</span> &mdash; 跑一遍你自己的</a>
       </div>
+      <div id="chrome-ext-cta" class="mt-4 inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-medium bg-white/5 border border-gray-700 hover:border-brand-500/50 hover:bg-white/10 transition text-gray-300">
+        <svg class="w-4 h-4 text-brand-400 shrink-0" viewBox="0 0 24 24" fill="currentColor">
+          <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none"/>
+          <path d="M12 7v5l3 3" stroke="currentColor" stroke-width="2" fill="none"/>
+        </svg>
+        <span>调试 <strong>Localhost</strong> 或遇到 WAF 拦截？</span>
+        <a href="#chrome-extension" class="text-brand-400 hover:text-brand-300 font-semibold underline underline-offset-2">使用 Chrome 官方插件 &rarr;</a>
+      </div>
       <div id="batch-section" class="hidden max-w-lg mx-auto mt-4 card p-4">
         <h3 class="text-sm font-semibold mb-2 text-gray-300">从 Sitemap 批量审计</h3>
         <input id="sitemap-url" type="url" placeholder="例如 example.com/sitemap.xml" aria-label="请输入 sitemap 网址" class="w-full px-4 py-2 rounded-lg bg-white/5 text-white placeholder-gray-500 border border-gray-600 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 text-sm transition mb-3" />
@@ -127,6 +135,43 @@ import demo from '../../../data/demo-report.json';
         <p class="text-sm text-gray-400"><strong class="text-gray-200">AI 可见度 Fix Pack</strong> 按你的真实目录重写 llms.txt、补显式 AI 爬虫放行规则与 Product schema——部署后复检。$49 一次性，48 小时交付。</p>
       </div>
       <a href="/zh/fixpack/" class="shrink-0 text-center px-5 py-2.5 rounded-lg font-semibold text-sm text-white bg-gradient-to-r from-geo-600 to-brand-600 hover:from-geo-500 hover:to-brand-500 transition">帮我做完 →</a>
+    </div>
+  </section>
+
+  <!-- Chrome 插件生态介绍卡片 -->
+  <section id="chrome-extension" class="max-w-4xl mx-auto mb-8 scroll-mt-20">
+    <div class="card p-6 border-brand-500/30 bg-gradient-to-br from-brand-950/20 via-transparent to-geo-950/20">
+      <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+        <div class="flex-1 text-left">
+          <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-md text-xs font-semibold bg-brand-500/10 text-brand-400 border border-brand-500/20 mb-3">
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>
+            Chrome 官方插件 (MV3)
+          </div>
+          <h2 class="text-xl font-bold text-white mb-2">突破防火墙拦截，支持 Localhost 与真实渲染 DOM 审计</h2>
+          <p class="text-sm text-gray-300 mb-4 leading-relaxed">
+            在浏览器侧边栏（Side Panel）直接审计当前标签页。彻底突破 Cloudflare 等 WAF 拦截，支持私有测试环境与 <code class="text-brand-300">localhost:3000</code> 本地调试，并能一键对比服务端 SSR 初始 HTML 与客户端 JS 渲染后的 CSR 真实 DOM，网页原位高亮排查。
+          </p>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs text-gray-400">
+            <div class="flex items-center gap-2">
+              <span class="text-geo-400 font-bold">✓</span> 支持 Localhost 本地页面
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-geo-400 font-bold">✓</span> 突破 Cloudflare/WAF 阻断
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-geo-400 font-bold">✓</span> SSR vs CSR DOM 深度对比
+            </div>
+          </div>
+        </div>
+        <div class="shrink-0 flex flex-col sm:flex-row md:flex-col gap-3 w-full md:w-auto">
+          <a href="https://chromewebstore.google.com/detail/geoscore-free-geo-aeo-llm/cboppgehhkhaamcgfcikhekkdaelichn" target="_blank" rel="noopener" class="text-center px-5 py-2.5 rounded-lg font-semibold text-sm text-white bg-gradient-to-r from-geo-600 to-brand-600 hover:from-geo-500 hover:to-brand-500 transition shadow-md shadow-brand-500/20">
+            前往 Chrome 商店安装 →
+          </a>
+          <a href="https://github.com/qq136692547-cmyk/geo-score/blob/main/extension/README.md#%E5%AE%89%E8%A3%85%E4%BD%BF%E7%94%A8%E5%BC%80%E5%8F%91%E8%80%85%E6%A8%A1%E5%BC%8F" target="_blank" rel="noopener" class="text-center px-5 py-2 rounded-lg font-medium text-xs text-gray-300 bg-white/5 hover:bg-white/10 transition border border-gray-700">
+            GitHub 源码与开发者安装
+          </a>
+        </div>
+      </div>
     </div>
   </section>
 
