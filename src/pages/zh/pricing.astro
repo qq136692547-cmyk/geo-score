@@ -29,79 +29,134 @@ import LayoutZh from '../../layouts/LayoutZh.astro';
       </div>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
+    <!-- 计费周期全局切换 -->
+    <div class="flex justify-center mb-10">
+      <div class="inline-flex items-center p-1 rounded-xl bg-gray-800/90 border border-gray-700/80 text-sm shadow-inner" role="group" aria-label="计费周期">
+        <button type="button" id="billing-cycle-monthly" class="py-1.5 px-5 rounded-lg font-medium transition cursor-pointer bg-brand-500 text-white shadow-sm flex items-center gap-1.5">
+          按月付费
+        </button>
+        <button type="button" id="billing-cycle-annual" class="py-1.5 px-5 rounded-lg font-medium transition cursor-pointer text-gray-400 hover:text-white flex items-center gap-2">
+          按年付费
+          <span class="px-2 py-0.5 text-xs font-semibold bg-brand-500/20 text-brand-300 border border-brand-500/30 rounded-full">Pro 立省 25%</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 items-stretch mb-12">
       <!-- Free -->
-      <div class="card p-6 flex flex-col">
-        <div class="text-sm font-semibold text-gray-400 mb-2">Free</div>
-        <div class="text-3xl font-extrabold mb-1">¥0</div>
-        <div class="text-xs text-gray-500 mb-6">永久免费</div>
-        <ul class="text-sm text-gray-400 space-y-2 mb-6 flex-1">
-          <li class="flex gap-2"><span class="text-geo-500">✓</span> 单 URL 审计</li>
-          <li class="flex gap-2"><span class="text-geo-500">✓</span> 11 维度，85 检查项</li>
-          <li class="flex gap-2"><span class="text-geo-500">✓</span> 修复文件生成器</li>
-          <li class="flex gap-2"><span class="text-geo-500">✓</span> CLI & MCP Server</li>
-          <li class="flex gap-2"><span class="text-geo-500">✓</span> 登录可选</li>
+      <div class="card p-5 lg:p-6 flex flex-col justify-between h-full relative">
+        <!-- 区域 1: 标题与标签 -->
+        <div class="flex items-center justify-between mb-3 h-[28px]">
+          <div class="text-base font-bold text-gray-200">Free</div>
+          <span class="px-2 py-0.5 rounded-full text-[11px] font-medium bg-gray-800 text-gray-400 border border-gray-700">基础版</span>
+        </div>
+        <!-- 区域 2: 大字号价格 -->
+        <div class="h-[44px] flex items-baseline mb-1">
+          <span class="text-3xl font-extrabold text-white tracking-tight">$0</span>
+          <span class="text-sm font-normal text-gray-400 ml-1.5">/ 永久</span>
+        </div>
+        <!-- 区域 3: 计费说明 -->
+        <div class="h-[20px] mb-5 flex items-center text-xs text-gray-500">永久免费 · 快速上手</div>
+        <!-- 区域 4: 功能列表 (精准 6 项，单行对齐) -->
+        <ul class="border-t border-gray-700/50 pt-5 mb-6 space-y-3 flex-1 text-xs md:text-[13px] text-gray-300">
+          <li class="flex items-center gap-2 h-[22px] whitespace-nowrap"><span class="text-geo-500 font-bold shrink-0">✓</span><span>单 URL 深度审计</span></li>
+          <li class="flex items-center gap-2 h-[22px] whitespace-nowrap"><span class="text-geo-500 font-bold shrink-0">✓</span><span>11 维度 85 项全检</span></li>
+          <li class="flex items-center gap-2 h-[22px] whitespace-nowrap"><span class="text-geo-500 font-bold shrink-0">✓</span><span>修复文件生成器</span></li>
+          <li class="flex items-center gap-2 h-[22px] whitespace-nowrap"><span class="text-geo-500 font-bold shrink-0">✓</span><span>CLI & MCP 本地工具</span></li>
+          <li class="flex items-center gap-2 h-[22px] whitespace-nowrap"><span class="text-geo-500 font-bold shrink-0">✓</span><span>完整开源 (MIT 协议)</span></li>
+          <li class="flex items-center gap-2 h-[22px] whitespace-nowrap"><span class="text-geo-500 font-bold shrink-0">✓</span><span>永久免费，无需绑卡</span></li>
         </ul>
-        <a href="/zh/#url-input" class="block text-center py-2.5 rounded-lg font-semibold text-sm border border-gray-600 text-gray-300 hover:border-brand-500 hover:text-white transition">开始使用</a>
+        <!-- 区域 5: 底部操作按钮 -->
+        <div class="mt-auto">
+          <a href="/zh/#url-input" class="block w-full text-center py-2.5 rounded-lg font-semibold text-sm border border-gray-700 bg-gray-800/40 text-gray-300 hover:border-gray-500 hover:text-white transition">开始使用</a>
+        </div>
       </div>
 
-      <!-- Pro -->
-      <div class="card p-6 flex flex-col ring-2 ring-brand-500/50 relative">
-        <div class="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full text-xs font-semibold bg-brand-500 text-white">热门</div>
-        <div class="text-sm font-semibold text-brand-400 mb-2">Pro</div>
-        <div class="text-xs text-gray-500 mb-6">价格含税</div>
-        <ul class="text-sm text-gray-400 space-y-2 mb-6 flex-1">
-          <li class="flex gap-2"><span class="text-brand-500">✓</span> Free 全部功能</li>
-          <li class="flex gap-2"><span class="text-brand-500">✓</span> 每周自动审计</li>
-          <li class="flex gap-2"><span class="text-brand-500">✓</span> 30 天审计历史</li>
-          <li class="flex gap-2"><span class="text-brand-500">✓</span> 回归告警</li>
-          <li class="flex gap-2"><span class="text-brand-500">✓</span> PDF 导出</li>
-          <li class="flex gap-2"><span class="text-brand-500">✓</span> AI 可见度估算——由大模型模拟 ChatGPT · Perplexity · Claude · Gemini 的回答，明确标注为估算，非真实引擎流量；每月 30 次</li>
-          <li class="flex gap-2"><span class="text-brand-500">✓</span> 5 个域名</li>
+      <!-- Pro (热门推荐) -->
+      <div class="card p-5 lg:p-6 flex flex-col justify-between h-full relative ring-2 ring-brand-500 bg-gradient-to-b from-brand-950/20 to-transparent shadow-lg shadow-brand-500/10">
+        <!-- 区域 1: 标题与标签 -->
+        <div class="flex items-center justify-between mb-3 h-[28px]">
+          <div class="text-base font-bold text-brand-400">Pro</div>
+          <span class="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-brand-500/20 text-brand-400 border border-brand-500/40">热门推荐</span>
+        </div>
+        <!-- 区域 2: 大字号价格 -->
+        <div class="h-[44px] flex items-baseline mb-1">
+          <span class="text-3xl font-extrabold text-white tracking-tight" id="pro-price-val">$9</span>
+          <span class="text-sm font-normal text-gray-400 ml-1.5" id="pro-period-unit">/ 月</span>
+        </div>
+        <!-- 区域 3: 计费说明 -->
+        <div class="h-[20px] mb-5 flex items-center text-xs text-brand-400/90 font-medium whitespace-nowrap" id="pro-billing-note">7 天免费试用 · 随时取消</div>
+        <!-- 区域 4: 功能列表 (精准 6 项，单行对齐) -->
+        <ul class="border-t border-brand-500/30 pt-5 mb-6 space-y-3 flex-1 text-xs md:text-[13px] text-gray-300">
+          <li class="flex items-center gap-2 h-[22px] whitespace-nowrap"><span class="text-brand-500 font-bold shrink-0">✓</span><span>包含 Free 全部功能</span></li>
+          <li class="flex items-center gap-2 h-[22px] whitespace-nowrap"><span class="text-brand-500 font-bold shrink-0">✓</span><span>5 个域名自动监控</span></li>
+          <li class="flex items-center gap-2 h-[22px] whitespace-nowrap"><span class="text-brand-500 font-bold shrink-0">✓</span><span>每周审计与回归告警</span></li>
+          <li class="flex items-center gap-2 h-[22px] whitespace-nowrap"><span class="text-brand-500 font-bold shrink-0">✓</span><span>30 天历史与 PDF 导出</span></li>
+          <li class="flex items-center gap-2 h-[22px] whitespace-nowrap"><span class="text-brand-500 font-bold shrink-0">✓</span><span>AI 模拟估算 30次/月</span></li>
+          <li class="flex items-center gap-2 h-[22px] whitespace-nowrap"><span class="text-brand-500 font-bold shrink-0">✓</span><span>优先邮件技术支持</span></li>
         </ul>
-        <!-- 月付与年付并排；各自发起对应的结账 -->
-        <div class="grid grid-cols-2 gap-2">
-          <button id="upgrade-pro" type="button" data-plan="pro" data-billing="monthly" data-checkout="https://www.creem.io/payment/prod_3hLh24EkJOL0jS0Jrf9zq5" class="rounded-lg border border-gray-700 hover:border-brand-500 p-2 text-left transition cursor-pointer">
-            <span class="block text-lg font-extrabold">$9/mo</span>
-            <span class="block text-xs text-gray-500">7 天免费试用</span>
-          </button>
-          <button id="upgrade-annual" type="button" data-plan="pro" data-billing="annual" data-checkout="https://www.creem.io/payment/prod_2OZLydXjeAKD3HyVY20eEN" class="rounded-lg border border-gray-700 hover:border-brand-500 p-2 text-left transition cursor-pointer">
-            <span class="block text-lg font-extrabold">$79/yr</span>
-            <span class="block text-xs font-semibold text-brand-400">立省 $29</span>
-          </button>
+        <!-- 区域 5: 底部操作按钮 -->
+        <div class="mt-auto">
+          <button id="upgrade-pro" type="button" data-plan="pro" data-billing="monthly" data-checkout="https://www.creem.io/payment/prod_3hLh24EkJOL0jS0Jrf9zq5" class="block w-full text-center py-2.5 rounded-lg font-semibold text-sm text-white bg-gradient-to-r from-geo-600 to-brand-600 hover:from-geo-500 hover:to-brand-500 shadow-md shadow-brand-500/25 hover:shadow-brand-500/40 transition cursor-pointer">开始 7 天试用</button>
         </div>
       </div>
 
       <!-- Studio -->
-      <div class="card p-6 flex flex-col relative border-geo-500/30">
-        <div class="text-sm font-semibold text-geo-400 mb-2">Studio</div>
-        <div class="text-3xl font-extrabold mb-1">$29<span class="text-base font-normal text-gray-500">/月</span></div>
-        <div class="text-xs text-gray-500 mb-6">7 天免费试用 · 价格含税</div>
-        <ul class="text-sm text-gray-400 space-y-2 mb-6 flex-1">
-          <li class="flex gap-2"><span class="text-geo-500">✓</span> Pro 全部功能</li>
-          <li class="flex gap-2"><span class="text-geo-500">✓</span> 每日自动审计</li>
-          <li class="flex gap-2"><span class="text-geo-500">✓</span> 12 个月审计历史</li>
-          <li class="flex gap-2"><span class="text-geo-500">✓</span> 竞品对比</li>
-          <li class="flex gap-2"><span class="text-geo-500">✓</span> 15 个域名</li>
-          <li class="flex gap-2"><span class="text-geo-500">✓</span> API 访问</li>
+      <div class="card p-5 lg:p-6 flex flex-col justify-between h-full relative border-geo-500/30">
+        <!-- 区域 1: 标题与标签 -->
+        <div class="flex items-center justify-between mb-3 h-[28px]">
+          <div class="text-base font-bold text-geo-400">Studio</div>
+          <span class="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-geo-500/20 text-geo-400 border border-geo-500/40">团队协作</span>
+        </div>
+        <!-- 区域 2: 大字号价格 -->
+        <div class="h-[44px] flex items-baseline mb-1">
+          <span class="text-3xl font-extrabold text-white tracking-tight">$29</span>
+          <span class="text-sm font-normal text-gray-400 ml-1.5">/ 月</span>
+        </div>
+        <!-- 区域 3: 计费说明 -->
+        <div class="h-[20px] mb-5 flex items-center text-xs text-gray-500 whitespace-nowrap" id="studio-billing-note">7 天免费试用 · 价格含税</div>
+        <!-- 区域 4: 功能列表 (精准 6 项，单行对齐) -->
+        <ul class="border-t border-gray-700/50 pt-5 mb-6 space-y-3 flex-1 text-xs md:text-[13px] text-gray-300">
+          <li class="flex items-center gap-2 h-[22px] whitespace-nowrap"><span class="text-geo-500 font-bold shrink-0">✓</span><span>包含 Pro 全部功能</span></li>
+          <li class="flex items-center gap-2 h-[22px] whitespace-nowrap"><span class="text-geo-500 font-bold shrink-0">✓</span><span>15 个域名每日监控</span></li>
+          <li class="flex items-center gap-2 h-[22px] whitespace-nowrap"><span class="text-geo-500 font-bold shrink-0">✓</span><span>12 个月长期历史趋势</span></li>
+          <li class="flex items-center gap-2 h-[22px] whitespace-nowrap"><span class="text-geo-500 font-bold shrink-0">✓</span><span>多域名竞品对标分析</span></li>
+          <li class="flex items-center gap-2 h-[22px] whitespace-nowrap"><span class="text-geo-500 font-bold shrink-0">✓</span><span>独立 API 访问密钥</span></li>
+          <li class="flex items-center gap-2 h-[22px] whitespace-nowrap"><span class="text-geo-500 font-bold shrink-0">✓</span><span>支持全量数据导出</span></li>
         </ul>
-        <button id="upgrade-studio" type="button" data-plan="studio" data-billing="monthly" data-checkout="https://www.creem.io/payment/prod_yvmQsDZnoKHNXtDpJt51x" class="block w-full text-center py-2.5 rounded-lg font-semibold text-sm text-white bg-gradient-to-r from-geo-600 to-brand-600 hover:from-geo-500 hover:to-brand-500 transition cursor-pointer">开始 7 天试用</button>
+        <!-- 区域 5: 底部操作按钮 -->
+        <div class="mt-auto">
+          <button id="upgrade-studio" type="button" data-plan="studio" data-billing="monthly" data-checkout="https://www.creem.io/payment/prod_yvmQsDZnoKHNXtDpJt51x" class="block w-full text-center py-2.5 rounded-lg font-semibold text-sm border border-gray-700 bg-gray-800/60 text-white hover:border-geo-500 hover:bg-geo-500/10 transition cursor-pointer">开始 7 天试用</button>
+        </div>
       </div>
 
       <!-- Agency -->
-      <div class="card p-6 flex flex-col relative border-brand-500/30">
-        <div class="text-sm font-semibold text-gray-400 mb-2">Agency</div>
-        <div class="text-3xl font-extrabold mb-1">$59<span class="text-base font-normal text-gray-500">/月</span></div>
-        <div class="text-xs text-gray-500 mb-6">7 天免费试用 · 价格含税</div>
-        <ul class="text-sm text-gray-400 space-y-2 mb-6 flex-1">
-          <li class="flex gap-2"><span class="text-geo-500">✓</span> Studio 全部功能</li>
-          <li class="flex gap-2"><span class="text-geo-500">✓</span> 每小时审计</li>
-          <li class="flex gap-2"><span class="text-geo-500">✓</span> 无限审计历史</li>
-          <li class="flex gap-2"><span class="text-geo-500">✓</span> 团队工作区</li>
-          <li class="flex gap-2"><span class="text-geo-500">✓</span> 50 个域名</li>
-          <li class="flex gap-2"><span class="text-geo-500">✓</span> 白标 PDF 报告</li>
+      <div class="card p-5 lg:p-6 flex flex-col justify-between h-full relative border-indigo-500/30">
+        <!-- 区域 1: 标题与标签 -->
+        <div class="flex items-center justify-between mb-3 h-[28px]">
+          <div class="text-base font-bold text-indigo-400">Agency</div>
+          <span class="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-indigo-500/20 text-indigo-400 border border-indigo-500/40">企业机构</span>
+        </div>
+        <!-- 区域 2: 大字号价格 -->
+        <div class="h-[44px] flex items-baseline mb-1">
+          <span class="text-3xl font-extrabold text-white tracking-tight">$59</span>
+          <span class="text-sm font-normal text-gray-400 ml-1.5">/ 月</span>
+        </div>
+        <!-- 区域 3: 计费说明 -->
+        <div class="h-[20px] mb-5 flex items-center text-xs text-gray-500 whitespace-nowrap" id="agency-billing-note">7 天免费试用 · 价格含税</div>
+        <!-- 区域 4: 功能列表 (精准 6 项，单行对齐) -->
+        <ul class="border-t border-gray-700/50 pt-5 mb-6 space-y-3 flex-1 text-xs md:text-[13px] text-gray-300">
+          <li class="flex items-center gap-2 h-[22px] whitespace-nowrap"><span class="text-indigo-500 font-bold shrink-0">✓</span><span>包含 Studio 全部功能</span></li>
+          <li class="flex items-center gap-2 h-[22px] whitespace-nowrap"><span class="text-indigo-500 font-bold shrink-0">✓</span><span>50 个域名每小时审计</span></li>
+          <li class="flex items-center gap-2 h-[22px] whitespace-nowrap"><span class="text-indigo-500 font-bold shrink-0">✓</span><span>永久无限历史数据</span></li>
+          <li class="flex items-center gap-2 h-[22px] whitespace-nowrap"><span class="text-indigo-500 font-bold shrink-0">✓</span><span>专属客户隔离工作区</span></li>
+          <li class="flex items-center gap-2 h-[22px] whitespace-nowrap"><span class="text-indigo-500 font-bold shrink-0">✓</span><span>白标定制品牌 PDF</span></li>
+          <li class="flex items-center gap-2 h-[22px] whitespace-nowrap"><span class="text-indigo-500 font-bold shrink-0">✓</span><span>1对1 专属专家支持</span></li>
         </ul>
-        <button id="upgrade-agency" type="button" data-plan="agency" data-billing="monthly" data-checkout="https://www.creem.io/payment/prod_7Itt3xoxDKLaItFqjfhv7x" class="block w-full text-center py-2.5 rounded-lg font-semibold text-sm border border-gray-700 text-white hover:border-brand-500 hover:bg-brand-500/10 transition cursor-pointer">开始 7 天试用</button>
+        <!-- 区域 5: 底部操作按钮 -->
+        <div class="mt-auto">
+          <button id="upgrade-agency" type="button" data-plan="agency" data-billing="monthly" data-checkout="https://www.creem.io/payment/prod_7Itt3xoxDKLaItFqjfhv7x" class="block w-full text-center py-2.5 rounded-lg font-semibold text-sm border border-gray-700 bg-gray-800/60 text-white hover:border-brand-500 hover:bg-brand-500/10 transition cursor-pointer">开始 7 天试用</button>
+        </div>
       </div>
     </div>
 
@@ -133,7 +188,7 @@ import LayoutZh from '../../layouts/LayoutZh.astro';
             <tr><td class="py-2.5 text-gray-300">团队工作区</td><td class="text-center text-gray-400">—</td><td class="text-center text-gray-400">—</td><td class="text-center text-gray-400">—</td><td class="text-center text-gray-300">✓</td></tr>
             <tr><td class="py-2.5 text-gray-300">白标报告</td><td class="text-center text-gray-400">—</td><td class="text-center text-gray-400">—</td><td class="text-center text-gray-400">—</td><td class="text-center text-gray-300">✓</td></tr>
             <tr class="font-semibold"><td class="py-2.5 text-white">域名数</td><td class="text-center text-gray-300">1</td><td class="text-center text-brand-400">5</td><td class="text-center text-geo-400">15</td><td class="text-center text-gray-300">50</td></tr>
-            <tr class="font-semibold"><td class="py-2.5 text-white">价格</td><td class="text-center text-gray-300">¥0</td><td class="text-center text-brand-400">$9/月</td><td class="text-center text-geo-400">$29/月</td><td class="text-center text-gray-300">$59/月</td></tr>
+            <tr class="font-semibold"><td class="py-2.5 text-white">价格</td><td class="text-center text-gray-300">$0</td><td class="text-center text-brand-400">$9/月</td><td class="text-center text-geo-400">$29/月</td><td class="text-center text-gray-300">$59/月</td></tr>
           </tbody>
         </table>
       </div>
@@ -252,6 +307,48 @@ import LayoutZh from '../../layouts/LayoutZh.astro';
       planButtons[i].addEventListener('click', function () { startCheckout(this); });
     }
 
+    // 全局计费周期切换 (月付 / 年付)
+    const btnMonthly = document.getElementById('billing-cycle-monthly');
+    const btnAnnual = document.getElementById('billing-cycle-annual');
+    const proPriceVal = document.getElementById('pro-price-val');
+    const proPeriodUnit = document.getElementById('pro-period-unit');
+    const proBillingNote = document.getElementById('pro-billing-note');
+    const proBtn = document.getElementById('upgrade-pro');
+
+    function setBillingCycle(cycle) {
+      if (!proPriceVal || !proBtn) return;
+      if (cycle === 'annual') {
+        proPriceVal.textContent = '$79';
+        if (proPeriodUnit) proPeriodUnit.textContent = '/ 年';
+        if (proBillingNote) proBillingNote.textContent = '年付 $79 · 立省 $29';
+        proBtn.setAttribute('data-billing', 'annual');
+        proBtn.setAttribute('data-checkout', 'https://www.creem.io/payment/prod_2OZLydXjeAKD3HyVY20eEN');
+        proBtn.textContent = '立即订阅';
+        if (btnMonthly && btnAnnual) {
+          btnAnnual.className = 'py-1.5 px-5 rounded-lg font-medium transition cursor-pointer bg-brand-500 text-white shadow-sm flex items-center gap-2';
+          btnMonthly.className = 'py-1.5 px-5 rounded-lg font-medium transition cursor-pointer text-gray-400 hover:text-white flex items-center gap-1.5';
+        }
+      } else {
+        proPriceVal.textContent = '$9';
+        if (proPeriodUnit) proPeriodUnit.textContent = '/ 月';
+        if (proBillingNote) proBillingNote.textContent = '7 天免费试用 · 随时取消';
+        proBtn.setAttribute('data-billing', 'monthly');
+        proBtn.setAttribute('data-checkout', 'https://www.creem.io/payment/prod_3hLh24EkJOL0jS0Jrf9zq5');
+        proBtn.textContent = '开始 7 天试用';
+        if (btnMonthly && btnAnnual) {
+          btnMonthly.className = 'py-1.5 px-5 rounded-lg font-medium transition cursor-pointer bg-brand-500 text-white shadow-sm flex items-center gap-1.5';
+          btnAnnual.className = 'py-1.5 px-5 rounded-lg font-medium transition cursor-pointer text-gray-400 hover:text-white flex items-center gap-2';
+        }
+      }
+    }
+
+    if (btnMonthly) {
+      btnMonthly.addEventListener('click', function () { setBillingCycle('monthly'); });
+    }
+    if (btnAnnual) {
+      btnAnnual.addEventListener('click', function () { setBillingCycle('annual'); });
+    }
+
     // Creem 付款后带 ?checkout=success 回到本页。每个会话只上报一次，
     // 刷新不得重复计入转化。
     if (new URLSearchParams(location.search).get('checkout') === 'success') {
@@ -297,6 +394,9 @@ import LayoutZh from '../../layouts/LayoutZh.astro';
       if (!pending || !pending.period) return;
       if (!localStorage.getItem('geoscore_token')) return;
       if (Date.now() - pending.ts > 10 * 60 * 1000) return;
+      if (pending.plan === 'pro' && pending.period === 'annual') {
+        setBillingCycle('annual');
+      }
       const selector = pending.plan
         ? '[data-plan="' + pending.plan + '"][data-billing="' + pending.period + '"]'
         : '[data-billing="' + pending.period + '"]';
@@ -315,3 +415,4 @@ import LayoutZh from '../../layouts/LayoutZh.astro';
       });
     }
   </script>
+</LayoutZh>
