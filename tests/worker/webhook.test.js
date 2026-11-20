@@ -313,4 +313,136 @@ describe('Creem webhook', () => {
     expect(resp.status).toBe(200);
     expect(db._tables.subscriptions[0].plan).toBe('pro');
   });
+
+  it('grants Studio plan on checkout.completed with production prod_yvmQsDZnoKHNXtDpJt51x ($29)', async () => {
+    const db = createMockDb({ users: [{ id: 'u_s', email: 'studio@example.com', plan: 'free' }] });
+    const rawBody = JSON.stringify({
+      id: 'evt_studio_real',
+      event_type: 'checkout.completed',
+      data: {
+        object: {
+          id: 'cs_studio_real',
+          subscription: { id: 'sub_studio_real' },
+          customer: { id: 'cus_s', email: 'studio@example.com' },
+          product: { id: 'prod_yvmQsDZnoKHNXtDpJt51x', price: 2900 },
+          amount: 2900,
+        },
+      },
+    });
+    const resp = await postWebhook(db, rawBody);
+    expect(resp.status).toBe(200);
+    expect(db._tables.subscriptions[0].plan).toBe('studio');
+    expect(db._tables.users[0].plan).toBe('studio');
+  });
+
+  it('grants Agency plan on checkout.completed with production prod_7Itt3xoxDKLaItFqjfhv7x ($59)', async () => {
+    const db = createMockDb({ users: [{ id: 'u_a', email: 'agency@example.com', plan: 'free' }] });
+    const rawBody = JSON.stringify({
+      id: 'evt_agency_real',
+      event_type: 'checkout.completed',
+      data: {
+        object: {
+          id: 'cs_agency_real',
+          subscription: { id: 'sub_agency_real' },
+          customer: { id: 'cus_a', email: 'agency@example.com' },
+          product: { id: 'prod_7Itt3xoxDKLaItFqjfhv7x', price: 5900 },
+          amount: 5900,
+        },
+      },
+    });
+    const resp = await postWebhook(db, rawBody);
+    expect(resp.status).toBe(200);
+    expect(db._tables.subscriptions[0].plan).toBe('agency');
+    expect(db._tables.users[0].plan).toBe('agency');
+  });
+
+  it('grants Studio plan when product is a string id or product_id', async () => {
+    const db = createMockDb({ users: [{ id: 'u_s2', email: 'studio2@example.com', plan: 'free' }] });
+    const rawBody = JSON.stringify({
+      id: 'evt_studio_str',
+      event_type: 'checkout.completed',
+      data: {
+        object: {
+          id: 'cs_studio_str',
+          subscription: { id: 'sub_studio_str' },
+          customer: { id: 'cus_s2', email: 'studio2@example.com' },
+          product_id: 'prod_yvmQsDZnoKHNXtDpJt51x',
+          amount: 2900,
+        },
+      },
+    });
+    const resp = await postWebhook(db, rawBody);
+    expect(resp.status).toBe(200);
+    expect(db._tables.subscriptions[0].plan).toBe('studio');
+  });
+
+  it('grants Studio plan on checkout.completed with prod_studio ($29)', async () => {
+    const db = createMockDb({ users: [{ id: 'u_s', email: 'studio@example.com', plan: 'free' }] });
+    const rawBody = JSON.stringify({
+      id: 'evt_studio_1',
+      event_type: 'checkout.completed',
+      data: {
+        object: {
+          id: 'cs_studio',
+          subscription: { id: 'sub_studio' },
+          customer: { id: 'cus_s', email: 'studio@example.com' },
+          product: { id: 'prod_studio', price: 2900 },
+          amount: 2900,
+        },
+      },
+    });
+    const resp = await postWebhook(db, rawBody);
+    expect(resp.status).toBe(200);
+    expect(db._tables.subscriptions[0].plan).toBe('studio');
+    expect(db._tables.users[0].plan).toBe('studio');
+  });
+
+  it('grants Agency plan on checkout.completed with prod_agency ($59)', async () => {
+    const db = createMockDb({ users: [{ id: 'u_a', email: 'agency@example.com', plan: 'free' }] });
+    const rawBody = JSON.stringify({
+      id: 'evt_agency_1',
+      event_type: 'checkout.completed',
+      data: {
+        object: {
+          id: 'cs_agency',
+          subscription: { id: 'sub_agency' },
+          customer: { id: 'cus_a', email: 'agency@example.com' },
+          product: { id: 'prod_agency', price: 5900 },
+          amount: 5900,
+        },
+      },
+    });
+    const resp = await postWebhook(db, rawBody);
+    expect(resp.status).toBe(200);
+    expect(db._tables.subscriptions[0].plan).toBe('agency');
+    expect(db._tables.users[0].plan).toBe('agency');
+  });
+
+  it('honours CREEM_PRODUCT_ID_STUDIO and CREEM_PRODUCT_ID_AGENCY secrets', async () => {
+    const db = createMockDb();
+    const rawBody = JSON.stringify({
+      id: 'evt_agency_secret',
+      event_type: 'subscription.active',
+      data: {
+        object: {
+          id: 'sub_ag',
+          customer: { id: 'cus_ag', email: 'agency_secret@example.com' },
+          product: { id: 'prod_custom_agency_id' },
+        },
+      },
+    });
+    const signature = await hmacSha256(rawBody, SECRET);
+    const req = new Request('https://worker.test/webhook', {
+      method: 'POST',
+      headers: { 'creem-signature': signature, 'Content-Type': 'application/json' },
+      body: rawBody,
+    });
+    const resp = await handler.fetch(req, {
+      DB: db,
+      CREEM_WEBHOOK_SECRET: SECRET,
+      CREEM_PRODUCT_ID_AGENCY: 'prod_custom_agency_id',
+    });
+    expect(resp.status).toBe(200);
+    expect(db._tables.subscriptions[0].plan).toBe('agency');
+  });
 });

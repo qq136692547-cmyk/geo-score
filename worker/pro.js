@@ -197,7 +197,9 @@ async function handleCreateLead(request, env, corsHeaders) {
 async function assertProUser(request, env, corsHeaders) {
   const user = await requireAuth(request, env);
   if (!user) return { error: json({ error: 'Unauthorized' }, 401, corsHeaders) };
-  if (user.plan !== 'pro') return { error: json({ error: 'Pro plan required' }, 403, corsHeaders) };
+  if (user.plan !== 'pro' && user.plan !== 'studio' && user.plan !== 'agency') {
+    return { error: json({ error: 'Pro plan required' }, 403, corsHeaders) };
+  }
   return { user };
 }
 
@@ -233,8 +235,9 @@ async function handleAddSite(request, env, corsHeaders) {
   const count = await env.DB.prepare(
     `SELECT COUNT(*) AS c FROM sites WHERE user_id=? AND status='active'`
   ).bind(user.id).first();
-  if ((count?.c || 0) >= MAX_SITES) {
-    return json({ error: 'Monitor limit reached (' + MAX_SITES + ' domains)' }, 409, corsHeaders);
+  const maxSites = user.plan === 'agency' ? 50 : (user.plan === 'studio' ? 15 : MAX_SITES);
+  if ((count?.c || 0) >= maxSites) {
+    return json({ error: 'Monitor limit reached (' + maxSites + ' domains)' }, 409, corsHeaders);
   }
 
   const dup = await env.DB.prepare(
@@ -406,7 +409,7 @@ async function handleVisibilityCheck(request, env, corsHeaders) {
   let body = {};
   try { body = await request.json(); } catch (e) {}
   // Steps 3-11 for non-Pro callers live in freeVisibility.js.
-  if (user.plan !== 'pro') {
+  if (user.plan !== 'pro' && user.plan !== 'studio' && user.plan !== 'agency') {
     return runFreeVisibilityCheck(env, request, user, body, corsHeaders);
   }
   // Global monthly budget circuit breaker (PRD §12.5 step 8). Checked before any
@@ -460,10 +463,22 @@ const CREEM_CHECKOUT_KEY = env => (env.CREEM_API_BASE || '').includes('test-api'
 // deliberately no annual default, because falling back to the monthly product
 // would charge $9/mo for a page that advertises $79/yr.
 const CREEM_PRODUCT_MONTHLY_DEFAULT = 'prod_3hLh24EkJOL0jS0Jrf9zq5';
+const CREEM_PRODUCT_STUDIO_DEFAULT = 'prod_yvmQsDZnoKHNXtDpJt51x';
+const CREEM_PRODUCT_AGENCY_DEFAULT = 'prod_7Itt3xoxDKLaItFqjfhv7x';
 const BILLING_PERIODS = ['monthly', 'annual'];
+const VALID_PLANS = ['pro', 'studio', 'agency'];
 
-function creemProductId(env, period) {
-  if (period === 'annual') return env.CREEM_PRODUCT_ID_ANNUAL || null;
+function creemProductId(env, plan = 'pro', period = 'monthly') {
+  if (period === 'annual') {
+    if (plan !== 'pro') return null;
+    return env.CREEM_PRODUCT_ID_ANNUAL || null;
+  }
+  if (plan === 'studio') {
+    return env.CREEM_PRODUCT_ID_STUDIO || CREEM_PRODUCT_STUDIO_DEFAULT;
+  }
+  if (plan === 'agency') {
+    return env.CREEM_PRODUCT_ID_AGENCY || CREEM_PRODUCT_AGENCY_DEFAULT;
+  }
   return env.CREEM_PRODUCT_ID_MONTHLY || CREEM_PRODUCT_MONTHLY_DEFAULT;
 }
 
@@ -491,10 +506,10 @@ function resolveSuccessUrl(raw) {
 
 /**
  * POST /api/checkout
- * Body: { billing_period?: 'monthly' | 'annual' } - defaults to monthly.
+ * Body: { plan?: 'pro' | 'studio' | 'agency', billing_period?: 'monthly' | 'annual' } - defaults to pro monthly.
  * Creates a Creem checkout session bound to the signed-in user's email so the
  * checkout.completed webhook can activate the correct account.
- * The client picks a period, never a product id.
+ * The client picks a plan and period, never a product id.
  */
 export async function handleCreateCheckout(request, env, corsHeaders) {
   const user = await requireAuth(request, env);
@@ -502,15 +517,22 @@ export async function handleCreateCheckout(request, env, corsHeaders) {
   if (!env.CREEM_API_KEY) return json({ error: 'Checkout unavailable' }, 503, corsHeaders);
   let body = {};
   try { body = await request.json(); } catch (e) {}
+  const plan = String(body.plan || 'pro').toLowerCase();
+  if (VALID_PLANS.indexOf(plan) === -1) {
+    return json({ error: 'Invalid plan', code: 'invalid_plan' }, 400, corsHeaders);
+  }
   const period = String(body.billing_period || 'monthly').toLowerCase();
   if (BILLING_PERIODS.indexOf(period) === -1) {
     return json({ error: 'Invalid billing_period', code: 'invalid_billing_period' }, 400, corsHeaders);
   }
-  const productId = creemProductId(env, period);
+  const productId = creemProductId(env, plan, period);
   if (!productId) {
     // Explicit degradation (PRD §15): never sell a different product than the one
     // the page shows.
-    return json({ error: 'Annual billing is not configured', code: 'annual_unavailable' }, 503, corsHeaders);
+    if (period === 'annual') {
+      return json({ error: 'Annual billing is not configured for this plan', code: 'annual_unavailable' }, 503, corsHeaders);
+    }
+    return json({ error: 'Checkout for this plan is not configured', code: 'plan_unavailable' }, 503, corsHeaders);
   }
   const successUrl = resolveSuccessUrl(body.success_url);
   const checkoutRes = await fetch(CREEM_CHECKOUT_API(env), {
@@ -528,6 +550,7 @@ export async function handleCreateCheckout(request, env, corsHeaders) {
   let data = null;
   try { data = await checkoutRes.json(); } catch (e) {}
   if (!checkoutRes.ok || !data || !data.checkout_url) {
+    console.error('Creem checkout session creation failed:', checkoutRes.status, JSON.stringify(data));
     return json({ error: 'Failed to create checkout' }, 502, corsHeaders);
   }
   return json({ checkout_url: data.checkout_url }, 200, corsHeaders);

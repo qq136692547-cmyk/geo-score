@@ -23,13 +23,19 @@ import { verifyJWT, resolvePlan, hmacSha256, base64Url, constantTimeEqual, handl
 import { freeVisibilityAllowance } from './visibilityQuota.js';
 
 // Plan mapping: Creem product ID -> plan name
-// v1.5.0: Only Pro is offered for now. Studio/Agency are visible on pricing page as "Coming Soon".
 const PLAN_MAP = {
   'prod_3hLh24EkJOL0jS0Jrf9zq5': 'pro',
+  'prod_2OZLydXjeAKD3HyVY20eEN': 'pro',
+  'prod_yvmQsDZnoKHNXtDpJt51x': 'studio',
+  'prod_7Itt3xoxDKLaItFqjfhv7x': 'agency',
+  'prod_studio': 'studio',
+  'prod_agency': 'agency',
 };
 
 const PLAN_PRICES = {
-  pro: 900,  // $9.00
+  pro: 900,      // $9.00
+  studio: 2900,  // $29.00
+  agency: 5900,  // $59.00
 };
 
 export default {
@@ -638,7 +644,7 @@ async function signJWT(payload, secret) {
  * became a paid tier.
  */
 function resolvePlanFromPayload(object, env) {
-  const productId = object?.product?.id;
+  const productId = object?.product?.id || (typeof object?.product === 'string' ? object.product : null) || object?.product_id;
   // The product id is the only identity we trust. Falling back to the price let
   // a payload with no product id (or an empty one) plus price:900 become Pro -
   // the independent reviewer reproduced exactly that on 2026-11-01.
@@ -649,6 +655,8 @@ function resolvePlanFromPayload(object, env) {
   if (PLAN_MAP[productId]) return PLAN_MAP[productId];
   if (env?.CREEM_PRODUCT_ID_MONTHLY && productId === env.CREEM_PRODUCT_ID_MONTHLY) return 'pro';
   if (env?.CREEM_PRODUCT_ID_ANNUAL && productId === env.CREEM_PRODUCT_ID_ANNUAL) return 'pro';
+  if (env?.CREEM_PRODUCT_ID_STUDIO && productId === env.CREEM_PRODUCT_ID_STUDIO) return 'studio';
+  if (env?.CREEM_PRODUCT_ID_AGENCY && productId === env.CREEM_PRODUCT_ID_AGENCY) return 'agency';
   // Loud on purpose: an unmatched id means a secret is missing, and the event
   // will be dropped. grep `unmatched product id` in `wrangler tail`.
   console.error('webhook: unmatched product id', productId);

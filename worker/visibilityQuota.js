@@ -204,8 +204,8 @@ async function readUsage(env, userId) {
  */
 export async function freeVisibilityAllowance(env, user, now, plan) {
   const periodEnd = currentPeriodEndUtc(now);
-  if (plan === 'pro') {
-    return { eligible: true, plan: 'pro', remaining: PRO_VIS_LIMIT, limit: PRO_VIS_LIMIT, period_end: periodEnd, reason: null };
+  if (plan === 'pro' || plan === 'studio' || plan === 'agency') {
+    return { eligible: true, plan, remaining: PRO_VIS_LIMIT, limit: PRO_VIS_LIMIT, period_end: periodEnd, reason: null };
   }
   const eligibility = evaluateFreeEligibility(user, env);
   if (!eligibility.eligible) {

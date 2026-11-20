@@ -33,6 +33,22 @@ describe('/api/subscription', () => {
     expect(body.status).toBe('active');
   });
 
+  it('reports studio and agency while the period is still in the future', async () => {
+    const db = createMockDb({
+      subscriptions: [
+        { email: 'studio@example.com', plan: 'studio', status: 'active', current_period_end: NOW + 86400 },
+        { email: 'agency@example.com', plan: 'agency', status: 'active', current_period_end: NOW + 86400 },
+      ],
+    });
+    const respStudio = await (await handler.fetch(req('studio@example.com'), { DB: db, GEOSCORE_API_TOKEN: TOKEN })).json();
+    expect(respStudio.plan).toBe('studio');
+    expect(respStudio.status).toBe('active');
+
+    const respAgency = await (await handler.fetch(req('agency@example.com'), { DB: db, GEOSCORE_API_TOKEN: TOKEN })).json();
+    expect(respAgency.plan).toBe('agency');
+    expect(respAgency.status).toBe('active');
+  });
+
   it('reports free for a canceled subscription', async () => {
     const db = createMockDb({
       subscriptions: [{ email: 'c@example.com', plan: 'pro', status: 'canceled', current_period_end: NOW + 86400 }],

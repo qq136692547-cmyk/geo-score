@@ -15,8 +15,8 @@ async function makeToken(uid) {
 function makeEnv(userPlan = 'pro') {
   const db = createMockDb({
     users: [{ id: 'u_1', email: 'pro@example.com', name: 'Pro User', plan: userPlan }],
-    subscriptions: userPlan === 'pro'
-      ? [{ email: 'pro@example.com', plan: 'pro', status: 'active', current_period_end: FUTURE }]
+    subscriptions: userPlan !== 'free'
+      ? [{ email: 'pro@example.com', plan: userPlan, status: 'active', current_period_end: FUTURE }]
       : [],
   });
   return { env: { DB: db, JWT_SECRET }, db, user: { id: 'u_1' } };
@@ -48,6 +48,16 @@ describe('Pro API auth', () => {
     const data = await resp.json();
     expect(data.error).toContain('Pro');
   });
+
+  it('allows Studio and Agency users (200)', async () => {
+    const eStudio = makeEnv('studio');
+    const respStudio = await call('GET', '/api/sites', eStudio);
+    expect(respStudio.status).toBe(200);
+
+    const eAgency = makeEnv('agency');
+    const respAgency = await call('GET', '/api/sites', eAgency);
+    expect(respAgency.status).toBe(200);
+  });
 });
 
 describe('sites CRUD', () => {
@@ -76,6 +86,17 @@ describe('sites CRUD', () => {
     const resp = await call('POST', '/api/sites', e, { url: 'https://site6.example.com' });
     expect(resp.status).toBe(409);
     expect((await resp.json()).error).toContain('5');
+  });
+
+  it('allows Studio to monitor up to 15 domains (409 on 16th)', async () => {
+    const e = makeEnv('studio');
+    for (let i = 1; i <= 15; i++) {
+      const res = await call('POST', '/api/sites', e, { url: 'https://site' + i + '.studio.com' });
+      expect(res.status).toBe(201);
+    }
+    const resp = await call('POST', '/api/sites', e, { url: 'https://site16.studio.com' });
+    expect(resp.status).toBe(409);
+    expect((await resp.json()).error).toContain('15');
   });
 
   it('lists monitored sites for the owner', async () => {
@@ -273,6 +294,81 @@ describe('checkout session', () => {
 
     await call('POST', '/api/checkout', e, { success_url: 'https://geoscore.help/zh/pricing/?checkout=success' });
     expect(sentBody.success_url).toBe('https://geoscore.help/zh/pricing/?checkout=success');
+  });
+
+  it('sells Studio product when plan=studio (defaults to prod_yvmQsDZnoKHNXtDpJt51x)', async () => {
+    let sentBody = null;
+    vi.stubGlobal('fetch', vi.fn(async (url, init) => {
+      sentBody = JSON.parse(init.body);
+      return new Response(JSON.stringify({ checkout_url: 'https://checkout.creem.io/ch_studio' }), { status: 200 });
+    }));
+    const e = makeEnv('free');
+    e.env.CREEM_API_KEY = 'test-creem-key';
+    const resp = await call('POST', '/api/checkout', e, { plan: 'studio' });
+    expect(resp.status).toBe(200);
+    expect(sentBody.product_id).toBe('prod_yvmQsDZnoKHNXtDpJt51x');
+  });
+
+  it('sells Studio product when plan=studio and honours secret override', async () => {
+    let sentBody = null;
+    vi.stubGlobal('fetch', vi.fn(async (url, init) => {
+      sentBody = JSON.parse(init.body);
+      return new Response(JSON.stringify({ checkout_url: 'https://checkout.creem.io/ch_studio_custom' }), { status: 200 });
+    }));
+    const e = makeEnv('free');
+    e.env.CREEM_API_KEY = 'test-creem-key';
+    e.env.CREEM_PRODUCT_ID_STUDIO = 'prod_studio_override';
+    const resp = await call('POST', '/api/checkout', e, { plan: 'studio' });
+    expect(resp.status).toBe(200);
+    expect(sentBody.product_id).toBe('prod_studio_override');
+  });
+
+  it('sells Agency product when plan=agency (defaults to prod_7Itt3xoxDKLaItFqjfhv7x)', async () => {
+    let sentBody = null;
+    vi.stubGlobal('fetch', vi.fn(async (url, init) => {
+      sentBody = JSON.parse(init.body);
+      return new Response(JSON.stringify({ checkout_url: 'https://checkout.creem.io/ch_agency' }), { status: 200 });
+    }));
+    const e = makeEnv('free');
+    e.env.CREEM_API_KEY = 'test-creem-key';
+    const resp = await call('POST', '/api/checkout', e, { plan: 'agency' });
+    expect(resp.status).toBe(200);
+    expect(sentBody.product_id).toBe('prod_7Itt3xoxDKLaItFqjfhv7x');
+  });
+
+  it('sells Agency product when plan=agency and honours secret override', async () => {
+    let sentBody = null;
+    vi.stubGlobal('fetch', vi.fn(async (url, init) => {
+      sentBody = JSON.parse(init.body);
+      return new Response(JSON.stringify({ checkout_url: 'https://checkout.creem.io/ch_agency' }), { status: 200 });
+    }));
+    const e = makeEnv('free');
+    e.env.CREEM_API_KEY = 'test-creem-key';
+    e.env.CREEM_PRODUCT_ID_AGENCY = 'prod_agency_custom';
+    const resp = await call('POST', '/api/checkout', e, { plan: 'agency' });
+    expect(resp.status).toBe(200);
+    expect(sentBody.product_id).toBe('prod_agency_custom');
+  });
+
+  it('rejects annual billing for studio and agency (503 annual_unavailable)', async () => {
+    const e = makeEnv('free');
+    e.env.CREEM_API_KEY = 'test-creem-key';
+    e.env.CREEM_PRODUCT_ID_ANNUAL = 'prod_pro_annual';
+    const respStudio = await call('POST', '/api/checkout', e, { plan: 'studio', billing_period: 'annual' });
+    expect(respStudio.status).toBe(503);
+    expect((await respStudio.json()).code).toBe('annual_unavailable');
+
+    const respAgency = await call('POST', '/api/checkout', e, { plan: 'agency', billing_period: 'annual' });
+    expect(respAgency.status).toBe(503);
+    expect((await respAgency.json()).code).toBe('annual_unavailable');
+  });
+
+  it('rejects an invalid plan (400)', async () => {
+    const e = makeEnv('free');
+    e.env.CREEM_API_KEY = 'test-creem-key';
+    const resp = await call('POST', '/api/checkout', e, { plan: 'enterprise_ultra' });
+    expect(resp.status).toBe(400);
+    expect((await resp.json()).code).toBe('invalid_plan');
   });
 });});
 

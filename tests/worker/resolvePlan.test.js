@@ -20,6 +20,17 @@ describe('resolvePlan', () => {
     expect(await resolvePlan({ email: 'ok@example.com' }, { DB: db })).toBe('pro');
   });
 
+  it('keeps Studio and Agency while the period is still in the future', async () => {
+    const db = createMockDb({
+      subscriptions: [
+        { email: 'studio@example.com', plan: 'studio', status: 'active', current_period_end: NOW + 86400 },
+        { email: 'agency@example.com', plan: 'agency', status: 'active', current_period_end: NOW + 86400 },
+      ],
+    });
+    expect(await resolvePlan({ email: 'studio@example.com' }, { DB: db })).toBe('studio');
+    expect(await resolvePlan({ email: 'agency@example.com' }, { DB: db })).toBe('agency');
+  });
+
   it('downgrades once the period has ended', async () => {
     const db = createMockDb({
       subscriptions: [{ email: 'old@example.com', plan: 'pro', status: 'active', current_period_end: NOW - 86400 }],
