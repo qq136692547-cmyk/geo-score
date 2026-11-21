@@ -1,0 +1,200 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import demo from '../../../data/demo-report.json';
+---
+<Layout
+  title="GEO for Shopify — Optimize Your Store for ChatGPT & AI Search | GeoScore"
+  description="Audit and optimize your Shopify store for ChatGPT, Perplexity, and AI shopping agents. Configure llms.txt via Content > Files and URL redirects, templates/robots.txt.liquid, and Product JSON-LD."
+  schema={[
+    {
+      '@context': 'https://schema.org',
+      '@type': 'SoftwareApplication',
+      name: 'GeoScore for Shopify',
+      description: 'Free Shopify GEO audit tool to check AI crawler access, llms.txt redirects, and Product JSON-LD structured data.',
+      url: 'https://geoscore.help/geo-for/shopify/',
+      applicationCategory: 'SEO Tool',
+      operatingSystem: 'Any',
+      offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+      isPartOf: { '@type': 'WebApplication', name: 'GeoScore', url: 'https://geoscore.help' }
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: [
+        {
+          '@type': 'Question',
+          name: 'How do I add llms.txt to a Shopify store?',
+          acceptedAnswer: { '@type': 'Answer', text: 'Upload your llms.txt file under Content > Files in Shopify Admin to get its CDN URL, then create a URL Redirect from /llms.txt to that CDN file URL under Online Store > Navigation > View URL redirects (or Content > Menus > URL Redirects). Because Shopify serves static assets from its CDN, redirecting /llms.txt to the uploaded file makes it reachable at your root domain.' }
+        },
+        {
+          '@type': 'Question',
+          name: 'How do I allow GPTBot and ClaudeBot in Shopify robots.txt?',
+          acceptedAnswer: { '@type': 'Answer', text: 'In Shopify Admin, go to Online Store > Themes > Edit code > Templates > Add a new template and select robots.txt to create templates/robots.txt.liquid. Keep {{ robots.default_groups }} intact and append explicit Allow rules for GPTBot, OAI-SearchBot, ClaudeBot, PerplexityBot, and Google-Extended.' }
+        },
+        {
+          '@type': 'Question',
+          name: 'Where should Product JSON-LD live in a Shopify theme?',
+          acceptedAnswer: { '@type': 'Answer', text: 'Place Product JSON-LD inside your product template or main-product section guarded by template contains \'product\', rather than on the homepage. Include every variant offer with price, priceCurrency, availability, and product identifiers such as sku, gtin, or mpn so AI shopping surfaces can match your items accurately.' }
+        },
+        {
+          '@type': 'Question',
+          name: 'Why does Shopify need a manual GEO check if it generates default SEO tags?',
+          acceptedAnswer: { '@type': 'Answer', text: 'Shopify default themes often omit variant-level identifiers (sku, gtin, mpn), serve generic llms.txt endpoints without store catalog facts, or lose structured data when third-party apps inject conflicting blocks. A live audit verifies what AI crawlers actually parse on your store.' }
+        }
+      ]
+    }
+  ]}
+>
+  <section class="max-w-4xl mx-auto">
+    <div class="text-center mb-10">
+      <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-geo-500/10 text-geo-400 border border-geo-500/20 mb-4">
+        Platform Guide · Shopify
+      </div>
+      <h1 class="text-4xl font-extrabold mb-3">GEO for Shopify</h1>
+      <p class="text-gray-400 max-w-2xl mx-auto">
+        Make your Shopify catalog readable to ChatGPT Shopping, Perplexity, and Claude. Audit your store in seconds and deploy clean <code class="text-geo-400 bg-white/5 px-1.5 py-0.5 rounded">llms.txt</code>, <code class="text-geo-400 bg-white/5 px-1.5 py-0.5 rounded">robots.txt.liquid</code>, and <code class="text-geo-400 bg-white/5 px-1.5 py-0.5 rounded">Product</code> schema.
+      </p>
+    </div>
+
+    <div class="card p-8 mb-8">
+      <h2 class="text-xl font-bold mb-4">Audit Your Shopify Store Now</h2>
+      <p class="text-gray-400 mb-6">Enter your Shopify store domain to run the 11-dimension GEO audit (crawler access, llms.txt, schema, and E-E-A-T):</p>
+      <div class="flex flex-col sm:flex-row gap-3 max-w-xl">
+        <div class="flex-1 relative">
+          <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+          <input id="url-input" type="url" placeholder="e.g. yourstore.com" aria-label="Enter Shopify store URL" onkeydown="if(event.key==='Enter'){document.getElementById('audit-btn').click();}" class="w-full pl-12 pr-5 py-3.5 rounded-xl bg-white/5 text-white placeholder-gray-500 border border-gray-600 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 text-lg transition" />
+        </div>
+        <button id="audit-btn" class="px-8 py-3.5 rounded-xl font-semibold text-white bg-gradient-to-r from-geo-600 to-brand-600 hover:from-geo-500 hover:to-brand-500 transition shadow-lg shadow-brand-500/20 whitespace-nowrap">Audit Store</button>
+      </div>
+    </div>
+
+    <p class="text-xs text-gray-500 mb-10 text-center">
+      <a href="/report/demo/" class="text-gray-400 hover:text-geo-400 transition underline underline-offset-2">See a sample report</a>
+      &mdash; {demo.host} scored <span class="text-geo-400 font-semibold">{demo.score}/100 ({demo.level})</span>, {demo.dimensionsAboveSixty}/{demo.dimensionCount} dimensions above 60%.
+    </p>
+
+    <div class="card p-8 mb-8">
+      <h2 class="text-xl font-bold mb-4">1. Publish <code class="text-geo-400">llms.txt</code> via Content &gt; Files + URL Redirect</h2>
+      <p class="text-gray-400 mb-4">
+        Shopify does not let you drop arbitrary static text files directly into the root directory. The cleanest, platform-native workflow is to upload your file to Shopify's CDN and map <code class="bg-white/5 px-1.5 py-0.5 rounded">/llms.txt</code> to it:
+      </p>
+      <ol class="space-y-3 text-sm text-gray-300 list-decimal list-inside mb-4">
+        <li>Create a concise <code class="bg-white/5 px-1.5 py-0.5 rounded">llms.txt</code> describing your store, best-selling collections, shipping/return policies, and key product links.</li>
+        <li>In Shopify Admin, open <strong class="text-white">Content &gt; Files</strong>, upload <code class="bg-white/5 px-1.5 py-0.5 rounded">llms.txt</code>, and copy its generated CDN URL.</li>
+        <li>Create a redirect from <code class="bg-white/5 px-1.5 py-0.5 rounded">/llms.txt</code> to that CDN URL in <strong class="text-white">Online Store &gt; Navigation &gt; View URL redirects</strong> (or <strong class="text-white">Content &gt; Menus &gt; URL Redirects</strong>).</li>
+      </ol>
+      <pre class="bg-black/30 rounded-lg p-4 text-sm text-gray-300 overflow-x-auto"><code># Your Store Name
+
+> Concise summary of what your Shopify store sells, shipping regions, and warranty.
+
+## Key Collections
+- [Best Sellers](https://yourstore.com/collections/best-sellers): Top products
+- [Shipping &amp; Returns](https://yourstore.com/pages/shipping): Delivery and return policy</code></pre>
+    </div>
+
+    <div class="card p-8 mb-8">
+      <h2 class="text-xl font-bold mb-4">2. Configure AI Crawlers in <code class="text-geo-400">templates/robots.txt.liquid</code></h2>
+      <p class="text-gray-400 mb-4">
+        Shopify supports customizing <code class="bg-white/5 px-1.5 py-0.5 rounded">/robots.txt</code> through <code class="text-geo-400 bg-white/5 px-1.5 py-0.5 rounded">templates/robots.txt.liquid</code>. Always preserve <code class="bg-white/5 px-1.5 py-0.5 rounded">{"{{ robots.default_groups }}"}</code> so checkout and cart protections stay intact, then add explicit AI search crawler directives:
+      </p>
+      <pre class="bg-black/30 rounded-lg p-4 text-sm text-gray-300 overflow-x-auto"><code>{`{% for group in robots.default_groups %}
+  {{- group.user_agent -}}
+  {% for rule in group.rules %}
+    {{- rule -}}
+  {% endfor %}
+  {%- if group.sitemap != blank -%}
+    {{ group.sitemap }}
+  {%- endif -%}
+{% endfor %}
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /`}</code></pre>
+    </div>
+
+    <div class="card p-8 mb-8">
+      <h2 class="text-xl font-bold mb-4">3. Validate <code class="text-geo-400">Product</code> JSON-LD on Product Templates</h2>
+      <p class="text-gray-400 mb-4">
+        Keep <code class="bg-white/5 px-1.5 py-0.5 rounded">Product</code> structured data strictly inside product templates using <code class="text-geo-400 bg-white/5 px-1.5 py-0.5 rounded">{"{% if template contains 'product' %}"}</code> (or inside your <code class="bg-white/5 px-1.5 py-0.5 rounded">sections/main-product.liquid</code>). Ensure every variant includes price, currency, availability, and identifiers (<code class="bg-white/5 px-1.5 py-0.5 rounded">sku</code>, <code class="bg-white/5 px-1.5 py-0.5 rounded">gtin</code>, or <code class="bg-white/5 px-1.5 py-0.5 rounded">mpn</code>).
+      </p>
+      <pre class="bg-black/30 rounded-lg p-4 text-sm text-gray-300 overflow-x-auto"><code>{`{% if template contains 'product' %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": {{ product.title | json }},
+  "description": {{ product.description | strip_html | truncate: 300 | json }},
+  "sku": {{ product.selected_or_first_available_variant.sku | json }},
+  "brand": { "@type": "Brand", "name": {{ product.vendor | json }} },
+  "offers": {
+    "@type": "Offer",
+    "priceCurrency": {{ cart.currency.iso_code | json }},
+    "price": {{ product.selected_or_first_available_variant.price | money_without_currency | json }},
+    "availability": "https://schema.org/{% if product.available %}InStock{% else %}OutOfStock{% endif %}",
+    "url": {{ shop.url | append: product.url | json }}
+  }
+}
+</script>
+{% endif %}`}</code></pre>
+    </div>
+
+    <div class="card p-8 mb-8 border-brand-500/40 bg-brand-500/5 text-center">
+      <h2 class="text-2xl font-bold mb-3">Want Us to Fix Your Shopify Store for You?</h2>
+      <p class="text-gray-300 max-w-2xl mx-auto mb-6">
+        Get the <strong class="text-white">$49 AI Visibility Fix Pack</strong> — completed &amp; validated Product JSON-LD for your best-seller, a line-by-line <code class="bg-white/10 px-1.5 py-0.5 rounded">robots.txt</code> diagnosis, a curated <code class="bg-white/10 px-1.5 py-0.5 rounded">llms.txt</code> ready for <code class="bg-white/10 px-1.5 py-0.5 rounded">Content &gt; Files</code>, and a post-deploy re-audit in 48 hours.
+      </p>
+      <div class="flex flex-col sm:flex-row justify-center gap-3">
+        <a href="/fixpack/" class="inline-flex items-center justify-center px-6 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-geo-600 to-brand-600 hover:from-geo-500 hover:to-brand-500 transition">
+          Get $49 AI Visibility Fix Pack →
+        </a>
+        <a href="mailto:hello@geoscore.help?subject=Shopify%20Fix%20Pack%20Diagnosis" class="inline-flex items-center justify-center px-6 py-3 rounded-xl font-semibold text-gray-200 bg-white/10 hover:bg-white/20 transition">
+          Email hello@geoscore.help
+        </a>
+      </div>
+    </div>
+
+    <div class="max-w-2xl mx-auto mb-10">
+      <h2 class="text-2xl font-bold text-center mb-6">Shopify GEO FAQ</h2>
+      <div class="space-y-4">
+        <div class="card p-5">
+          <h3 class="font-semibold mb-2">How do I add llms.txt to a Shopify store?</h3>
+          <p class="text-sm text-gray-400">Upload your llms.txt file under Content &gt; Files in Shopify Admin to get its CDN URL, then create a URL Redirect from /llms.txt to that CDN file URL under Online Store &gt; Navigation &gt; View URL redirects (or Content &gt; Menus &gt; URL Redirects). Because Shopify serves static assets from its CDN, redirecting /llms.txt to the uploaded file makes it reachable at your root domain.</p>
+        </div>
+        <div class="card p-5">
+          <h3 class="font-semibold mb-2">How do I allow GPTBot and ClaudeBot in Shopify robots.txt?</h3>
+          <p class="text-sm text-gray-400">In Shopify Admin, go to Online Store &gt; Themes &gt; Edit code &gt; Templates &gt; Add a new template and select robots.txt to create templates/robots.txt.liquid. Keep {"{{ robots.default_groups }}"} intact and append explicit Allow rules for GPTBot, OAI-SearchBot, ClaudeBot, PerplexityBot, and Google-Extended.</p>
+        </div>
+        <div class="card p-5">
+          <h3 class="font-semibold mb-2">Where should Product JSON-LD live in a Shopify theme?</h3>
+          <p class="text-sm text-gray-400">Place Product JSON-LD inside your product template or main-product section guarded by template contains 'product', rather than on the homepage. Include every variant offer with price, priceCurrency, availability, and product identifiers such as sku, gtin, or mpn so AI shopping surfaces can match your items accurately.</p>
+        </div>
+        <div class="card p-5">
+          <h3 class="font-semibold mb-2">Why does Shopify need a manual GEO check if it generates default SEO tags?</h3>
+          <p class="text-sm text-gray-400">Shopify default themes often omit variant-level identifiers (sku, gtin, mpn), serve generic llms.txt endpoints without store catalog facts, or lose structured data when third-party apps inject conflicting blocks. A live audit verifies what AI crawlers actually parse on your store.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<script is:inline>
+  (function() {
+    var queue = [];
+    ["startAudit","showBatchInput","showComparison","startBatchAudit","runComparison","doExport"].forEach(function(n) {
+      window[n] = function() { queue.push({ n: n, a: arguments }); };
+    });
+    window.__geoFlush = function() { queue.splice(0).forEach(function(q) { window[q.n].apply(null, q.a); }); };
+  })();
+</script>
+<script src="../../scripts/boot.js"></script>

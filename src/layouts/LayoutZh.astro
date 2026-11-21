@@ -3,9 +3,16 @@ import '../styles/global.css';
 import { alternates } from '../lib/hreflang.js';
 export interface Props {
   title?: string;
-  schema?: object;
+  description?: string;
+  schema?: object | object[];
 }
-const { title = 'GeoScore - GEO 审计工具', schema } = Astro.props;
+const {
+  title = 'GeoScore - GEO 审计工具',
+  description,
+  schema
+} = Astro.props;
+const metaDescription = description || '检测你的网站对 AI 搜索引擎的可见性。免费 GEO 审计工具。';
+const ogDescription = description || '检测你的网站对 ChatGPT、Perplexity、Claude、Gemini 等 AI 搜索引擎的 GEO 就绪分数。';
 const path = Astro.url.pathname;
 const isBlog = path === '/zh/blog' || path.startsWith('/zh/blog/');
 // null for pages with no English counterpart. Both layouts emit the same
@@ -18,11 +25,11 @@ const alt = alternates(Astro.site, path);
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="检测你的网站对 AI 搜索引擎的可见性。免费 GEO 审计工具。" />
+  <meta name="description" content={metaDescription} />
   <meta name="author" content="anan" />
   <link rel="author" href="https://geoscore.help/zh/methodology" />
   <meta property="og:title" content={title} />
-  <meta property="og:description" content="检测你的网站对 ChatGPT、Perplexity、Claude、Gemini 等 AI 搜索引擎的 GEO 就绪分数。" />
+  <meta property="og:description" content={ogDescription} />
   <meta property="og:type" content="website" />
   <meta property="og:image" content="https://geoscore.help/og-image.png" />
   <meta property="og:image:width" content="1200" />
@@ -169,7 +176,7 @@ const alt = alternates(Astro.site, path);
   <!-- JSON-LD: WebApplication (中文版全站) + 页面级 schema -->
   <script is:inline type="application/ld+json" set:html={JSON.stringify(schema ? {
     '@context': 'https://schema.org',
-    '@graph': [schema, {
+    '@graph': [...(Array.isArray(schema) ? schema : [schema]), {
       '@context': 'https://schema.org',
       '@type': 'WebApplication',
       name: 'GeoScore',
@@ -242,6 +249,9 @@ const alt = alternates(Astro.site, path);
             <li><a href="/zh/tools/llms-txt-checker/" class="hover:text-brand-500 transition">llms.txt 检测</a></li>
             <li><a href="/zh/tools/robots-txt-ai-checker/" class="hover:text-brand-500 transition">Robots.txt AI 检测</a></li>
             <li><a href="/zh/tools/ai-readiness-score/" class="hover:text-brand-500 transition">AI 就绪评分</a></li>
+            <li><a href="/zh/geo-for/shopify/" class="hover:text-brand-500 transition">Shopify GEO 优化</a></li>
+            <li><a href="/zh/geo-for/wordpress/" class="hover:text-brand-500 transition">WordPress GEO 优化</a></li>
+            <li><a href="/zh/geo-for/nextjs/" class="hover:text-brand-500 transition">Next.js GEO 优化</a></li>
             <li><a href="/zh/#chrome-extension" class="hover:text-brand-500 transition">Chrome 插件</a></li>
           </ul>
         </div>

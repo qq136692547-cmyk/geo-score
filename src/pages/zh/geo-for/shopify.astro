@@ -1,0 +1,200 @@
+---
+import LayoutZh from '../../../layouts/LayoutZh.astro';
+import demo from '../../../../data/demo-report.json';
+---
+<LayoutZh
+  title="Shopify GEO 优化指南 — 让店铺被 ChatGPT 与 AI 搜索引用 | GeoScore"
+  description="针对 Shopify 独立站的 GEO 优化与免费审计：通过 Content > Files 上传 llms.txt 并配置 /llms.txt URL 重定向、配置 templates/robots.txt.liquid 与商品页 Product JSON-LD。"
+  schema={[
+    {
+      '@context': 'https://schema.org',
+      '@type': 'SoftwareApplication',
+      name: 'GeoScore Shopify GEO 优化工具',
+      description: '免费 Shopify GEO 审计工具，检测 AI 爬虫访问规则、llms.txt 重定向与商品 Product JSON-LD 结构化数据。',
+      url: 'https://geoscore.help/zh/geo-for/shopify/',
+      applicationCategory: 'SEO Tool',
+      operatingSystem: 'Any',
+      offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+      isPartOf: { '@type': 'WebApplication', name: 'GeoScore', url: 'https://geoscore.help' }
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: [
+        {
+          '@type': 'Question',
+          name: '如何在 Shopify 店铺中添加 llms.txt？',
+          acceptedAnswer: { '@type': 'Answer', text: '在 Shopify 后台进入 Content > Files 上传你的 llms.txt 文件并复制生成的 CDN 链接，然后进入 Online Store > Navigation > View URL redirects（或 Content > Menus > URL Redirects），创建一条从 /llms.txt 指向该 CDN 文件地址的 URL 重定向，即可在根域名路径下稳定访问。' }
+        },
+        {
+          '@type': 'Question',
+          name: '如何在 Shopify 的 robots.txt 中放行 GPTBot 和 ClaudeBot？',
+          acceptedAnswer: { '@type': 'Answer', text: '进入 Shopify 后台 Online Store > Themes > Edit code > Templates > Add a new template，选择 robots.txt 创建 templates/robots.txt.liquid。保留 {{ robots.default_groups }} 默认规则，在末尾为 GPTBot、OAI-SearchBot、ClaudeBot、PerplexityBot 和 Google-Extended 添加 Allow: / 规则。' }
+        },
+        {
+          '@type': 'Question',
+          name: 'Shopify 主题中 Product JSON-LD 应该放在哪里？',
+          acceptedAnswer: { '@type': 'Answer', text: '应当将 Product JSON-LD 放在商品模板或 main-product 区块中，并通过 template contains \'product\' 条件包裹，切勿挂在首页。需完整输出每个变体的价格、币种、库存状态以及 sku、gtin 或 mpn 等商品标识符。' }
+        },
+        {
+          '@type': 'Question',
+          name: 'Shopify 自带基础 SEO 标签，为什么还需要做 GEO 审计？',
+          acceptedAnswer: { '@type': 'Answer', text: '许多 Shopify 默认主题或第三方插件会遗漏变体级标识符（sku、gtin、mpn），或输出不包含店铺真实商品目录信息的通用接口，甚至产生结构化数据冲突。实时审计可以验证 AI 爬虫实际解析到的内容。' }
+        }
+      ]
+    }
+  ]}
+>
+  <section class="max-w-4xl mx-auto">
+    <div class="text-center mb-10">
+      <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-geo-500/10 text-geo-400 border border-geo-500/20 mb-4">
+        平台优化指南 · Shopify
+      </div>
+      <h1 class="text-4xl font-extrabold mb-3">Shopify GEO 优化</h1>
+      <p class="text-gray-400 max-w-2xl mx-auto">
+        让你的 Shopify 独立站商品目录被 ChatGPT Shopping、Perplexity 与 Claude 准确读取。几秒内完成 11 维 GEO 审计，并部署规范的 <code class="text-geo-400 bg-white/5 px-1.5 py-0.5 rounded">llms.txt</code>、<code class="text-geo-400 bg-white/5 px-1.5 py-0.5 rounded">robots.txt.liquid</code> 与 <code class="text-geo-400 bg-white/5 px-1.5 py-0.5 rounded">Product</code> Schema。
+      </p>
+    </div>
+
+    <div class="card p-8 mb-8">
+      <h2 class="text-xl font-bold mb-4">立即审计你的 Shopify 店铺</h2>
+      <p class="text-gray-400 mb-6">输入 Shopify 店铺域名，运行完整的 11 维度 GEO 审计（爬虫权限、llms.txt、结构化数据与 E-E-A-T 信号）：</p>
+      <div class="flex flex-col sm:flex-row gap-3 max-w-xl">
+        <div class="flex-1 relative">
+          <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+          <input id="url-input" type="url" placeholder="输入店铺网址，如 yourstore.com" aria-label="请输入 Shopify 店铺网址" onkeydown="if(event.key==='Enter'){document.getElementById('audit-btn').click();}" class="w-full pl-12 pr-5 py-3.5 rounded-xl bg-white/5 text-white placeholder-gray-500 border border-gray-600 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 text-lg transition" />
+        </div>
+        <button id="audit-btn" class="px-8 py-3.5 rounded-xl font-semibold text-white bg-gradient-to-r from-geo-600 to-brand-600 hover:from-geo-500 hover:to-brand-500 transition shadow-lg shadow-brand-500/20 whitespace-nowrap">检测店铺</button>
+      </div>
+    </div>
+
+    <p class="text-xs text-gray-500 mb-10 text-center">
+      <a href="/zh/report/demo/" class="text-gray-400 hover:text-geo-400 transition underline underline-offset-2">查看样例报告</a>
+      &mdash; {demo.host} 得分 <span class="text-geo-400 font-semibold">{demo.score}/100（{demo.level}）</span>，{demo.dimensionCount} 个维度中 {demo.dimensionsAboveSixty} 个超过 60%。
+    </p>
+
+    <div class="card p-8 mb-8">
+      <h2 class="text-xl font-bold mb-4">1. 通过 Content &gt; Files + URL 重定向发布 <code class="text-geo-400">llms.txt</code></h2>
+      <p class="text-gray-400 mb-4">
+        Shopify 不支持直接向网站根目录上传静态文本文件。最稳妥的原生做法是将文件上传至 Shopify CDN，再将 <code class="bg-white/5 px-1.5 py-0.5 rounded">/llms.txt</code> 重定向过去：
+      </p>
+      <ol class="space-y-3 text-sm text-gray-300 list-decimal list-inside mb-4">
+        <li>编写简洁的 <code class="bg-white/5 px-1.5 py-0.5 rounded">llms.txt</code>，概括店铺主营品类、畅销系列、物流退换货政策与核心页面链接。</li>
+        <li>在 Shopify 后台打开 <strong class="text-white">Content &gt; Files</strong>，上传 <code class="bg-white/5 px-1.5 py-0.5 rounded">llms.txt</code> 并复制生成的 CDN 文件 URL。</li>
+        <li>前往 <strong class="text-white">Online Store &gt; Navigation &gt; View URL redirects</strong>（或 <strong class="text-white">Content &gt; Menus &gt; URL Redirects</strong>），新建一条从 <code class="bg-white/5 px-1.5 py-0.5 rounded">/llms.txt</code> 到该 CDN 地址的重定向。</li>
+      </ol>
+      <pre class="bg-black/30 rounded-lg p-4 text-sm text-gray-300 overflow-x-auto"><code># Your Store Name
+
+> 店铺主营商品、配送范围与质保政策简介。
+
+## Key Collections
+- [Best Sellers](https://yourstore.com/collections/best-sellers): 畅销商品合集
+- [Shipping &amp; Returns](https://yourstore.com/pages/shipping): 配送与退换政策</code></pre>
+    </div>
+
+    <div class="card p-8 mb-8">
+      <h2 class="text-xl font-bold mb-4">2. 在 <code class="text-geo-400">templates/robots.txt.liquid</code> 中配置 AI 爬虫</h2>
+      <p class="text-gray-400 mb-4">
+        Shopify 支持通过 <code class="text-geo-400 bg-white/5 px-1.5 py-0.5 rounded">templates/robots.txt.liquid</code> 自定义爬虫规则。请务必保留 <code class="bg-white/5 px-1.5 py-0.5 rounded">{"{{ robots.default_groups }}"}</code> 以维持结账与后台路径保护，随后显式放行主流 AI 搜索爬虫：
+      </p>
+      <pre class="bg-black/30 rounded-lg p-4 text-sm text-gray-300 overflow-x-auto"><code>{`{% for group in robots.default_groups %}
+  {{- group.user_agent -}}
+  {% for rule in group.rules %}
+    {{- rule -}}
+  {% endfor %}
+  {%- if group.sitemap != blank -%}
+    {{ group.sitemap }}
+  {%- endif -%}
+{% endfor %}
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /`}</code></pre>
+    </div>
+
+    <div class="card p-8 mb-8">
+      <h2 class="text-xl font-bold mb-4">3. 在商品模板中校验 <code class="text-geo-400">Product</code> JSON-LD</h2>
+      <p class="text-gray-400 mb-4">
+        确保 <code class="bg-white/5 px-1.5 py-0.5 rounded">Product</code> 结构化数据仅在商品页输出（使用 <code class="text-geo-400 bg-white/5 px-1.5 py-0.5 rounded">{"{% if template contains 'product' %}"}</code> 或置于 <code class="bg-white/5 px-1.5 py-0.5 rounded">sections/main-product.liquid</code>），并完整提供价格、币种、库存状态及 <code class="bg-white/5 px-1.5 py-0.5 rounded">sku</code>/<code class="bg-white/5 px-1.5 py-0.5 rounded">gtin</code>/<code class="bg-white/5 px-1.5 py-0.5 rounded">mpn</code> 标识符：
+      </p>
+      <pre class="bg-black/30 rounded-lg p-4 text-sm text-gray-300 overflow-x-auto"><code>{`{% if template contains 'product' %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": {{ product.title | json }},
+  "description": {{ product.description | strip_html | truncate: 300 | json }},
+  "sku": {{ product.selected_or_first_available_variant.sku | json }},
+  "brand": { "@type": "Brand", "name": {{ product.vendor | json }} },
+  "offers": {
+    "@type": "Offer",
+    "priceCurrency": {{ cart.currency.iso_code | json }},
+    "price": {{ product.selected_or_first_available_variant.price | money_without_currency | json }},
+    "availability": "https://schema.org/{% if product.available %}InStock{% else %}OutOfStock{% endif %}",
+    "url": {{ shop.url | append: product.url | json }}
+  }
+}
+</script>
+{% endif %}`}</code></pre>
+    </div>
+
+    <div class="card p-8 mb-8 border-brand-500/40 bg-brand-500/5 text-center">
+      <h2 class="text-2xl font-bold mb-3">希望由我们代为修复你的 Shopify 店铺？</h2>
+      <p class="text-gray-300 max-w-2xl mx-auto mb-6">
+        选择 <strong class="text-white">$49 AI Visibility Fix Pack</strong> —— 为你的主力爆款补全并通过校验的 Product JSON-LD、逐行 <code class="bg-white/10 px-1.5 py-0.5 rounded">robots.txt</code> 诊断、可直接上传 <code class="bg-white/10 px-1.5 py-0.5 rounded">Content &gt; Files</code> 的手写 <code class="bg-white/10 px-1.5 py-0.5 rounded">llms.txt</code>，以及部署后 48 小时内复检对比。
+      </p>
+      <div class="flex flex-col sm:flex-row justify-center gap-3">
+        <a href="/zh/fixpack/" class="inline-flex items-center justify-center px-6 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-geo-600 to-brand-600 hover:from-geo-500 hover:to-brand-500 transition">
+          获取 $49 AI Visibility Fix Pack →
+        </a>
+        <a href="mailto:hello@geoscore.help?subject=Shopify%20Fix%20Pack%20%E5%92%A8%E8%AF%A2" class="inline-flex items-center justify-center px-6 py-3 rounded-xl font-semibold text-gray-200 bg-white/10 hover:bg-white/20 transition">
+          发送邮件至 hello@geoscore.help
+        </a>
+      </div>
+    </div>
+
+    <div class="max-w-2xl mx-auto mb-10">
+      <h2 class="text-2xl font-bold text-center mb-6">Shopify GEO 常见问题</h2>
+      <div class="space-y-4">
+        <div class="card p-5">
+          <h3 class="font-semibold mb-2">如何在 Shopify 店铺中添加 llms.txt？</h3>
+          <p class="text-sm text-gray-400">在 Shopify 后台进入 Content &gt; Files 上传你的 llms.txt 文件并复制生成的 CDN 链接，然后进入 Online Store &gt; Navigation &gt; View URL redirects（或 Content &gt; Menus &gt; URL Redirects），创建一条从 /llms.txt 指向该 CDN 文件地址的 URL 重定向，即可在根域名路径下稳定访问。</p>
+        </div>
+        <div class="card p-5">
+          <h3 class="font-semibold mb-2">如何在 Shopify 的 robots.txt 中放行 GPTBot 和 ClaudeBot？</h3>
+          <p class="text-sm text-gray-400">进入 Shopify 后台 Online Store &gt; Themes &gt; Edit code &gt; Templates &gt; Add a new template，选择 robots.txt 创建 templates/robots.txt.liquid。保留 {"{{ robots.default_groups }}"} 默认规则，在末尾为 GPTBot、OAI-SearchBot、ClaudeBot、PerplexityBot 和 Google-Extended 添加 Allow: / 规则。</p>
+        </div>
+        <div class="card p-5">
+          <h3 class="font-semibold mb-2">Shopify 主题中 Product JSON-LD 应该放在哪里？</h3>
+          <p class="text-sm text-gray-400">应当将 Product JSON-LD 放在商品模板或 main-product 区块中，并通过 template contains 'product' 条件包裹，切勿挂在首页。需完整输出每个变体的价格、币种、库存状态以及 sku、gtin 或 mpn 等商品标识符。</p>
+        </div>
+        <div class="card p-5">
+          <h3 class="font-semibold mb-2">Shopify 自带基础 SEO 标签，为什么还需要做 GEO 审计？</h3>
+          <p class="text-sm text-gray-400">许多 Shopify 默认主题或第三方插件会遗漏变体级标识符（sku、gtin、mpn），或输出不包含店铺真实商品目录信息的通用接口，甚至产生结构化数据冲突。实时审计可以验证 AI 爬虫实际解析到的内容。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</LayoutZh>
+
+<script is:inline>
+  (function() {
+    var queue = [];
+    ["startAudit","showBatchInput","showComparison","startBatchAudit","runComparison","doExport"].forEach(function(n) {
+      window[n] = function() { queue.push({ n: n, a: arguments }); };
+    });
+    window.__geoFlush = function() { queue.splice(0).forEach(function(q) { window[q.n].apply(null, q.a); }); };
+  })();
+</script>
+<script src="../../../scripts/boot.js"></script>

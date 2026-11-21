@@ -1,0 +1,184 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import demo from '../../../data/demo-report.json';
+---
+<Layout
+  title="GEO for Next.js — App Router robots.ts, llms.txt, SSR & JSON-LD | GeoScore"
+  description="Audit and optimize your Next.js App Router or Pages Router app for AI search engines. Configure public/llms.txt, app/robots.ts, SSR vs CSR checks, app/layout.tsx JSON-LD, and local audits with CLI, MCP, or Chrome Extension."
+  schema={[
+    {
+      '@context': 'https://schema.org',
+      '@type': 'SoftwareApplication',
+      name: 'GeoScore for Next.js',
+      description: 'Free Next.js GEO audit tool to verify SSR HTML visibility, app/robots.ts, public/llms.txt, and JSON-LD in app/layout.tsx.',
+      url: 'https://geoscore.help/geo-for/nextjs/',
+      applicationCategory: 'DeveloperApplication',
+      operatingSystem: 'Any',
+      offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+      isPartOf: { '@type': 'WebApplication', name: 'GeoScore', url: 'https://geoscore.help' }
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: [
+        {
+          '@type': 'Question',
+          name: 'Where do I put llms.txt in a Next.js project?',
+          acceptedAnswer: { '@type': 'Answer', text: 'Place a static llms.txt file inside your public/ directory (public/llms.txt) so Next.js serves it at /llms.txt automatically in both App Router and Pages Router. If your directory changes dynamically, you can also serve it from an App Router route handler at app/llms.txt/route.ts.' }
+        },
+        {
+          '@type': 'Question',
+          name: 'How do I configure AI crawlers with app/robots.ts in Next.js App Router?',
+          acceptedAnswer: { '@type': 'Answer', text: 'Export a default function returning MetadataRoute.Robots from app/robots.ts with explicit rules allowing GPTBot, OAI-SearchBot, ClaudeBot, PerplexityBot, and Google-Extended, along with your sitemap URL.' }
+        },
+        {
+          '@type': 'Question',
+          name: 'Why do client-rendered Next.js pages score poorly with AI crawlers?',
+          acceptedAnswer: { '@type': 'Answer', text: 'Many AI crawlers inspect the raw initial HTML response without waiting for client-side JavaScript hydration. Pages marked with \'use client\' that fetch primary copy inside useEffect ship empty shells to crawlers. Render core copy and JSON-LD in Server Components or SSR/SSG.' }
+        },
+        {
+          '@type': 'Question',
+          name: 'Can I audit localhost:3000 before deploying my Next.js app?',
+          acceptedAnswer: { '@type': 'Answer', text: 'Yes. Run npx geoscore http://localhost:3000 in your terminal, connect geoscore-mcp to your AI coding agent, or use the GeoScore Chrome Extension to inspect both raw SSR HTML and the live hydrated DOM on localhost:3000.' }
+        }
+      ]
+    }
+  ]}
+>
+  <section class="max-w-4xl mx-auto">
+    <div class="text-center mb-10">
+      <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-geo-500/10 text-geo-400 border border-geo-500/20 mb-4">
+        Platform Guide · Next.js App Router
+      </div>
+      <h1 class="text-4xl font-extrabold mb-3">GEO for Next.js</h1>
+      <p class="text-gray-400 max-w-2xl mx-auto">
+        Ship AI-readable Next.js apps with zero hydration blind spots. Configure <code class="text-geo-400 bg-white/5 px-1.5 py-0.5 rounded">public/llms.txt</code>, <code class="text-geo-400 bg-white/5 px-1.5 py-0.5 rounded">app/robots.ts</code>, Server Component JSON-LD in <code class="text-geo-400 bg-white/5 px-1.5 py-0.5 rounded">app/layout.tsx</code>, and test <code class="text-geo-400 bg-white/5 px-1.5 py-0.5 rounded">localhost:3000</code> locally.
+      </p>
+    </div>
+
+    <div class="card p-8 mb-8">
+      <h2 class="text-xl font-bold mb-4">Audit Your Production Next.js Site</h2>
+      <p class="text-gray-400 mb-6">Enter your deployed Next.js URL to check raw SSR word count, AI crawler rules, llms.txt, and JSON-LD:</p>
+      <div class="flex flex-col sm:flex-row gap-3 max-w-xl">
+        <div class="flex-1 relative">
+          <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+          <input id="url-input" type="url" placeholder="e.g. yourapp.com" aria-label="Enter Next.js site URL" onkeydown="if(event.key==='Enter'){document.getElementById('audit-btn').click();}" class="w-full pl-12 pr-5 py-3.5 rounded-xl bg-white/5 text-white placeholder-gray-500 border border-gray-600 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 text-lg transition" />
+        </div>
+        <button id="audit-btn" class="px-8 py-3.5 rounded-xl font-semibold text-white bg-gradient-to-r from-geo-600 to-brand-600 hover:from-geo-500 hover:to-brand-500 transition shadow-lg shadow-brand-500/20 whitespace-nowrap">Audit App</button>
+      </div>
+    </div>
+
+    <p class="text-xs text-gray-500 mb-10 text-center">
+      <a href="/report/demo/" class="text-gray-400 hover:text-geo-400 transition underline underline-offset-2">See a sample report</a>
+      &mdash; {demo.host} scored <span class="text-geo-400 font-semibold">{demo.score}/100 ({demo.level})</span>, {demo.dimensionsAboveSixty}/{demo.dimensionCount} dimensions above 60%.
+    </p>
+
+    <div class="card p-8 mb-8">
+      <h2 class="text-xl font-bold mb-4">1. Serve <code class="text-geo-400">public/llms.txt</code> &amp; <code class="text-geo-400">app/robots.ts</code></h2>
+      <p class="text-gray-400 mb-4">
+        Drop <code class="bg-white/5 px-1.5 py-0.5 rounded">public/llms.txt</code> at the project root so Next.js serves it statically at <code class="bg-white/5 px-1.5 py-0.5 rounded">/llms.txt</code>, and use typed <code class="text-geo-400 bg-white/5 px-1.5 py-0.5 rounded">app/robots.ts</code> to declare AI crawler access:
+      </p>
+      <pre class="bg-black/30 rounded-lg p-4 text-sm text-gray-300 overflow-x-auto"><code>{`// app/robots.ts
+import type { MetadataRoute } from 'next';
+
+export default function robots(): MetadataRoute.Robots {
+  return {
+    rules: [
+      { userAgent: '*', allow: '/' },
+      { userAgent: 'GPTBot', allow: '/' },
+      { userAgent: 'OAI-SearchBot', allow: '/' },
+      { userAgent: 'ClaudeBot', allow: '/' },
+      { userAgent: 'PerplexityBot', allow: '/' },
+      { userAgent: 'Google-Extended', allow: '/' },
+    ],
+    sitemap: 'https://yourapp.com/sitemap.xml',
+  };
+}`}</code></pre>
+    </div>
+
+    <div class="card p-8 mb-8">
+      <h2 class="text-xl font-bold mb-4">2. Eliminate SSR vs CSR Blind Spots &amp; Emit JSON-LD in <code class="text-geo-400">app/layout.tsx</code></h2>
+      <p class="text-gray-400 mb-4">
+        AI crawlers such as <strong class="text-white">GPTBot</strong>, <strong class="text-white">ClaudeBot</strong>, and <strong class="text-white">PerplexityBot</strong> frequently parse initial SSR HTML without running client JavaScript. Keep marketing copy, docs, pricing, and structured data inside React Server Components rather than <code class="bg-white/5 px-1.5 py-0.5 rounded">'use client'</code> fetch hooks:
+      </p>
+      <pre class="bg-black/30 rounded-lg p-4 text-sm text-gray-300 overflow-x-auto"><code>{`// app/layout.tsx (Server Component)
+const orgSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'Your App',
+  url: 'https://yourapp.com',
+};
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en">
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(orgSchema) }}
+        />
+      </head>
+      <body>{children}</body>
+    </html>
+  );
+}`}</code></pre>
+    </div>
+
+    <div class="card p-8 mb-8">
+      <h2 class="text-xl font-bold mb-4">3. Audit <code class="text-geo-400">localhost:3000</code> in CI, Agents &amp; Browser</h2>
+      <ul class="space-y-3 text-sm text-gray-300">
+        <li class="flex gap-3"><span class="text-geo-500 flex-shrink-0">✓</span><span><strong class="text-white">CLI in dev or CI:</strong> Run <code class="bg-white/5 px-1.5 py-0.5 rounded">npx geoscore http://localhost:3000 --json</code> to catch SSR/schema regressions before shipping.</span></li>
+        <li class="flex gap-3"><span class="text-geo-500 flex-shrink-0">✓</span><span><strong class="text-white">MCP Server:</strong> Connect <code class="bg-white/5 px-1.5 py-0.5 rounded">geoscore-mcp</code> to Claude Desktop, Cursor, or Antigravity to run <code class="bg-white/5 px-1.5 py-0.5 rounded">audit_url</code> and <code class="bg-white/5 px-1.5 py-0.5 rounded">generate_fixes</code> inside your coding loop.</span></li>
+        <li class="flex gap-3"><span class="text-geo-500 flex-shrink-0">✓</span><span><strong class="text-white">Chrome Extension:</strong> Inspect live rendered DOM vs raw SSR HTML directly on <code class="bg-white/5 px-1.5 py-0.5 rounded">localhost:3000</code> or staging auth-gated routes.</span></li>
+      </ul>
+    </div>
+
+    <div class="card p-8 mb-8 border-geo-500/40 bg-geo-500/5 text-center">
+      <h2 class="text-2xl font-bold mb-3">Monitor Production Deployments Automatically with Pro</h2>
+      <p class="text-gray-300 max-w-2xl mx-auto mb-6">
+        Track weekly GEO scores across up to 5 domains, spot accidental <code class="bg-white/10 px-1.5 py-0.5 rounded">robots.txt</code> or SSR regressions after deploys, and export PDF reports for stakeholders.
+      </p>
+      <div class="flex flex-col sm:flex-row justify-center gap-3">
+        <a href="/pricing/" class="inline-flex items-center justify-center px-6 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-geo-600 to-brand-600 hover:from-geo-500 hover:to-brand-500 transition">
+          View Pro Monitoring Plans →
+        </a>
+        <a href="https://chromewebstore.google.com/detail/geoscore-free-geo-aeo-llm/cboppgehhkhaamcgfcikhekkdaelichn" target="_blank" rel="noopener" class="inline-flex items-center justify-center px-6 py-3 rounded-xl font-semibold text-gray-200 bg-white/10 hover:bg-white/20 transition">
+          Get Chrome Extension
+        </a>
+      </div>
+    </div>
+
+    <div class="max-w-2xl mx-auto mb-10">
+      <h2 class="text-2xl font-bold text-center mb-6">Next.js GEO FAQ</h2>
+      <div class="space-y-4">
+        <div class="card p-5">
+          <h3 class="font-semibold mb-2">Where do I put llms.txt in a Next.js project?</h3>
+          <p class="text-sm text-gray-400">Place a static llms.txt file inside your public/ directory (public/llms.txt) so Next.js serves it at /llms.txt automatically in both App Router and Pages Router. If your directory changes dynamically, you can also serve it from an App Router route handler at app/llms.txt/route.ts.</p>
+        </div>
+        <div class="card p-5">
+          <h3 class="font-semibold mb-2">How do I configure AI crawlers with app/robots.ts in Next.js App Router?</h3>
+          <p class="text-sm text-gray-400">Export a default function returning MetadataRoute.Robots from app/robots.ts with explicit rules allowing GPTBot, OAI-SearchBot, ClaudeBot, PerplexityBot, and Google-Extended, along with your sitemap URL.</p>
+        </div>
+        <div class="card p-5">
+          <h3 class="font-semibold mb-2">Why do client-rendered Next.js pages score poorly with AI crawlers?</h3>
+          <p class="text-sm text-gray-400">Many AI crawlers inspect the raw initial HTML response without waiting for client-side JavaScript hydration. Pages marked with 'use client' that fetch primary copy inside useEffect ship empty shells to crawlers. Render core copy and JSON-LD in Server Components or SSR/SSG.</p>
+        </div>
+        <div class="card p-5">
+          <h3 class="font-semibold mb-2">Can I audit localhost:3000 before deploying my Next.js app?</h3>
+          <p class="text-sm text-gray-400">Yes. Run npx geoscore http://localhost:3000 in your terminal, connect geoscore-mcp to your AI coding agent, or use the GeoScore Chrome Extension to inspect both raw SSR HTML and the live hydrated DOM on localhost:3000.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<script is:inline>
+  (function() {
+    var queue = [];
+    ["startAudit","showBatchInput","showComparison","startBatchAudit","runComparison","doExport"].forEach(function(n) {
+      window[n] = function() { queue.push({ n: n, a: arguments }); };
+    });
+    window.__geoFlush = function() { queue.splice(0).forEach(function(q) { window[q.n].apply(null, q.a); }); };
+  })();
+</script>
+<script src="../../scripts/boot.js"></script>

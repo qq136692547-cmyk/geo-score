@@ -1,0 +1,177 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import demo from '../../../data/demo-report.json';
+---
+<Layout
+  title="GEO for WordPress — AI Search & WooCommerce Optimization | GeoScore"
+  description="Audit and optimize your WordPress or WooCommerce site for ChatGPT, Perplexity, and Claude. Place llms.txt in the root alongside wp-config.php, configure Yoast or Rank Math robots.txt, and inject Product JSON-LD via WPCode."
+  schema={[
+    {
+      '@context': 'https://schema.org',
+      '@type': 'SoftwareApplication',
+      name: 'GeoScore for WordPress',
+      description: 'Free WordPress and WooCommerce GEO audit tool to verify root llms.txt, AI crawler robots.txt rules, and JSON-LD structured data.',
+      url: 'https://geoscore.help/geo-for/wordpress/',
+      applicationCategory: 'SEO Tool',
+      operatingSystem: 'Any',
+      offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+      isPartOf: { '@type': 'WebApplication', name: 'GeoScore', url: 'https://geoscore.help' }
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: [
+        {
+          '@type': 'Question',
+          name: 'Where do I upload llms.txt on a WordPress website?',
+          acceptedAnswer: { '@type': 'Answer', text: 'Upload llms.txt directly to your WordPress document root — the same folder that contains wp-config.php — using SFTP, SSH, or your hosting File Manager. That ensures https://yourdomain.com/llms.txt returns HTTP 200 plain text without needing a plugin.' }
+        },
+        {
+          '@type': 'Question',
+          name: 'How do I edit robots.txt for AI crawlers in Yoast SEO or Rank Math?',
+          acceptedAnswer: { '@type': 'Answer', text: 'In Yoast SEO, go to Tools > File editor to edit robots.txt. In Rank Math, open General Settings > Edit robots.txt. Add explicit Allow rules for GPTBot, OAI-SearchBot, ClaudeBot, PerplexityBot, and Google-Extended, and check that security plugins like Wordfence or Cloudflare WAF are not blocking those user agents.' }
+        },
+        {
+          '@type': 'Question',
+          name: 'How do I add custom JSON-LD and WooCommerce Product schema safely?',
+          acceptedAnswer: { '@type': 'Answer', text: 'Use the WPCode plugin (Code Snippets > Header & Footer) to inject clean Organization or FAQPage JSON-LD without editing theme files directly. For WooCommerce stores, audit your product pages to confirm WooCommerce emits Product schema with offers, price, currency, availability, and sku/gtin fields.' }
+        },
+        {
+          '@type': 'Question',
+          name: 'Why do WordPress sites sometimes fail AI crawler audits even with SEO plugins installed?',
+          acceptedAnswer: { '@type': 'Answer', text: 'Common culprits include security plugins, aggressive caching rules, or CDN Bot Fight Mode blocking AI crawlers with 403 responses, plus missing llms.txt and incomplete WooCommerce product identifiers. Running an audit catches these gaps immediately.' }
+        }
+      ]
+    }
+  ]}
+>
+  <section class="max-w-4xl mx-auto">
+    <div class="text-center mb-10">
+      <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-brand-500/10 text-brand-400 border border-brand-500/20 mb-4">
+        Platform Guide · WordPress &amp; WooCommerce
+      </div>
+      <h1 class="text-4xl font-extrabold mb-3">GEO for WordPress</h1>
+      <p class="text-gray-400 max-w-2xl mx-auto">
+        Make your WordPress site or WooCommerce store visible to AI search engines. Drop <code class="text-geo-400 bg-white/5 px-1.5 py-0.5 rounded">llms.txt</code> next to <code class="text-geo-400 bg-white/5 px-1.5 py-0.5 rounded">wp-config.php</code>, open <code class="text-geo-400 bg-white/5 px-1.5 py-0.5 rounded">robots.txt</code> in Yoast or Rank Math, and ship clean JSON-LD via WPCode.
+      </p>
+    </div>
+
+    <div class="card p-8 mb-8">
+      <h2 class="text-xl font-bold mb-4">Audit Your WordPress Site Now</h2>
+      <p class="text-gray-400 mb-6">Enter your WordPress or WooCommerce domain to check AI crawlability, llms.txt, schema, and E-E-A-T signals:</p>
+      <div class="flex flex-col sm:flex-row gap-3 max-w-xl">
+        <div class="flex-1 relative">
+          <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+          <input id="url-input" type="url" placeholder="e.g. yourwpsite.com" aria-label="Enter WordPress site URL" onkeydown="if(event.key==='Enter'){document.getElementById('audit-btn').click();}" class="w-full pl-12 pr-5 py-3.5 rounded-xl bg-white/5 text-white placeholder-gray-500 border border-gray-600 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 text-lg transition" />
+        </div>
+        <button id="audit-btn" class="px-8 py-3.5 rounded-xl font-semibold text-white bg-gradient-to-r from-geo-600 to-brand-600 hover:from-geo-500 hover:to-brand-500 transition shadow-lg shadow-brand-500/20 whitespace-nowrap">Audit Site</button>
+      </div>
+    </div>
+
+    <p class="text-xs text-gray-500 mb-10 text-center">
+      <a href="/report/demo/" class="text-gray-400 hover:text-geo-400 transition underline underline-offset-2">See a sample report</a>
+      &mdash; {demo.host} scored <span class="text-geo-400 font-semibold">{demo.score}/100 ({demo.level})</span>, {demo.dimensionsAboveSixty}/{demo.dimensionCount} dimensions above 60%.
+    </p>
+
+    <div class="card p-8 mb-8">
+      <h2 class="text-xl font-bold mb-4">1. Place <code class="text-geo-400">llms.txt</code> in the WordPress Root (<code class="text-geo-400">wp-config.php</code> Level)</h2>
+      <p class="text-gray-400 mb-4">
+        You do not need a heavy plugin to serve <code class="bg-white/5 px-1.5 py-0.5 rounded">/llms.txt</code>. Upload a plain UTF-8 <code class="bg-white/5 px-1.5 py-0.5 rounded">llms.txt</code> file via SFTP, SSH, or your host's File Manager into the document root alongside <code class="text-geo-400 bg-white/5 px-1.5 py-0.5 rounded">wp-config.php</code>.
+      </p>
+      <pre class="bg-black/30 rounded-lg p-4 text-sm text-gray-300 overflow-x-auto"><code># Your WordPress Site
+
+> Concise summary of your site, core guides, or WooCommerce product catalog.
+
+## Core Pages
+- [About](https://yourwpsite.com/about/): Company background and editorial standards
+- [Shop](https://yourwpsite.com/shop/): Full product catalog
+- [Guides](https://yourwpsite.com/blog/): In-depth tutorials and buying guides</code></pre>
+    </div>
+
+    <div class="card p-8 mb-8">
+      <h2 class="text-xl font-bold mb-4">2. Configure AI Crawlers in Yoast SEO / Rank Math <code class="text-geo-400">robots.txt</code></h2>
+      <p class="text-gray-400 mb-4">
+        WordPress serves a virtual <code class="bg-white/5 px-1.5 py-0.5 rounded">robots.txt</code> unless a physical file exists. Edit it cleanly using your SEO plugin:
+      </p>
+      <ul class="space-y-2 text-sm text-gray-300 mb-4">
+        <li class="flex gap-2"><span class="text-geo-500">✓</span><span><strong class="text-white">Yoast SEO:</strong> Go to <code class="bg-white/5 px-1.5 py-0.5 rounded">Yoast SEO &gt; Tools &gt; File editor</code>.</span></li>
+        <li class="flex gap-2"><span class="text-geo-500">✓</span><span><strong class="text-white">Rank Math:</strong> Go to <code class="bg-white/5 px-1.5 py-0.5 rounded">Rank Math &gt; General Settings &gt; Edit robots.txt</code>.</span></li>
+      </ul>
+      <pre class="bg-black/30 rounded-lg p-4 text-sm text-gray-300 overflow-x-auto"><code>User-agent: *
+Disallow: /wp-admin/
+Allow: /wp-admin/admin-ajax.php
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+Sitemap: https://yourwpsite.com/sitemap_index.xml</code></pre>
+    </div>
+
+    <div class="card p-8 mb-8">
+      <h2 class="text-xl font-bold mb-4">3. Inject JSON-LD via WPCode &amp; Complete WooCommerce Product Schema</h2>
+      <p class="text-gray-400 mb-4">
+        Use <strong class="text-white">WPCode</strong> (<code class="bg-white/5 px-1.5 py-0.5 rounded">Code Snippets &gt; Header &amp; Footer</code>) to output <code class="bg-white/5 px-1.5 py-0.5 rounded">Organization</code> and <code class="bg-white/5 px-1.5 py-0.5 rounded">Person</code> JSON-LD safely across theme updates. If you run <strong class="text-white">WooCommerce</strong>, verify every product page exposes <code class="text-geo-400 bg-white/5 px-1.5 py-0.5 rounded">Product</code> schema with <code class="bg-white/5 px-1.5 py-0.5 rounded">offers</code> (price, currency, availability) plus <code class="bg-white/5 px-1.5 py-0.5 rounded">sku</code> or <code class="bg-white/5 px-1.5 py-0.5 rounded">gtin</code>.
+      </p>
+    </div>
+
+    <div class="card p-8 mb-8 border-brand-500/40 bg-brand-500/5 text-center">
+      <h2 class="text-2xl font-bold mb-3">Need Done-for-You WordPress or WooCommerce Fixes?</h2>
+      <p class="text-gray-300 max-w-2xl mx-auto mb-6">
+        Order the <strong class="text-white">$49 AI Visibility Fix Pack</strong> — drop-in <code class="bg-white/10 px-1.5 py-0.5 rounded">llms.txt</code>, <code class="bg-white/10 px-1.5 py-0.5 rounded">robots.txt</code> diagnosis, validated Product JSON-LD for your flagship product, and a post-deploy re-audit within 48 hours.
+      </p>
+      <div class="flex flex-col sm:flex-row justify-center gap-3">
+        <a href="/fixpack/" class="inline-flex items-center justify-center px-6 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-geo-600 to-brand-600 hover:from-geo-500 hover:to-brand-500 transition">
+          Get $49 AI Visibility Fix Pack →
+        </a>
+        <a href="mailto:hello@geoscore.help?subject=WordPress%20Fix%20Pack%20Diagnosis" class="inline-flex items-center justify-center px-6 py-3 rounded-xl font-semibold text-gray-200 bg-white/10 hover:bg-white/20 transition">
+          Email hello@geoscore.help
+        </a>
+      </div>
+    </div>
+
+    <div class="max-w-2xl mx-auto mb-10">
+      <h2 class="text-2xl font-bold text-center mb-6">WordPress GEO FAQ</h2>
+      <div class="space-y-4">
+        <div class="card p-5">
+          <h3 class="font-semibold mb-2">Where do I upload llms.txt on a WordPress website?</h3>
+          <p class="text-sm text-gray-400">Upload llms.txt directly to your WordPress document root — the same folder that contains wp-config.php — using SFTP, SSH, or your hosting File Manager. That ensures https://yourdomain.com/llms.txt returns HTTP 200 plain text without needing a plugin.</p>
+        </div>
+        <div class="card p-5">
+          <h3 class="font-semibold mb-2">How do I edit robots.txt for AI crawlers in Yoast SEO or Rank Math?</h3>
+          <p class="text-sm text-gray-400">In Yoast SEO, go to Tools &gt; File editor to edit robots.txt. In Rank Math, open General Settings &gt; Edit robots.txt. Add explicit Allow rules for GPTBot, OAI-SearchBot, ClaudeBot, PerplexityBot, and Google-Extended, and check that security plugins like Wordfence or Cloudflare WAF are not blocking those user agents.</p>
+        </div>
+        <div class="card p-5">
+          <h3 class="font-semibold mb-2">How do I add custom JSON-LD and WooCommerce Product schema safely?</h3>
+          <p class="text-sm text-gray-400">Use the WPCode plugin (Code Snippets &gt; Header &amp; Footer) to inject clean Organization or FAQPage JSON-LD without editing theme files directly. For WooCommerce stores, audit your product pages to confirm WooCommerce emits Product schema with offers, price, currency, availability, and sku/gtin fields.</p>
+        </div>
+        <div class="card p-5">
+          <h3 class="font-semibold mb-2">Why do WordPress sites sometimes fail AI crawler audits even with SEO plugins installed?</h3>
+          <p class="text-sm text-gray-400">Common culprits include security plugins, aggressive caching rules, or CDN Bot Fight Mode blocking AI crawlers with 403 responses, plus missing llms.txt and incomplete WooCommerce product identifiers. Running an audit catches these gaps immediately.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<script is:inline>
+  (function() {
+    var queue = [];
+    ["startAudit","showBatchInput","showComparison","startBatchAudit","runComparison","doExport"].forEach(function(n) {
+      window[n] = function() { queue.push({ n: n, a: arguments }); };
+    });
+    window.__geoFlush = function() { queue.splice(0).forEach(function(q) { window[q.n].apply(null, q.a); }); };
+  })();
+</script>
+<script src="../../scripts/boot.js"></script>

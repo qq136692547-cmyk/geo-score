@@ -3,10 +3,78 @@
  * Supports Twitter/X, LinkedIn, Reddit, and copy-link.
  */
 import ICONS from '../lib/icons.js';
+import { parseBadgeDomain, renderBadgeSvg, buildBadgeEmbedSnippets } from '../lib/badgeSvg.js';
 
-var IS_ZH = (document.documentElement.lang || 'en').toLowerCase().indexOf('zh') === 0;
+var IS_ZH = (typeof document !== 'undefined' && document.documentElement && document.documentElement.lang || 'en').toLowerCase().indexOf('zh') === 0;
 var LEVEL_ZH = { Excellent: "优秀", Good: "良好", Basic: "基础", Critical: "较差" };
 function t(en, zh) { return IS_ZH ? zh : en; }
+
+function extractBadgeHost(rawUrl) {
+  try {
+    return parseBadgeDomain(new URL(rawUrl).hostname);
+  } catch (e) {
+    return null;
+  }
+}
+
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function renderBadgeEmbedBlock(result) {
+  var badgeHost = extractBadgeHost(result && result.url);
+  if (!badgeHost) return '';
+  var snippets = buildBadgeEmbedSnippets(badgeHost);
+  if (!snippets) return '';
+
+  var isReady = typeof result.score === 'number' && result.score >= 80;
+  var svgPreview = renderBadgeSvg({ score: result.score, level: result.level });
+  var boxClass = isReady
+    ? 'mt-6 pt-5 border-t border-gray-700/60 rounded-xl p-4 border border-geo-500/30 bg-geo-500/5'
+    : 'mt-6 pt-5 border-t border-gray-700/60 rounded-xl p-4 border border-gray-700/60 bg-white/5';
+  var headingClass = isReady
+    ? 'text-sm font-semibold text-geo-400 mb-3'
+    : 'text-sm font-semibold text-gray-200 mb-3';
+  var headingText = isReady
+    ? t(
+        'Your site is AI-ready! Embed your live GeoScore badge on your site footer or GitHub README',
+        '你的网站已达到 AI 友好标准！将实时 GeoScore 徽章嵌入页脚或 GitHub README'
+      )
+    : t('Embed Live GeoScore Badge', '嵌入实时 GeoScore 徽章');
+
+  return '<div class="' + boxClass + '" data-badge-embed="1">' +
+    '<div class="' + headingClass + '">' + headingText + '</div>' +
+    '<div class="mb-4 flex items-center gap-3">' +
+      '<span class="text-xs text-gray-400">' + t('Preview:', '预览：') + '</span>' +
+      '<span>' + svgPreview + '</span>' +
+    '</div>' +
+    '<div class="space-y-3">' +
+      '<div>' +
+        '<div class="flex items-center justify-between mb-1">' +
+          '<span class="text-xs font-medium text-gray-400">Markdown</span>' +
+          '<button type="button" data-badge-copy="markdown" class="px-2.5 py-1 rounded text-xs font-medium bg-white/10 hover:bg-white/20 text-gray-200 transition cursor-pointer">' +
+            t('Copy Markdown', '复制 Markdown') +
+          '</button>' +
+        '</div>' +
+        '<pre class="bg-black/30 rounded-lg p-2.5 text-xs text-gray-300 overflow-x-auto"><code data-badge-snippet="markdown">' + escapeHtml(snippets.markdown) + '</code></pre>' +
+      '</div>' +
+      '<div>' +
+        '<div class="flex items-center justify-between mb-1">' +
+          '<span class="text-xs font-medium text-gray-400">HTML</span>' +
+          '<button type="button" data-badge-copy="html" class="px-2.5 py-1 rounded text-xs font-medium bg-white/10 hover:bg-white/20 text-gray-200 transition cursor-pointer">' +
+            t('Copy HTML', '复制 HTML') +
+          '</button>' +
+        '</div>' +
+        '<pre class="bg-black/30 rounded-lg p-2.5 text-xs text-gray-300 overflow-x-auto"><code data-badge-snippet="html">' + escapeHtml(snippets.html) + '</code></pre>' +
+      '</div>' +
+    '</div>' +
+  '</div>';
+}
 
 export function renderShareButtons(result) {
   var url = encodeURIComponent(result.url);
@@ -44,11 +112,6 @@ export function renderShareButtons(result) {
         '<span id="copy-label">' + t('Copy Link', '复制链接') + '</span>' +
       '</button>' +
     '</div>' +
-    // 2026-10-23: an "embed this score" snippet used to live here and pointed at
-    // https://geoscore.help/badge/<url>. No such endpoint exists — not in dist/,
-    // not in the worker route table (worker/pro.js) — so anyone who pasted it
-    // got a broken image. The only "take it with you" asset we shipped was a
-    // 404. The copy-link button above still works, so the snippet is gone until
-    // a real badge endpoint exists.
+    renderBadgeEmbedBlock(result) +
   '</div>';
 }

@@ -1,0 +1,177 @@
+---
+import LayoutZh from '../../../layouts/LayoutZh.astro';
+import demo from '../../../../data/demo-report.json';
+---
+<LayoutZh
+  title="WordPress GEO 优化指南 — AI 搜索与 WooCommerce 可见度 | GeoScore"
+  description="WordPress 与 WooCommerce 站点 GEO 优化及免费审计：在 wp-config.php 同级根目录放置 llms.txt，使用 Yoast SEO / Rank Math 配置 AI 爬虫 robots.txt，通过 WPCode 注入 JSON-LD。"
+  schema={[
+    {
+      '@context': 'https://schema.org',
+      '@type': 'SoftwareApplication',
+      name: 'GeoScore WordPress GEO 优化工具',
+      description: '免费 WordPress 与 WooCommerce GEO 审计工具，检测根目录 llms.txt、AI 爬虫 robots.txt 规则与 JSON-LD 结构化数据。',
+      url: 'https://geoscore.help/zh/geo-for/wordpress/',
+      applicationCategory: 'SEO Tool',
+      operatingSystem: 'Any',
+      offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+      isPartOf: { '@type': 'WebApplication', name: 'GeoScore', url: 'https://geoscore.help' }
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: [
+        {
+          '@type': 'Question',
+          name: 'WordPress 网站的 llms.txt 应该放在哪个目录？',
+          acceptedAnswer: { '@type': 'Answer', text: '通过 SFTP、SSH 或主机文件管理器，将 llms.txt 直接上传到 WordPress 网站根目录（与 wp-config.php 同级目录），无需额外插件即可让 https://yourdomain.com/llms.txt 返回 HTTP 200 纯文本。' }
+        },
+        {
+          '@type': 'Question',
+          name: '如何在 Yoast SEO 或 Rank Math 中为 AI 爬虫配置 robots.txt？',
+          acceptedAnswer: { '@type': 'Answer', text: '在 Yoast SEO 中进入 Tools > File editor 编辑 robots.txt；在 Rank Math 中进入 General Settings > Edit robots.txt。添加 GPTBot、OAI-SearchBot、ClaudeBot、PerplexityBot 和 Google-Extended 的 Allow: / 规则，并检查 Wordfence 或 Cloudflare WAF 是否误拦截。' }
+        },
+        {
+          '@type': 'Question',
+          name: '如何在 WordPress 安全注入 JSON-LD 与 WooCommerce Product Schema？',
+          acceptedAnswer: { '@type': 'Answer', text: '使用 WPCode 插件（Code Snippets > Header & Footer）注入 Organization 或 FAQPage JSON-LD，避免主题更新覆盖修改。若使用 WooCommerce，请检查商品页是否正确输出含价格、币种、库存及 sku/gtin 的 Product Schema。' }
+        },
+        {
+          '@type': 'Question',
+          name: '为什么安装了 SEO 插件后 WordPress 仍可能在 AI 审计中失分？',
+          acceptedAnswer: { '@type': 'Answer', text: '常见原因包括安全插件或 CDN Bot Fight Mode 对 AI 爬虫返回 403、缺少根目录 llms.txt、以及 WooCommerce 商品缺少标识符或变体报价。运行一次实时审计可以立刻定位这些问题。' }
+        }
+      ]
+    }
+  ]}
+>
+  <section class="max-w-4xl mx-auto">
+    <div class="text-center mb-10">
+      <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-brand-500/10 text-brand-400 border border-brand-500/20 mb-4">
+        平台优化指南 · WordPress &amp; WooCommerce
+      </div>
+      <h1 class="text-4xl font-extrabold mb-3">WordPress GEO 优化</h1>
+      <p class="text-gray-400 max-w-2xl mx-auto">
+        让你的 WordPress 内容站或 WooCommerce 商店被 AI 搜索引擎准确收录。将 <code class="text-geo-400 bg-white/5 px-1.5 py-0.5 rounded">llms.txt</code> 放在 <code class="text-geo-400 bg-white/5 px-1.5 py-0.5 rounded">wp-config.php</code> 同级根目录，用 Yoast / Rank Math 放行 AI 爬虫，并用 WPCode 稳定输出 JSON-LD。
+      </p>
+    </div>
+
+    <div class="card p-8 mb-8">
+      <h2 class="text-xl font-bold mb-4">立即审计你的 WordPress 站点</h2>
+      <p class="text-gray-400 mb-6">输入 WordPress 或 WooCommerce 域名，检测 AI 可爬性、llms.txt、结构化数据与 E-E-A-T 信号：</p>
+      <div class="flex flex-col sm:flex-row gap-3 max-w-xl">
+        <div class="flex-1 relative">
+          <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+          <input id="url-input" type="url" placeholder="输入站点网址，如 yourwpsite.com" aria-label="请输入 WordPress 网站网址" onkeydown="if(event.key==='Enter'){document.getElementById('audit-btn').click();}" class="w-full pl-12 pr-5 py-3.5 rounded-xl bg-white/5 text-white placeholder-gray-500 border border-gray-600 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 text-lg transition" />
+        </div>
+        <button id="audit-btn" class="px-8 py-3.5 rounded-xl font-semibold text-white bg-gradient-to-r from-geo-600 to-brand-600 hover:from-geo-500 hover:to-brand-500 transition shadow-lg shadow-brand-500/20 whitespace-nowrap">检测站点</button>
+      </div>
+    </div>
+
+    <p class="text-xs text-gray-500 mb-10 text-center">
+      <a href="/zh/report/demo/" class="text-gray-400 hover:text-geo-400 transition underline underline-offset-2">查看样例报告</a>
+      &mdash; {demo.host} 得分 <span class="text-geo-400 font-semibold">{demo.score}/100（{demo.level}）</span>，{demo.dimensionCount} 个维度中 {demo.dimensionsAboveSixty} 个超过 60%。
+    </p>
+
+    <div class="card p-8 mb-8">
+      <h2 class="text-xl font-bold mb-4">1. 在 WordPress 根目录（<code class="text-geo-400">wp-config.php</code> 同级）放置 <code class="text-geo-400">llms.txt</code></h2>
+      <p class="text-gray-400 mb-4">
+        不需要安装额外插件。通过 SFTP、SSH 或服务器面板的文件管理器，将 UTF-8 编码的 <code class="bg-white/5 px-1.5 py-0.5 rounded">llms.txt</code> 上传到与 <code class="text-geo-400 bg-white/5 px-1.5 py-0.5 rounded">wp-config.php</code> 相同的网站根目录即可。
+      </p>
+      <pre class="bg-black/30 rounded-lg p-4 text-sm text-gray-300 overflow-x-auto"><code># Your WordPress Site
+
+> 网站定位、核心栏目或 WooCommerce 商品目录简介。
+
+## Core Pages
+- [About](https://yourwpsite.com/about/): 团队背景与编辑规范
+- [Shop](https://yourwpsite.com/shop/): 全部商品目录
+- [Guides](https://yourwpsite.com/blog/): 深度评测与选购指南</code></pre>
+    </div>
+
+    <div class="card p-8 mb-8">
+      <h2 class="text-xl font-bold mb-4">2. 通过 Yoast SEO / Rank Math 配置 AI 爬虫 <code class="text-geo-400">robots.txt</code></h2>
+      <p class="text-gray-400 mb-4">
+        如果根目录没有物理文件，WordPress 会由 SEO 插件接管虚拟 <code class="bg-white/5 px-1.5 py-0.5 rounded">robots.txt</code> 输出：
+      </p>
+      <ul class="space-y-2 text-sm text-gray-300 mb-4">
+        <li class="flex gap-2"><span class="text-geo-500">✓</span><span><strong class="text-white">Yoast SEO：</strong>进入 <code class="bg-white/5 px-1.5 py-0.5 rounded">Yoast SEO &gt; Tools &gt; File editor</code> 编辑。</span></li>
+        <li class="flex gap-2"><span class="text-geo-500">✓</span><span><strong class="text-white">Rank Math：</strong>进入 <code class="bg-white/5 px-1.5 py-0.5 rounded">Rank Math &gt; General Settings &gt; Edit robots.txt</code> 编辑。</span></li>
+      </ul>
+      <pre class="bg-black/30 rounded-lg p-4 text-sm text-gray-300 overflow-x-auto"><code>User-agent: *
+Disallow: /wp-admin/
+Allow: /wp-admin/admin-ajax.php
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+Sitemap: https://yourwpsite.com/sitemap_index.xml</code></pre>
+    </div>
+
+    <div class="card p-8 mb-8">
+      <h2 class="text-xl font-bold mb-4">3. 使用 WPCode 注入 JSON-LD 并补全 WooCommerce Product Schema</h2>
+      <p class="text-gray-400 mb-4">
+        安装 <strong class="text-white">WPCode</strong>（<code class="bg-white/5 px-1.5 py-0.5 rounded">Code Snippets &gt; Header &amp; Footer</code>），安全注入 <code class="bg-white/5 px-1.5 py-0.5 rounded">Organization</code> 与 <code class="bg-white/5 px-1.5 py-0.5 rounded">Person</code> 结构化数据，避免主题更新丢失代码。若站点使用 <strong class="text-white">WooCommerce</strong>，请确认商品页完整输出 <code class="text-geo-400 bg-white/5 px-1.5 py-0.5 rounded">Product</code> Schema 的 <code class="bg-white/5 px-1.5 py-0.5 rounded">offers</code>（价格、币种、库存）及 <code class="bg-white/5 px-1.5 py-0.5 rounded">sku</code> / <code class="bg-white/5 px-1.5 py-0.5 rounded">gtin</code>。
+      </p>
+    </div>
+
+    <div class="card p-8 mb-8 border-brand-500/40 bg-brand-500/5 text-center">
+      <h2 class="text-2xl font-bold mb-3">需要 WordPress / WooCommerce 一站式修复代做？</h2>
+      <p class="text-gray-300 max-w-2xl mx-auto mb-6">
+        选择 <strong class="text-white">$49 AI Visibility Fix Pack</strong> —— 交付可直接放入根目录的 <code class="bg-white/10 px-1.5 py-0.5 rounded">llms.txt</code>、<code class="bg-white/10 px-1.5 py-0.5 rounded">robots.txt</code> 诊断、主力商品的完整 Product JSON-LD，以及部署后 48 小时内复检对比报告。
+      </p>
+      <div class="flex flex-col sm:flex-row justify-center gap-3">
+        <a href="/zh/fixpack/" class="inline-flex items-center justify-center px-6 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-geo-600 to-brand-600 hover:from-geo-500 hover:to-brand-500 transition">
+          获取 $49 AI Visibility Fix Pack →
+        </a>
+        <a href="mailto:hello@geoscore.help?subject=WordPress%20Fix%20Pack%20%E5%92%A8%E8%AF%A2" class="inline-flex items-center justify-center px-6 py-3 rounded-xl font-semibold text-gray-200 bg-white/10 hover:bg-white/20 transition">
+          发送邮件至 hello@geoscore.help
+        </a>
+      </div>
+    </div>
+
+    <div class="max-w-2xl mx-auto mb-10">
+      <h2 class="text-2xl font-bold text-center mb-6">WordPress GEO 常见问题</h2>
+      <div class="space-y-4">
+        <div class="card p-5">
+          <h3 class="font-semibold mb-2">WordPress 网站的 llms.txt 应该放在哪个目录？</h3>
+          <p class="text-sm text-gray-400">通过 SFTP、SSH 或主机文件管理器，将 llms.txt 直接上传到 WordPress 网站根目录（与 wp-config.php 同级目录），无需额外插件即可让 https://yourdomain.com/llms.txt 返回 HTTP 200 纯文本。</p>
+        </div>
+        <div class="card p-5">
+          <h3 class="font-semibold mb-2">如何在 Yoast SEO 或 Rank Math 中为 AI 爬虫配置 robots.txt？</h3>
+          <p class="text-sm text-gray-400">在 Yoast SEO 中进入 Tools &gt; File editor 编辑 robots.txt；在 Rank Math 中进入 General Settings &gt; Edit robots.txt。添加 GPTBot、OAI-SearchBot、ClaudeBot、PerplexityBot 和 Google-Extended 的 Allow: / 规则，并检查 Wordfence 或 Cloudflare WAF 是否误拦截。</p>
+        </div>
+        <div class="card p-5">
+          <h3 class="font-semibold mb-2">如何在 WordPress 安全注入 JSON-LD 与 WooCommerce Product Schema？</h3>
+          <p class="text-sm text-gray-400">使用 WPCode 插件（Code Snippets &gt; Header &amp; Footer）注入 Organization 或 FAQPage JSON-LD，避免主题更新覆盖修改。若使用 WooCommerce，请检查商品页是否正确输出含价格、币种、库存及 sku/gtin 的 Product Schema。</p>
+        </div>
+        <div class="card p-5">
+          <h3 class="font-semibold mb-2">为什么安装了 SEO 插件后 WordPress 仍可能在 AI 审计中失分？</h3>
+          <p class="text-sm text-gray-400">常见原因包括安全插件或 CDN Bot Fight Mode 对 AI 爬虫返回 403、缺少根目录 llms.txt、以及 WooCommerce 商品缺少标识符或变体报价。运行一次实时审计可以立刻定位这些问题。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</LayoutZh>
+
+<script is:inline>
+  (function() {
+    var queue = [];
+    ["startAudit","showBatchInput","showComparison","startBatchAudit","runComparison","doExport"].forEach(function(n) {
+      window[n] = function() { queue.push({ n: n, a: arguments }); };
+    });
+    window.__geoFlush = function() { queue.splice(0).forEach(function(q) { window[q.n].apply(null, q.a); }); };
+  })();
+</script>
+<script src="../../../scripts/boot.js"></script>

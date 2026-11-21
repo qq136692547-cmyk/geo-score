@@ -8,6 +8,9 @@
 - [llms.txt Checker](https://geoscore.help/tools/llms-txt-checker/): Validate the format, structure, and content of your llms.txt file
 - [Robots.txt AI Checker](https://geoscore.help/tools/robots-txt-ai-checker/): See if your robots.txt blocks GPTBot, ClaudeBot, PerplexityBot, or Google-Extended
 - [AI Readiness Score](https://geoscore.help/tools/ai-readiness-score/): The full 11-dimension audit with fix recommendations
+- [GEO for Shopify](https://geoscore.help/geo-for/shopify/): Shopify guide for llms.txt via Content > Files, robots.txt.liquid, and Product JSON-LD
+- [GEO for WordPress](https://geoscore.help/geo-for/wordpress/): WordPress and WooCommerce guide for root llms.txt, Yoast/Rank Math robots.txt, and WPCode JSON-LD
+- [GEO for Next.js](https://geoscore.help/geo-for/nextjs/): Next.js App Router guide for public/llms.txt, app/robots.ts, SSR vs CSR checks, and localhost auditing
 - [Demo Report](https://geoscore.help/report/demo/): Example audit report showing all 11 dimensions and recommendations
 - [AI Visibility Fix Pack](https://geoscore.help/fixpack/): Done-for-you GEO fixes — custom llms.txt built from your catalog, AI-crawler robots.txt rules, Product schema completion, and a re-audit after deployment. One-time $49.
 - CLI: `npx geoscore <url>` — zero-dependency command-line tool (--json, --html, --fix, --quiet)
@@ -32,7 +35,7 @@
 
 ## Case Studies
 
-- [I Audited 1,200 Websites for AI Search Visibility](https://geoscore.help/blog/auditing-1200-websites/): What 2 months of building a GEO audit tool taught me about how AI engines pick winners
+- [I Audited 343 Websites for AI Search Visibility](https://geoscore.help/blog/auditing-343-websites/): What 2 months of building a GEO audit tool taught me about how AI engines pick winners
 
 ## Reference
 

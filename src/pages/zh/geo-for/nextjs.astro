@@ -1,0 +1,184 @@
+---
+import LayoutZh from '../../../layouts/LayoutZh.astro';
+import demo from '../../../../data/demo-report.json';
+---
+<LayoutZh
+  title="Next.js GEO 优化指南 — App Router robots.ts、llms.txt 与 SSR 审计 | GeoScore"
+  description="Next.js App Router 应用的 GEO 优化与审计：配置 public/llms.txt、app/robots.ts、排查 SSR 与 CSR 渲染盲区、在 app/layout.tsx 注入 JSON-LD，并使用 npx geoscore CLI、geoscore-mcp 与 Chrome 插件调试 localhost:3000。"
+  schema={[
+    {
+      '@context': 'https://schema.org',
+      '@type': 'SoftwareApplication',
+      name: 'GeoScore Next.js GEO 优化工具',
+      description: '免费 Next.js GEO 审计工具，检测 SSR 原始 HTML 可见度、app/robots.ts、public/llms.txt 与 app/layout.tsx JSON-LD。',
+      url: 'https://geoscore.help/zh/geo-for/nextjs/',
+      applicationCategory: 'DeveloperApplication',
+      operatingSystem: 'Any',
+      offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+      isPartOf: { '@type': 'WebApplication', name: 'GeoScore', url: 'https://geoscore.help' }
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: [
+        {
+          '@type': 'Question',
+          name: 'Next.js 项目中 llms.txt 应该放在哪里？',
+          acceptedAnswer: { '@type': 'Answer', text: '将静态 llms.txt 放在项目根目录的 public/llms.txt，App Router 与 Pages Router 都会自动在 /llms.txt 路径提供服务；若需要动态生成目录，也可在 App Router 中使用 app/llms.txt/route.ts 路由处理器返回纯文本。' }
+        },
+        {
+          '@type': 'Question',
+          name: '如何在 Next.js App Router 中通过 app/robots.ts 配置 AI 爬虫？',
+          acceptedAnswer: { '@type': 'Answer', text: '在 app/robots.ts 默认导出返回 MetadataRoute.Robots 的函数，显式为 GPTBot、OAI-SearchBot、ClaudeBot、PerplexityBot 和 Google-Extended 设置 allow: \'/\'，并附上 sitemap 地址。' }
+        },
+        {
+          '@type': 'Question',
+          name: '为什么纯客户端渲染（CSR）的 Next.js 页面在 AI 审计中得分偏低？',
+          acceptedAnswer: { '@type': 'Answer', text: '多数 AI 爬虫只读取服务端返回的初始 HTML，不执行客户端 JavaScript 水合。如果在 \'use client\' 组件里用 useEffect 拉取核心文案，爬虫拿到的就是空壳。建议核心正文与 JSON-LD 在服务端组件或 SSR/SSG 中直接渲染。' }
+        },
+        {
+          '@type': 'Question',
+          name: '上线前能在本地 localhost:3000 运行 GEO 审计吗？',
+          acceptedAnswer: { '@type': 'Answer', text: '可以。在终端运行 npx geoscore http://localhost:3000，或在编码助手中接入 geoscore-mcp MCP Server，也可直接使用 GeoScore Chrome 扩展在 localhost:3000 对比原始 SSR HTML 与渲染后 DOM。' }
+        }
+      ]
+    }
+  ]}
+>
+  <section class="max-w-4xl mx-auto">
+    <div class="text-center mb-10">
+      <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-geo-500/10 text-geo-400 border border-geo-500/20 mb-4">
+        平台优化指南 · Next.js App Router
+      </div>
+      <h1 class="text-4xl font-extrabold mb-3">Next.js GEO 优化</h1>
+      <p class="text-gray-400 max-w-2xl mx-auto">
+        消除 Next.js 水合渲染盲区，让应用对 AI 搜索完全可读。规范配置 <code class="text-geo-400 bg-white/5 px-1.5 py-0.5 rounded">public/llms.txt</code>、<code class="text-geo-400 bg-white/5 px-1.5 py-0.5 rounded">app/robots.ts</code>、<code class="text-geo-400 bg-white/5 px-1.5 py-0.5 rounded">app/layout.tsx</code> JSON-LD，并在本地调试 <code class="text-geo-400 bg-white/5 px-1.5 py-0.5 rounded">localhost:3000</code>。
+      </p>
+    </div>
+
+    <div class="card p-8 mb-8">
+      <h2 class="text-xl font-bold mb-4">审计已上线的 Next.js 站点</h2>
+      <p class="text-gray-400 mb-6">输入线上域名，检测服务端初始 HTML 字数、AI 爬虫规则、llms.txt 与 JSON-LD：</p>
+      <div class="flex flex-col sm:flex-row gap-3 max-w-xl">
+        <div class="flex-1 relative">
+          <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+          <input id="url-input" type="url" placeholder="输入应用网址，如 yourapp.com" aria-label="请输入 Next.js 应用网址" onkeydown="if(event.key==='Enter'){document.getElementById('audit-btn').click();}" class="w-full pl-12 pr-5 py-3.5 rounded-xl bg-white/5 text-white placeholder-gray-500 border border-gray-600 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 text-lg transition" />
+        </div>
+        <button id="audit-btn" class="px-8 py-3.5 rounded-xl font-semibold text-white bg-gradient-to-r from-geo-600 to-brand-600 hover:from-geo-500 hover:to-brand-500 transition shadow-lg shadow-brand-500/20 whitespace-nowrap">检测应用</button>
+      </div>
+    </div>
+
+    <p class="text-xs text-gray-500 mb-10 text-center">
+      <a href="/zh/report/demo/" class="text-gray-400 hover:text-geo-400 transition underline underline-offset-2">查看样例报告</a>
+      &mdash; {demo.host} 得分 <span class="text-geo-400 font-semibold">{demo.score}/100（{demo.level}）</span>，{demo.dimensionCount} 个维度中 {demo.dimensionsAboveSixty} 个超过 60%。
+    </p>
+
+    <div class="card p-8 mb-8">
+      <h2 class="text-xl font-bold mb-4">1. 配置 <code class="text-geo-400">public/llms.txt</code> 与 <code class="text-geo-400">app/robots.ts</code></h2>
+      <p class="text-gray-400 mb-4">
+        将静态 <code class="bg-white/5 px-1.5 py-0.5 rounded">public/llms.txt</code> 放在项目根目录以自动暴露于 <code class="bg-white/5 px-1.5 py-0.5 rounded">/llms.txt</code>，并使用类型安全的 <code class="text-geo-400 bg-white/5 px-1.5 py-0.5 rounded">app/robots.ts</code> 放行 AI 爬虫：
+      </p>
+      <pre class="bg-black/30 rounded-lg p-4 text-sm text-gray-300 overflow-x-auto"><code>{`// app/robots.ts
+import type { MetadataRoute } from 'next';
+
+export default function robots(): MetadataRoute.Robots {
+  return {
+    rules: [
+      { userAgent: '*', allow: '/' },
+      { userAgent: 'GPTBot', allow: '/' },
+      { userAgent: 'OAI-SearchBot', allow: '/' },
+      { userAgent: 'ClaudeBot', allow: '/' },
+      { userAgent: 'PerplexityBot', allow: '/' },
+      { userAgent: 'Google-Extended', allow: '/' },
+    ],
+    sitemap: 'https://yourapp.com/sitemap.xml',
+  };
+}`}</code></pre>
+    </div>
+
+    <div class="card p-8 mb-8">
+      <h2 class="text-xl font-bold mb-4">2. 排查 SSR 与 CSR 渲染盲区并在 <code class="text-geo-400">app/layout.tsx</code> 输出 JSON-LD</h2>
+      <p class="text-gray-400 mb-4">
+        <strong class="text-white">GPTBot</strong>、<strong class="text-white">ClaudeBot</strong> 与 <strong class="text-white">PerplexityBot</strong> 通常只解析服务端返回的原始 HTML，不等待客户端水合。请将产品文案、文档、定价与 JSON-LD 放在 React 服务端组件（RSC）中渲染，避免全部塞入 <code class="bg-white/5 px-1.5 py-0.5 rounded">'use client'</code> 异步加载：
+      </p>
+      <pre class="bg-black/30 rounded-lg p-4 text-sm text-gray-300 overflow-x-auto"><code>{`// app/layout.tsx (Server Component)
+const orgSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'Your App',
+  url: 'https://yourapp.com',
+};
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="zh-CN">
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(orgSchema) }}
+        />
+      </head>
+      <body>{children}</body>
+    </html>
+  );
+}`}</code></pre>
+    </div>
+
+    <div class="card p-8 mb-8">
+      <h2 class="text-xl font-bold mb-4">3. 用 CLI、MCP Server 与 Chrome 插件本地审计 <code class="text-geo-400">localhost:3000</code></h2>
+      <ul class="space-y-3 text-sm text-gray-300">
+        <li class="flex gap-3"><span class="text-geo-500 flex-shrink-0">✓</span><span><strong class="text-white">命令行 CLI：</strong>在本地或 CI 中运行 <code class="bg-white/5 px-1.5 py-0.5 rounded">npx geoscore http://localhost:3000 --json</code>，上线前拦截 SSR/Schema 回归。</span></li>
+        <li class="flex gap-3"><span class="text-geo-500 flex-shrink-0">✓</span><span><strong class="text-white">MCP Server：</strong>将 <code class="bg-white/5 px-1.5 py-0.5 rounded">geoscore-mcp</code> 接入 Claude Desktop、Cursor 或 Antigravity，在开发流中直接调用 <code class="bg-white/5 px-1.5 py-0.5 rounded">audit_url</code> 与 <code class="bg-white/5 px-1.5 py-0.5 rounded">generate_fixes</code>。</span></li>
+        <li class="flex gap-3"><span class="text-geo-500 flex-shrink-0">✓</span><span><strong class="text-white">Chrome 扩展：</strong>在 <code class="bg-white/5 px-1.5 py-0.5 rounded">localhost:3000</code> 或登录态预发页面直接对比原始 SSR HTML 与浏览器渲染后 DOM。</span></li>
+      </ul>
+    </div>
+
+    <div class="card p-8 mb-8 border-geo-500/40 bg-geo-500/5 text-center">
+      <h2 class="text-2xl font-bold mb-3">开启 Pro 自动监控，守护每次发布后的 AI 可见性</h2>
+      <p class="text-gray-300 max-w-2xl mx-auto mb-6">
+        每周自动审计最多 5 个线上域名，第一时间发现发布误改 <code class="bg-white/10 px-1.5 py-0.5 rounded">robots.txt</code> 或 SSR 退化导致的降分，并支持导出 PDF 报告。
+      </p>
+      <div class="flex flex-col sm:flex-row justify-center gap-3">
+        <a href="/zh/pricing/" class="inline-flex items-center justify-center px-6 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-geo-600 to-brand-600 hover:from-geo-500 hover:to-brand-500 transition">
+          查看 Pro 监控方案 →
+        </a>
+        <a href="https://chromewebstore.google.com/detail/geoscore-free-geo-aeo-llm/cboppgehhkhaamcgfcikhekkdaelichn" target="_blank" rel="noopener" class="inline-flex items-center justify-center px-6 py-3 rounded-xl font-semibold text-gray-200 bg-white/10 hover:bg-white/20 transition">
+          安装 Chrome 官方插件
+        </a>
+      </div>
+    </div>
+
+    <div class="max-w-2xl mx-auto mb-10">
+      <h2 class="text-2xl font-bold text-center mb-6">Next.js GEO 常见问题</h2>
+      <div class="space-y-4">
+        <div class="card p-5">
+          <h3 class="font-semibold mb-2">Next.js 项目中 llms.txt 应该放在哪里？</h3>
+          <p class="text-sm text-gray-400">将静态 llms.txt 放在项目根目录的 public/llms.txt，App Router 与 Pages Router 都会自动在 /llms.txt 路径提供服务；若需要动态生成目录，也可在 App Router 中使用 app/llms.txt/route.ts 路由处理器返回纯文本。</p>
+        </div>
+        <div class="card p-5">
+          <h3 class="font-semibold mb-2">如何在 Next.js App Router 中通过 app/robots.ts 配置 AI 爬虫？</h3>
+          <p class="text-sm text-gray-400">在 app/robots.ts 默认导出返回 MetadataRoute.Robots 的函数，显式为 GPTBot、OAI-SearchBot、ClaudeBot、PerplexityBot 和 Google-Extended 设置 allow: '/'，并附上 sitemap 地址。</p>
+        </div>
+        <div class="card p-5">
+          <h3 class="font-semibold mb-2">为什么纯客户端渲染（CSR）的 Next.js 页面在 AI 审计中得分偏低？</h3>
+          <p class="text-sm text-gray-400">多数 AI 爬虫只读取服务端返回的初始 HTML，不执行客户端 JavaScript 水合。如果在 'use client' 组件里用 useEffect 拉取核心文案，爬虫拿到的就是空壳。建议核心正文与 JSON-LD 在服务端组件或 SSR/SSG 中直接渲染。</p>
+        </div>
+        <div class="card p-5">
+          <h3 class="font-semibold mb-2">上线前能在本地 localhost:3000 运行 GEO 审计吗？</h3>
+          <p class="text-sm text-gray-400">可以。在终端运行 npx geoscore http://localhost:3000，或在编码助手中接入 geoscore-mcp MCP Server，也可直接使用 GeoScore Chrome 扩展在 localhost:3000 对比原始 SSR HTML 与渲染后 DOM。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</LayoutZh>
+
+<script is:inline>
+  (function() {
+    var queue = [];
+    ["startAudit","showBatchInput","showComparison","startBatchAudit","runComparison","doExport"].forEach(function(n) {
+      window[n] = function() { queue.push({ n: n, a: arguments }); };
+    });
+    window.__geoFlush = function() { queue.splice(0).forEach(function(q) { window[q.n].apply(null, q.a); }); };
+  })();
+</script>
+<script src="../../../scripts/boot.js"></script>

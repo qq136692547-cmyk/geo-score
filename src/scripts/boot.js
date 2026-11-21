@@ -800,7 +800,10 @@ async function submitLead(ctaId, r) {
 var TOOL_PAGE_NAMES = {
   'llms-txt-checker': 'llms.txt Checker',
   'ai-readiness-score': 'AI Readiness Score',
-  'robots-txt-ai-checker': 'robots.txt AI Checker'
+  'robots-txt-ai-checker': 'robots.txt AI Checker',
+  'shopify': 'GEO for Shopify',
+  'wordpress': 'GEO for WordPress',
+  'nextjs': 'GEO for Next.js'
 };
 
 function showAuditOrigin(slug) {
@@ -833,7 +836,7 @@ document.addEventListener("DOMContentLoaded", function() {
   // exactly "/" and "/zh/" — so this stays correct if pages are added later.
   if (ab) ab.addEventListener("click", function() {
     var here = window.location.pathname;
-    window.startAudit(/\/tools\/[^/]+\/?$/.test(here) ? 'tool_page' : 'home');
+    window.startAudit(/\/(tools|geo-for)\/[^/]+\/?$/.test(here) ? 'tool_page' : 'home');
   });
   var bl = document.getElementById("batch-link");
   if (bl) bl.addEventListener("click", function() { window.showBatchInput(); });
@@ -861,6 +864,25 @@ document.addEventListener("DOMContentLoaded", function() {
   var reportCtaRoot = document.getElementById("report-section");
   if (reportCtaRoot) {
     reportCtaRoot.addEventListener("click", function(e) {
+      var badgeBtn = e.target.closest('[data-badge-copy]');
+      if (badgeBtn) {
+        var format = badgeBtn.getAttribute('data-badge-copy');
+        if (format === 'markdown' || format === 'html') {
+          var codeEl = reportCtaRoot.querySelector('[data-badge-snippet="' + format + '"]');
+          if (codeEl && navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+            navigator.clipboard.writeText(codeEl.textContent || '').then(function() {
+              var orig = badgeBtn.getAttribute('data-orig-label') || badgeBtn.textContent;
+              badgeBtn.setAttribute('data-orig-label', orig);
+              badgeBtn.textContent = t('Copied!', '已复制！');
+              setTimeout(function() { badgeBtn.textContent = orig; }, 2000);
+            }).catch(function() {});
+          }
+          if (typeof window.geoTrack === 'function') {
+            window.geoTrack('tool_complete', { tool_name: 'badge_copy', format: format });
+          }
+        }
+        return;
+      }
       var stackTab = e.target.closest('[data-stack-tab]');
       if (stackTab) {
         selectStackTab(stackTab.getAttribute('data-stack-tab'));

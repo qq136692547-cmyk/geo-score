@@ -59,6 +59,23 @@ describe('alternates', () => {
     expect(alt).not.toBeNull();
     expect(alt.zh).toBe('https://geoscore.help/zh/blog/');
   });
+
+  it('pairs the platform GEO landing pages across English and Chinese', () => {
+    for (const slug of ['shopify', 'wordpress', 'nextjs']) {
+      const enPath = `/geo-for/${slug}/`;
+      const zhPath = `/zh/geo-for/${slug}/`;
+      expect(routeExists(enPath)).toBe(true);
+      expect(routeExists(zhPath)).toBe(true);
+      const fromEn = alternates(SITE, enPath);
+      const fromZh = alternates(SITE, zhPath);
+      expect(fromEn).toEqual({
+        en: `${SITE}${enPath}`,
+        zh: `${SITE}${zhPath}`,
+        xDefault: `${SITE}${enPath}`,
+      });
+      expect(fromZh).toEqual(fromEn);
+    }
+  });
 });
 
 describe('routeExists', () => {
