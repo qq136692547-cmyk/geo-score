@@ -20,7 +20,10 @@
     "test:watch": "node --experimental-vm-modules node_modules/vitest/vitest.mjs",
     "ext:build": "node extension/build.mjs",
     "ext:zip": "node extension/scripts/package-zip.mjs",
-    "ext:package": "node extension/build.mjs && node extension/scripts/package-zip.mjs"
+    "ext:package": "node extension/build.mjs && node extension/scripts/package-zip.mjs",
+    "ext:cws-auth": "node extension/scripts/publish-cws.mjs --auth",
+    "ext:status": "node extension/scripts/publish-cws.mjs --status",
+    "ext:publish": "node extension/build.mjs && node extension/scripts/package-zip.mjs && node extension/scripts/publish-cws.mjs --publish"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.0.0",
