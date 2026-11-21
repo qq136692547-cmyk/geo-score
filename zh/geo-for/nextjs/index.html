@@ -1,0 +1,136 @@
+<!DOCTYPE html><html lang="zh-CN" class="dark"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="description" content="Next.js App Router 应用的 GEO 优化与审计：配置 public/llms.txt、app/robots.ts、排查 SSR 与 CSR 渲染盲区、在 app/layout.tsx 注入 JSON-LD，并使用 npx geoscore CLI、geoscore-mcp 与 Chrome 插件调试 localhost:3000。"><meta name="author" content="anan"><link rel="author" href="https://geoscore.help/zh/methodology"><meta property="og:title" content="Next.js GEO 优化指南 — App Router robots.ts、llms.txt 与 SSR 审计 | GeoScore"><meta property="og:description" content="Next.js App Router 应用的 GEO 优化与审计：配置 public/llms.txt、app/robots.ts、排查 SSR 与 CSR 渲染盲区、在 app/layout.tsx 注入 JSON-LD，并使用 npx geoscore CLI、geoscore-mcp 与 Chrome 插件调试 localhost:3000。"><meta property="og:type" content="website"><meta property="og:image" content="https://geoscore.help/og-image.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:type" content="image/png"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="https://geoscore.help/og-image.png"><link rel="sitemap" type="application/xml" href="/sitemap.xml"><link rel="canonical" href="https://geoscore.help/zh/geo-for/nextjs/"><link rel="alternate" hreflang="en" href="https://geoscore.help/geo-for/nextjs/"><link rel="alternate" hreflang="zh-CN" href="https://geoscore.help/zh/geo-for/nextjs/"><link rel="alternate" hreflang="x-default" href="https://geoscore.help/geo-for/nextjs/"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="dns-prefetch" href="https://github.com"><title>Next.js GEO 优化指南 — App Router robots.ts、llms.txt 与 SSR 审计 | GeoScore</title><!-- Consent state. Runs before first paint so the banner never flashes: a
+       parsable stored record = the visitor already decided, banner stays hidden
+       and scripts/consent.js replays the choice. Same predicate as consent.js,
+       so an unreadable record falls back to "undecided" on both sides. --><script>
+    (function () {
+      var decided = false;
+      try {
+        var raw = localStorage.getItem('geoscore-consent-v1');
+        if (raw) decided = !!JSON.parse(raw);
+      } catch (e) { decided = false; }
+      document.documentElement.setAttribute('data-consent', decided ? 'decided' : 'pending');
+    })();
+  </script><!-- Consent gate. GA4 loader is created here on opt-in;
+       no third-party script is requested before that. Calls made before consent
+       are queued and flushed once gtag appears (see __geoFlushPending below);
+       a visitor who never consents never flushes. --><script src="/scripts/consent.js" defer></script><script>
+    function geoAuthed() {
+      try {
+        if (window.geoscoreAuth && typeof window.geoscoreAuth.getCurrentUser === 'function') {
+          return !!window.geoscoreAuth.getCurrentUser();
+        }
+        return !!localStorage.getItem('geoscore_token');
+      } catch (e) {
+        return false;
+      }
+    }
+    // 2026-10-23 (P0.2): geoTrack used to be a SILENT NO-OP until gtag existed
+    // (consent.js injects it), with no queue and no replay. Events fired while
+    // the page was still parsing were therefore dropped for every visitor who
+    // had not consented yet -- and for returning visitors too, because
+    // consent.js is deferred, so gtag does not exist at parse time either.
+    // That killed pricing_viewed (on /pricing/) and fixpack_viewed (on
+    // /fixpack/), which are exactly the two events the funnel top is measured
+    // by. Now: queue while gtag is missing, flush in order the moment it
+    // exists. A visitor who never consents never flushes -- that is the
+    // compliance requirement, not a defect.
+    window.__geoPending = [];
+    window.__geoFlushPending = function () {
+      if (typeof gtag !== 'function') return;
+      var pending = window.__geoPending.splice(0);
+      for (var i = 0; i < pending.length; i++) {
+        var params = pending[i].params || {};
+        if (params.authed === undefined) params.authed = geoAuthed();
+        gtag('event', pending[i].action, params);
+      }
+    };
+    window.geoTrack = function(action, params) {
+      if (typeof gtag === 'function') {
+        params = params || {};
+        if (params.authed === undefined) params.authed = geoAuthed();
+        gtag('event', action, params);
+        return;
+      }
+      window.__geoPending.push({ action: action, params: params || {} });
+    };
+    function geoCrossSource() {
+      try {
+        const params = new URLSearchParams(location.search);
+        const source = (params.get('utm_source') || '').toLowerCase();
+        if (source) return 'external';
+        if (!document.referrer) return 'direct';
+        const host = new URL(document.referrer).hostname.toLowerCase();
+        if (/(^|\.)(google|bing|baidu|duckduckgo|yandex|ecosia|startpage|brave)\.[a-z.]+$/.test(host)) return 'search';
+        return 'external';
+      } catch (e) {
+        return 'other';
+      }
+    }
+    window.geoSource = geoCrossSource;
+  </script><!-- JSON-LD: Organization (全站实体) --><script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","@id":"https://geoscore.help/#organization","name":"GeoScore","url":"https://geoscore.help","logo":"https://geoscore.help/og-image.png","description":"开源 GEO 审计工具，检测你的网站对 AI 搜索引擎的可见性。","sameAs":["https://github.com/qq136692547-cmyk/geo-score","https://github.com/qq136692547-cmyk/geo-score/tree/main/docs/handbook","https://github.com/qq136692547-cmyk","https://geoscore.help/zh/methodology"],"contactPoint":{"@type":"ContactPoint","contactType":"technical support","url":"https://github.com/qq136692547-cmyk/geo-score/issues","email":"hello@geoscore.help","availableLanguage":"Chinese"}}</script><!-- JSON-LD: WebSite (中文版) --><script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","@id":"https://geoscore.help/zh/#website","url":"https://geoscore.help/zh/","name":"GeoScore - GEO 审计工具","description":"免费 GEO 审计工具 —— 检测你的网站对 AI 搜索引擎的可见性。","publisher":{"@id":"https://geoscore.help/#organization"},"inLanguage":"zh-CN"}</script><!-- JSON-LD: Person (作者) --><script type="application/ld+json">{"@context":"https://schema.org","@type":"Person","@id":"https://geoscore.help/#author","name":"anan","email":"hello@geoscore.help","url":"https://geoscore.help/zh/methodology","jobTitle":"GEO 研究员","worksFor":{"@type":"Organization","name":"GeoScore","url":"https://geoscore.help"},"knowsAbout":["Generative Engine Optimization","AI 搜索","llms.txt","Schema.org","Robots.txt","SEO","Web 开发"],"sameAs":["https://github.com/qq136692547-cmyk"]}</script><!-- JSON-LD: WebApplication (中文版全站) + 页面级 schema --><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@context":"https://schema.org","@type":"SoftwareApplication","name":"GeoScore Next.js GEO 优化工具","description":"免费 Next.js GEO 审计工具，检测 SSR 原始 HTML 可见度、app/robots.ts、public/llms.txt 与 app/layout.tsx JSON-LD。","url":"https://geoscore.help/zh/geo-for/nextjs/","applicationCategory":"DeveloperApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"isPartOf":{"@type":"WebApplication","name":"GeoScore","url":"https://geoscore.help"}},{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Next.js 项目中 llms.txt 应该放在哪里？","acceptedAnswer":{"@type":"Answer","text":"将静态 llms.txt 放在项目根目录的 public/llms.txt，App Router 与 Pages Router 都会自动在 /llms.txt 路径提供服务；若需要动态生成目录，也可在 App Router 中使用 app/llms.txt/route.ts 路由处理器返回纯文本。"}},{"@type":"Question","name":"如何在 Next.js App Router 中通过 app/robots.ts 配置 AI 爬虫？","acceptedAnswer":{"@type":"Answer","text":"在 app/robots.ts 默认导出返回 MetadataRoute.Robots 的函数，显式为 GPTBot、OAI-SearchBot、ClaudeBot、PerplexityBot 和 Google-Extended 设置 allow: '/'，并附上 sitemap 地址。"}},{"@type":"Question","name":"为什么纯客户端渲染（CSR）的 Next.js 页面在 AI 审计中得分偏低？","acceptedAnswer":{"@type":"Answer","text":"多数 AI 爬虫只读取服务端返回的初始 HTML，不执行客户端 JavaScript 水合。如果在 'use client' 组件里用 useEffect 拉取核心文案，爬虫拿到的就是空壳。建议核心正文与 JSON-LD 在服务端组件或 SSR/SSG 中直接渲染。"}},{"@type":"Question","name":"上线前能在本地 localhost:3000 运行 GEO 审计吗？","acceptedAnswer":{"@type":"Answer","text":"可以。在终端运行 npx geoscore http://localhost:3000，或在编码助手中接入 geoscore-mcp MCP Server，也可直接使用 GeoScore Chrome 扩展在 localhost:3000 对比原始 SSR HTML 与渲染后 DOM。"}}]},{"@context":"https://schema.org","@type":"WebApplication","name":"GeoScore","description":"GEO 审计工具：单次浏览器审计免费，可选 Pro 监控付费。","url":"https://geoscore.help/zh/","applicationCategory":"SEO Tool","operatingSystem":"Any","offers":{"@type":"AggregateOffer","lowPrice":"0","highPrice":"9","priceCurrency":"USD","offerCount":2},"features":["11 维度 GEO 评分","AI 搜索可见性审计","llms.txt 检测","robots.txt AI 爬虫分析","结构化数据审计","E-E-A-T 信号"],"author":{"@type":"Person","name":"anan","url":"https://geoscore.help/zh/methodology"},"publisher":{"@type":"Organization","name":"GeoScore","url":"https://geoscore.help"},"dateModified":"2026-08-11"}]}</script><link rel="stylesheet" href="/_astro/ai-crawler-robots-txt-templates.BoXNd3SW.css"></head> <body class="min-h-[100dvh] text-gray-100 antialiased"> <header class="border-b border-gray-700/50 sticky top-0 z-50" style="background:rgba(15,23,42,0.85);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)"> <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"> <div class="flex flex-wrap items-center justify-between gap-x-4 min-h-16 py-2"> <a href="/zh/" class="flex items-center text-lg font-bold"> <span><span class="text-geo-500">Geo</span><span class="text-brand-500">Score</span></span> </a> <input type="checkbox" id="zh-nav-toggle" class="peer sr-only"> <label for="zh-nav-toggle" class="md:hidden cursor-pointer text-gray-300 hover:text-white transition select-none text-2xl leading-none" aria-label="菜单">☰</label> <div class="w-full hidden peer-checked:flex flex-col gap-3 pt-3 pb-1 md:w-auto md:flex md:flex-row md:items-center md:gap-4 md:pt-0 md:pb-0 text-sm"> <a href="/zh/tools/llms-txt-checker/" class="text-gray-400 hover:text-white transition">llms.txt 检测</a> <a href="/zh/tools/robots-txt-ai-checker/" class="text-gray-400 hover:text-white transition">Robots.txt 检测</a> <a href="/zh/tools/ai-readiness-score/" class="text-gray-400 hover:text-white transition">AI 就绪评分</a> <a href="/zh/#chrome-extension" class="text-gray-400 hover:text-white transition">Chrome 插件</a> <a href="/zh/blog/" class="text-gray-400 hover:text-white transition">博客</a> <a href="/zh/methodology/" class="text-gray-400 hover:text-white transition">方法论</a> <a href="/zh/pricing/" class="text-gray-400 hover:text-white transition">定价</a> <a href="/" class="text-gray-500 hover:text-gray-300 transition text-xs">EN</a> <a href="https://github.com/qq136692547-cmyk/geo-score" target="_blank" rel="noopener" class="text-gray-500 hover:text-white transition flex items-center gap-1.5"> <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"></path></svg> <span class="font-mono text-[10px] px-1.5 py-0.5 rounded bg-white/10 text-gray-400">v1.8.0</span> </a> </div> <div id="nav-auth" class="ml-0 md:ml-2"></div> </div> </nav> </header> <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 min-h-[calc(100dvh-8rem)]">  <section class="max-w-4xl mx-auto"> <div class="text-center mb-10"> <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-geo-500/10 text-geo-400 border border-geo-500/20 mb-4">
+平台优化指南 · Next.js App Router
+</div> <h1 class="text-4xl font-extrabold mb-3">Next.js GEO 优化</h1> <p class="text-gray-400 max-w-2xl mx-auto">
+消除 Next.js 水合渲染盲区，让应用对 AI 搜索完全可读。规范配置 <code class="text-geo-400 bg-white/5 px-1.5 py-0.5 rounded">public/llms.txt</code>、<code class="text-geo-400 bg-white/5 px-1.5 py-0.5 rounded">app/robots.ts</code>、<code class="text-geo-400 bg-white/5 px-1.5 py-0.5 rounded">app/layout.tsx</code> JSON-LD，并在本地调试 <code class="text-geo-400 bg-white/5 px-1.5 py-0.5 rounded">localhost:3000</code>。
+</p> </div> <div class="card p-8 mb-8"> <h2 class="text-xl font-bold mb-4">审计已上线的 Next.js 站点</h2> <p class="text-gray-400 mb-6">输入线上域名，检测服务端初始 HTML 字数、AI 爬虫规则、llms.txt 与 JSON-LD：</p> <div class="flex flex-col sm:flex-row gap-3 max-w-xl"> <div class="flex-1 relative"> <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v4l3 3"></path></svg> <input id="url-input" type="url" placeholder="输入应用网址，如 yourapp.com" aria-label="请输入 Next.js 应用网址" onkeydown="if(event.key==='Enter'){document.getElementById('audit-btn').click();}" class="w-full pl-12 pr-5 py-3.5 rounded-xl bg-white/5 text-white placeholder-gray-500 border border-gray-600 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 text-lg transition"> </div> <button id="audit-btn" class="px-8 py-3.5 rounded-xl font-semibold text-white bg-gradient-to-r from-geo-600 to-brand-600 hover:from-geo-500 hover:to-brand-500 transition shadow-lg shadow-brand-500/20 whitespace-nowrap">检测应用</button> </div> </div> <p class="text-xs text-gray-500 mb-10 text-center"> <a href="/zh/report/demo/" class="text-gray-400 hover:text-geo-400 transition underline underline-offset-2">查看样例报告</a>
+&mdash; n8n.io 得分 <span class="text-geo-400 font-semibold">66/100（Basic）</span>，11 个维度中 8 个超过 60%。
+</p> <div class="card p-8 mb-8"> <h2 class="text-xl font-bold mb-4">1. 配置 <code class="text-geo-400">public/llms.txt</code> 与 <code class="text-geo-400">app/robots.ts</code></h2> <p class="text-gray-400 mb-4">
+将静态 <code class="bg-white/5 px-1.5 py-0.5 rounded">public/llms.txt</code> 放在项目根目录以自动暴露于 <code class="bg-white/5 px-1.5 py-0.5 rounded">/llms.txt</code>，并使用类型安全的 <code class="text-geo-400 bg-white/5 px-1.5 py-0.5 rounded">app/robots.ts</code> 放行 AI 爬虫：
+</p> <pre class="bg-black/30 rounded-lg p-4 text-sm text-gray-300 overflow-x-auto"><code>// app/robots.ts
+import type { MetadataRoute } from &#39;next&#39;;
+
+export default function robots(): MetadataRoute.Robots {
+  return {
+    rules: [
+      { userAgent: &#39;*&#39;, allow: &#39;/&#39; },
+      { userAgent: &#39;GPTBot&#39;, allow: &#39;/&#39; },
+      { userAgent: &#39;OAI-SearchBot&#39;, allow: &#39;/&#39; },
+      { userAgent: &#39;ClaudeBot&#39;, allow: &#39;/&#39; },
+      { userAgent: &#39;PerplexityBot&#39;, allow: &#39;/&#39; },
+      { userAgent: &#39;Google-Extended&#39;, allow: &#39;/&#39; },
+    ],
+    sitemap: &#39;https://yourapp.com/sitemap.xml&#39;,
+  };
+}</code></pre> </div> <div class="card p-8 mb-8"> <h2 class="text-xl font-bold mb-4">2. 排查 SSR 与 CSR 渲染盲区并在 <code class="text-geo-400">app/layout.tsx</code> 输出 JSON-LD</h2> <p class="text-gray-400 mb-4"> <strong class="text-white">GPTBot</strong>、<strong class="text-white">ClaudeBot</strong> 与 <strong class="text-white">PerplexityBot</strong> 通常只解析服务端返回的原始 HTML，不等待客户端水合。请将产品文案、文档、定价与 JSON-LD 放在 React 服务端组件（RSC）中渲染，避免全部塞入 <code class="bg-white/5 px-1.5 py-0.5 rounded">'use client'</code> 异步加载：
+</p> <pre class="bg-black/30 rounded-lg p-4 text-sm text-gray-300 overflow-x-auto"><code>// app/layout.tsx (Server Component)
+const orgSchema = {
+  &#39;@context&#39;: &#39;https://schema.org&#39;,
+  &#39;@type&#39;: &#39;Organization&#39;,
+  name: &#39;Your App&#39;,
+  url: &#39;https://yourapp.com&#39;,
+};
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    &lt;html lang=&quot;zh-CN&quot;&gt;
+      &lt;head&gt;
+        &lt;script
+          type=&quot;application/ld+json&quot;
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(orgSchema) }}
+        /&gt;
+      &lt;/head&gt;
+      &lt;body&gt;{children}&lt;/body&gt;
+    &lt;/html&gt;
+  );
+}</code></pre> </div> <div class="card p-8 mb-8"> <h2 class="text-xl font-bold mb-4">3. 用 CLI、MCP Server 与 Chrome 插件本地审计 <code class="text-geo-400">localhost:3000</code></h2> <ul class="space-y-3 text-sm text-gray-300"> <li class="flex gap-3"><span class="text-geo-500 flex-shrink-0">✓</span><span><strong class="text-white">命令行 CLI：</strong>在本地或 CI 中运行 <code class="bg-white/5 px-1.5 py-0.5 rounded">npx geoscore http://localhost:3000 --json</code>，上线前拦截 SSR/Schema 回归。</span></li> <li class="flex gap-3"><span class="text-geo-500 flex-shrink-0">✓</span><span><strong class="text-white">MCP Server：</strong>将 <code class="bg-white/5 px-1.5 py-0.5 rounded">geoscore-mcp</code> 接入 Claude Desktop、Cursor 或 Antigravity，在开发流中直接调用 <code class="bg-white/5 px-1.5 py-0.5 rounded">audit_url</code> 与 <code class="bg-white/5 px-1.5 py-0.5 rounded">generate_fixes</code>。</span></li> <li class="flex gap-3"><span class="text-geo-500 flex-shrink-0">✓</span><span><strong class="text-white">Chrome 扩展：</strong>在 <code class="bg-white/5 px-1.5 py-0.5 rounded">localhost:3000</code> 或登录态预发页面直接对比原始 SSR HTML 与浏览器渲染后 DOM。</span></li> </ul> </div> <div class="card p-8 mb-8 border-geo-500/40 bg-geo-500/5 text-center"> <h2 class="text-2xl font-bold mb-3">开启 Pro 自动监控，守护每次发布后的 AI 可见性</h2> <p class="text-gray-300 max-w-2xl mx-auto mb-6">
+每周自动审计最多 5 个线上域名，第一时间发现发布误改 <code class="bg-white/10 px-1.5 py-0.5 rounded">robots.txt</code> 或 SSR 退化导致的降分，并支持导出 PDF 报告。
+</p> <div class="flex flex-col sm:flex-row justify-center gap-3"> <a href="/zh/pricing/" class="inline-flex items-center justify-center px-6 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-geo-600 to-brand-600 hover:from-geo-500 hover:to-brand-500 transition">
+查看 Pro 监控方案 →
+</a> <a href="https://chromewebstore.google.com/detail/geoscore-free-geo-aeo-llm/cboppgehhkhaamcgfcikhekkdaelichn" target="_blank" rel="noopener" class="inline-flex items-center justify-center px-6 py-3 rounded-xl font-semibold text-gray-200 bg-white/10 hover:bg-white/20 transition">
+安装 Chrome 官方插件
+</a> </div> </div> <div class="max-w-2xl mx-auto mb-10"> <h2 class="text-2xl font-bold text-center mb-6">Next.js GEO 常见问题</h2> <div class="space-y-4"> <div class="card p-5"> <h3 class="font-semibold mb-2">Next.js 项目中 llms.txt 应该放在哪里？</h3> <p class="text-sm text-gray-400">将静态 llms.txt 放在项目根目录的 public/llms.txt，App Router 与 Pages Router 都会自动在 /llms.txt 路径提供服务；若需要动态生成目录，也可在 App Router 中使用 app/llms.txt/route.ts 路由处理器返回纯文本。</p> </div> <div class="card p-5"> <h3 class="font-semibold mb-2">如何在 Next.js App Router 中通过 app/robots.ts 配置 AI 爬虫？</h3> <p class="text-sm text-gray-400">在 app/robots.ts 默认导出返回 MetadataRoute.Robots 的函数，显式为 GPTBot、OAI-SearchBot、ClaudeBot、PerplexityBot 和 Google-Extended 设置 allow: '/'，并附上 sitemap 地址。</p> </div> <div class="card p-5"> <h3 class="font-semibold mb-2">为什么纯客户端渲染（CSR）的 Next.js 页面在 AI 审计中得分偏低？</h3> <p class="text-sm text-gray-400">多数 AI 爬虫只读取服务端返回的初始 HTML，不执行客户端 JavaScript 水合。如果在 'use client' 组件里用 useEffect 拉取核心文案，爬虫拿到的就是空壳。建议核心正文与 JSON-LD 在服务端组件或 SSR/SSG 中直接渲染。</p> </div> <div class="card p-5"> <h3 class="font-semibold mb-2">上线前能在本地 localhost:3000 运行 GEO 审计吗？</h3> <p class="text-sm text-gray-400">可以。在终端运行 npx geoscore http://localhost:3000，或在编码助手中接入 geoscore-mcp MCP Server，也可直接使用 GeoScore Chrome 扩展在 localhost:3000 对比原始 SSR HTML 与渲染后 DOM。</p> </div> </div> </div> </section>  </main> <footer class="border-t border-gray-700/50"> <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"> <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-6"> <div> <h4 class="text-sm font-bold text-white mb-3">工具</h4> <ul class="space-y-2 text-sm text-gray-400"> <li><a href="/zh/tools/llms-txt-checker/" class="hover:text-brand-500 transition">llms.txt 检测</a></li> <li><a href="/zh/tools/robots-txt-ai-checker/" class="hover:text-brand-500 transition">Robots.txt AI 检测</a></li> <li><a href="/zh/tools/ai-readiness-score/" class="hover:text-brand-500 transition">AI 就绪评分</a></li> <li><a href="/zh/geo-for/shopify/" class="hover:text-brand-500 transition">Shopify GEO 优化</a></li> <li><a href="/zh/geo-for/wordpress/" class="hover:text-brand-500 transition">WordPress GEO 优化</a></li> <li><a href="/zh/geo-for/nextjs/" class="hover:text-brand-500 transition">Next.js GEO 优化</a></li> <li><a href="/zh/#chrome-extension" class="hover:text-brand-500 transition">Chrome 插件</a></li> </ul> </div> <div> <h4 class="text-sm font-bold text-white mb-3">学习</h4> <ul class="space-y-2 text-sm text-gray-400"> <li><a href="/zh/blog/" class="hover:text-brand-500 transition">中文博客</a></li> <li><a href="/zh/blog/geoscore-update-multi-page-security/" class="hover:text-brand-500 transition">引擎升级：多页面扫描</a></li> <li><a href="/zh/methodology/" class="hover:text-brand-500 transition">方法论</a></li> <li><a href="/blog/" class="hover:text-brand-500 transition">英文指南全集</a></li> <li><a href="https://github.com/qq136692547-cmyk/geo-score/tree/main/docs/handbook" target="_blank" rel="noopener" class="hover:text-brand-500 transition">GEO 手册</a></li> </ul> </div> <div> <h4 class="text-sm font-bold text-white mb-3">项目</h4> <ul class="space-y-2 text-sm text-gray-400"> <li><a href="https://github.com/qq136692547-cmyk/geo-score" target="_blank" rel="noopener" class="hover:text-brand-500 transition">GitHub 源码 (MIT)</a></li> <li><a href="https://geoscore.help/sitemap.xml" class="hover:text-brand-500 transition">Sitemap</a></li> <li><a href="https://geoscore.help/llms.txt" class="hover:text-brand-500 transition">llms.txt</a></li> <li><a href="/zh/privacy/" class="hover:text-brand-500 transition">隐私政策</a></li> <li><a href="/zh/terms/" class="hover:text-brand-500 transition">使用条款</a></li> <li><a href="mailto:hello@geoscore.help" class="hover:text-brand-500 transition">联系支持</a></li> <li><button type="button" id="consent-open" class="cursor-pointer text-left hover:text-brand-500 transition">Cookie 设置</button></li> <li><span class="text-gray-500">开源 — MIT 许可证</span></li> </ul> </div> </div> <p class="text-xs text-gray-500 text-center">© 2026 GeoScore. MIT 许可证。❤️ 为 AI 搜索时代构建.</p> </div> </footer> <!-- Consent panel. Server-rendered so it is on screen at first paint; shown
+       only while <html data-consent="pending">. Deliberately non-modal —
+       role=region, no focus trap — and every control is a native focusable
+       element (checkbox + label, real buttons). --> <div id="geoscore-consent-banner" class="consent-banner fixed bottom-0 left-0 right-0 z-[60] p-3 sm:p-4" role="region" aria-label="Cookie 设置"> <div class="max-w-4xl mx-auto card p-4 sm:p-5" style="background:rgba(15,23,42,0.97);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:0 8px 30px rgba(0,0,0,0.35)"> <p class="text-sm font-semibold text-white mb-1">GeoScore 的 Cookie 使用</p> <p class="text-xs text-gray-400 mb-3">
+只有在你允许之后，我们才会加载分析统计脚本 —— 在此之前不会向任何第三方发起请求。详见
+<a href="/zh/privacy/" class="text-brand-400 hover:underline">隐私政策</a>。
+</p> <div class="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4"> <div class="flex flex-col sm:flex-row sm:items-center gap-x-6 gap-y-2 sm:flex-1"> <label for="consent-analytics" class="flex items-center gap-2 text-sm text-gray-300 cursor-pointer"> <input type="checkbox" id="consent-analytics" class="h-4 w-4 accent-geo-500 cursor-pointer">
+分析统计
+</label> </div> <div class="flex flex-wrap gap-2"> <button type="button" id="consent-accept-all" class="cursor-pointer px-4 py-2 rounded-lg text-sm font-semibold text-white bg-gradient-to-r from-geo-600 to-brand-600 hover:from-geo-500 hover:to-brand-500 transition">接受全部</button> <button type="button" id="consent-essential" class="cursor-pointer px-4 py-2 rounded-lg text-sm font-semibold bg-white/10 hover:bg-white/20 transition">仅必要</button> <button type="button" id="consent-save" class="cursor-pointer px-4 py-2 rounded-lg text-sm font-semibold bg-white/10 hover:bg-white/20 transition">保存选择</button> </div> </div> </div> </div> <script type="module" src="/scripts/auth.js"></script> </body> </html> <script>
+  (function() {
+    var queue = [];
+    ["startAudit","showBatchInput","showComparison","startBatchAudit","runComparison","doExport"].forEach(function(n) {
+      window[n] = function() { queue.push({ n: n, a: arguments }); };
+    });
+    window.__geoFlush = function() { queue.splice(0).forEach(function(q) { window[q.n].apply(null, q.a); }); };
+  })();
+</script> <script type="module" src="/_astro/nextjs.astro_astro_type_script_index_0_lang.Bk12U-0w.js"></script>

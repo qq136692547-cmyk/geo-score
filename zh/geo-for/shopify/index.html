@@ -1,0 +1,151 @@
+<!DOCTYPE html><html lang="zh-CN" class="dark"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="description" content="针对 Shopify 独立站的 GEO 优化与免费审计：通过 Content > Files 上传 llms.txt 并配置 /llms.txt URL 重定向、配置 templates/robots.txt.liquid 与商品页 Product JSON-LD。"><meta name="author" content="anan"><link rel="author" href="https://geoscore.help/zh/methodology"><meta property="og:title" content="Shopify GEO 优化指南 — 让店铺被 ChatGPT 与 AI 搜索引用 | GeoScore"><meta property="og:description" content="针对 Shopify 独立站的 GEO 优化与免费审计：通过 Content > Files 上传 llms.txt 并配置 /llms.txt URL 重定向、配置 templates/robots.txt.liquid 与商品页 Product JSON-LD。"><meta property="og:type" content="website"><meta property="og:image" content="https://geoscore.help/og-image.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:type" content="image/png"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="https://geoscore.help/og-image.png"><link rel="sitemap" type="application/xml" href="/sitemap.xml"><link rel="canonical" href="https://geoscore.help/zh/geo-for/shopify/"><link rel="alternate" hreflang="en" href="https://geoscore.help/geo-for/shopify/"><link rel="alternate" hreflang="zh-CN" href="https://geoscore.help/zh/geo-for/shopify/"><link rel="alternate" hreflang="x-default" href="https://geoscore.help/geo-for/shopify/"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="dns-prefetch" href="https://github.com"><title>Shopify GEO 优化指南 — 让店铺被 ChatGPT 与 AI 搜索引用 | GeoScore</title><!-- Consent state. Runs before first paint so the banner never flashes: a
+       parsable stored record = the visitor already decided, banner stays hidden
+       and scripts/consent.js replays the choice. Same predicate as consent.js,
+       so an unreadable record falls back to "undecided" on both sides. --><script>
+    (function () {
+      var decided = false;
+      try {
+        var raw = localStorage.getItem('geoscore-consent-v1');
+        if (raw) decided = !!JSON.parse(raw);
+      } catch (e) { decided = false; }
+      document.documentElement.setAttribute('data-consent', decided ? 'decided' : 'pending');
+    })();
+  </script><!-- Consent gate. GA4 loader is created here on opt-in;
+       no third-party script is requested before that. Calls made before consent
+       are queued and flushed once gtag appears (see __geoFlushPending below);
+       a visitor who never consents never flushes. --><script src="/scripts/consent.js" defer></script><script>
+    function geoAuthed() {
+      try {
+        if (window.geoscoreAuth && typeof window.geoscoreAuth.getCurrentUser === 'function') {
+          return !!window.geoscoreAuth.getCurrentUser();
+        }
+        return !!localStorage.getItem('geoscore_token');
+      } catch (e) {
+        return false;
+      }
+    }
+    // 2026-10-23 (P0.2): geoTrack used to be a SILENT NO-OP until gtag existed
+    // (consent.js injects it), with no queue and no replay. Events fired while
+    // the page was still parsing were therefore dropped for every visitor who
+    // had not consented yet -- and for returning visitors too, because
+    // consent.js is deferred, so gtag does not exist at parse time either.
+    // That killed pricing_viewed (on /pricing/) and fixpack_viewed (on
+    // /fixpack/), which are exactly the two events the funnel top is measured
+    // by. Now: queue while gtag is missing, flush in order the moment it
+    // exists. A visitor who never consents never flushes -- that is the
+    // compliance requirement, not a defect.
+    window.__geoPending = [];
+    window.__geoFlushPending = function () {
+      if (typeof gtag !== 'function') return;
+      var pending = window.__geoPending.splice(0);
+      for (var i = 0; i < pending.length; i++) {
+        var params = pending[i].params || {};
+        if (params.authed === undefined) params.authed = geoAuthed();
+        gtag('event', pending[i].action, params);
+      }
+    };
+    window.geoTrack = function(action, params) {
+      if (typeof gtag === 'function') {
+        params = params || {};
+        if (params.authed === undefined) params.authed = geoAuthed();
+        gtag('event', action, params);
+        return;
+      }
+      window.__geoPending.push({ action: action, params: params || {} });
+    };
+    function geoCrossSource() {
+      try {
+        const params = new URLSearchParams(location.search);
+        const source = (params.get('utm_source') || '').toLowerCase();
+        if (source) return 'external';
+        if (!document.referrer) return 'direct';
+        const host = new URL(document.referrer).hostname.toLowerCase();
+        if (/(^|\.)(google|bing|baidu|duckduckgo|yandex|ecosia|startpage|brave)\.[a-z.]+$/.test(host)) return 'search';
+        return 'external';
+      } catch (e) {
+        return 'other';
+      }
+    }
+    window.geoSource = geoCrossSource;
+  </script><!-- JSON-LD: Organization (全站实体) --><script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","@id":"https://geoscore.help/#organization","name":"GeoScore","url":"https://geoscore.help","logo":"https://geoscore.help/og-image.png","description":"开源 GEO 审计工具，检测你的网站对 AI 搜索引擎的可见性。","sameAs":["https://github.com/qq136692547-cmyk/geo-score","https://github.com/qq136692547-cmyk/geo-score/tree/main/docs/handbook","https://github.com/qq136692547-cmyk","https://geoscore.help/zh/methodology"],"contactPoint":{"@type":"ContactPoint","contactType":"technical support","url":"https://github.com/qq136692547-cmyk/geo-score/issues","email":"hello@geoscore.help","availableLanguage":"Chinese"}}</script><!-- JSON-LD: WebSite (中文版) --><script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","@id":"https://geoscore.help/zh/#website","url":"https://geoscore.help/zh/","name":"GeoScore - GEO 审计工具","description":"免费 GEO 审计工具 —— 检测你的网站对 AI 搜索引擎的可见性。","publisher":{"@id":"https://geoscore.help/#organization"},"inLanguage":"zh-CN"}</script><!-- JSON-LD: Person (作者) --><script type="application/ld+json">{"@context":"https://schema.org","@type":"Person","@id":"https://geoscore.help/#author","name":"anan","email":"hello@geoscore.help","url":"https://geoscore.help/zh/methodology","jobTitle":"GEO 研究员","worksFor":{"@type":"Organization","name":"GeoScore","url":"https://geoscore.help"},"knowsAbout":["Generative Engine Optimization","AI 搜索","llms.txt","Schema.org","Robots.txt","SEO","Web 开发"],"sameAs":["https://github.com/qq136692547-cmyk"]}</script><!-- JSON-LD: WebApplication (中文版全站) + 页面级 schema --><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@context":"https://schema.org","@type":"SoftwareApplication","name":"GeoScore Shopify GEO 优化工具","description":"免费 Shopify GEO 审计工具，检测 AI 爬虫访问规则、llms.txt 重定向与商品 Product JSON-LD 结构化数据。","url":"https://geoscore.help/zh/geo-for/shopify/","applicationCategory":"SEO Tool","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"isPartOf":{"@type":"WebApplication","name":"GeoScore","url":"https://geoscore.help"}},{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"如何在 Shopify 店铺中添加 llms.txt？","acceptedAnswer":{"@type":"Answer","text":"在 Shopify 后台进入 Content > Files 上传你的 llms.txt 文件并复制生成的 CDN 链接，然后进入 Online Store > Navigation > View URL redirects（或 Content > Menus > URL Redirects），创建一条从 /llms.txt 指向该 CDN 文件地址的 URL 重定向，即可在根域名路径下稳定访问。"}},{"@type":"Question","name":"如何在 Shopify 的 robots.txt 中放行 GPTBot 和 ClaudeBot？","acceptedAnswer":{"@type":"Answer","text":"进入 Shopify 后台 Online Store > Themes > Edit code > Templates > Add a new template，选择 robots.txt 创建 templates/robots.txt.liquid。保留 {{ robots.default_groups }} 默认规则，在末尾为 GPTBot、OAI-SearchBot、ClaudeBot、PerplexityBot 和 Google-Extended 添加 Allow: / 规则。"}},{"@type":"Question","name":"Shopify 主题中 Product JSON-LD 应该放在哪里？","acceptedAnswer":{"@type":"Answer","text":"应当将 Product JSON-LD 放在商品模板或 main-product 区块中，并通过 template contains 'product' 条件包裹，切勿挂在首页。需完整输出每个变体的价格、币种、库存状态以及 sku、gtin 或 mpn 等商品标识符。"}},{"@type":"Question","name":"Shopify 自带基础 SEO 标签，为什么还需要做 GEO 审计？","acceptedAnswer":{"@type":"Answer","text":"许多 Shopify 默认主题或第三方插件会遗漏变体级标识符（sku、gtin、mpn），或输出不包含店铺真实商品目录信息的通用接口，甚至产生结构化数据冲突。实时审计可以验证 AI 爬虫实际解析到的内容。"}}]},{"@context":"https://schema.org","@type":"WebApplication","name":"GeoScore","description":"GEO 审计工具：单次浏览器审计免费，可选 Pro 监控付费。","url":"https://geoscore.help/zh/","applicationCategory":"SEO Tool","operatingSystem":"Any","offers":{"@type":"AggregateOffer","lowPrice":"0","highPrice":"9","priceCurrency":"USD","offerCount":2},"features":["11 维度 GEO 评分","AI 搜索可见性审计","llms.txt 检测","robots.txt AI 爬虫分析","结构化数据审计","E-E-A-T 信号"],"author":{"@type":"Person","name":"anan","url":"https://geoscore.help/zh/methodology"},"publisher":{"@type":"Organization","name":"GeoScore","url":"https://geoscore.help"},"dateModified":"2026-08-11"}]}</script><link rel="stylesheet" href="/_astro/ai-crawler-robots-txt-templates.BoXNd3SW.css"></head> <body class="min-h-[100dvh] text-gray-100 antialiased"> <header class="border-b border-gray-700/50 sticky top-0 z-50" style="background:rgba(15,23,42,0.85);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)"> <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"> <div class="flex flex-wrap items-center justify-between gap-x-4 min-h-16 py-2"> <a href="/zh/" class="flex items-center text-lg font-bold"> <span><span class="text-geo-500">Geo</span><span class="text-brand-500">Score</span></span> </a> <input type="checkbox" id="zh-nav-toggle" class="peer sr-only"> <label for="zh-nav-toggle" class="md:hidden cursor-pointer text-gray-300 hover:text-white transition select-none text-2xl leading-none" aria-label="菜单">☰</label> <div class="w-full hidden peer-checked:flex flex-col gap-3 pt-3 pb-1 md:w-auto md:flex md:flex-row md:items-center md:gap-4 md:pt-0 md:pb-0 text-sm"> <a href="/zh/tools/llms-txt-checker/" class="text-gray-400 hover:text-white transition">llms.txt 检测</a> <a href="/zh/tools/robots-txt-ai-checker/" class="text-gray-400 hover:text-white transition">Robots.txt 检测</a> <a href="/zh/tools/ai-readiness-score/" class="text-gray-400 hover:text-white transition">AI 就绪评分</a> <a href="/zh/#chrome-extension" class="text-gray-400 hover:text-white transition">Chrome 插件</a> <a href="/zh/blog/" class="text-gray-400 hover:text-white transition">博客</a> <a href="/zh/methodology/" class="text-gray-400 hover:text-white transition">方法论</a> <a href="/zh/pricing/" class="text-gray-400 hover:text-white transition">定价</a> <a href="/" class="text-gray-500 hover:text-gray-300 transition text-xs">EN</a> <a href="https://github.com/qq136692547-cmyk/geo-score" target="_blank" rel="noopener" class="text-gray-500 hover:text-white transition flex items-center gap-1.5"> <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"></path></svg> <span class="font-mono text-[10px] px-1.5 py-0.5 rounded bg-white/10 text-gray-400">v1.8.0</span> </a> </div> <div id="nav-auth" class="ml-0 md:ml-2"></div> </div> </nav> </header> <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 min-h-[calc(100dvh-8rem)]">  <section class="max-w-4xl mx-auto"> <div class="text-center mb-10"> <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-geo-500/10 text-geo-400 border border-geo-500/20 mb-4">
+平台优化指南 · Shopify
+</div> <h1 class="text-4xl font-extrabold mb-3">Shopify GEO 优化</h1> <p class="text-gray-400 max-w-2xl mx-auto">
+让你的 Shopify 独立站商品目录被 ChatGPT Shopping、Perplexity 与 Claude 准确读取。几秒内完成 11 维 GEO 审计，并部署规范的 <code class="text-geo-400 bg-white/5 px-1.5 py-0.5 rounded">llms.txt</code>、<code class="text-geo-400 bg-white/5 px-1.5 py-0.5 rounded">robots.txt.liquid</code> 与 <code class="text-geo-400 bg-white/5 px-1.5 py-0.5 rounded">Product</code> Schema。
+</p> </div> <div class="card p-8 mb-8"> <h2 class="text-xl font-bold mb-4">立即审计你的 Shopify 店铺</h2> <p class="text-gray-400 mb-6">输入 Shopify 店铺域名，运行完整的 11 维度 GEO 审计（爬虫权限、llms.txt、结构化数据与 E-E-A-T 信号）：</p> <div class="flex flex-col sm:flex-row gap-3 max-w-xl"> <div class="flex-1 relative"> <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v4l3 3"></path></svg> <input id="url-input" type="url" placeholder="输入店铺网址，如 yourstore.com" aria-label="请输入 Shopify 店铺网址" onkeydown="if(event.key==='Enter'){document.getElementById('audit-btn').click();}" class="w-full pl-12 pr-5 py-3.5 rounded-xl bg-white/5 text-white placeholder-gray-500 border border-gray-600 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 text-lg transition"> </div> <button id="audit-btn" class="px-8 py-3.5 rounded-xl font-semibold text-white bg-gradient-to-r from-geo-600 to-brand-600 hover:from-geo-500 hover:to-brand-500 transition shadow-lg shadow-brand-500/20 whitespace-nowrap">检测店铺</button> </div> </div> <p class="text-xs text-gray-500 mb-10 text-center"> <a href="/zh/report/demo/" class="text-gray-400 hover:text-geo-400 transition underline underline-offset-2">查看样例报告</a>
+&mdash; n8n.io 得分 <span class="text-geo-400 font-semibold">66/100（Basic）</span>，11 个维度中 8 个超过 60%。
+</p> <div class="card p-8 mb-8"> <h2 class="text-xl font-bold mb-4">1. 通过 Content &gt; Files + URL 重定向发布 <code class="text-geo-400">llms.txt</code></h2> <p class="text-gray-400 mb-4">
+Shopify 不支持直接向网站根目录上传静态文本文件。最稳妥的原生做法是将文件上传至 Shopify CDN，再将 <code class="bg-white/5 px-1.5 py-0.5 rounded">/llms.txt</code> 重定向过去：
+</p> <ol class="space-y-3 text-sm text-gray-300 list-decimal list-inside mb-4"> <li>编写简洁的 <code class="bg-white/5 px-1.5 py-0.5 rounded">llms.txt</code>，概括店铺主营品类、畅销系列、物流退换货政策与核心页面链接。</li> <li>在 Shopify 后台打开 <strong class="text-white">Content &gt; Files</strong>，上传 <code class="bg-white/5 px-1.5 py-0.5 rounded">llms.txt</code> 并复制生成的 CDN 文件 URL。</li> <li>前往 <strong class="text-white">Online Store &gt; Navigation &gt; View URL redirects</strong>（或 <strong class="text-white">Content &gt; Menus &gt; URL Redirects</strong>），新建一条从 <code class="bg-white/5 px-1.5 py-0.5 rounded">/llms.txt</code> 到该 CDN 地址的重定向。</li> </ol> <pre class="bg-black/30 rounded-lg p-4 text-sm text-gray-300 overflow-x-auto"><code># Your Store Name
+
+> 店铺主营商品、配送范围与质保政策简介。
+
+## Key Collections
+- [Best Sellers](https://yourstore.com/collections/best-sellers): 畅销商品合集
+- [Shipping &amp; Returns](https://yourstore.com/pages/shipping): 配送与退换政策</code></pre> </div> <div class="card p-8 mb-8"> <h2 class="text-xl font-bold mb-4">2. 在 <code class="text-geo-400">templates/robots.txt.liquid</code> 中配置 AI 爬虫</h2> <p class="text-gray-400 mb-4">
+Shopify 支持通过 <code class="text-geo-400 bg-white/5 px-1.5 py-0.5 rounded">templates/robots.txt.liquid</code> 自定义爬虫规则。请务必保留 <code class="bg-white/5 px-1.5 py-0.5 rounded">{{ robots.default_groups }}</code> 以维持结账与后台路径保护，随后显式放行主流 AI 搜索爬虫：
+</p> <pre class="bg-black/30 rounded-lg p-4 text-sm text-gray-300 overflow-x-auto"><code>{% for group in robots.default_groups %}
+  {{- group.user_agent -}}
+  {% for rule in group.rules %}
+    {{- rule -}}
+  {% endfor %}
+  {%- if group.sitemap != blank -%}
+    {{ group.sitemap }}
+  {%- endif -%}
+{% endfor %}
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /</code></pre> </div> <div class="card p-8 mb-8"> <h2 class="text-xl font-bold mb-4">3. 在商品模板中校验 <code class="text-geo-400">Product</code> JSON-LD</h2> <p class="text-gray-400 mb-4">
+确保 <code class="bg-white/5 px-1.5 py-0.5 rounded">Product</code> 结构化数据仅在商品页输出（使用 <code class="text-geo-400 bg-white/5 px-1.5 py-0.5 rounded">{% if template contains &#39;product&#39; %}</code> 或置于 <code class="bg-white/5 px-1.5 py-0.5 rounded">sections/main-product.liquid</code>），并完整提供价格、币种、库存状态及 <code class="bg-white/5 px-1.5 py-0.5 rounded">sku</code>/<code class="bg-white/5 px-1.5 py-0.5 rounded">gtin</code>/<code class="bg-white/5 px-1.5 py-0.5 rounded">mpn</code> 标识符：
+</p> <pre class="bg-black/30 rounded-lg p-4 text-sm text-gray-300 overflow-x-auto"><code>{% if template contains &#39;product&#39; %}
+&lt;script type=&quot;application/ld+json&quot;&gt;
+{
+  &quot;@context&quot;: &quot;https://schema.org&quot;,
+  &quot;@type&quot;: &quot;Product&quot;,
+  &quot;name&quot;: {{ product.title | json }},
+  &quot;description&quot;: {{ product.description | strip_html | truncate: 300 | json }},
+  &quot;sku&quot;: {{ product.selected_or_first_available_variant.sku | json }},
+  &quot;brand&quot;: { &quot;@type&quot;: &quot;Brand&quot;, &quot;name&quot;: {{ product.vendor | json }} },
+  &quot;offers&quot;: {
+    &quot;@type&quot;: &quot;Offer&quot;,
+    &quot;priceCurrency&quot;: {{ cart.currency.iso_code | json }},
+    &quot;price&quot;: {{ product.selected_or_first_available_variant.price | money_without_currency | json }},
+    &quot;availability&quot;: &quot;https://schema.org/{% if product.available %}InStock{% else %}OutOfStock{% endif %}&quot;,
+    &quot;url&quot;: {{ shop.url | append: product.url | json }}
+  }
+}
+&lt;/script&gt;
+{% endif %}</code></pre> </div> <div class="card p-8 mb-8 border-brand-500/40 bg-brand-500/5 text-center"> <h2 class="text-2xl font-bold mb-3">希望由我们代为修复你的 Shopify 店铺？</h2> <p class="text-gray-300 max-w-2xl mx-auto mb-6">
+选择 <strong class="text-white">$49 AI Visibility Fix Pack</strong> —— 为你的主力爆款补全并通过校验的 Product JSON-LD、逐行 <code class="bg-white/10 px-1.5 py-0.5 rounded">robots.txt</code> 诊断、可直接上传 <code class="bg-white/10 px-1.5 py-0.5 rounded">Content &gt; Files</code> 的手写 <code class="bg-white/10 px-1.5 py-0.5 rounded">llms.txt</code>，以及部署后 48 小时内复检对比。
+</p> <div class="flex flex-col sm:flex-row justify-center gap-3"> <a href="/zh/fixpack/" class="inline-flex items-center justify-center px-6 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-geo-600 to-brand-600 hover:from-geo-500 hover:to-brand-500 transition">
+获取 $49 AI Visibility Fix Pack →
+</a> <a href="mailto:hello@geoscore.help?subject=Shopify%20Fix%20Pack%20%E5%92%A8%E8%AF%A2" class="inline-flex items-center justify-center px-6 py-3 rounded-xl font-semibold text-gray-200 bg-white/10 hover:bg-white/20 transition">
+发送邮件至 hello@geoscore.help
+</a> </div> </div> <div class="max-w-2xl mx-auto mb-10"> <h2 class="text-2xl font-bold text-center mb-6">Shopify GEO 常见问题</h2> <div class="space-y-4"> <div class="card p-5"> <h3 class="font-semibold mb-2">如何在 Shopify 店铺中添加 llms.txt？</h3> <p class="text-sm text-gray-400">在 Shopify 后台进入 Content &gt; Files 上传你的 llms.txt 文件并复制生成的 CDN 链接，然后进入 Online Store &gt; Navigation &gt; View URL redirects（或 Content &gt; Menus &gt; URL Redirects），创建一条从 /llms.txt 指向该 CDN 文件地址的 URL 重定向，即可在根域名路径下稳定访问。</p> </div> <div class="card p-5"> <h3 class="font-semibold mb-2">如何在 Shopify 的 robots.txt 中放行 GPTBot 和 ClaudeBot？</h3> <p class="text-sm text-gray-400">进入 Shopify 后台 Online Store &gt; Themes &gt; Edit code &gt; Templates &gt; Add a new template，选择 robots.txt 创建 templates/robots.txt.liquid。保留 {{ robots.default_groups }} 默认规则，在末尾为 GPTBot、OAI-SearchBot、ClaudeBot、PerplexityBot 和 Google-Extended 添加 Allow: / 规则。</p> </div> <div class="card p-5"> <h3 class="font-semibold mb-2">Shopify 主题中 Product JSON-LD 应该放在哪里？</h3> <p class="text-sm text-gray-400">应当将 Product JSON-LD 放在商品模板或 main-product 区块中，并通过 template contains 'product' 条件包裹，切勿挂在首页。需完整输出每个变体的价格、币种、库存状态以及 sku、gtin 或 mpn 等商品标识符。</p> </div> <div class="card p-5"> <h3 class="font-semibold mb-2">Shopify 自带基础 SEO 标签，为什么还需要做 GEO 审计？</h3> <p class="text-sm text-gray-400">许多 Shopify 默认主题或第三方插件会遗漏变体级标识符（sku、gtin、mpn），或输出不包含店铺真实商品目录信息的通用接口，甚至产生结构化数据冲突。实时审计可以验证 AI 爬虫实际解析到的内容。</p> </div> </div> </div> </section>  </main> <footer class="border-t border-gray-700/50"> <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"> <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-6"> <div> <h4 class="text-sm font-bold text-white mb-3">工具</h4> <ul class="space-y-2 text-sm text-gray-400"> <li><a href="/zh/tools/llms-txt-checker/" class="hover:text-brand-500 transition">llms.txt 检测</a></li> <li><a href="/zh/tools/robots-txt-ai-checker/" class="hover:text-brand-500 transition">Robots.txt AI 检测</a></li> <li><a href="/zh/tools/ai-readiness-score/" class="hover:text-brand-500 transition">AI 就绪评分</a></li> <li><a href="/zh/geo-for/shopify/" class="hover:text-brand-500 transition">Shopify GEO 优化</a></li> <li><a href="/zh/geo-for/wordpress/" class="hover:text-brand-500 transition">WordPress GEO 优化</a></li> <li><a href="/zh/geo-for/nextjs/" class="hover:text-brand-500 transition">Next.js GEO 优化</a></li> <li><a href="/zh/#chrome-extension" class="hover:text-brand-500 transition">Chrome 插件</a></li> </ul> </div> <div> <h4 class="text-sm font-bold text-white mb-3">学习</h4> <ul class="space-y-2 text-sm text-gray-400"> <li><a href="/zh/blog/" class="hover:text-brand-500 transition">中文博客</a></li> <li><a href="/zh/blog/geoscore-update-multi-page-security/" class="hover:text-brand-500 transition">引擎升级：多页面扫描</a></li> <li><a href="/zh/methodology/" class="hover:text-brand-500 transition">方法论</a></li> <li><a href="/blog/" class="hover:text-brand-500 transition">英文指南全集</a></li> <li><a href="https://github.com/qq136692547-cmyk/geo-score/tree/main/docs/handbook" target="_blank" rel="noopener" class="hover:text-brand-500 transition">GEO 手册</a></li> </ul> </div> <div> <h4 class="text-sm font-bold text-white mb-3">项目</h4> <ul class="space-y-2 text-sm text-gray-400"> <li><a href="https://github.com/qq136692547-cmyk/geo-score" target="_blank" rel="noopener" class="hover:text-brand-500 transition">GitHub 源码 (MIT)</a></li> <li><a href="https://geoscore.help/sitemap.xml" class="hover:text-brand-500 transition">Sitemap</a></li> <li><a href="https://geoscore.help/llms.txt" class="hover:text-brand-500 transition">llms.txt</a></li> <li><a href="/zh/privacy/" class="hover:text-brand-500 transition">隐私政策</a></li> <li><a href="/zh/terms/" class="hover:text-brand-500 transition">使用条款</a></li> <li><a href="mailto:hello@geoscore.help" class="hover:text-brand-500 transition">联系支持</a></li> <li><button type="button" id="consent-open" class="cursor-pointer text-left hover:text-brand-500 transition">Cookie 设置</button></li> <li><span class="text-gray-500">开源 — MIT 许可证</span></li> </ul> </div> </div> <p class="text-xs text-gray-500 text-center">© 2026 GeoScore. MIT 许可证。❤️ 为 AI 搜索时代构建.</p> </div> </footer> <!-- Consent panel. Server-rendered so it is on screen at first paint; shown
+       only while <html data-consent="pending">. Deliberately non-modal —
+       role=region, no focus trap — and every control is a native focusable
+       element (checkbox + label, real buttons). --> <div id="geoscore-consent-banner" class="consent-banner fixed bottom-0 left-0 right-0 z-[60] p-3 sm:p-4" role="region" aria-label="Cookie 设置"> <div class="max-w-4xl mx-auto card p-4 sm:p-5" style="background:rgba(15,23,42,0.97);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:0 8px 30px rgba(0,0,0,0.35)"> <p class="text-sm font-semibold text-white mb-1">GeoScore 的 Cookie 使用</p> <p class="text-xs text-gray-400 mb-3">
+只有在你允许之后，我们才会加载分析统计脚本 —— 在此之前不会向任何第三方发起请求。详见
+<a href="/zh/privacy/" class="text-brand-400 hover:underline">隐私政策</a>。
+</p> <div class="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4"> <div class="flex flex-col sm:flex-row sm:items-center gap-x-6 gap-y-2 sm:flex-1"> <label for="consent-analytics" class="flex items-center gap-2 text-sm text-gray-300 cursor-pointer"> <input type="checkbox" id="consent-analytics" class="h-4 w-4 accent-geo-500 cursor-pointer">
+分析统计
+</label> </div> <div class="flex flex-wrap gap-2"> <button type="button" id="consent-accept-all" class="cursor-pointer px-4 py-2 rounded-lg text-sm font-semibold text-white bg-gradient-to-r from-geo-600 to-brand-600 hover:from-geo-500 hover:to-brand-500 transition">接受全部</button> <button type="button" id="consent-essential" class="cursor-pointer px-4 py-2 rounded-lg text-sm font-semibold bg-white/10 hover:bg-white/20 transition">仅必要</button> <button type="button" id="consent-save" class="cursor-pointer px-4 py-2 rounded-lg text-sm font-semibold bg-white/10 hover:bg-white/20 transition">保存选择</button> </div> </div> </div> </div> <script type="module" src="/scripts/auth.js"></script> </body> </html> <script>
+  (function() {
+    var queue = [];
+    ["startAudit","showBatchInput","showComparison","startBatchAudit","runComparison","doExport"].forEach(function(n) {
+      window[n] = function() { queue.push({ n: n, a: arguments }); };
+    });
+    window.__geoFlush = function() { queue.splice(0).forEach(function(q) { window[q.n].apply(null, q.a); }); };
+  })();
+</script> <script type="module" src="/_astro/shopify.astro_astro_type_script_index_0_lang.nsxPTVXS.js"></script>
