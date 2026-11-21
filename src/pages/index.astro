@@ -43,7 +43,7 @@ import demo from '../../data/demo-report.json';
       name: 'Is GeoScore free?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'The open-source browser audit, CLI, and MCP Server are free. Optional Pro, Studio, and Agency plans with automated monitoring start at $9/month — see our pricing page for details. The source code is available on GitHub at github.com/qq136692547-cmyk/geo-score.'
+        text: 'The open-source browser audit, CLI, and MCP Server are free. Optional Pro, Studio, and Agency plans with automated monitoring start at $9/month — see our pricing page for details. The source code is available on GitHub (MIT Licensed).'
       }
     },
     {
@@ -149,17 +149,6 @@ import demo from '../../data/demo-report.json';
         <div id="compare-list" class="space-y-1 mb-3 max-h-40 overflow-y-auto"></div>
         <button id="compare-btn" class="px-4 py-1.5 rounded-lg text-xs font-semibold text-white bg-brand-600 hover:bg-brand-500 transition">Compare Selected</button>
       </div>
-    </div>
-  </section>
-
-  <!-- Fix Pack strip: the done-for-you offer, visible before any audit is run -->
-  <section class="max-w-4xl mx-auto mb-8">
-    <div class="card p-5 md:p-6 border-brand-500/30 flex flex-col sm:flex-row sm:items-center gap-4">
-      <div class="flex-1 text-left">
-        <div class="font-semibold text-white">No time to fix it yourself?</div>
-        <p class="text-sm text-gray-400">The <strong class="text-gray-200">AI Visibility Fix Pack</strong> rebuilds your llms.txt from your real catalog, adds explicit AI-crawler rules and Product schema — then re-audits after you deploy. $49 one-time, 48 hours.</p>
-      </div>
-      <a href="/fixpack/" class="shrink-0 text-center px-5 py-2.5 rounded-lg font-semibold text-sm text-white bg-gradient-to-r from-geo-600 to-brand-600 hover:from-geo-500 hover:to-brand-500 transition">Get it done for me →</a>
     </div>
   </section>
 
@@ -378,7 +367,7 @@ import demo from '../../data/demo-report.json';
       <p class="text-gray-400">GeoScore audits any public URL across 11 dimensions of GEO readiness (AI crawlability, llms.txt presence, structured data, meta tags, content quality, E-E-A-T signals, brand entity, citation readiness, discovery, agent-friendliness, and freshness), producing a 0-100 score plus a prioritized list of fixes. A single browser audit is free; the browser does not send the audited URL to GeoScore for storage.</p>
 
       <h3 class="text-lg font-bold text-white mt-6 mb-2">Is GeoScore free?</h3>
-      <p class="text-gray-400">The open-source browser audit, CLI, and MCP Server are free. Optional Pro, Studio, and Agency plans with automated monitoring start at $9/month — see our <a href="/pricing/" class="text-geo-400 hover:underline">pricing page</a> for details. The source code is available on GitHub at github.com/qq136692547-cmyk/geo-score.</p>
+      <p class="text-gray-400">The open-source browser audit, CLI, and MCP Server are free. Optional Pro, Studio, and Agency plans with automated monitoring start at $9/month — see our <a href="/pricing/" class="text-geo-400 hover:underline">pricing page</a> for details. The source code is available on <a href="https://github.com/qq136692547-cmyk/geo-score" target="_blank" rel="noopener" class="text-geo-400 hover:underline">GitHub (MIT Licensed)</a>.</p>
 
       <h3 class="text-lg font-bold text-white mt-6 mb-2">Which AI crawlers should I allow in robots.txt?</h3>
       <p class="text-gray-400">At minimum, allow: GPTBot and OAI-SearchBot (OpenAI/ChatGPT), ClaudeBot and anthropic-ai (Anthropic/Claude), PerplexityBot (Perplexity), Google-Extended (Google Gemini and AI Overviews), and CCBot (Common Crawl, used by many models). GeoScore will tell you exactly which crawlers you are currently blocking.</p>

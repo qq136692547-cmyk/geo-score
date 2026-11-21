@@ -4,10 +4,8 @@ import Layout from '../layouts/Layout.astro';
 <Layout title="GeoScore Pricing - Free & Pro Plans" schema={{
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
-  // 这份 mainEntity 必须与页面下方 "Pricing FAQ" 区块逐条对齐。
-  // 之前的版本声明了 'Is GeoScore free?' 与 'What is included in the Pro plan?'，
-  // 但页面上显示的是另外一组问题——schema 里的答案用户看不到，属于不一致，
-  // 会被判为无资格显示富媒体结果。tests/faq-schema-consistency.test.js 守住这条。
+  // Keep mainEntity strictly aligned with visible "Pricing FAQ" cards below
+  // to satisfy tests/faq-schema-consistency.test.js and maintain Rich Results eligibility.
   mainEntity: [
     {
       '@type': 'Question',
@@ -32,7 +30,7 @@ import Layout from '../layouts/Layout.astro';
     {
       '@type': 'Question',
       name: 'Do you handle VAT and taxes?',
-      acceptedAnswer: { '@type': 'Answer', text: 'Yes. As a Merchant of Record, our payment partner Creem handles VAT, GST, and sales tax compliance in 190+ countries.' }
+      acceptedAnswer: { '@type': 'Answer', text: "Yes. As a Merchant of Record, our payment partner Creem handles VAT, GST, and sales tax compliance in 190+ countries. You don't need to worry about tax forms." }
     },
     {
       '@type': 'Question',
@@ -56,24 +54,6 @@ import Layout from '../layouts/Layout.astro';
       </p>
     </div>
 
-    <!-- Fix Pack: one-time done-for-you service, deliberately outside the subscription grid -->
-    <div class="card p-6 md:p-8 mb-12 border-brand-500/30 flex flex-col md:flex-row md:items-center gap-6">
-      <div class="flex-1">
-        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-brand-500/10 text-brand-400 border border-brand-500/20 mb-3">One-time · Done for you</div>
-        <h2 class="text-2xl font-bold mb-2">AI Visibility Fix Pack — $49</h2>
-        <p class="text-sm text-gray-400">
-          Don't want to DIY? We rebuild your llms.txt from your real catalog, write explicit AI-crawler rules
-          for robots.txt, and complete Product schema for your best-seller — then re-audit after you deploy.
-          Human-made, checked against your live site, delivered in 48 hours.
-        </p>
-      </div>
-      <div class="text-center shrink-0">
-        <div class="text-4xl font-extrabold mb-1">$49</div>
-        <div class="text-xs text-gray-500 mb-4">one-time · no subscription</div>
-        <a id="fixpack-banner-cta" href="/fixpack/" class="inline-block px-6 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-geo-600 to-brand-600 hover:from-geo-500 hover:to-brand-500 transition">See what's included →</a>
-      </div>
-    </div>
-
     <!-- Global Billing Cycle Toggle -->
     <div class="flex justify-center mb-10">
       <div class="inline-flex items-center p-1 rounded-xl bg-gray-800/90 border border-gray-700/80 text-sm shadow-inner" role="group" aria-label="Billing cycle">
@@ -87,8 +67,9 @@ import Layout from '../layouts/Layout.astro';
       </div>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 items-stretch mb-12">
-      <!-- Free -->
+    <!-- 3-Column Core Pricing Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch mb-10">
+      <!-- Card 1: Free -->
       <div class="card p-5 lg:p-6 flex flex-col justify-between h-full relative">
         <!-- Area 1: Title and badge -->
         <div class="flex items-center justify-between mb-3 h-[28px]">
@@ -101,7 +82,7 @@ import Layout from '../layouts/Layout.astro';
           <span class="text-sm font-normal text-gray-400 ml-1.5">/ forever</span>
         </div>
         <!-- Area 3: Billing info -->
-        <div class="h-[20px] mb-5 flex items-center text-xs text-gray-500">Free forever · Instant audit</div>
+        <div class="h-[20px] mb-5 flex items-center text-xs text-gray-500 whitespace-nowrap">Free forever · Instant audit</div>
         <!-- Area 4: Features list (Standard 6 items, single-line alignment) -->
         <ul class="border-t border-gray-700/50 pt-5 mb-6 space-y-3 flex-1 text-xs md:text-[13px] text-gray-300">
           <li class="flex items-center gap-2 h-[22px] whitespace-nowrap"><span class="text-geo-500 font-bold shrink-0">✓</span><span>Single URL instant audit</span></li>
@@ -117,7 +98,7 @@ import Layout from '../layouts/Layout.astro';
         </div>
       </div>
 
-      <!-- Pro (Popular) -->
+      <!-- Card 2: Pro (Featured / Popular) -->
       <div class="card p-5 lg:p-6 flex flex-col justify-between h-full relative ring-2 ring-brand-500 bg-gradient-to-b from-brand-950/20 to-transparent shadow-lg shadow-brand-500/10">
         <!-- Area 1: Title and badge -->
         <div class="flex items-center justify-between mb-3 h-[28px]">
@@ -137,7 +118,7 @@ import Layout from '../layouts/Layout.astro';
           <li class="flex items-center gap-2 h-[22px] whitespace-nowrap"><span class="text-brand-500 font-bold shrink-0">✓</span><span>5 domains weekly audit</span></li>
           <li class="flex items-center gap-2 h-[22px] whitespace-nowrap"><span class="text-brand-500 font-bold shrink-0">✓</span><span>30-day history & alerts</span></li>
           <li class="flex items-center gap-2 h-[22px] whitespace-nowrap"><span class="text-brand-500 font-bold shrink-0">✓</span><span>Professional PDF export</span></li>
-          <li class="flex items-center gap-2 h-[22px] whitespace-nowrap"><span class="text-brand-500 font-bold shrink-0">✓</span><span>AI estimate (30 runs/mo)</span></li>
+          <li class="flex items-center gap-2 h-[22px] whitespace-nowrap"><span class="text-brand-500 font-bold shrink-0">✓</span><span>AI Citation Simulator (30 runs/mo)</span></li>
           <li class="flex items-center gap-2 h-[22px] whitespace-nowrap"><span class="text-brand-500 font-bold shrink-0">✓</span><span>Priority email support</span></li>
         </ul>
         <!-- Area 5: Action CTA button -->
@@ -146,67 +127,55 @@ import Layout from '../layouts/Layout.astro';
         </div>
       </div>
 
-      <!-- Studio -->
-      <div class="card p-5 lg:p-6 flex flex-col justify-between h-full relative border-geo-500/30">
+      <!-- Card 3: AI Visibility Fix Pack (Done For You) -->
+      <div class="card p-5 lg:p-6 flex flex-col justify-between h-full relative border-geo-500/30 bg-gradient-to-b from-geo-950/20 to-transparent shadow-lg shadow-geo-500/10">
         <!-- Area 1: Title and badge -->
         <div class="flex items-center justify-between mb-3 h-[28px]">
-          <div class="text-base font-bold text-geo-400">Studio</div>
-          <span class="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-geo-500/20 text-geo-400 border border-geo-500/40">Team</span>
+          <div class="text-base font-bold text-geo-400">Fix Pack</div>
+          <span class="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-geo-500/20 text-geo-400 border border-geo-500/40">Done For You</span>
         </div>
         <!-- Area 2: Main price -->
         <div class="h-[44px] flex items-baseline mb-1">
-          <span class="text-3xl font-extrabold text-white tracking-tight">$29</span>
-          <span class="text-sm font-normal text-gray-400 ml-1.5">/ mo</span>
+          <span class="text-3xl font-extrabold text-white tracking-tight">$49</span>
+          <span class="text-sm font-normal text-gray-400 ml-1.5">/ one-time</span>
         </div>
         <!-- Area 3: Billing info -->
-        <div class="h-[20px] mb-5 flex items-center text-xs text-gray-500 whitespace-nowrap" id="studio-billing-note">7-day trial · Taxes included</div>
+        <div class="h-[20px] mb-5 flex items-center text-xs text-gray-400 whitespace-nowrap">One-time payment · No subscription</div>
         <!-- Area 4: Features list (Standard 6 items, single-line alignment) -->
-        <ul class="border-t border-gray-700/50 pt-5 mb-6 space-y-3 flex-1 text-xs md:text-[13px] text-gray-300">
-          <li class="flex items-center gap-2 h-[22px] whitespace-nowrap"><span class="text-geo-500 font-bold shrink-0">✓</span><span>Everything in Pro</span></li>
-          <li class="flex items-center gap-2 h-[22px] whitespace-nowrap"><span class="text-geo-500 font-bold shrink-0">✓</span><span>15 domains daily audit</span></li>
-          <li class="flex items-center gap-2 h-[22px] whitespace-nowrap"><span class="text-geo-500 font-bold shrink-0">✓</span><span>12-month history trends</span></li>
-          <li class="flex items-center gap-2 h-[22px] whitespace-nowrap"><span class="text-geo-500 font-bold shrink-0">✓</span><span>Competitor benchmarks</span></li>
-          <li class="flex items-center gap-2 h-[22px] whitespace-nowrap"><span class="text-geo-500 font-bold shrink-0">✓</span><span>Dedicated API access</span></li>
-          <li class="flex items-center gap-2 h-[22px] whitespace-nowrap"><span class="text-geo-500 font-bold shrink-0">✓</span><span>Full audit data export</span></li>
+        <ul class="border-t border-geo-500/30 pt-5 mb-6 space-y-3 flex-1 text-xs md:text-[13px] text-gray-300">
+          <li class="flex items-center gap-2 h-[22px] whitespace-nowrap"><span class="text-geo-500 font-bold shrink-0">✓</span><span>Custom llms.txt for your catalog</span></li>
+          <li class="flex items-center gap-2 h-[22px] whitespace-nowrap"><span class="text-geo-500 font-bold shrink-0">✓</span><span>Explicit AI crawler robots.txt</span></li>
+          <li class="flex items-center gap-2 h-[22px] whitespace-nowrap"><span class="text-geo-500 font-bold shrink-0">✓</span><span>Product JSON-LD schema fix</span></li>
+          <li class="flex items-center gap-2 h-[22px] whitespace-nowrap"><span class="text-geo-500 font-bold shrink-0">✓</span><span>1-page tailored GEO audit</span></li>
+          <li class="flex items-center gap-2 h-[22px] whitespace-nowrap"><span class="text-geo-500 font-bold shrink-0">✓</span><span>Post-deploy re-audit check</span></li>
+          <li class="flex items-center gap-2 h-[22px] whitespace-nowrap"><span class="text-geo-500 font-bold shrink-0">✓</span><span>Human-made · 48h delivery</span></li>
         </ul>
         <!-- Area 5: Action CTA button -->
         <div class="mt-auto">
-          <button id="upgrade-studio" type="button" data-plan="studio" data-billing="monthly" data-checkout="https://www.creem.io/payment/prod_yvmQsDZnoKHNXtDpJt51x" class="block w-full text-center py-2.5 rounded-lg font-semibold text-sm border border-gray-700 bg-gray-800/60 text-white hover:border-geo-500 hover:bg-geo-500/10 transition cursor-pointer">Start 7-Day Trial</button>
-        </div>
-      </div>
-
-      <!-- Agency -->
-      <div class="card p-5 lg:p-6 flex flex-col justify-between h-full relative border-indigo-500/30">
-        <!-- Area 1: Title and badge -->
-        <div class="flex items-center justify-between mb-3 h-[28px]">
-          <div class="text-base font-bold text-indigo-400">Agency</div>
-          <span class="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-indigo-500/20 text-indigo-400 border border-indigo-500/40">Enterprise</span>
-        </div>
-        <!-- Area 2: Main price -->
-        <div class="h-[44px] flex items-baseline mb-1">
-          <span class="text-3xl font-extrabold text-white tracking-tight">$59</span>
-          <span class="text-sm font-normal text-gray-400 ml-1.5">/ mo</span>
-        </div>
-        <!-- Area 3: Billing info -->
-        <div class="h-[20px] mb-5 flex items-center text-xs text-gray-500 whitespace-nowrap" id="agency-billing-note">7-day trial · Taxes included</div>
-        <!-- Area 4: Features list (Standard 6 items, single-line alignment) -->
-        <ul class="border-t border-gray-700/50 pt-5 mb-6 space-y-3 flex-1 text-xs md:text-[13px] text-gray-300">
-          <li class="flex items-center gap-2 h-[22px] whitespace-nowrap"><span class="text-indigo-500 font-bold shrink-0">✓</span><span>Everything in Studio</span></li>
-          <li class="flex items-center gap-2 h-[22px] whitespace-nowrap"><span class="text-indigo-500 font-bold shrink-0">✓</span><span>50 domains hourly audit</span></li>
-          <li class="flex items-center gap-2 h-[22px] whitespace-nowrap"><span class="text-indigo-500 font-bold shrink-0">✓</span><span>Unlimited audit history</span></li>
-          <li class="flex items-center gap-2 h-[22px] whitespace-nowrap"><span class="text-indigo-500 font-bold shrink-0">✓</span><span>Client workspace isolation</span></li>
-          <li class="flex items-center gap-2 h-[22px] whitespace-nowrap"><span class="text-indigo-500 font-bold shrink-0">✓</span><span>White-label PDF reports</span></li>
-          <li class="flex items-center gap-2 h-[22px] whitespace-nowrap"><span class="text-indigo-500 font-bold shrink-0">✓</span><span>1-on-1 engineer support</span></li>
-        </ul>
-        <!-- Area 5: Action CTA button -->
-        <div class="mt-auto">
-          <button id="upgrade-agency" type="button" data-plan="agency" data-billing="monthly" data-checkout="https://www.creem.io/payment/prod_7Itt3xoxDKLaItFqjfhv7x" class="block w-full text-center py-2.5 rounded-lg font-semibold text-sm border border-gray-700 bg-gray-800/60 text-white hover:border-brand-500 hover:bg-brand-500/10 transition cursor-pointer">Start 7-Day Trial</button>
+          <a id="fixpack-cta" href="/fixpack/" class="block w-full text-center py-2.5 rounded-lg font-semibold text-sm border border-geo-500/50 bg-geo-500/10 text-geo-300 hover:bg-geo-500 hover:text-white transition">Get Fix Pack ($49) →</a>
         </div>
       </div>
     </div>
 
+    <!-- Studio & Agency Callout Bar -->
+    <div class="card p-5 md:p-6 mb-12 border-gray-700/60 bg-gradient-to-r from-gray-900/90 via-gray-800/50 to-gray-900/90 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div class="flex-1">
+        <div class="flex items-center gap-2 mb-1.5">
+          <span class="px-2 py-0.5 rounded text-[11px] font-semibold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">Enterprise & Teams</span>
+          <h3 class="text-base font-semibold text-white">Studio & Agency Plans</h3>
+        </div>
+        <p class="text-sm text-gray-400 leading-relaxed">
+          Need higher frequency, 15+ domains, or white-label reports? Studio ($29/mo) and Agency ($59/mo) plans include daily/hourly audits, team workspaces, and dedicated API access.
+        </p>
+      </div>
+      <div class="flex items-center gap-3 shrink-0">
+        <a href="#feature-comparison" class="px-4 py-2 rounded-lg text-sm font-medium text-gray-300 bg-gray-800 border border-gray-700 hover:border-gray-500 hover:text-white transition text-center">Compare Plans</a>
+        <button id="upgrade-studio" type="button" data-plan="studio" data-billing="monthly" data-checkout="https://www.creem.io/payment/prod_yvmQsDZnoKHNXtDpJt51x" class="px-4 py-2 rounded-lg text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-500 shadow-sm transition cursor-pointer text-center whitespace-nowrap">Start Studio Trial</button>
+      </div>
+    </div>
+
     <!-- Comparison table -->
-    <div class="card p-6 md:p-8 mb-12">
+    <div id="feature-comparison" class="card p-6 md:p-8 mb-12 scroll-mt-6">
       <h2 class="text-xl font-bold mb-6 text-center">Feature Comparison</h2>
       <div class="overflow-x-auto">
         <table class="w-full text-sm">
@@ -236,6 +205,10 @@ import Layout from '../layouts/Layout.astro';
             <tr class="font-semibold"><td class="py-2.5 text-white">Price</td><td class="text-center text-gray-300">$0</td><td class="text-center text-brand-400">$9/mo</td><td class="text-center text-geo-400">$29/mo</td><td class="text-center text-gray-300">$59/mo</td></tr>
           </tbody>
         </table>
+      </div>
+      <div class="mt-6 pt-4 border-t border-gray-700/50 flex flex-wrap justify-between items-center gap-3 text-xs text-gray-400">
+        <div>All paid plans include a 7-day free trial · Cancel anytime</div>
+        <button id="upgrade-agency" type="button" data-plan="agency" data-billing="monthly" data-checkout="https://www.creem.io/payment/prod_7Itt3xoxDKLaItFqjfhv7x" class="px-4 py-2 rounded-lg border border-gray-700 bg-gray-800/80 hover:border-indigo-500 hover:text-white text-gray-300 transition cursor-pointer font-medium">Start Agency Trial ($59/mo) →</button>
       </div>
     </div>
 
@@ -269,7 +242,7 @@ import Layout from '../layouts/Layout.astro';
         </div>
         <div class="card p-5">
           <h3 class="font-semibold mb-2">Are Studio and Agency plans available?</h3>
-          <p class="text-sm text-gray-400">Yes. Studio ($29/mo) and Agency ($59/mo) plans are now live with 7-day free trials. They include daily/hourly automated audits, 15–50 domains, and team workspace capabilities.</p>
+          <p class="text-sm text-gray-400">Yes. Studio ($29/mo) and Agency ($59/mo) plans are available with 7-day free trials. They include higher audit frequencies, more domains, and team features.</p>
         </div>
       </div>
     </div>
@@ -422,23 +395,14 @@ import Layout from '../layouts/Layout.astro';
   function renderCheckoutSuccess() {
     const host = document.querySelector('section');
     if (!host || document.getElementById('checkout-success')) return;
-    const zh = (document.documentElement.lang || 'en').toLowerCase().indexOf('zh') === 0;
     const box = document.createElement('div');
     box.id = 'checkout-success';
     box.setAttribute('role', 'status');
     box.className = 'card p-6 mb-8 border-geo-500/40 bg-geo-500/10';
     box.innerHTML =
-      '<h2 class="text-lg font-bold text-white mb-2">' +
-        (zh ? '付款成功，订阅已生效' : 'Payment received — your subscription is active') +
-      '</h2>' +
-      '<p class="text-sm text-gray-300 mb-4">' +
-        (zh
-          ? '你的账号已升级。监控面板在首页，跑一次审计后即可看到监控、历史与 AI 可见度。'
-          : 'Your account is upgraded. The monitoring panel lives on the home page — run one audit and monitoring, history and AI visibility open up.') +
-      '</p>' +
-      '<a href="/' + (zh ? 'zh/' : '') + '#pro-monitor-root" class="inline-block px-4 py-2 rounded-lg bg-geo-500 hover:bg-geo-600 text-white text-sm font-semibold transition">' +
-        (zh ? '打开监控面板 →' : 'Open the monitoring panel →') +
-      '</a>';
+      '<h2 class="text-lg font-bold text-white mb-2">Payment received — your subscription is active</h2>' +
+      '<p class="text-sm text-gray-300 mb-4">Your account is upgraded. The monitoring panel lives on the home page — run one audit and monitoring, history and AI visibility open up.</p>' +
+      '<a href="/#pro-monitor-root" class="inline-block px-4 py-2 rounded-lg bg-geo-500 hover:bg-geo-600 text-white text-sm font-semibold transition">Open the monitoring panel →</a>';
     host.insertBefore(box, host.firstChild);
   }
 
@@ -469,10 +433,10 @@ import Layout from '../layouts/Layout.astro';
   if (window.geoTrack) {
     window.geoTrack('pricing_viewed', { source_type: window.geoSource ? window.geoSource() : 'other' });
   }
-  const fixpackCta = document.getElementById('fixpack-banner-cta');
+  const fixpackCta = document.getElementById('fixpack-cta');
   if (fixpackCta) {
     fixpackCta.addEventListener('click', function () {
-      if (window.geoTrack) window.geoTrack('fixpack_cta_clicked', { placement: 'pricing_banner', transport_type: 'beacon' });
+      if (window.geoTrack) window.geoTrack('fixpack_cta_clicked', { placement: 'pricing_card', transport_type: 'beacon' });
     });
   }
 </script>

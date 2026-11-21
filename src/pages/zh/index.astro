@@ -43,7 +43,7 @@ import demo from '../../../data/demo-report.json';
       name: 'GeoScore 是免费的吗？',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: '开源的浏览器审计、CLI 和 MCP Server 免费。可选 Pro、Studio 和 Agency 计划提供自动化监控，起价 $9/月——详见定价页。源代码可在 GitHub 获取：github.com/qq136692547-cmyk/geo-score。'
+        text: '开源的浏览器审计、CLI 和 MCP Server 免费。可选 Pro、Studio 和 Agency 计划提供自动化监控，起价 $9/月——详见定价页。源代码可在 GitHub 源码 (MIT) 获取。'
       }
     },
     {
@@ -124,17 +124,6 @@ import demo from '../../../data/demo-report.json';
         <div id="compare-list" class="space-y-1 mb-3 max-h-40 overflow-y-auto"></div>
         <button id="compare-btn" class="px-4 py-1.5 rounded-lg text-xs font-semibold text-white bg-brand-600 hover:bg-brand-500 transition">对比已选</button>
       </div>
-    </div>
-  </section>
-
-  <!-- Fix Pack 条带：代做服务入口，审计前即可见 -->
-  <section class="max-w-4xl mx-auto mb-8">
-    <div class="card p-5 md:p-6 border-brand-500/30 flex flex-col sm:flex-row sm:items-center gap-4">
-      <div class="flex-1 text-left">
-        <div class="font-semibold text-white">没时间自己修？</div>
-        <p class="text-sm text-gray-400"><strong class="text-gray-200">AI 可见度 Fix Pack</strong> 按你的真实目录重写 llms.txt、补显式 AI 爬虫放行规则与 Product schema——部署后复检。$49 一次性，48 小时交付。</p>
-      </div>
-      <a href="/zh/fixpack/" class="shrink-0 text-center px-5 py-2.5 rounded-lg font-semibold text-sm text-white bg-gradient-to-r from-geo-600 to-brand-600 hover:from-geo-500 hover:to-brand-500 transition">帮我做完 →</a>
     </div>
   </section>
 
@@ -328,7 +317,7 @@ import demo from '../../../data/demo-report.json';
       <p class="text-gray-400">GeoScore 从 11 个维度审计任何公开 URL 的 GEO 就绪度（AI 可爬性、llms.txt 存在性、结构化数据、meta 标签、内容质量、E-E-A-T 信号、品牌实体、引用就绪度、发现端点、Agent 友好性和新鲜度），生成 0-100 分和优先修复列表。单次浏览器审计免费；浏览器审计不会把 URL 发送给 GeoScore 存储。</p>
 
       <h3 class="text-lg font-bold text-white mt-6 mb-2">GeoScore 是免费的吗？</h3>
-      <p class="text-gray-400">开源的浏览器审计、CLI 和 MCP Server 免费。可选 Pro、Studio 和 Agency 计划提供自动化监控，起价 $9/月——详见定价页。源代码可在 GitHub 获取：github.com/qq136692547-cmyk/geo-score。</p>
+      <p class="text-gray-400">开源的浏览器审计、CLI 和 MCP Server 免费。可选 Pro、Studio 和 Agency 计划提供自动化监控，起价 $9/月——详见定价页。源代码可在 <a href="https://github.com/qq136692547-cmyk/geo-score" target="_blank" rel="noopener" class="text-geo-400 hover:underline">GitHub 源码 (MIT)</a> 获取。</p>
 
       <h3 class="text-lg font-bold text-white mt-6 mb-2">robots.txt 中应该允许哪些 AI 爬虫？</h3>
       <p class="text-gray-400">至少应允许：GPTBot 和 OAI-SearchBot（OpenAI/ChatGPT）、ClaudeBot 和 anthropic-ai（Anthropic/Claude）、PerplexityBot（Perplexity）、Google-Extended（Google Gemini 和 AI Overviews）以及 CCBot（Common Crawl，被许多模型使用）。GeoScore 会告诉你当前正在阻止哪些爬虫。</p>
