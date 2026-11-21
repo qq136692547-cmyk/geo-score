@@ -60,9 +60,9 @@ export function renderBadgeSvg({ score, level, status } = {}) {
   } else {
     const rounded = Math.round(score);
     rightText = `${rounded}/100`;
-    if (score >= 80) rightColor = '#16a34a';
-    else if (score >= 60) rightColor = '#2563eb';
-    else if (score >= 40) rightColor = '#ca8a04';
+    if (score >= 86) rightColor = '#16a34a';
+    else if (score >= 68) rightColor = '#2563eb';
+    else if (score >= 36) rightColor = '#ca8a04';
     else rightColor = '#dc2626';
   }
 

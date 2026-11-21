@@ -18,8 +18,10 @@ import {
 } from '../shared/i18n.js';
 import { buildCursorFixPrompt } from '../shared/promptBuilder.js';
 import { buildSmokeTestData } from '../shared/smokeTest.js';
+import { detectTechStack, getStackGuidance } from '../shared/stackDetector.js';
 import { getSettings, saveSettings, clearAuditHistory, computeAuditDiff } from '../shared/storage.js';
 import { exportMarkdown, exportJson } from '../../../src/lib/export.js';
+import { parseBadgeDomain, renderBadgeSvg, buildBadgeEmbedSnippets } from '../../../src/lib/badgeSvg.js';
 
 // --- State Variables ---
 let currentTabId = null;
@@ -329,7 +331,7 @@ export function renderAuditState(state) {
     if (bannerSoft404Text) {
       const endpoints = soft404Entries.map(([ep]) => ep).join(', ');
       bannerSoft404Text.innerHTML = isZh
-        ? `<strong>软 404 伪响应告警：</strong> 端点 ${endpoints} 返回了 HTTP 200，但实际响应体为 HTML SPA 壳工程。`
+        ? `<strong>软 404 伪响应告警：</strong> 端点 ${endpoints} 返回了 HTTP 200，但实际响应体为 HTML 兜底页面。`
         : `<strong>Soft 404 Detected:</strong> Endpoints (${endpoints}) returned HTTP 200 with HTML SPA shells.`;
     }
   } else {
@@ -485,7 +487,7 @@ export function renderAuditState(state) {
         div.style.background = 'rgba(234, 179, 8, 0.1)';
         div.style.border = '1px solid rgba(234, 179, 8, 0.25)';
         div.style.borderRadius = '6px';
-        div.innerHTML = `<strong>${escapeHtml(ep)}</strong>: ${escapeHtml(item.reason || (isZh ? '服务器对静态端点返回了 HTML 壳工程' : 'Returned HTTP 200 with HTML shell'))}`;
+        div.innerHTML = `<strong>${escapeHtml(ep)}</strong>: ${escapeHtml(item.reason || (isZh ? '服务器对静态端点返回了 HTML 兜底页面（软 404）' : 'Returned HTTP 200 with HTML shell'))}`;
         soft404List.appendChild(div);
       }
     } else {
@@ -502,8 +504,11 @@ export function renderAuditState(state) {
   // 11. AI Smoke Test Launcher
   renderSmokeTest(smokeTestData, result);
 
-  // 12. Dynamic Funnel Links with URL params
-  updateFunnelLinks(result.url || currentTabUrl);
+  // 12. Live SVG Badge Embed Card
+  renderLiveBadgeCard(result);
+
+  // 13. Dynamic Funnel Links with URL params & score-based pinning
+  updateFunnelLinks(result.url || currentTabUrl, scoreVal);
 }
 
 // Render Dimensions List & Checks
@@ -801,6 +806,43 @@ function renderFixFiles(fixFiles = {}, result = {}) {
   if (robotsDisclaimer) {
     robotsDisclaimer.style.display = activeFixTab === 'robots' ? 'block' : 'none';
   }
+
+  // Tech stack detection & platform deployment guidance
+  const stackCallout = document.getElementById('stack-guide-callout');
+  if (stackCallout) {
+    const detectedStack = detectTechStack(result.raw?.pageHtml || '', result.url || currentTabUrl);
+    const guidance = getStackGuidance(detectedStack, isZh);
+    if (guidance) {
+      stackCallout.style.display = 'flex';
+      const badgeEl = document.getElementById('stack-guide-badge');
+      const hintEl = document.getElementById('stack-guide-hint');
+      const summaryEl = document.getElementById('stack-guide-summary');
+      const linkEl = document.getElementById('stack-guide-link');
+
+      if (badgeEl) {
+        badgeEl.textContent = isZh
+          ? `检测到技术栈：${guidance.name}`
+          : `Detected Stack: ${guidance.name}`;
+      }
+      if (hintEl) {
+        if (guidance.showFixPackHint) {
+          hintEl.style.display = 'inline-block';
+          hintEl.textContent = isZh ? '支持 Fix Pack 代部署' : 'Fix Pack Available';
+        } else {
+          hintEl.style.display = 'none';
+        }
+      }
+      if (summaryEl) summaryEl.textContent = guidance.summary;
+      if (linkEl) {
+        linkEl.href = guidance.guideUrl;
+        linkEl.textContent = isZh
+          ? `查看 ${guidance.name} 完整 GEO 指南 ↗`
+          : `View Full ${guidance.name} GEO Guide ↗`;
+      }
+    } else {
+      stackCallout.style.display = 'none';
+    }
+  }
 }
 
 // Render AI Smoke Test Launcher
@@ -865,8 +907,82 @@ function renderSmokeTest(smokeTestData, result) {
   }
 }
 
-// Update Funnel Links with URL params & localization
-function updateFunnelLinks(targetUrl) {
+// Render Live SVG Badge Embed Card
+function renderLiveBadgeCard(result = {}) {
+  const card = document.getElementById('live-badge-card');
+  if (!card) return;
+
+  const isZh = currentLang === 'zh_CN';
+  let hostname = '';
+  try {
+    if (result.url) hostname = new URL(result.url).hostname;
+  } catch {}
+
+  const validDomain = parseBadgeDomain(hostname);
+  if (!validDomain) {
+    card.style.display = 'none';
+    return;
+  }
+
+  const snippets = buildBadgeEmbedSnippets(validDomain);
+  if (!snippets) {
+    card.style.display = 'none';
+    return;
+  }
+
+  const scoreVal = typeof result.score === 'number' ? result.score : result.total;
+  const isReady = typeof scoreVal === 'number' && scoreVal >= 80;
+
+  card.style.display = 'flex';
+  if (isReady) {
+    card.classList.add('live-badge-ready');
+  } else {
+    card.classList.remove('live-badge-ready');
+  }
+
+  const titleEl = document.getElementById('label-live-badge-title');
+  if (titleEl) {
+    titleEl.textContent = isZh ? '嵌入实时 GeoScore 徽章' : 'Embed Live GeoScore Badge';
+  }
+
+  const descEl = document.getElementById('label-live-badge-desc');
+  if (descEl) {
+    if (isReady) {
+      descEl.textContent = isZh
+        ? '您的站点已达到 AI 友好标准！建议将此实时徽章嵌入页脚或 GitHub README。'
+        : 'Your site meets AI-ready standards! Embed this live badge in your site footer or GitHub README.';
+    } else {
+      descEl.textContent = isZh
+        ? '可将实时 GeoScore 状态徽章嵌入网站页脚或 GitHub README（分数将自动同步更新）。'
+        : 'Embed your live GeoScore badge in your site footer or GitHub README (updates automatically).';
+    }
+  }
+
+  const previewEl = document.getElementById('live-badge-preview');
+  if (previewEl) {
+    const svgString = renderBadgeSvg({ score: scoreVal, level: result.level });
+    if (typeof DOMParser !== 'undefined') {
+      const doc = new DOMParser().parseFromString(svgString, 'image/svg+xml');
+      const svgNode = doc && doc.documentElement;
+      if (svgNode && svgNode.nodeName.toLowerCase() === 'svg') {
+        previewEl.replaceChildren(document.importNode(svgNode, true));
+      } else {
+        previewEl.textContent = '';
+      }
+    } else {
+      previewEl.textContent = '';
+    }
+  }
+
+  const mdCodeEl = document.getElementById('badge-md-code');
+  if (mdCodeEl) mdCodeEl.textContent = snippets.markdown;
+
+  const htmlCodeEl = document.getElementById('badge-html-code');
+  if (htmlCodeEl) htmlCodeEl.textContent = snippets.html;
+}
+
+// Update Funnel Links with URL params, localization & low-score pinning
+function updateFunnelLinks(targetUrl, score) {
   const isZh = currentLang === 'zh_CN';
   const encodedUrl = encodeURIComponent(targetUrl || '');
 
@@ -888,6 +1004,22 @@ function updateFunnelLinks(targetUrl) {
     pricingLink.href = isZh
       ? 'https://geoscore.help/zh/pricing/?utm_source=chrome_ext'
       : 'https://geoscore.help/pricing/?utm_source=chrome_ext';
+  }
+
+  const funnelContainer = document.querySelector('.funnel-container');
+  if (funnelContainer && proLink && fixPackLink && pricingLink) {
+    const prioritizeFixPack = typeof score === 'number' && score < 60;
+    if (prioritizeFixPack) {
+      funnelContainer.appendChild(fixPackLink);
+      funnelContainer.appendChild(proLink);
+      funnelContainer.appendChild(pricingLink);
+      fixPackLink.classList.add('funnel-card-primary');
+    } else {
+      funnelContainer.appendChild(proLink);
+      funnelContainer.appendChild(fixPackLink);
+      funnelContainer.appendChild(pricingLink);
+      fixPackLink.classList.remove('funnel-card-primary');
+    }
   }
 }
 
@@ -1031,14 +1163,27 @@ function updateStaticLabels() {
   }
 
   const fixpackTitle = document.getElementById('label-fixpack-title');
-  if (fixpackTitle) fixpackTitle.textContent = isZh ? '全套 AI 搜索就绪度修复包' : 'Done-For-You AI Visibility Fix Pack';
+  if (fixpackTitle) fixpackTitle.textContent = isZh ? 'AI 可见度 Fix Pack（人工代做）' : 'Done-For-You AI Visibility Fix Pack';
+
+  const fixpackBadge = document.getElementById('label-fixpack-badge');
+  if (fixpackBadge) fixpackBadge.textContent = isZh ? '$49 一次性 · 48h' : '$49 One-Time · 48h';
 
   const fixpackDesc = document.getElementById('label-fixpack-desc');
   if (fixpackDesc) {
     fixpackDesc.textContent = isZh
-      ? '由 GEO 专家人工深度定制专属 llms.txt、校验 JSON-LD 实体网络与爬虫端点配置。'
-      : 'Get customized llms.txt, validated JSON-LD schema, and AI agent discovery endpoints tailored by GEO specialists.';
+      ? '按店铺真实目录定制 llms.txt、显式 AI 爬虫 robots.txt、畅销品 Product schema 与部署后复检，48 小时交付。'
+      : 'Custom llms.txt from your real catalog, explicit AI-crawler robots.txt, best-seller Product schema & post-deploy re-audit in 48h.';
   }
+
+  // Live SVG Badge Labels
+  const liveBadgeTitle = document.getElementById('label-live-badge-title');
+  if (liveBadgeTitle) liveBadgeTitle.textContent = isZh ? '嵌入实时 GeoScore 徽章' : 'Embed Live GeoScore Badge';
+
+  const copyBadgeMdBtn = document.getElementById('btn-copy-badge-md');
+  if (copyBadgeMdBtn) copyBadgeMdBtn.textContent = isZh ? '复制 Markdown' : 'Copy Markdown';
+
+  const copyBadgeHtmlBtn = document.getElementById('btn-copy-badge-html');
+  if (copyBadgeHtmlBtn) copyBadgeHtmlBtn.textContent = isZh ? '复制 HTML' : 'Copy HTML';
 
   const pricingTitle = document.getElementById('label-pricing-title');
   if (pricingTitle) pricingTitle.textContent = isZh ? 'PDF 报告导出与 30 天云端历史' : 'PDF Report Export & 30-Day History';
@@ -1354,6 +1499,35 @@ function setupEventListeners() {
       }
 
       downloadFile(filename, codeEl.textContent, mime);
+    });
+  }
+
+  // 18. Copy Live Badge Markdown / HTML Snippets
+  const copyBadgeMdBtn = document.getElementById('btn-copy-badge-md');
+  if (copyBadgeMdBtn) {
+    copyBadgeMdBtn.addEventListener('click', () => {
+      const mdCodeEl = document.getElementById('badge-md-code');
+      if (mdCodeEl && mdCodeEl.textContent) {
+        copyToClipboard(
+          mdCodeEl.textContent,
+          'Copied Markdown badge snippet!',
+          '已复制 Markdown 徽章代码！'
+        );
+      }
+    });
+  }
+
+  const copyBadgeHtmlBtn = document.getElementById('btn-copy-badge-html');
+  if (copyBadgeHtmlBtn) {
+    copyBadgeHtmlBtn.addEventListener('click', () => {
+      const htmlCodeEl = document.getElementById('badge-html-code');
+      if (htmlCodeEl && htmlCodeEl.textContent) {
+        copyToClipboard(
+          htmlCodeEl.textContent,
+          'Copied HTML badge snippet!',
+          '已复制 HTML 徽章代码！'
+        );
+      }
     });
   }
 }

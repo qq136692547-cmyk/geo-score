@@ -38,6 +38,11 @@ import {
   getAuditHistory,
 } from '../../extension/src/shared/storage.js';
 
+import {
+  detectTechStack,
+  getStackGuidance,
+} from '../../extension/src/shared/stackDetector.js';
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const projectRoot = path.resolve(__dirname, '../..');
@@ -53,7 +58,7 @@ describe('Chrome MV3 Extension Foundation', () => {
     expect(manifest.name).toBe('__MSG_extName__');
     expect(manifest.description).toBe('__MSG_extDescription__');
     expect(manifest.default_locale).toBe('en');
-    expect(manifest.version).toBe('1.8.0');
+    expect(manifest.version).toBe('1.9.0');
 
     // Strict permissions: activeTab, sidePanel, storage, scripting
     expect(manifest.permissions).toEqual(['activeTab', 'sidePanel', 'storage', 'scripting']);
@@ -559,5 +564,72 @@ describe('Shared Module: storage & diff', () => {
 
     const history = await getAuditHistory();
     expect(Array.isArray(history)).toBe(true);
+  });
+});
+
+describe('Shared Module: stackDetector', () => {
+  it('detects Shopify, Next.js, WordPress, and returns null for unknown sites', () => {
+    expect(detectTechStack('<script src="https://cdn.shopify.com/s/files/theme.js"></script>', 'https://shop.example.com')).toBe('shopify');
+    expect(detectTechStack('<script>window.Shopify = { theme: {} }; Shopify.shop = "demo";</script>', 'https://store.example.com')).toBe('shopify');
+    expect(detectTechStack('<div class="shopify-section"></div>', 'https://demo.myshopify.com')).toBe('shopify');
+
+    expect(detectTechStack('<script id="__NEXT_DATA__" type="application/json">{}</script>', 'https://app.example.com')).toBe('nextjs');
+    expect(detectTechStack('<script src="/_next/static/chunks/main.js"></script>', 'https://app.example.com')).toBe('nextjs');
+    expect(detectTechStack('<next-route-announcer></next-route-announcer>', 'https://app.example.com')).toBe('nextjs');
+
+    expect(detectTechStack('<link rel="stylesheet" href="/wp-content/themes/starter/style.css">', 'https://blog.example.com')).toBe('wordpress');
+    expect(detectTechStack('<script src="/wp-includes/js/jquery/jquery.min.js"></script>', 'https://blog.example.com')).toBe('wordpress');
+    expect(detectTechStack('<meta name="generator" content="WordPress 6.7" />', 'https://blog.example.com')).toBe('wordpress');
+
+    expect(detectTechStack('<html><body><h1>Plain Static Site</h1></body></html>', 'https://example.com')).toBeNull();
+    expect(detectTechStack('', '')).toBeNull();
+  });
+
+  it('returns accurate EN and ZH platform guidance without invalid Shopify template paths', () => {
+    const shopifyEn = getStackGuidance('shopify', false);
+    expect(shopifyEn).toEqual({
+      stack: 'shopify',
+      name: 'Shopify',
+      summary: expect.stringContaining('Content > Files'),
+      guideUrl: 'https://geoscore.help/geo-for/shopify/?utm_source=chrome_ext',
+      showFixPackHint: true,
+    });
+    expect(shopifyEn.summary).toContain('/llms.txt');
+    expect(shopifyEn.summary).toContain('templates/robots.txt.liquid');
+    expect(shopifyEn.summary).not.toContain('llms.txt.liquid');
+    expect(/[\u4e00-\u9fff]/.test(shopifyEn.summary)).toBe(false);
+
+    const shopifyZh = getStackGuidance('shopify', true);
+    expect(shopifyZh.guideUrl).toBe('https://geoscore.help/zh/geo-for/shopify/?utm_source=chrome_ext');
+    expect(shopifyZh.summary).toContain('Content > Files');
+    expect(shopifyZh.summary).toContain('templates/robots.txt.liquid');
+    expect(shopifyZh.summary).not.toContain('llms.txt.liquid');
+    expect(shopifyZh.showFixPackHint).toBe(true);
+
+    const wpEn = getStackGuidance('wordpress', false);
+    expect(wpEn.name).toBe('WordPress');
+    expect(wpEn.summary).toContain('wp-config.php');
+    expect(wpEn.summary).toContain('WPCode');
+    expect(wpEn.guideUrl).toBe('https://geoscore.help/geo-for/wordpress/?utm_source=chrome_ext');
+    expect(wpEn.showFixPackHint).toBe(true);
+
+    const wpZh = getStackGuidance('wordpress', true);
+    expect(wpZh.guideUrl).toBe('https://geoscore.help/zh/geo-for/wordpress/?utm_source=chrome_ext');
+    expect(wpZh.summary).toContain('Yoast');
+
+    const nextEn = getStackGuidance('nextjs', false);
+    expect(nextEn.name).toBe('Next.js');
+    expect(nextEn.summary).toContain('public/llms.txt');
+    expect(nextEn.summary).toContain('app/robots.ts');
+    expect(nextEn.summary).toContain('app/layout.tsx');
+    expect(nextEn.guideUrl).toBe('https://geoscore.help/geo-for/nextjs/?utm_source=chrome_ext');
+    expect(nextEn.showFixPackHint).toBe(false);
+
+    const nextZh = getStackGuidance('nextjs', true);
+    expect(nextZh.guideUrl).toBe('https://geoscore.help/zh/geo-for/nextjs/?utm_source=chrome_ext');
+    expect(nextZh.showFixPackHint).toBe(false);
+
+    expect(getStackGuidance(null, false)).toBeNull();
+    expect(getStackGuidance('unknown', true)).toBeNull();
   });
 });

@@ -685,6 +685,22 @@ describe('Background Service Worker - Full Lifecycle & Mocked Chrome APIs', () =
     expect(mockSessionStore.latestManualAuditTabId).toBeUndefined();
   });
 
+  it('runSilentBadgeCheckForTab inspects llms.txt/sitemap/summary.json/about and matches runAuditForTab score', async () => {
+    mockSessionStore = {};
+    mockBadge = {};
+
+    const silentResult = await runSilentBadgeCheckForTab(mockTabs[1]);
+    expect(silentResult).toBeDefined();
+    expect(silentResult.raw.llmsTxt).toContain('# Example Site');
+    expect(mockSessionStore['tabAudit:1']).toBeUndefined();
+    expect(mockSessionStore.latestManualAuditTabId).toBeUndefined();
+
+    const fullState = await runAuditForTab(mockTabs[1]);
+    expect(fullState.status).toBe('ready');
+    expect(silentResult.score).toBe(fullState.data.result.score);
+    expect(mockBadge[1]?.text).toBe(String(fullState.data.result.score));
+  });
+
   it('XRAY_HIGHLIGHT switches back to target tab if inactive, or returns tab_closed when tab not found', async () => {
     // Current active tab is tab 3
     chrome.tabs.query = vi.fn((q, cb) => cb([mockTabs[3]]));

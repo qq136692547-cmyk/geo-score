@@ -121,6 +121,71 @@ export async function getActiveTab() {
   });
 }
 
+export function inspectCollectedEndpoints(endpoints = {}, origin = '') {
+  const robots = inspectFetchedResource({
+    url: endpoints.robots?.finalUrl || `${origin}/robots.txt`,
+    status: endpoints.robots?.status ?? 0,
+    ok: endpoints.robots?.ok,
+    contentType: endpoints.robots?.contentType || '',
+    body: endpoints.robots?.body || '',
+    expectedType: 'text',
+  });
+
+  const llms = inspectFetchedResource({
+    url: endpoints.llms?.finalUrl || `${origin}/llms.txt`,
+    status: endpoints.llms?.status ?? 0,
+    ok: endpoints.llms?.ok,
+    contentType: endpoints.llms?.contentType || '',
+    body: endpoints.llms?.body || '',
+    expectedType: 'text',
+  });
+
+  const sitemap = inspectFetchedResource({
+    url: endpoints.sitemap?.finalUrl || `${origin}/sitemap.xml`,
+    status: endpoints.sitemap?.status ?? 0,
+    ok: endpoints.sitemap?.ok,
+    contentType: endpoints.sitemap?.contentType || '',
+    body: endpoints.sitemap?.body || '',
+    expectedType: 'xml',
+  });
+
+  const aiTxt = inspectFetchedResource({
+    url: endpoints.aiTxt?.finalUrl || `${origin}/.well-known/ai.txt`,
+    status: endpoints.aiTxt?.status ?? 0,
+    ok: endpoints.aiTxt?.ok,
+    contentType: endpoints.aiTxt?.contentType || '',
+    body: endpoints.aiTxt?.body || '',
+    expectedType: 'text',
+  });
+
+  const aiSummary = inspectFetchedResource({
+    url: endpoints.aiSummary?.finalUrl || `${origin}/ai/summary.json`,
+    status: endpoints.aiSummary?.status ?? 0,
+    ok: endpoints.aiSummary?.ok,
+    contentType: endpoints.aiSummary?.contentType || '',
+    body: endpoints.aiSummary?.body || '',
+    expectedType: 'json',
+  });
+
+  const aiFaq = inspectFetchedResource({
+    url: endpoints.aiFaq?.finalUrl || `${origin}/ai/faq.json`,
+    status: endpoints.aiFaq?.status ?? 0,
+    ok: endpoints.aiFaq?.ok,
+    contentType: endpoints.aiFaq?.contentType || '',
+    body: endpoints.aiFaq?.body || '',
+    expectedType: 'json',
+  });
+
+  return {
+    robots,
+    llms,
+    sitemap,
+    aiTxt,
+    aiSummary,
+    aiFaq,
+  };
+}
+
 export async function runAuditForTab(tab) {
   if (!tab || !tab.id) return null;
 
@@ -175,68 +240,7 @@ export async function runAuditForTab(tab) {
     const endpoints = payload.endpoints || {};
 
     // Soft 404 inspections on non-HTML endpoints
-    const inspectedRobots = inspectFetchedResource({
-      url: endpoints.robots?.finalUrl || `${payload.origin}/robots.txt`,
-      status: endpoints.robots?.status ?? 0,
-      ok: endpoints.robots?.ok,
-      contentType: endpoints.robots?.contentType || '',
-      body: endpoints.robots?.body || '',
-      expectedType: 'text',
-    });
-
-    const inspectedLlms = inspectFetchedResource({
-      url: endpoints.llms?.finalUrl || `${payload.origin}/llms.txt`,
-      status: endpoints.llms?.status ?? 0,
-      ok: endpoints.llms?.ok,
-      contentType: endpoints.llms?.contentType || '',
-      body: endpoints.llms?.body || '',
-      expectedType: 'text',
-    });
-
-    const inspectedSitemap = inspectFetchedResource({
-      url: endpoints.sitemap?.finalUrl || `${payload.origin}/sitemap.xml`,
-      status: endpoints.sitemap?.status ?? 0,
-      ok: endpoints.sitemap?.ok,
-      contentType: endpoints.sitemap?.contentType || '',
-      body: endpoints.sitemap?.body || '',
-      expectedType: 'xml',
-    });
-
-    const inspectedAiTxt = inspectFetchedResource({
-      url: endpoints.aiTxt?.finalUrl || `${payload.origin}/.well-known/ai.txt`,
-      status: endpoints.aiTxt?.status ?? 0,
-      ok: endpoints.aiTxt?.ok,
-      contentType: endpoints.aiTxt?.contentType || '',
-      body: endpoints.aiTxt?.body || '',
-      expectedType: 'text',
-    });
-
-    const inspectedAiSummary = inspectFetchedResource({
-      url: endpoints.aiSummary?.finalUrl || `${payload.origin}/ai/summary.json`,
-      status: endpoints.aiSummary?.status ?? 0,
-      ok: endpoints.aiSummary?.ok,
-      contentType: endpoints.aiSummary?.contentType || '',
-      body: endpoints.aiSummary?.body || '',
-      expectedType: 'json',
-    });
-
-    const inspectedAiFaq = inspectFetchedResource({
-      url: endpoints.aiFaq?.finalUrl || `${payload.origin}/ai/faq.json`,
-      status: endpoints.aiFaq?.status ?? 0,
-      ok: endpoints.aiFaq?.ok,
-      contentType: endpoints.aiFaq?.contentType || '',
-      body: endpoints.aiFaq?.body || '',
-      expectedType: 'json',
-    });
-
-    const soft404Map = {
-      robots: inspectedRobots,
-      llms: inspectedLlms,
-      sitemap: inspectedSitemap,
-      aiTxt: inspectedAiTxt,
-      aiSummary: inspectedAiSummary,
-      aiFaq: inspectedAiFaq,
-    };
+    const soft404Map = inspectCollectedEndpoints(endpoints, payload.origin);
 
     const authenticatedFallback = Boolean(
       ssrRes.usedAuthFallback ||
@@ -255,12 +259,12 @@ export async function runAuditForTab(tab) {
       url: targetUrl,
       pageHtml: csrHtml,
       responseHeaders: ssrRes.headers || {},
-      robotsTxt: inspectedRobots.valid ? inspectedRobots.cleanBody : null,
-      llmsTxt: inspectedLlms.valid ? inspectedLlms.cleanBody : null,
-      sitemapXml: inspectedSitemap.valid ? inspectedSitemap.cleanBody : null,
-      aiTxt: inspectedAiTxt.valid ? inspectedAiTxt.cleanBody : null,
-      aiSummary: inspectedAiSummary.valid ? inspectedAiSummary.cleanBody : null,
-      aiFaq: inspectedAiFaq.valid ? inspectedAiFaq.cleanBody : null,
+      robotsTxt: soft404Map.robots.valid ? soft404Map.robots.cleanBody : null,
+      llmsTxt: soft404Map.llms.valid ? soft404Map.llms.cleanBody : null,
+      sitemapXml: soft404Map.sitemap.valid ? soft404Map.sitemap.cleanBody : null,
+      aiTxt: soft404Map.aiTxt.valid ? soft404Map.aiTxt.cleanBody : null,
+      aiSummary: soft404Map.aiSummary.valid ? soft404Map.aiSummary.cleanBody : null,
+      aiFaq: soft404Map.aiFaq.valid ? soft404Map.aiFaq.cleanBody : null,
       aboutHtml: endpoints.about && endpoints.about.ok ? endpoints.about.body : null,
       contentHtml: endpoints.content && endpoints.content.ok ? endpoints.content.body : null,
       lang,
@@ -360,14 +364,7 @@ export async function runSilentBadgeCheckForTab(tab) {
     const ssrRes = payload.ssr || {};
     const endpoints = payload.endpoints || {};
 
-    const inspectedRobots = inspectFetchedResource({
-      url: endpoints.robots?.finalUrl || `${payload.origin}/robots.txt`,
-      status: endpoints.robots?.status ?? 0,
-      ok: endpoints.robots?.ok,
-      contentType: endpoints.robots?.contentType || '',
-      body: endpoints.robots?.body || '',
-      expectedType: 'text',
-    });
+    const soft404Map = inspectCollectedEndpoints(endpoints, payload.origin);
 
     const settings = await getSettings();
     const lang = resolveLang(settings?.langPref);
@@ -376,16 +373,16 @@ export async function runSilentBadgeCheckForTab(tab) {
       url: targetUrl,
       pageHtml: csrHtml,
       responseHeaders: ssrRes.headers || {},
-      robotsTxt: inspectedRobots.valid ? inspectedRobots.cleanBody : null,
-      llmsTxt: null,
-      sitemapXml: null,
-      aiTxt: null,
-      aiSummary: null,
-      aiFaq: null,
-      aboutHtml: null,
-      contentHtml: null,
+      robotsTxt: soft404Map.robots.valid ? soft404Map.robots.cleanBody : null,
+      llmsTxt: soft404Map.llms.valid ? soft404Map.llms.cleanBody : null,
+      sitemapXml: soft404Map.sitemap.valid ? soft404Map.sitemap.cleanBody : null,
+      aiTxt: soft404Map.aiTxt.valid ? soft404Map.aiTxt.cleanBody : null,
+      aiSummary: soft404Map.aiSummary.valid ? soft404Map.aiSummary.cleanBody : null,
+      aiFaq: soft404Map.aiFaq.valid ? soft404Map.aiFaq.cleanBody : null,
+      aboutHtml: endpoints.about && endpoints.about.ok ? endpoints.about.body : null,
+      contentHtml: endpoints.content && endpoints.content.ok ? endpoints.content.body : null,
       lang,
-      rawHtmlLimit: 6000,
+      rawHtmlLimit: 12000,
     });
 
     await updateTabBadge(tabId, String(result.score), badgeColorForScore(result.score));

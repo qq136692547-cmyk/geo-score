@@ -91,7 +91,7 @@ const MESSAGES = {
     jsTrapDetected: '检测到 JavaScript 客户端渲染盲区陷阱！',
     jsTrapWarning: '页面关键正文或 Schema 仅在客户端 JS 执行后生成。非渲染型 AI 爬虫（如 GPTBot / Perplexity）抓取时将丢失核心信息。',
     soft404Detected: '在 {endpoint} 检测到软 404 伪响应',
-    soft404Warning: '服务器对 {endpoint} 返回了 HTTP 200，但实际响应体为 HTML / SPA 壳工程，缺少预期的纯文本或结构化数据。',
+    soft404Warning: '服务器对 {endpoint} 返回了 HTTP 200，但实际响应体为 HTML 兜底页面，缺少预期的纯文本或结构化数据。',
     copyCursorPrompt: '复制 Cursor / Copilot 一键修复 Prompt',
     exportReport: '导出 Markdown 审计报告',
     smokeTestTitle: 'AI 搜索引擎真机联调烟测',

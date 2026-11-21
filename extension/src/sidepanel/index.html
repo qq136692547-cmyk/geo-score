@@ -308,6 +308,14 @@
           <p id="robots-disclaimer" class="disclaimer-note" style="display: none;">
             Note: robots.txt recommendations preserve custom rules and only advise AI agent permissions without overreaching guarantees.
           </p>
+          <div id="stack-guide-callout" class="stack-guide-callout" style="display: none;">
+            <div class="stack-guide-header">
+              <span id="stack-guide-badge" class="stack-guide-badge"></span>
+              <span id="stack-guide-hint" class="stack-guide-hint" style="display: none;"></span>
+            </div>
+            <p id="stack-guide-summary" class="stack-guide-summary"></p>
+            <a id="stack-guide-link" href="#" target="_blank" rel="noopener noreferrer" class="stack-guide-link"></a>
+          </div>
         </div>
 
         <!-- AI Citation Smoke-Test Launcher -->
@@ -328,6 +336,34 @@
           </p>
         </div>
 
+        <!-- Live SVG Badge Embed Card -->
+        <div id="live-badge-card" class="live-badge-card" style="display: none;">
+          <div class="card-title-row">
+            <span class="card-title">
+              <span>🏅</span>
+              <span id="label-live-badge-title">Embed Live GeoScore Badge</span>
+            </span>
+          </div>
+          <p id="label-live-badge-desc" class="live-badge-desc"></p>
+          <div id="live-badge-preview" class="live-badge-preview"></div>
+          <div class="live-badge-snippets">
+            <div class="live-badge-snippet-block">
+              <div class="live-badge-snippet-header">
+                <span class="live-badge-snippet-label">Markdown</span>
+                <button id="btn-copy-badge-md" class="btn-secondary live-badge-copy-btn">Copy Markdown</button>
+              </div>
+              <pre class="live-badge-code-wrap"><code id="badge-md-code" class="live-badge-code"></code></pre>
+            </div>
+            <div class="live-badge-snippet-block">
+              <div class="live-badge-snippet-header">
+                <span class="live-badge-snippet-label">HTML</span>
+                <button id="btn-copy-badge-html" class="btn-secondary live-badge-copy-btn">Copy HTML</button>
+              </div>
+              <pre class="live-badge-code-wrap"><code id="badge-html-code" class="live-badge-code"></code></pre>
+            </div>
+          </div>
+        </div>
+
         <!-- Commercial Funnel Cards -->
         <div class="funnel-container">
           <a id="link-pro-scan" href="https://geoscore.help/?utm_source=chrome_ext&action=full_scan" target="_blank" rel="noopener noreferrer" class="funnel-card">
@@ -343,10 +379,10 @@
           <a id="link-fix-pack" href="https://geoscore.help/fixpack/?utm_source=chrome_ext" target="_blank" rel="noopener noreferrer" class="funnel-card">
             <div class="funnel-header">
               <span id="label-fixpack-title" class="funnel-title">Done-For-You AI Visibility Fix Pack</span>
-              <span class="funnel-price-badge">$49 One-Time</span>
+              <span id="label-fixpack-badge" class="funnel-price-badge">$49 One-Time · 48h</span>
             </div>
             <p id="label-fixpack-desc" class="funnel-desc">
-              Get customized llms.txt, validated JSON-LD schema, and AI agent discovery endpoints tailored by GEO specialists.
+              Custom llms.txt from your real catalog, explicit AI-crawler robots.txt, best-seller Product schema &amp; post-deploy re-audit in 48h.
             </p>
           </a>
 
