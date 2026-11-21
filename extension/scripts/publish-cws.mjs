@@ -21,6 +21,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import http from 'node:http';
 import crypto from 'node:crypto';
+import { exec } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -235,6 +236,17 @@ async function runOAuthSetup(config) {
   console.log('\nOpen this URL in your browser to authorize Chrome Web Store Publish API:\n');
   console.log(authUrl.toString());
   console.log(`\nWaiting for OAuth callback on ${redirectUri} ...`);
+
+  try {
+    const urlStr = authUrl.toString();
+    const openCmd =
+      process.platform === 'win32'
+        ? `start "" "${urlStr}"`
+        : process.platform === 'darwin'
+          ? `open "${urlStr}"`
+          : `xdg-open "${urlStr}"`;
+    exec(openCmd, () => {});
+  } catch {}
 
   const code = await new Promise((resolve, reject) => {
     const timer = setTimeout(() => {
