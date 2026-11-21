@@ -109,21 +109,48 @@ import demo from '../../data/demo-report.json';
         11 dimensions &middot; 20 AI crawlers &middot; 100-point scoring &middot; Free &amp; open-source
       </p>
 
-      <div class="max-w-xl mx-auto mb-6 px-1">
-        <div class="flex flex-col sm:flex-row gap-3">
-          <div class="flex-1 relative">
-            <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
-            <input id="url-input" type="text" placeholder="Enter URL, e.g. geoscore.help" aria-label="Enter website URL" autofocus class="w-full pl-12 pr-5 py-3.5 rounded-xl bg-white/5 text-white placeholder-gray-500 border border-gray-600 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 text-lg transition" onkeydown="if(event.key==='Enter'){document.getElementById('audit-btn').click();}" />
+      <div class="max-w-xl mx-auto mb-5 px-1">
+        <div id="hero-mode-tablist" class="geo-tablist mb-3 sm:justify-center" role="tablist" focusgroup="tablist nomemory" aria-label="Audit mode">
+          <button type="button" role="tab" class="geo-tab" id="mode-tab-single" data-mode-tab="single" aria-selected="true" tabindex="0" focusgroupstart>Single URL</button>
+          <button type="button" role="tab" class="geo-tab" id="mode-tab-batch" data-mode-tab="batch" aria-selected="false" tabindex="-1">Batch Sitemap</button>
+          <button type="button" role="tab" class="geo-tab" id="mode-tab-compare" data-mode-tab="compare" aria-selected="false" tabindex="-1">Compare Sites</button>
+        </div>
+
+        <div role="tabpanel" id="mode-panel-single" data-mode-panel="single" aria-labelledby="mode-tab-single">
+          <div class="flex flex-col sm:flex-row gap-3">
+            <div class="flex-1 relative">
+              <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+              <input id="url-input" type="text" placeholder="Enter URL, e.g. geoscore.help" aria-label="Enter website URL" autofocus class="w-full pl-12 pr-5 py-3.5 rounded-xl bg-white/5 text-white placeholder-gray-500 border border-gray-600 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 text-lg transition" onkeydown="if(event.key==='Enter'){document.getElementById('audit-btn').click();}" />
+            </div>
+            <button id="audit-btn" class="px-8 py-3.5 rounded-xl font-semibold text-white bg-gradient-to-r from-geo-600 to-brand-600 hover:from-geo-500 hover:to-brand-500 active:from-geo-700 active:to-brand-700 transition shadow-lg shadow-brand-500/20 hover:shadow-brand-500/30 whitespace-nowrap w-full sm:w-auto">Start Audit</button>
           </div>
-          <button id="audit-btn" class="px-8 py-3.5 rounded-xl font-semibold text-white bg-gradient-to-r from-geo-600 to-brand-600 hover:from-geo-500 hover:to-brand-500 active:from-geo-700 active:to-brand-700 transition shadow-lg shadow-brand-500/20 hover:shadow-brand-500/30 whitespace-nowrap w-full sm:w-auto">Start Audit</button>
+        </div>
+
+        <div role="tabpanel" id="mode-panel-batch" data-mode-panel="batch" aria-labelledby="mode-tab-batch" hidden="until-found">
+          <div id="batch-section" class="card p-4 text-left">
+            <h3 class="text-sm font-semibold mb-2 text-gray-300">Batch Audit from Sitemap</h3>
+            <div class="flex flex-col sm:flex-row gap-2">
+              <input id="sitemap-url" type="url" placeholder="e.g. example.com/sitemap.xml" aria-label="Sitemap URL" class="flex-1 px-4 py-2.5 rounded-lg bg-white/5 text-white placeholder-gray-500 border border-gray-600 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 text-sm transition" onkeydown="if(event.key==='Enter'){document.getElementById('batch-btn').click();}" />
+              <button id="batch-btn" class="px-5 py-2.5 rounded-lg text-sm font-semibold text-white bg-gradient-to-r from-geo-600 to-brand-600 hover:from-geo-500 hover:to-brand-500 transition whitespace-nowrap">Start Batch Scan</button>
+            </div>
+            <div id="batch-progress" class="mt-3 hidden">
+              <div class="w-full h-1 rounded-full bg-gray-700/50 overflow-hidden"><div id="batch-bar" class="h-full rounded-full bg-brand-500" style="width:0%"></div></div>
+              <p id="batch-status" class="text-xs text-gray-500 mt-1"></p>
+            </div>
+            <div id="batch-results" class="mt-3 text-xs text-left max-h-60 overflow-y-auto"></div>
+          </div>
+        </div>
+
+        <div role="tabpanel" id="mode-panel-compare" data-mode-panel="compare" aria-labelledby="mode-tab-compare" hidden="until-found">
+          <div id="compare-section" class="card p-4 text-left">
+            <h3 class="text-sm font-semibold mb-2 text-gray-300">Select sites to compare</h3>
+            <div id="compare-list" class="space-y-1 mb-3 max-h-40 overflow-y-auto text-xs text-gray-400"></div>
+            <button id="compare-btn" class="px-4 py-1.5 rounded-lg text-xs font-semibold text-white bg-brand-600 hover:bg-brand-500 transition">Compare Selected</button>
+          </div>
         </div>
       </div>
 
       <div class="flex items-center justify-center gap-4 text-xs">
-        <a id="batch-link" class="text-gray-500 hover:text-brand-400 transition cursor-pointer underline underline-offset-2">Batch audit via sitemap</a>
-        <span class="text-gray-400">|</span>
-        <a id="compare-link" class="text-gray-500 hover:text-brand-400 transition cursor-pointer underline underline-offset-2" style="display:none">Compare sites</a>
-        <span class="text-gray-400" style="display:none">|</span>
         <a href="/report/demo/" class="text-gray-500 hover:text-geo-400 transition underline underline-offset-2">View a sample report: <span class="text-geo-400 font-semibold">{demo.score}/100 ({demo.level})</span> on {demo.host} &mdash; run your own</a>
       </div>
       <div id="chrome-ext-cta" class="mt-4 inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-medium bg-white/5 border border-gray-700 hover:border-brand-500/50 hover:bg-white/10 transition text-gray-300">
@@ -133,21 +160,6 @@ import demo from '../../data/demo-report.json';
         </svg>
         <span>Auditing <strong>localhost</strong> or facing WAF blocks?</span>
         <a href="#chrome-extension" class="text-brand-400 hover:text-brand-300 font-semibold underline underline-offset-2">Use Chrome Extension &rarr;</a>
-      </div>
-      <div id="batch-section" class="hidden max-w-lg mx-auto mt-4 card p-4">
-        <h3 class="text-sm font-semibold mb-2 text-gray-300">Batch Audit from Sitemap</h3>
-        <input id="sitemap-url" type="url" placeholder="e.g. example.com/sitemap.xml" aria-label="Sitemap URL" class="w-full px-4 py-2 rounded-lg bg-white/5 text-white placeholder-gray-500 border border-gray-600 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 text-sm transition mb-3" />
-        <button id="batch-btn" class="px-5 py-2 rounded-lg text-sm font-semibold text-white bg-gradient-to-r from-geo-600 to-brand-600 hover:from-geo-500 hover:to-brand-500 transition">Start Batch Scan</button>
-        <div id="batch-progress" class="mt-3 hidden">
-          <div class="w-full h-1 rounded-full bg-gray-700/50 overflow-hidden"><div id="batch-bar" class="h-full rounded-full bg-brand-500" style="width:0%"></div></div>
-          <p id="batch-status" class="text-xs text-gray-500 mt-1"></p>
-        </div>
-        <div id="batch-results" class="mt-3 text-xs text-left max-h-60 overflow-y-auto"></div>
-      </div>
-      <div id="compare-section" class="hidden max-w-lg mx-auto mt-4 card p-4" style="display:none">
-        <h3 class="text-sm font-semibold mb-2 text-gray-300">Select sites to compare</h3>
-        <div id="compare-list" class="space-y-1 mb-3 max-h-40 overflow-y-auto"></div>
-        <button id="compare-btn" class="px-4 py-1.5 rounded-lg text-xs font-semibold text-white bg-brand-600 hover:bg-brand-500 transition">Compare Selected</button>
       </div>
     </div>
   </section>

@@ -57,12 +57,97 @@ function geoErrorCode(error) {
   return 'unknown';
 }
 
+function activateTabPanel(container, tabAttr, panelAttr, activeId, opts) {
+  if (!container) return null;
+  var activeTab = null;
+  container.querySelectorAll('[' + tabAttr + ']').forEach(function(tab) {
+    var isMatch = tab.getAttribute(tabAttr) === activeId;
+    tab.setAttribute('aria-selected', isMatch ? 'true' : 'false');
+    tab.setAttribute('tabindex', isMatch ? '0' : '-1');
+    if (isMatch) {
+      tab.setAttribute('focusgroupstart', '');
+      activeTab = tab;
+    } else {
+      tab.removeAttribute('focusgroupstart');
+    }
+  });
+  container.querySelectorAll('[' + panelAttr + ']').forEach(function(panel) {
+    var isMatch = panel.getAttribute(panelAttr) === activeId;
+    if (isMatch) {
+      panel.removeAttribute('hidden');
+      if (!panel.querySelector('a[href], button, input, select, textarea')) {
+        panel.setAttribute('tabindex', '0');
+      } else {
+        panel.removeAttribute('tabindex');
+      }
+    } else {
+      panel.setAttribute('hidden', 'until-found');
+      panel.removeAttribute('tabindex');
+    }
+  });
+  if (activeTab && typeof activeTab.scrollIntoView === 'function') {
+    try { activeTab.scrollIntoView({ block: 'nearest', inline: 'nearest' }); } catch (e) {}
+  }
+  if (opts && opts.focusTab && activeTab) activeTab.focus();
+  return activeTab;
+}
+
+function handleTablistKeydown(e, tabSelector, onSelect) {
+  var tab = e.target.closest(tabSelector);
+  if (!tab) return;
+  var tablist = tab.closest('[role="tablist"]');
+  if (!tablist) return;
+  var tabs = Array.prototype.slice.call(tablist.querySelectorAll(tabSelector));
+  var idx = tabs.indexOf(tab);
+  if (idx === -1) return;
+  var nextIdx = -1;
+  if (e.key === 'ArrowRight') nextIdx = (idx + 1) % tabs.length;
+  else if (e.key === 'ArrowLeft') nextIdx = (idx - 1 + tabs.length) % tabs.length;
+  else if (e.key === 'Home') nextIdx = 0;
+  else if (e.key === 'End') nextIdx = tabs.length - 1;
+  if (nextIdx === -1) return;
+  e.preventDefault();
+  onSelect(tabs[nextIdx]);
+}
+
+function selectHeroModeTab(mode, opts) {
+  var tablist = document.getElementById("hero-mode-tablist");
+  if (!tablist || !tablist.parentElement) return;
+  activateTabPanel(tablist.parentElement, 'data-mode-tab', 'data-mode-panel', mode, opts);
+  if (mode === 'compare') {
+    populateCompareList();
+  }
+  if (!opts || (!opts.focusTab && opts.focusInput !== false)) {
+    if (mode === 'batch') {
+      var sitemapEl = document.getElementById('sitemap-url');
+      if (sitemapEl) sitemapEl.focus();
+    } else if (mode === 'single') {
+      var urlEl = document.getElementById('url-input');
+      if (urlEl) urlEl.focus();
+    }
+  }
+}
+
+function selectStackTab(stackId, opts) {
+  var reportRoot = document.getElementById('report-section');
+  if (!reportRoot) return;
+  activateTabPanel(reportRoot, 'data-stack-tab', 'data-stack-panel', stackId, opts);
+}
+
 window.showBatchInput = function() {
+  if (document.getElementById("hero-mode-tablist")) {
+    selectHeroModeTab('batch');
+    return;
+  }
   var el = document.getElementById("batch-section");
   if (el) el.classList.toggle("hidden");
 };
 
 window.showComparison = function() {
+  if (document.getElementById("hero-mode-tablist")) {
+    selectHeroModeTab('compare');
+    return;
+  }
   var el = document.getElementById("compare-section");
   if (el) {
     el.style.display = el.style.display === "none" ? "block" : "none";
@@ -72,8 +157,12 @@ window.showComparison = function() {
 
 function populateCompareList() {
   var root = document.getElementById("compare-list");
+  if (!root) return;
   var history = getHistory();
-  if (history.length < 2) { root.innerHTML = t("Audit at least 2 sites first.", "请先审计至少 2 个站点。"); return; }
+  if (history.length < 2) {
+    root.innerHTML = '<p class="text-xs text-gray-400 py-2">' + t("Audit at least 2 sites first.", "请先审计至少 2 个站点。") + '</p>';
+    return;
+  }
   root.innerHTML = history.slice(0, 10).map(function(e) {
     var lc = e.level === "Excellent" ? "text-geo-500" : e.level === "Good" ? "text-brand-500" : e.level === "Basic" ? "text-warn-500" : "text-danger-500";
     return '<label class="flex items-center gap-2 py-1 px-2 card-hover rounded cursor-pointer text-sm">' +
@@ -89,10 +178,17 @@ window.runComparison = function() {
   var history = getHistory();
   var selected = history.filter(function(e) { return ids.indexOf(e.id) >= 0; });
   if (selected.length < 2) return;
-  document.getElementById("compare-section").style.display = "none";
+  if (document.getElementById("hero-mode-tablist")) {
+    selectHeroModeTab('single', { focusInput: false });
+  } else {
+    var compareSec = document.getElementById("compare-section");
+    if (compareSec) compareSec.style.display = "none";
+  }
   var reportRoot = document.getElementById("report-section");
   var comparisonHtml = renderComparisonPanel(selected);
-  if (comparisonHtml) {
+  if (comparisonHtml && reportRoot) {
+    reportRoot.classList.remove("hidden");
+    reportRoot.style.opacity = "1";
     var div = document.createElement("div");
     div.innerHTML = comparisonHtml;
     var exportSection = reportRoot.querySelector(".stagger-section.fade-in-delay-7");
@@ -261,8 +357,9 @@ window.startAudit = async function (entryPoint) {
       maybeShowSaveCloud(result);
     }, 200);
     var history = getHistory();
-    if (history.length >= 2) {
-      document.getElementById("compare-link").style.display = "inline";
+    var compareLink = document.getElementById("compare-link");
+    if (history.length >= 2 && compareLink) {
+      compareLink.style.display = "inline";
     }
   } catch (err) {
     clearInterval(scanTimer);
@@ -637,9 +734,11 @@ function handleReportCtaClick(e) {
   if (!cta) return;
   var ctaId = cta.getAttribute('data-cta-id');
   var action = cta.getAttribute('data-cta-action');
+  var placement = cta.getAttribute('data-cta-placement');
   var r = null;
   try { r = JSON.parse(localStorage.getItem('geoscope_last_result') || 'null'); } catch (err) { r = null; }
   var params = { cta_id: ctaId, source_type: getGeoSource(), transport_type: 'beacon' };
+  if (placement) params.cta_placement = placement;
   if (r && typeof r.score === 'number') { params.score = r.score; params.score_bucket = scoreBucket(r.score); }
   if (typeof window.geoTrack === 'function') window.geoTrack('upgrade_cta_clicked', params);
   if (action === 'lead-toggle') {
@@ -742,8 +841,43 @@ document.addEventListener("DOMContentLoaded", function() {
   if (bb) bb.addEventListener("click", function() { window.startBatchAudit(); });
   var cb = document.getElementById("compare-btn");
   if (cb) cb.addEventListener("click", function() { window.runComparison(); });
+  var heroModeTablist = document.getElementById("hero-mode-tablist");
+  if (heroModeTablist && heroModeTablist.parentElement) {
+    var heroModeContainer = heroModeTablist.parentElement;
+    heroModeTablist.addEventListener("click", function(e) {
+      var tab = e.target.closest('[data-mode-tab]');
+      if (tab) selectHeroModeTab(tab.getAttribute('data-mode-tab'), { focusInput: e.detail > 0 });
+    });
+    heroModeTablist.addEventListener("keydown", function(e) {
+      handleTablistKeydown(e, '[data-mode-tab]', function(nextTab) {
+        selectHeroModeTab(nextTab.getAttribute('data-mode-tab'), { focusTab: true, focusInput: false });
+      });
+    });
+    heroModeContainer.addEventListener("beforematch", function(e) {
+      var panel = e.target.closest('[data-mode-panel]');
+      if (panel) selectHeroModeTab(panel.getAttribute('data-mode-panel'), { focusTab: false, focusInput: false });
+    });
+  }
   var reportCtaRoot = document.getElementById("report-section");
-  if (reportCtaRoot) reportCtaRoot.addEventListener("click", handleReportCtaClick);
+  if (reportCtaRoot) {
+    reportCtaRoot.addEventListener("click", function(e) {
+      var stackTab = e.target.closest('[data-stack-tab]');
+      if (stackTab) {
+        selectStackTab(stackTab.getAttribute('data-stack-tab'));
+        return;
+      }
+      handleReportCtaClick(e);
+    });
+    reportCtaRoot.addEventListener("keydown", function(e) {
+      handleTablistKeydown(e, '[data-stack-tab]', function(nextTab) {
+        selectStackTab(nextTab.getAttribute('data-stack-tab'), { focusTab: true });
+      });
+    });
+    reportCtaRoot.addEventListener("beforematch", function(e) {
+      var panel = e.target.closest('[data-stack-panel]');
+      if (panel) selectStackTab(panel.getAttribute('data-stack-panel'), { focusTab: false });
+    });
+  }
 
   // --- Pro monitoring panel ---
   initProMonitor();
@@ -797,6 +931,9 @@ document.addEventListener("DOMContentLoaded", function() {
         deepInput.setAttribute('data-deeplink', 'filled');
 
         if (actionParam === 'full_scan') {
+          if (document.getElementById('hero-mode-tablist')) {
+            selectHeroModeTab('batch', { focusInput: false });
+          }
           var batchSec = document.getElementById('batch-section');
           if (batchSec) {
             batchSec.classList.remove('hidden');
@@ -821,8 +958,11 @@ document.addEventListener("DOMContentLoaded", function() {
             hintDiv.className = 'mb-3 p-3 rounded-lg bg-brand-500/10 border border-brand-500/30 text-xs text-brand-300 font-medium flex items-center justify-between gap-2';
             hintDiv.textContent = tipMsg;
             var batchBtn = document.getElementById('batch-btn');
+            var batchRow = batchBtn ? batchBtn.parentNode : null;
             if (batchBtn && batchBtn.parentNode === batchSec) {
               batchSec.insertBefore(hintDiv, batchBtn);
+            } else if (batchRow && batchRow.parentNode === batchSec) {
+              batchSec.insertBefore(hintDiv, batchRow);
             } else {
               batchSec.prepend(hintDiv);
             }

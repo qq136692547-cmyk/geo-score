@@ -102,7 +102,7 @@ function renderLead(r) {
         '<input id="lead-consent" type="checkbox" class="mt-0.5" />' +
         '<span>' + t('I agree that GeoScore may contact me at this email about this check.', '我同意 GeoScore 使用此邮箱就本次检测结果联系我。') + '</span>' +
       '</label>' +
-      '<p class="text-xs text-gray-500 mb-3">' + t('We ask for your email only to reply about this check; no ads, no third parties. Operator: anan · qq136692547@gmail.com', '需要邮箱是为了回复这次检测；不发广告，不提供给第三方。运营者：anan · qq136692547@gmail.com') + '</p>' +
+      '<p class="text-xs text-gray-500 mb-3">' + t('We ask for your email only to reply about this check; no ads, no third parties. Operator: GeoScore Team · hello@geoscore.help', '需要邮箱是为了回复这次检测；不发广告，不提供给第三方。运营：GeoScore 团队 · hello@geoscore.help') + '</p>' +
       '<button type="button" data-cta-id="result_lead" data-cta-action="lead-submit" class="' + BTN_CLS + '">' + t('Send', '发送') + '</button>' +
       '<p id="lead-status" class="text-xs mt-3" role="status" aria-live="polite"></p>' +
     '</div>' +

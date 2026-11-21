@@ -266,3 +266,49 @@ html[data-consent="pending"] .consent-banner { display: block; }
     scroll-behavior: auto !important;
   }
 }
+
+/* ===== Unified Accessible Tabs ===== */
+.geo-tablist {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  scrollbar-width: none;
+  gap: 0.25rem;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+.geo-tablist::-webkit-scrollbar {
+  display: none;
+}
+
+.geo-tab {
+  position: relative;
+  flex: none;
+  white-space: nowrap;
+  padding: 0.625rem 0.875rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  background: transparent;
+  border: 0;
+  margin: 0;
+  cursor: pointer;
+  transition: color var(--duration-fast) ease;
+}
+
+.geo-tab:hover {
+  color: var(--color-text-primary);
+}
+
+.geo-tab[aria-selected="true"] {
+  color: var(--color-brand-400);
+}
+
+.geo-tab[aria-selected="true"]::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0.5rem;
+  inset-block-end: 0;
+  border-block-end: 2px solid currentColor;
+}
