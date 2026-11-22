@@ -4,7 +4,7 @@
 *Audit locally via Chrome Extension or Terminal CLI; Generate 1-Click Code Fix Packs on [geoscore.help](https://geoscore.help/).*
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Chrome Web Store](https://img.shields.io/badge/Chrome_Web_Store-v1.8.0-blue?logo=google-chrome)](https://chromewebstore.google.com/detail/geoscore-free-geo-aeo-llm/cboppgehhkhaamcgfcikhekkdaelichn)
+[![Chrome Web Store](https://img.shields.io/badge/Chrome_Web_Store-v1.9.0-blue?logo=google-chrome)](https://chromewebstore.google.com/detail/geoscore-free-geo-aeo-llm/cboppgehhkhaamcgfcikhekkdaelichn)
 [![Built with Astro](https://img.shields.io/badge/Built%20with-Astro-ff5a03?logo=astro)](https://astro.build)
 [![GitHub Pages](https://img.shields.io/badge/Deploy-GitHub%20Pages-222?logo=githubpages)](https://pages.github.com)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
