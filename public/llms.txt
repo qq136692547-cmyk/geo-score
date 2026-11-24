@@ -18,6 +18,9 @@
 
 ## Learn GEO
 
+- [GeoScore v1.9 Release: Live SVG Badges & Stack Detection](https://geoscore.help/blog/geoscore-v1-9-live-badges-stack-detection/): Live `/badge/<domain>` SVG score badges, automatic Shopify/WordPress/Next.js detection in Chrome Extension v1.9.0, and 6-endpoint background scoring
+- [GeoScore Chrome Extension Launch](https://geoscore.help/blog/geoscore-chrome-extension-launch/): Audit open tabs, localhost, and behind-WAF pages directly from the Chrome MV3 Side Panel
+- [2026 Enterprise GEO in China](https://geoscore.help/blog/enterprise-geo-china-kimi-doubao-metaso/): Playbook for enterprise websites targeting Kimi, Doubao, and Metaso AI search
 - [GeoScore Engine Update 2026](https://geoscore.help/blog/geoscore-update-multi-page-security/): Multi-page schema scanning, HTTP security headers, and CJK language optimization
 - [What is GEO? Complete Guide](https://geoscore.help/blog/what-is-geo/): Introduction to Generative Engine Optimization and the 11 dimensions
 - [GEO vs SEO](https://geoscore.help/blog/geo-vs-seo/): How AI search differs from traditional search and where they overlap
@@ -44,6 +47,9 @@
 
 ## 中文版 (Chinese)
 
+- [GeoScore v1.9 发布日志（中文）](https://geoscore.help/zh/blog/geoscore-v1-9-live-badges-stack-detection/): 实时动态 SVG 评分徽章、技术栈自动识别、3 大平台中文指南与腾讯 WorkBuddy 国内企业专家团
+- [国内企业官网 GEO 引文实战指南（中文）](https://geoscore.help/zh/blog/enterprise-geo-china-kimi-doubao-metaso/): 面向 Kimi、豆包、秘塔的 11 维 85 项国内企业官网 GEO 优化全攻略
+- [GeoScore Chrome 扩展发布公告（中文）](https://geoscore.help/zh/blog/geoscore-chrome-extension-launch/): 突破 WAF 限制、支持 Localhost 本地与 SSR/CSR DOM 对比的 Chrome MV3 扩展
 - [GeoScore 引擎升级公告（中文）](https://geoscore.help/zh/blog/geoscore-update-multi-page-security/): 多页面扫描、真实 HTTP 安全响应头检测与全方位 CJK 中文适配
 
 - [GeoScore 中文版](https://geoscore.help/zh/): 免费开源的 GEO 审计工具 — 11 维度评分、20 个 AI 爬虫检测、一键生成修复文件

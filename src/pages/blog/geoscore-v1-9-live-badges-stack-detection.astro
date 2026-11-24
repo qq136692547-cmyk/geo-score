@@ -1,0 +1,209 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+<Layout
+  title="GeoScore v1.9: Live GEO Score SVG Badges & Stack Guides | GeoScore"
+  description="GeoScore v1.9 launches live SVG score badges for READMEs, automatic Shopify/WordPress/Next.js detection in Chrome MV3, 6 platform playbooks, and 3-mode web audits."
+  schema={[
+    {
+      '@type': 'Article',
+      headline: 'GeoScore v1.9: Live GEO Score SVG Badges, Stack Auto-Detection & Platform Playbooks',
+      description: 'GeoScore v1.9 launches live SVG score badges for GitHub READMEs and footers, automatic Shopify/WordPress/Next.js stack detection in Chrome Extension v1.9.0, 6 new platform guides, and unified 3-mode web audits.',
+      url: 'https://geoscore.help/blog/geoscore-v1-9-live-badges-stack-detection/',
+      datePublished: '2026-11-25',
+      dateModified: '2026-11-25',
+      author: { '@type': 'Organization', name: 'GeoScore' },
+      publisher: { '@type': 'Organization', name: 'GeoScore', url: 'https://geoscore.help' }
+    },
+    {
+      '@type': 'FAQPage',
+      mainEntity: [
+        {
+          '@type': 'Question',
+          name: 'How do GeoScore live SVG badges work?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Point any Markdown or HTML image tag at https://geoscore.help/badge/yourdomain.com. A Cloudflare Pages edge function audits your public site, caches the SVG badge for 6 hours, and color-codes your 0-100 score across four tiers (86+ emerald, 68+ blue, 36+ amber, under 36 red).'
+          }
+        },
+        {
+          '@type': 'Question',
+          name: 'Which tech stacks does GeoScore Chrome Extension v1.9.0 detect automatically?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'GeoScore Chrome Extension v1.9.0 automatically detects Shopify, WordPress, and Next.js on the active tab and displays stack-specific deployment steps for llms.txt, robots.txt, and JSON-LD schema directly inside the Side Panel.'
+          }
+        },
+        {
+          '@type': 'Question',
+          name: 'Does the live badge endpoint expose private or internal IP addresses?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'No. The /badge/[domain] edge function enforces strict domain validation, SSRF and private-IP blocking, manual redirect checks, and a 350 KB streaming read cap so only public production domains are scored.'
+          }
+        },
+        {
+          '@type': 'Question',
+          name: 'How accurate is the background tab score badge in Chrome Extension v1.9.0?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Version 1.9.0 upgrades the background service worker to inspect all six non-HTML discovery endpoints (robots.txt, llms.txt, sitemap.xml, /ai/summary.json, /ai/faq.json, and /.well-known/ai-plugin.json) alongside the active page so toolbar scores match full Side Panel audits.'
+          }
+        }
+      ]
+    }
+  ]}
+>
+  <section class="max-w-3xl mx-auto py-8">
+    <article class="prose prose-invert max-w-none">
+      <div class="text-center mb-10">
+        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-geo-500/10 text-geo-400 border border-geo-500/20 mb-4">
+          Release v1.9.0 · Extension, Badges &amp; Platform Playbooks
+        </div>
+        <h1 class="text-3xl sm:text-4xl font-extrabold mb-3 text-white leading-tight">
+          GeoScore v1.9: Live GEO Score SVG Badges, Stack Auto-Detection &amp; Platform Playbooks
+        </h1>
+        <p class="text-gray-400">Published November 25, 2026 · 6 min read</p>
+      </div>
+
+      <div class="card p-6 sm:p-8 mb-6 border border-brand-500/30 bg-gradient-to-br from-brand-950/20 to-geo-950/30">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
+          <div>
+            <h2 class="text-xl font-bold text-white mb-1">Live Now on Web &amp; Chrome Web Store (v1.9.0)</h2>
+            <p class="text-sm text-gray-300">Dynamic SVG score badges, automatic Shopify/WordPress/Next.js detection, 6-endpoint background scoring, and unified 3-mode web audits.</p>
+          </div>
+          <a
+            href="https://chromewebstore.google.com/detail/geoscore-free-geo-aeo-llm/cboppgehhkhaamcgfcikhekkdaelichn"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-white bg-gradient-to-r from-geo-600 to-brand-600 hover:from-geo-500 hover:to-brand-500 transition shadow-lg shadow-geo-600/20 shrink-0 text-sm"
+          >
+            Install Extension v1.9.0 →
+          </a>
+        </div>
+        <p class="text-gray-300 text-base leading-relaxed">
+          Finding GEO issues is only half the workflow. Developers and site owners kept asking for two things: a lightweight way to showcase verified AI readiness in GitHub READMEs and site footers, and concrete deployment instructions tailored to their exact CMS or framework instead of generic server advice.
+        </p>
+        <p class="text-gray-400 text-sm mt-3">
+          <strong class="text-white">GeoScore v1.9.0</strong> ships both across <a href="/" class="text-brand-400 hover:underline">geoscore.help</a> and the official <a href="/blog/geoscore-chrome-extension-launch/" class="text-brand-400 hover:underline">Chrome MV3 Extension</a>.
+        </p>
+      </div>
+
+      <div class="card p-6 sm:p-8 mb-6">
+        <h2 class="text-xl font-bold mb-4 text-white">1. Live Dynamic GEO Score SVG Badges (Embed in 10 Seconds)</h2>
+        <p class="text-gray-300 text-sm mb-4 leading-relaxed">
+          Every public domain now has a live, cache-backed SVG badge at <code class="text-geo-400">https://geoscore.help/badge/&lt;domain&gt;</code>. Powered by a Cloudflare Pages edge function with SSRF/private-IP filtering, manual redirect verification, a 350 KB streaming read cap, and a 6-hour edge cache, the badge automatically reflects your latest 0–100 score and color tier (<strong class="text-emerald-400">86+ green</strong>, <strong class="text-brand-400">68+ blue</strong>, <strong class="text-yellow-400">36+ amber</strong>, <strong class="text-red-400">&lt;36 red</strong>).
+        </p>
+        <div class="p-4 rounded-xl bg-gray-900/70 border border-gray-800 mb-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div class="text-xs text-gray-400">Live example rendered directly from the edge endpoint:</div>
+          <a href="/?url=https://geoscore.help" class="shrink-0">
+            <img src="/badge/geoscore.help" alt="GeoScore live GEO readiness badge" class="h-6" loading="lazy" />
+          </a>
+        </div>
+        <h3 class="text-base font-semibold text-brand-400 mb-2">Markdown Snippet (GitHub README / Docs)</h3>
+        <div class="bg-gray-900/80 rounded-xl p-4 font-mono text-xs text-gray-300 mb-4 overflow-x-auto border border-gray-800">
+<pre>{`[![GEO Score](https://geoscore.help/badge/example.com)](https://geoscore.help/?url=https://example.com)`}</pre>
+        </div>
+        <h3 class="text-base font-semibold text-brand-400 mb-2">HTML Snippet (Website Footer / Status Page)</h3>
+        <div class="bg-gray-900/80 rounded-xl p-4 font-mono text-xs text-gray-300 mb-4 overflow-x-auto border border-gray-800">
+<pre>{`<a href="https://geoscore.help/?url=https://example.com" target="_blank" rel="noopener">
+  <img src="https://geoscore.help/badge/example.com" alt="GEO Score" />
+</a>`}</pre>
+        </div>
+        <p class="text-gray-400 text-sm">
+          In <strong class="text-white">Chrome Extension v1.9.0</strong>, the Side Panel renders a live badge preview automatically after every audit with one-click Markdown and HTML copy buttons—no manual domain typing needed.
+        </p>
+      </div>
+
+      <div class="card p-6 sm:p-8 mb-6">
+        <h2 class="text-xl font-bold mb-4 text-white">2. Automatic Stack Detection &amp; Dedicated Platform Playbooks</h2>
+        <p class="text-gray-300 text-sm mb-4 leading-relaxed">
+          Deploying <code class="text-geo-400">/llms.txt</code>, <code class="text-geo-400">robots.txt</code> AI crawler rules, and JSON-LD schema looks completely different on Shopify vs WordPress vs Next.js App Router. GeoScore v1.9.0 introduces automatic stack detection inside the Chrome extension (<code class="text-geo-400">stackDetector.js</code>) and a 4-tab deployment guide (<strong class="text-white">Static HTML</strong>, <strong class="text-white">Next.js</strong>, <strong class="text-white">WordPress</strong>, <strong class="text-white">Shopify</strong>) right inside the web Fix Files panel.
+        </p>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+          <a href="/geo-for/shopify/" class="p-4 rounded-xl bg-gray-900/60 border border-gray-800 hover:border-geo-500/50 transition block">
+            <div class="text-xs font-mono text-geo-400 mb-1">/geo-for/shopify/</div>
+            <h3 class="font-bold text-white text-base mb-1">GEO for Shopify</h3>
+            <p class="text-xs text-gray-400 leading-relaxed">Upload <code class="text-gray-300">llms.txt</code> via Content &gt; Files + URL redirect, customize <code class="text-gray-300">robots.txt.liquid</code>, and complete Product JSON-LD.</p>
+          </a>
+          <a href="/geo-for/wordpress/" class="p-4 rounded-xl bg-gray-900/60 border border-gray-800 hover:border-geo-500/50 transition block">
+            <div class="text-xs font-mono text-geo-400 mb-1">/geo-for/wordpress/</div>
+            <h3 class="font-bold text-white text-base mb-1">GEO for WordPress</h3>
+            <p class="text-xs text-gray-400 leading-relaxed">Place root <code class="text-gray-300">llms.txt</code>, configure Yoast / Rank Math AI crawler rules, and inject schema cleanly via WPCode.</p>
+          </a>
+          <a href="/geo-for/nextjs/" class="p-4 rounded-xl bg-gray-900/60 border border-gray-800 hover:border-geo-500/50 transition block">
+            <div class="text-xs font-mono text-geo-400 mb-1">/geo-for/nextjs/</div>
+            <h3 class="font-bold text-white text-base mb-1">GEO for Next.js</h3>
+            <p class="text-xs text-gray-400 leading-relaxed">Ship <code class="text-gray-300">public/llms.txt</code>, typed <code class="text-gray-300">app/robots.ts</code>, Server Component JSON-LD, and localhost SSR vs CSR checks.</p>
+          </a>
+        </div>
+        <p class="text-gray-400 text-sm">
+          Prefer hands-free implementation? When an audit scores below 60, GeoScore now surfaces the one-time <a href="/fixpack/" class="text-brand-400 hover:underline font-medium">$49 Fix Pack</a> (custom llms.txt, robots.txt, schema, and post-deploy re-audit within 48 hours). Reach us anytime at <a href="mailto:hello@geoscore.help" class="text-brand-400 hover:underline">hello@geoscore.help</a>.
+        </p>
+      </div>
+
+      <div class="card p-6 sm:p-8 mb-6">
+        <h2 class="text-xl font-bold mb-4 text-white">3. Accurate 6-Endpoint Background Scoring &amp; 3-Mode Web Audits</h2>
+        <div class="space-y-4 text-sm text-gray-300">
+          <div class="p-4 rounded-xl bg-gray-900/60 border border-gray-800">
+            <h3 class="font-bold text-geo-400 mb-1">Full 6-Endpoint Silent Background Audit (Extension v1.9.0)</h3>
+            <p class="text-gray-400 leading-relaxed">
+              Previously, silent toolbar badge checks only sampled a subset of discovery files, which could under-report scores compared to opening the Side Panel. In v1.9.0, the MV3 service worker checks all six non-HTML discovery endpoints—<code class="text-gray-300">robots.txt</code>, <code class="text-gray-300">llms.txt</code>, <code class="text-gray-300">sitemap.xml</code>, <code class="text-gray-300">/ai/summary.json</code>, <code class="text-gray-300">/ai/faq.json</code>, and <code class="text-gray-300">/.well-known/ai-plugin.json</code>—so your toolbar badge score matches the full Side Panel report.
+            </p>
+          </div>
+          <div class="p-4 rounded-xl bg-gray-900/60 border border-gray-800">
+            <h3 class="font-bold text-brand-400 mb-1">Unified 3-Tab Hero Switcher on geoscore.help</h3>
+            <p class="text-gray-400 leading-relaxed">
+              On the web app, you can now switch cleanly between <strong class="text-white">Single URL</strong>, <strong class="text-white">Batch Sitemap</strong>, and <strong class="text-white">Compare Sites</strong> directly inside the hero audit panel—making competitor benchmarking and multi-page audits much faster.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card p-6 sm:p-8 mb-6">
+        <h2 class="text-xl font-bold mb-4 text-white">Frequently Asked Questions</h2>
+        <div class="space-y-4 text-sm">
+          <div>
+            <h3 class="font-semibold text-white mb-1">How do GeoScore live SVG badges work?</h3>
+            <p class="text-gray-400">Point any Markdown or HTML image tag at <code class="text-geo-400">https://geoscore.help/badge/yourdomain.com</code>. A Cloudflare Pages edge function audits your public site, caches the SVG badge for 6 hours, and color-codes your 0–100 score across four tiers (86+ emerald, 68+ blue, 36+ amber, under 36 red).</p>
+          </div>
+          <div>
+            <h3 class="font-semibold text-white mb-1">Which tech stacks does GeoScore Chrome Extension v1.9.0 detect automatically?</h3>
+            <p class="text-gray-400">GeoScore Chrome Extension v1.9.0 automatically detects <a href="/geo-for/shopify/" class="text-brand-400 hover:underline">Shopify</a>, <a href="/geo-for/wordpress/" class="text-brand-400 hover:underline">WordPress</a>, and <a href="/geo-for/nextjs/" class="text-brand-400 hover:underline">Next.js</a> locally inside your browser and displays stack-specific deployment steps directly inside the Side Panel.</p>
+          </div>
+          <div>
+            <h3 class="font-semibold text-white mb-1">Does the live badge endpoint expose private or internal IP addresses?</h3>
+            <p class="text-gray-400">No. The <code class="text-geo-400">/badge/[domain]</code> edge function enforces strict domain validation, SSRF and private-IP blocking, manual redirect checks, and a 350 KB streaming read cap so only public production domains are scored.</p>
+          </div>
+          <div>
+            <h3 class="font-semibold text-white mb-1">How accurate is the background tab score badge in Chrome Extension v1.9.0?</h3>
+            <p class="text-gray-400">Version 1.9.0 upgrades the background service worker to inspect all six non-HTML discovery endpoints (<code class="text-geo-400">robots.txt</code>, <code class="text-geo-400">llms.txt</code>, <code class="text-geo-400">sitemap.xml</code>, <code class="text-geo-400">/ai/summary.json</code>, <code class="text-geo-400">/ai/faq.json</code>, and <code class="text-geo-400">/.well-known/ai-plugin.json</code>) so toolbar scores match full Side Panel audits.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card p-6 sm:p-8 mb-6 bg-gradient-to-r from-geo-500/10 to-brand-500/10 border border-brand-500/30">
+        <h2 class="text-xl font-bold mb-3 text-white">Try GeoScore v1.9.0 &amp; Embed Your Live Badge</h2>
+        <p class="text-gray-300 text-sm mb-5 leading-relaxed">
+          Audit your site across 11 GEO dimensions, copy your live SVG score badge, and deploy stack-ready fix files in minutes.
+        </p>
+        <div class="flex flex-wrap items-center gap-4">
+          <a
+            href="/"
+            class="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-geo-600 to-brand-600 hover:from-geo-500 hover:to-brand-500 transition shadow-lg shadow-geo-600/20"
+          >
+            Run Free Web Audit →
+          </a>
+          <a
+            href="https://chromewebstore.google.com/detail/geoscore-free-geo-aeo-llm/cboppgehhkhaamcgfcikhekkdaelichn"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-gray-200 bg-gray-800/80 hover:bg-gray-700/80 hover:text-white transition border border-gray-700"
+          >
+            Chrome Extension v1.9.0
+          </a>
+        </div>
+      </div>
+    </article>
+  </section>
+</Layout>

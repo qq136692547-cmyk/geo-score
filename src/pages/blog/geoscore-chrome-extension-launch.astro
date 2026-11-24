@@ -11,7 +11,7 @@ import Layout from '../../layouts/Layout.astro';
     description: 'Directly audit any open tab from Chrome\'s Side Panel. Bypass Cloudflare WAF 5s shields, inspect private localhost/staging apps, and optimize your site for ChatGPT, Perplexity, and Claude.',
     url: 'https://geoscore.help/blog/geoscore-chrome-extension-launch/',
     datePublished: '2026-11-18',
-    dateModified: '2026-11-18',
+    dateModified: '2026-11-25',
     author: { '@type': 'Organization', name: 'GeoScore' },
     publisher: { '@type': 'Organization', name: 'GeoScore', url: 'https://geoscore.help' }
   }}
@@ -179,6 +179,24 @@ Please generate the following code fixes:
         <p class="text-gray-400 text-sm">
           The extension requires zero account registration, operates entirely without ads, and processes data strictly client-side to safeguard developer privacy.
         </p>
+      </div>
+
+      <div class="card p-6 sm:p-8 mb-6 border border-geo-500/30 bg-geo-950/20">
+        <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-md text-xs font-semibold bg-geo-500/10 text-geo-400 border border-geo-500/20 mb-3">
+          Updated · v1.9.0 Live on Chrome Web Store
+        </div>
+        <h2 class="text-xl font-bold mb-3 text-white">What&apos;s New in Extension v1.9.0</h2>
+        <p class="text-gray-300 text-sm mb-3 leading-relaxed">
+          Version <strong class="text-white">1.9.0</strong> adds three high-impact upgrades directly inside the Side Panel and background service worker:
+        </p>
+        <ul class="space-y-2 text-sm text-gray-300 mb-4 list-disc list-inside">
+          <li><strong class="text-white">Live SVG Score Badges</strong>: Preview <code class="text-geo-400">/badge/&lt;domain&gt;</code> and copy ready-to-paste Markdown or HTML snippets in one click.</li>
+          <li><strong class="text-white">Automatic Stack Detection</strong>: Detects <a href="/geo-for/shopify/" class="text-brand-400 hover:underline">Shopify</a>, <a href="/geo-for/wordpress/" class="text-brand-400 hover:underline">WordPress</a>, and <a href="/geo-for/nextjs/" class="text-brand-400 hover:underline">Next.js</a> locally and links straight to stack-specific deployment steps.</li>
+          <li><strong class="text-white">Full 6-Endpoint Background Scoring</strong>: Silent toolbar badge checks now inspect all six non-HTML discovery endpoints for accurate scores.</li>
+        </ul>
+        <a href="/blog/geoscore-v1-9-live-badges-stack-detection/" class="text-sm font-semibold text-geo-400 hover:underline">
+          Read the full GeoScore v1.9.0 release notes →
+        </a>
       </div>
 
       <div class="card p-6 sm:p-8 mb-6 bg-gradient-to-r from-geo-500/10 to-brand-500/10 border border-brand-500/30">

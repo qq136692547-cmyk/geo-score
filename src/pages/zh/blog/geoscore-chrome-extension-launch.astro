@@ -11,7 +11,7 @@ import LayoutZh from '../../../layouts/LayoutZh.astro';
     description: '告别云端爬虫被 Cloudflare 拦截与内网无法测试的困扰。基于 Manifest V3 与 Chrome Side Panel，零配置在任意前台网页一键审计 11 维 85 项 AI 引文关键指标。',
     url: 'https://geoscore.help/zh/blog/geoscore-chrome-extension-launch/',
     datePublished: '2026-11-18',
-    dateModified: '2026-11-18',
+    dateModified: '2026-11-25',
     author: { '@type': 'Organization', name: 'GeoScore' },
     publisher: { '@type': 'Organization', name: 'GeoScore', url: 'https://geoscore.help' }
   }}
@@ -184,6 +184,24 @@ GeoScore 扩展检测到以下 3 项关键缺陷：
         <p class="text-gray-400 text-xs">
           本扩展完全遵循 Google Chrome 官方安全审查规范，不抓取任何个人私密浏览历史，代码审计与 DOM 分析均在本地浏览器隔离环境中运行。
         </p>
+      </div>
+
+      <div class="card p-6 sm:p-8 mb-6 border border-geo-500/30 bg-geo-950/20">
+        <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-md text-xs font-semibold bg-geo-500/10 text-geo-400 border border-geo-500/20 mb-3">
+          版本更新 · v1.9.0 已全量上线 Chrome 商店
+        </div>
+        <h2 class="text-xl font-bold mb-3 text-white">Chrome 扩展 v1.9.0 新增亮点</h2>
+        <p class="text-gray-300 text-sm mb-3 leading-relaxed">
+          最新 <strong class="text-white">v1.9.0</strong> 版本在侧边栏与后台 Service Worker 中带来了三项核心升级：
+        </p>
+        <ul class="space-y-2 text-sm text-gray-300 mb-4 list-disc list-inside">
+          <li><strong class="text-white">实时动态 SVG 评分徽章</strong>：支持在侧边栏预览 <code class="text-geo-400">/badge/&lt;domain&gt;</code>，一键复制 Markdown 与 HTML 代码嵌入 README 或官网页脚。</li>
+          <li><strong class="text-white">建站技术栈自动识别</strong>：本地零外传自动识别 <a href="/zh/geo-for/shopify/" class="text-brand-400 hover:underline">Shopify</a>、<a href="/zh/geo-for/wordpress/" class="text-brand-400 hover:underline">WordPress</a> 与 <a href="/zh/geo-for/nextjs/" class="text-brand-400 hover:underline">Next.js</a>，直达对应平台部署教程。</li>
+          <li><strong class="text-white">6 端点后台静默校准</strong>：后台静默角标检测现已完整覆盖全部 6 个非 HTML 发现端点，工具栏分数与完整报告保持一致。</li>
+        </ul>
+        <a href="/zh/blog/geoscore-v1-9-live-badges-stack-detection/" class="text-sm font-semibold text-geo-400 hover:underline">
+          查看完整 GeoScore v1.9.0 发布日志（含动态徽章与 WorkBuddy 专家团介绍）→
+        </a>
       </div>
 
       <div class="card p-6 sm:p-8 mb-6 bg-gradient-to-r from-geo-500/10 to-brand-500/10 border border-brand-500/30">

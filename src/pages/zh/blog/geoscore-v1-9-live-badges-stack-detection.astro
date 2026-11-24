@@ -1,0 +1,234 @@
+---
+import LayoutZh from '../../../layouts/LayoutZh.astro';
+---
+<LayoutZh
+  title="GeoScore v1.9 发布：实时 SVG 评分徽章、技术栈自动识别、平台指南与 WorkBuddy 专家团 | GeoScore"
+  description="GeoScore v1.9 正式上线：支持实时动态 GEO 评分 SVG 徽章嵌入 README/页脚、Chrome 扩展自动识别 Shopify/WordPress/Next.js 技术栈、3 模式首页审计，以及腾讯 WorkBuddy 国内企业专家团。"
+  schema={[
+    {
+      '@type': 'Article',
+      headline: 'GeoScore v1.9 发布：实时 SVG 评分徽章、技术栈自动识别、平台指南与 WorkBuddy 专家团',
+      description: 'GeoScore v1.9 正式上线：支持实时动态 GEO 评分 SVG 徽章嵌入、Chrome 扩展自动识别 Shopify/WordPress/Next.js、6 篇双语平台落地指南，以及腾讯 WorkBuddy 国内企业官网 GEO 专家团（¥29 一次性买断）。',
+      url: 'https://geoscore.help/zh/blog/geoscore-v1-9-live-badges-stack-detection/',
+      datePublished: '2026-11-25',
+      dateModified: '2026-11-25',
+      author: { '@type': 'Organization', name: 'GeoScore' },
+      publisher: { '@type': 'Organization', name: 'GeoScore', url: 'https://geoscore.help' }
+    },
+    {
+      '@type': 'FAQPage',
+      mainEntity: [
+        {
+          '@type': 'Question',
+          name: 'GeoScore 实时 SVG 评分徽章如何嵌入网站或 GitHub README？',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: '只需将图片地址指向 https://geoscore.help/badge/你的域名 即可。Cloudflare 边缘节点会自动完成公开站点评分并缓存 6 小时，按分数段展示四档颜色（86+ 绿、68+ 蓝、36+ 琥珀、36 以下红），Chrome 扩展 v1.9.0 侧边栏也支持一键复制 Markdown 和 HTML 嵌入代码。'
+          }
+        },
+        {
+          '@type': 'Question',
+          name: 'Chrome 扩展 v1.9.0 支持自动识别哪些建站技术栈？',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: '扩展内置的 stackDetector.js 可在本地零外传自动识别 Shopify、WordPress 与 Next.js，并在侧边栏与网页修复文件面板中直接给出对应平台的 llms.txt、robots.txt 和 JSON-LD 部署步骤。'
+          }
+        },
+        {
+          '@type': 'Question',
+          name: '腾讯 WorkBuddy「国内企业官网 GEO 引文优化专家团」和网页版有什么区别？',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'WorkBuddy 专家团面向需要优化 Kimi、豆包、DeepSeek、秘塔和元宝等国产大模型引文的国内企业官网，采用 ¥29 一次性买断制（支持国内便捷支付），内置 1 位主理人 + 4 位专项专家，纯本地零依赖运行 9 大国产 AI 爬虫诊断、ICP/公安备案信任核验、中文修复包生成与离线 SVG+HTML 战报。'
+          }
+        },
+        {
+          '@type': 'Question',
+          name: '扩展工具栏的静默角标分数和打开侧边栏的完整分数一致吗？',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: '一致。v1.9.0 升级了后台 Service Worker，自动检测全部 6 个非 HTML 发现端点（robots.txt、llms.txt、sitemap.xml、/ai/summary.json、/ai/faq.json 与 /.well-known/ai-plugin.json），确保工具栏角标与侧边栏深度审计口径对齐。'
+          }
+        }
+      ]
+    }
+  ]}
+>
+  <section class="max-w-3xl mx-auto py-8">
+    <article class="prose prose-invert max-w-none">
+      <div class="text-center mb-10">
+        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-geo-500/10 text-geo-400 border border-geo-500/20 mb-4">
+          版本发布 v1.9.0 · 扩展升级、动态徽章与国内专家团
+        </div>
+        <h1 class="text-3xl sm:text-4xl font-extrabold mb-3 text-white leading-tight">
+          GeoScore v1.9 发布：实时 SVG 评分徽章、技术栈自动识别、平台指南与 WorkBuddy 专家团
+        </h1>
+        <p class="text-gray-400">发布于 2026 年 11 月 25 日 · 阅读时间约 6 分钟</p>
+      </div>
+
+      <div class="card p-6 sm:p-8 mb-6 border border-brand-500/30 bg-gradient-to-br from-brand-950/20 to-geo-950/30">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
+          <div>
+            <h2 class="text-xl font-bold text-white mb-1">Web 主站、Chrome 扩展 v1.9.0 与 WorkBuddy 专家团全线就绪</h2>
+            <p class="text-sm text-gray-300">实时动态 SVG 徽章、Shopify/WordPress/Next.js 自动识别、6 端点后台精准角标，以及国内人民币一次性买断专家团。</p>
+          </div>
+          <a
+            href="https://chromewebstore.google.com/detail/geoscore-free-geo-aeo-llm/cboppgehhkhaamcgfcikhekkdaelichn"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-white bg-gradient-to-r from-geo-600 to-brand-600 hover:from-geo-500 hover:to-brand-500 transition shadow-lg shadow-geo-600/20 shrink-0 text-sm"
+          >
+            升级 Chrome 扩展 v1.9.0 →
+          </a>
+        </div>
+        <p class="text-gray-200 text-base leading-relaxed">
+          过去一周，我们围绕“如何让 GEO 优化结果看得见、部署更省心、国内企业更好落地”三个核心诉求，对 <a href="/zh/" class="text-brand-400 hover:underline">geoscore.help</a> 网页端、<a href="/zh/blog/geoscore-chrome-extension-launch/" class="text-brand-400 hover:underline">Chrome MV3 官方扩展</a> 以及国内本地化工具链完成了一次完整升级。
+        </p>
+      </div>
+
+      <div class="card p-6 sm:p-8 mb-6">
+        <h2 class="text-xl font-bold mb-4 text-white">1. 实时动态 GEO 评分 SVG 徽章（10 秒嵌入 README / 官网页脚）</h2>
+        <p class="text-gray-300 text-sm mb-4 leading-relaxed">
+          现在任何公开域名都拥有专属的动态评分徽章地址：<code class="text-geo-400">https://geoscore.help/badge/你的域名</code>。该端点运行在 Cloudflare Pages 边缘函数上，内置 SSRF 与内网 IP 过滤、手动跳转校验、350 KB 流式读取上限与 6 小时边缘缓存，并严格对齐引擎的四档评分配色（<strong class="text-emerald-400">86+ 绿</strong>、<strong class="text-brand-400">68+ 蓝</strong>、<strong class="text-yellow-400">36+ 琥珀</strong>、<strong class="text-red-400">36 以下红</strong>）。
+        </p>
+        <div class="p-4 rounded-xl bg-gray-900/70 border border-gray-800 mb-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div class="text-xs text-gray-400">由边缘节点实时渲染的在线徽章示例：</div>
+          <a href="/zh/?url=https://geoscore.help" class="shrink-0">
+            <img src="/badge/geoscore.help" alt="GeoScore 实时 GEO 评分徽章" class="h-6" loading="lazy" />
+          </a>
+        </div>
+        <h3 class="text-base font-semibold text-brand-400 mb-2">Markdown 代码（适用于 GitHub README / 技术文档）</h3>
+        <div class="bg-gray-900/80 rounded-xl p-4 font-mono text-xs text-gray-300 mb-4 overflow-x-auto border border-gray-800">
+<pre>{`[![GEO Score](https://geoscore.help/badge/example.com)](https://geoscore.help/?url=https://example.com)`}</pre>
+        </div>
+        <h3 class="text-base font-semibold text-brand-400 mb-2">HTML 代码（适用于企业官网页脚 / 状态页）</h3>
+        <div class="bg-gray-900/80 rounded-xl p-4 font-mono text-xs text-gray-300 mb-4 overflow-x-auto border border-gray-800">
+<pre>{`<a href="https://geoscore.help/?url=https://example.com" target="_blank" rel="noopener">
+  <img src="https://geoscore.help/badge/example.com" alt="GEO Score" />
+</a>`}</pre>
+        </div>
+        <p class="text-gray-400 text-sm">
+          安装 <strong class="text-white">Chrome 扩展 v1.9.0</strong> 后，每次在侧边栏跑完审计都会自动展示当前网站的实时徽章预览，点击按钮即可一键复制 Markdown 或 HTML 嵌入代码。
+        </p>
+      </div>
+
+      <div class="card p-6 sm:p-8 mb-6">
+        <h2 class="text-xl font-bold mb-4 text-white">2. 技术栈自动识别与 3 大主流建站平台实战指南</h2>
+        <p class="text-gray-300 text-sm mb-4 leading-relaxed">
+          不同建站体系部署 <code class="text-geo-400">/llms.txt</code>、<code class="text-geo-400">robots.txt</code> 与 JSON-LD 的路径差异极大。v1.9.0 在扩展中新增了纯本地技术栈识别器（<code class="text-geo-400">stackDetector.js</code>），并在网页端修复文件面板上线了 4 套平台部署标签页（<strong class="text-white">Static HTML</strong>、<strong class="text-white">Next.js</strong>、<strong class="text-white">WordPress</strong>、<strong class="text-white">Shopify</strong>），同步开放 3 篇中文专题落地指南：
+        </p>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+          <a href="/zh/geo-for/shopify/" class="p-4 rounded-xl bg-gray-900/60 border border-gray-800 hover:border-geo-500/50 transition block">
+            <div class="text-xs font-mono text-geo-400 mb-1">/zh/geo-for/shopify/</div>
+            <h3 class="font-bold text-white text-base mb-1">Shopify GEO 指南</h3>
+            <p class="text-xs text-gray-400 leading-relaxed">通过 Content &gt; Files + 重定向部署 <code class="text-gray-300">llms.txt</code>，配置 <code class="text-gray-300">robots.txt.liquid</code> 与商品 Schema。</p>
+          </a>
+          <a href="/zh/geo-for/wordpress/" class="p-4 rounded-xl bg-gray-900/60 border border-gray-800 hover:border-geo-500/50 transition block">
+            <div class="text-xs font-mono text-geo-400 mb-1">/zh/geo-for/wordpress/</div>
+            <h3 class="font-bold text-white text-base mb-1">WordPress GEO 指南</h3>
+            <p class="text-xs text-gray-400 leading-relaxed">根目录放置 <code class="text-gray-300">llms.txt</code>、Yoast / Rank Math 爬虫规则配置与 WPCode 注入结构化数据。</p>
+          </a>
+          <a href="/zh/geo-for/nextjs/" class="p-4 rounded-xl bg-gray-900/60 border border-gray-800 hover:border-geo-500/50 transition block">
+            <div class="text-xs font-mono text-geo-400 mb-1">/zh/geo-for/nextjs/</div>
+            <h3 class="font-bold text-white text-base mb-1">Next.js GEO 指南</h3>
+            <p class="text-xs text-gray-400 leading-relaxed">App Router 落地 <code class="text-gray-300">public/llms.txt</code>、<code class="text-gray-300">app/robots.ts</code>、SSR/CSR 对比与 Localhost 本地审计。</p>
+          </a>
+        </div>
+      </div>
+
+      <div class="card p-6 sm:p-8 mb-6">
+        <h2 class="text-xl font-bold mb-4 text-white">3. 6 端点后台静默角标校准 &amp; 首页 3 模式审计切换</h2>
+        <div class="space-y-4 text-sm text-gray-300">
+          <div class="p-4 rounded-xl bg-gray-900/60 border border-gray-800">
+            <h3 class="font-bold text-geo-400 mb-1">扩展后台全 6 端点静默检测</h3>
+            <p class="text-gray-400 leading-relaxed">
+              Chrome 扩展 v1.9.0 的 Service Worker 现已完整检测 <code class="text-gray-300">robots.txt</code>、<code class="text-gray-300">llms.txt</code>、<code class="text-gray-300">sitemap.xml</code>、<code class="text-gray-300">/ai/summary.json</code>、<code class="text-gray-300">/ai/faq.json</code> 与 <code class="text-gray-300">/.well-known/ai-plugin.json</code> 全部 6 个发现端点，让浏览器图标角标分数与完整侧边栏报告完全一致。
+            </p>
+          </div>
+          <div class="p-4 rounded-xl bg-gray-900/60 border border-gray-800">
+            <h3 class="font-bold text-brand-400 mb-1">首页三合一审计模式切换</h3>
+            <p class="text-gray-400 leading-relaxed">
+              <a href="/zh/" class="text-brand-400 hover:underline">geoscore.help/zh/</a> 首页首屏现已整合 <strong class="text-white">单页 URL</strong>、<strong class="text-white">批量 Sitemap</strong> 与 <strong class="text-white">竞品对比</strong> 三种模式，一步完成整站摸底或竞品差距分析；同时官方联系邮箱已全面升级为 <a href="mailto:hello@geoscore.help" class="text-brand-400 hover:underline">hello@geoscore.help</a>。
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card p-6 sm:p-8 mb-6 border border-emerald-500/30 bg-gradient-to-br from-emerald-950/25 via-transparent to-geo-950/20">
+        <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-md text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 mb-3">
+          国内企业专享 · 腾讯 WorkBuddy 官方已上架
+        </div>
+        <h2 class="text-xl font-bold mb-3 text-white">4. 腾讯 WorkBuddy「国内企业官网 GEO 引文优化专家团」（¥29 一次性买断）</h2>
+        <p class="text-gray-300 text-sm mb-4 leading-relaxed">
+          针对重点布局 <strong class="text-white">Kimi、豆包、DeepSeek、秘塔、腾讯元宝与通义千问</strong> 的国内企业官网，我们还正式上架了 WorkBuddy 多智能体专家团（<code class="text-emerald-400">v1.0.1</code>）。无需外币卡或按月订阅，<strong class="text-white">¥29 人民币一次性买断永久拥有</strong>：
+        </p>
+        <ul class="space-y-2 text-sm text-gray-300 mb-5">
+          <li><strong class="text-emerald-400">✓ 5 位协同专家编队</strong>：1 位首席架构师主理人 + 4 位专项专家（AI 爬虫与 SSR 诊断、国内备案与信任审计、中文修复包架构、离线战报策略）。</li>
+          <li><strong class="text-emerald-400">✓ 国内合规深度适配</strong>：专项检测 9 大国产 AI 爬虫别名、CSR 渲染盲区、双层软 404，以及 ICP 备案号、公安网安备案与统一社会信用代码信任信号。</li>
+          <li><strong class="text-emerald-400">✓ 纯本地零外部绑定</strong>：零第三方 npm 依赖，不绑定任何外部 SaaS 账号或 API Key，直接输出中文 <code class="text-gray-200">llms.txt</code>、<code class="text-gray-200">robots.txt</code>、<code class="text-gray-200">@graph</code> JSON-LD 与单文件离线 SVG+HTML 战报。</li>
+        </ul>
+        <div class="flex flex-wrap items-center gap-3">
+          <a
+            href="https://www.workbuddy.cn/share/asset?shareCode=uAZqr7A5thAbrsgBgOfP4Q&sig=hq2cpnWtrzyM5upa"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-sm text-white bg-gradient-to-r from-emerald-600 to-geo-600 hover:from-emerald-500 hover:to-geo-500 transition shadow-lg shadow-emerald-600/20"
+          >
+            前往 WorkBuddy 召唤专家团 (¥29) →
+          </a>
+          <a
+            href="/zh/blog/enterprise-geo-china-kimi-doubao-metaso/"
+            class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-medium text-sm text-gray-300 bg-gray-800/80 hover:bg-gray-700/80 hover:text-white transition border border-gray-700"
+          >
+            阅读国内企业 GEO 实战指南
+          </a>
+        </div>
+      </div>
+
+      <div class="card p-6 sm:p-8 mb-6">
+        <h2 class="text-xl font-bold mb-4 text-white">常见问题</h2>
+        <div class="space-y-4 text-sm">
+          <div>
+            <h3 class="font-semibold text-white mb-1">GeoScore 实时 SVG 评分徽章如何嵌入网站或 GitHub README？</h3>
+            <p class="text-gray-400">只需将图片地址指向 <code class="text-geo-400">https://geoscore.help/badge/你的域名</code> 即可。Cloudflare 边缘节点会自动完成公开站点评分并缓存 6 小时，按分数段展示四档颜色，Chrome 扩展 v1.9.0 侧边栏也支持一键复制 Markdown 与 HTML 嵌入代码。</p>
+          </div>
+          <div>
+            <h3 class="font-semibold text-white mb-1">Chrome 扩展 v1.9.0 支持自动识别哪些建站技术栈？</h3>
+            <p class="text-gray-400">扩展内置的 <code class="text-geo-400">stackDetector.js</code> 可在本地零外传自动识别 <a href="/zh/geo-for/shopify/" class="text-brand-400 hover:underline">Shopify</a>、<a href="/zh/geo-for/wordpress/" class="text-brand-400 hover:underline">WordPress</a> 与 <a href="/zh/geo-for/nextjs/" class="text-brand-400 hover:underline">Next.js</a>，并在侧边栏与网页修复文件面板中直接给出对应平台的部署步骤。</p>
+          </div>
+          <div>
+            <h3 class="font-semibold text-white mb-1">腾讯 WorkBuddy「国内企业官网 GEO 引文优化专家团」和网页版有什么区别？</h3>
+            <p class="text-gray-400">WorkBuddy 专家团面向需要优化 Kimi、豆包、DeepSeek、秘塔和元宝等国产大模型引文的国内企业官网，采用 <a href="https://www.workbuddy.cn/share/asset?shareCode=uAZqr7A5thAbrsgBgOfP4Q&sig=hq2cpnWtrzyM5upa" target="_blank" rel="noopener noreferrer" class="text-emerald-400 hover:underline">¥29 一次性买断制</a>（国内便捷支付），纯本地零依赖运行 9 大国产 AI 爬虫诊断、ICP/公安备案信任核验、中文修复包生成与离线 SVG+HTML 战报；如需 48 小时人工代写并复检上线，也可选择 <a href="/zh/fixpack/" class="text-brand-400 hover:underline">Fix Pack ($49)</a>。</p>
+          </div>
+          <div>
+            <h3 class="font-semibold text-white mb-1">扩展工具栏的静默角标分数和打开侧边栏的完整分数一致吗？</h3>
+            <p class="text-gray-400">一致。v1.9.0 升级了后台 Service Worker，自动检测全部 6 个非 HTML 发现端点（<code class="text-geo-400">robots.txt</code>、<code class="text-geo-400">llms.txt</code>、<code class="text-geo-400">sitemap.xml</code>、<code class="text-geo-400">/ai/summary.json</code>、<code class="text-geo-400">/ai/faq.json</code> 与 <code class="text-geo-400">/.well-known/ai-plugin.json</code>），确保工具栏角标与侧边栏深度审计口径对齐。</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card p-6 sm:p-8 mb-6 bg-gradient-to-r from-geo-500/10 to-brand-500/10 border border-brand-500/30">
+        <h2 class="text-xl font-bold mb-3 text-white">立即体验 GeoScore v1.9.0</h2>
+        <p class="text-gray-300 text-sm mb-5 leading-relaxed">
+          30 秒跑完 11 维 85 项 AI 搜索就绪度审计，领取你的实时 SVG 评分徽章，按对应建站平台快速完成部署。
+        </p>
+        <div class="flex flex-wrap items-center gap-4">
+          <a
+            href="/zh/"
+            class="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-geo-600 to-brand-600 hover:from-geo-500 hover:to-brand-500 transition shadow-lg shadow-geo-600/20"
+          >
+            免费在线体检 →
+          </a>
+          <a
+            href="https://chromewebstore.google.com/detail/geoscore-free-geo-aeo-llm/cboppgehhkhaamcgfcikhekkdaelichn"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-gray-200 bg-gray-800/80 hover:bg-gray-700/80 hover:text-white transition border border-gray-700"
+          >
+            安装 Chrome 扩展 v1.9.0
+          </a>
+        </div>
+      </div>
+    </article>
+  </section>
+</LayoutZh>
