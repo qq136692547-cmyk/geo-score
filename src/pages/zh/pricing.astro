@@ -266,10 +266,11 @@ import LayoutZh from '../../layouts/LayoutZh.astro';
 
   <script is:inline type="application/ld+json" set:html={JSON.stringify({
     '@context': 'https://schema.org',
-    '@type': 'Product',
+    '@type': 'Service',
     name: 'GeoScore 定价',
+    serviceType: 'GEO（生成式引擎优化）审计与监控 SaaS 服务',
+    provider: { '@type': 'Organization', name: 'GeoScore', url: 'https://geoscore.help' },
     description: 'GEO 审计工具，提供自动化监控、回归告警及 PDF 报告导出',
-    brand: { '@type': 'Brand', name: 'GeoScore' },
     offers: [
       { '@type': 'Offer', price: '0', priceCurrency: 'USD', name: '免费版', availability: 'https://schema.org/InStock' },
       { '@type': 'Offer', price: '9', priceCurrency: 'USD', name: 'Pro 月付', availability: 'https://schema.org/InStock', url: 'https://www.creem.io/payment/prod_3hLh24EkJOL0jS0Jrf9zq5' },

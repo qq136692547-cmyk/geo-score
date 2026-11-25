@@ -250,10 +250,11 @@ import Layout from '../layouts/Layout.astro';
 
   <script is:inline type="application/ld+json" set:html={JSON.stringify({
     '@context': 'https://schema.org',
-    '@type': 'Product',
+    '@type': 'Service',
     name: 'GeoScore Pro',
+    serviceType: 'GEO (Generative Engine Optimization) Audit & Monitoring SaaS',
+    provider: { '@type': 'Organization', name: 'GeoScore', url: 'https://geoscore.help' },
     description: 'GEO audit tool with automated monitoring, regression alerts, and PDF export',
-    brand: { '@type': 'Brand', name: 'GeoScore' },
     offers: [
       { '@type': 'Offer', price: '0', priceCurrency: 'USD', name: 'Free', availability: 'https://schema.org/InStock' },
       { '@type': 'Offer', price: '9', priceCurrency: 'USD', name: 'Pro monthly', availability: 'https://schema.org/InStock', url: 'https://www.creem.io/payment/prod_3hLh24EkJOL0jS0Jrf9zq5' },
