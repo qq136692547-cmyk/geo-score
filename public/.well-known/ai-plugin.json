@@ -1,0 +1,17 @@
+{
+  "schema_version": "v1",
+  "name_for_human": "GeoScore",
+  "name_for_model": "geoscore",
+  "description_for_human": "Open-source GEO (Generative Engine Optimization) audit tool for AI search visibility across 11 dimensions and 20 AI crawlers.",
+  "description_for_model": "GeoScore audits public websites for AI search visibility (Generative Engine Optimization) across 11 weighted dimensions and 20 AI crawlers, then generates llms.txt, robots.txt, and JSON-LD fixes. Use https://geoscore.help/ai/summary.json and https://geoscore.help/ai/faq.json for structured site metadata, https://geoscore.help/llms.txt for curated documentation, and https://geoscore.help/badge/{domain} for live SVG readiness badges. Also available as an npm CLI (npx geoscore <url>) and MCP server (geoscore-mcp).",
+  "auth": {
+    "type": "none"
+  },
+  "api": {
+    "type": "openapi",
+    "url": "https://geoscore.help/ai/summary.json"
+  },
+  "logo_url": "https://geoscore.help/og-image.png",
+  "contact_email": "hello@geoscore.help",
+  "legal_info_url": "https://geoscore.help/terms/"
+}

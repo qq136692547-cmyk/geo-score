@@ -2,7 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import demo from '../../data/demo-report.json';
 ---
-<Layout title="GeoScore - Free GEO Audit Tool" schema={{
+<Layout title="GeoScore - Free GEO Audit Tool" description="Free open-source GEO audit tool. Score any website 0-100 across 11 AI search visibility dimensions for ChatGPT, Perplexity, and Claude, with instant fix files." schema={{
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
   mainEntity: [
@@ -362,9 +362,9 @@ import demo from '../../data/demo-report.json';
       </div>
     </div>
 
-    <!-- FAQ：这些问答同时以 FAQPage JSON-LD 声明。两侧必须逐条一致，
-         只在 schema 里写而页面上看不到，会失去富媒体结果资格。
-         tests/faq-schema-consistency.test.js 守住这条。 -->
+    <!-- FAQ: These items are also declared in FAQPage JSON-LD. Both sides must stay aligned;
+         declaring a question only in schema without visible page content forfeits Rich Results
+         eligibility. Enforced by tests/faq-schema-consistency.test.js. -->
     <hr class="border-gray-700/50 my-12">
     <div class="max-w-3xl mx-auto text-left">
       <h2 class="text-2xl font-bold text-center mb-8">Frequently Asked Questions</h2>

@@ -2,7 +2,7 @@
 import LayoutZh from '../../layouts/LayoutZh.astro';
 import demo from '../../../data/demo-report.json';
 ---
-<LayoutZh title="GeoScore - 免费 GEO 审计工具" schema={{
+<LayoutZh title="GeoScore - 免费 GEO 审计工具" description="免费开源的 GEO（生成式引擎优化）审计工具。从 11 个维度为网站 AI 搜索可见性打分（0-100），检测 20 个 AI 爬虫并一键生成 llms.txt、robots.txt 与 JSON-LD 修复文件。" schema={{
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
   mainEntity: [
@@ -335,7 +335,7 @@ import demo from '../../../data/demo-report.json';
       <h2 class="text-2xl font-bold mb-4">为什么选择 GeoScore？</h2>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-3xl mx-auto">
         <div class="text-left">
-          <div class="text-geo-500 text-3xl font-extrabold mb-2">12</div>
+          <div class="text-geo-500 text-3xl font-extrabold mb-2">11</div>
           <p class="text-gray-400 text-sm">分析维度——从 AI 可爬性到引用就绪度</p>
         </div>
         <div class="text-left">
@@ -371,6 +371,23 @@ import demo from '../../../data/demo-report.json';
       <p class="text-gray-400">至少应允许：GPTBot 和 OAI-SearchBot（OpenAI/ChatGPT）、ClaudeBot 和 anthropic-ai（Anthropic/Claude）、PerplexityBot（Perplexity）、Google-Extended（Google Gemini 和 AI Overviews）以及 CCBot（Common Crawl，被许多模型使用）。GeoScore 会告诉你当前正在阻止哪些爬虫。</p>
     </div>
   </section>
+
+  <!-- JSON-LD: HowTo（审计流程） -->
+  <script is:inline type="application/ld+json" set:html={JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'HowTo',
+    name: '如何审计你的网站对 AI 搜索引擎的可见性',
+    description: '运行免费 GEO 审计，检测 ChatGPT、Perplexity 和 Claude 等 AI 搜索引擎能否发现并引用你的网站。',
+    step: [
+      { '@type': 'HowToStep', position: 1, name: '输入网址', text: '在 GeoScore 审计输入框中输入任意公开网站的 URL。' },
+      { '@type': 'HowToStep', position: 2, name: '运行审计', text: 'GeoScore 会获取你的 robots.txt、llms.txt 和页面 HTML，并从 11 个维度分析 AI 搜索可见性。' },
+      { '@type': 'HowToStep', position: 3, name: '查看评分', text: '获取 0-100 综合得分与 11 维度雷达图，直观了解优势与短板。' },
+      { '@type': 'HowToStep', position: 4, name: '检查 AI 爬虫权限', text: '查看 GPTBot、ClaudeBot、PerplexityBot 等 20 个 AI 爬虫是被放行还是拦截。' },
+      { '@type': 'HowToStep', position: 5, name: '下载修复文件', text: '一键生成可直接部署的 llms.txt、robots.txt 和 JSON-LD 结构化数据修复文件。' }
+    ],
+    tool: { '@type': 'HowToTool', name: 'GeoScore（免费，https://geoscore.help/zh/）' },
+    totalTime: 'PT2M'
+  })} />
 </LayoutZh>
 
 <script src="../../scripts/boot.js"></script>

@@ -55,7 +55,7 @@ const schemaGraph = [
   }
 ];
 ---
-<Layout title="GEO Maturity Model 2026: From Experiment to Scale" schema={schemaGraph}>
+<Layout title="GEO Maturity Model 2026: From Experiment to Scale" description="The 5-stage 2026 GEO Maturity Model—Experiment, Validate, Standardize, Scale, and Optimize—featuring the AAES framework, stage KPIs, and GEO vs SEO budget allocation." schema={schemaGraph}>
   <article class="max-w-3xl mx-auto px-4 py-12">
     <a href="/" class="text-brand-400 hover:text-brand-300 text-sm transition">&larr; Back to GeoScore</a>
     <div class="mt-4 mb-2 text-xs text-gray-500">Guide · 14 min read</div>
@@ -105,22 +105,22 @@ const schemaGraph = [
       AAES comprises four factors, each scored 0–25, for a total of 0–100:
     </p>
 
-    <h3 class="text-xl font-semibold mt-8 mb-3 text-gray-200">Factor 1: Entity Stability (主体稳定性)</h3>
+    <h3 class="text-xl font-semibold mt-8 mb-3 text-gray-200">Factor 1: Entity Stability</h3>
     <p class="text-gray-300 mb-4 leading-relaxed">
       AI engines construct knowledge graphs that map entities — brands, people, products, concepts. Entity Stability measures how consistently your brand entity is represented across the web. Are your organization's name, description, and category consistent across your site, Wikipedia, knowledge panels, and third-party references? Inconsistent entity signals confuse AI models and reduce citation probability. High stability means AI engines can confidently identify and reference your brand across contexts.
     </p>
 
-    <h3 class="text-xl font-semibold mt-8 mb-3 text-gray-200">Factor 2: Role Clarity (角色清晰度)</h3>
+    <h3 class="text-xl font-semibold mt-8 mb-3 text-gray-200">Factor 2: Role Clarity</h3>
     <p class="text-gray-300 mb-4 leading-relaxed">
       Role Clarity measures how clearly your content defines its topic and authority scope. When an AI model encounters your domain, does it understand what you are an authority on? A site that covers finance, health, technology, and lifestyle with equal depth signals no particular expertise. A site that consistently produces authoritative content on a defined topic cluster signals clear role identity. Role Clarity is built through topical depth, consistent schema markup, and focused content clusters — not through keyword stuffing.
     </p>
 
-    <h3 class="text-xl font-semibold mt-8 mb-3 text-gray-200">Factor 3: Risk Posture (风险姿态)</h3>
+    <h3 class="text-xl font-semibold mt-8 mb-3 text-gray-200">Factor 3: Risk Posture</h3>
     <p class="text-gray-300 mb-4 leading-relaxed">
       Risk Posture evaluates signals that indicate content safety and reliability. AI engines are conservative — they avoid citing sources that could produce harmful, misleading, or outdated answers. High-risk signals include: missing author information, no fact-checking markers, outdated content without revision dates, controversial claims without sources, and spam patterns. Low-risk signals include: clear author credentials, primary source citations, recent modification dates, professional design, and consistent publishing history. Risk Posture is not about avoiding controversy — it is about demonstrating reliability.
     </p>
 
-    <h3 class="text-xl font-semibold mt-8 mb-3 text-gray-200">Factor 4: Cross-Query Consistency (跨问题一致性)</h3>
+    <h3 class="text-xl font-semibold mt-8 mb-3 text-gray-200">Factor 4: Cross-Query Consistency</h3>
     <p class="text-gray-300 mb-4 leading-relaxed">
       Cross-Query Consistency measures whether your domain consistently appears across related queries. If your site is cited for "what is GEO" but absent for "GEO optimization tools" and "GEO vs SEO," AI engines treat your authority as narrow and situational. Broad, consistent presence across a topic cluster signals deep authority. This factor is measured by running a set of related queries across AI engines and tracking your domain's appearance frequency. Consistency matters more than raw citation count — appearing in 3 out of 10 related queries is better than appearing in 10 out of 10 for a single narrow query.
     </p>
@@ -153,7 +153,7 @@ const schemaGraph = [
       The GEO Maturity Model maps five stages that organizations pass through as they build AI search visibility capabilities. Each stage has a defining question, key metrics, common traps, and a crossing strategy to advance to the next stage.
     </p>
 
-    <h3 class="text-xl font-semibold mt-8 mb-3 text-gray-200">Stage 1: Experiment (实验期)</h3>
+    <h3 class="text-xl font-semibold mt-8 mb-3 text-gray-200">Stage 1: Experiment</h3>
     <p class="text-gray-300 mb-4 leading-relaxed">
       <strong class="text-white">Defining question:</strong> "Does AI search matter for us?"
     </p>
@@ -170,7 +170,7 @@ const schemaGraph = [
       <strong class="text-white">Crossing strategy:</strong> Establish a baseline. Run a structured audit using the <a href="/tools/ai-readiness-score/" class="text-brand-400 hover:text-brand-300">AI Readiness Score</a> tool across 20–30 representative queries. Document the results. Present the baseline to your team with a recommendation for a formal pilot. The goal is to move from "we checked once" to "we measure systematically."
     </p>
 
-    <h3 class="text-xl font-semibold mt-8 mb-3 text-gray-200">Stage 2: Validate (验证期)</h3>
+    <h3 class="text-xl font-semibold mt-8 mb-3 text-gray-200">Stage 2: Validate</h3>
     <p class="text-gray-300 mb-4 leading-relaxed">
       <strong class="text-white">Defining question:</strong> "Can we measurably improve our AI visibility?"
     </p>
@@ -187,7 +187,7 @@ const schemaGraph = [
       <strong class="text-white">Crossing strategy:</strong> Document the pilot results in a one-page executive summary. Show the citation rate delta (before vs after), the specific optimizations that moved the needle, and the projected impact at scale. Use this to secure budget for standardization.
     </p>
 
-    <h3 class="text-xl font-semibold mt-8 mb-3 text-gray-200">Stage 3: Standardize (标准化期)</h3>
+    <h3 class="text-xl font-semibold mt-8 mb-3 text-gray-200">Stage 3: Standardize</h3>
     <p class="text-gray-300 mb-4 leading-relaxed">
       <strong class="text-white">Defining question:</strong> "Can we make GEO a repeatable process?"
     </p>
@@ -204,7 +204,7 @@ const schemaGraph = [
       <strong class="text-white">Crossing strategy:</strong> Build the GEO checklist into the CMS workflow so it is invisible to content creators. Train the content team on GEO principles — answer-first format, FAQ structures, passage retrieval optimization — rather than making them fill out compliance forms. The goal is to make GEO a habit, not a hurdle.
     </p>
 
-    <h3 class="text-xl font-semibold mt-8 mb-3 text-gray-200">Stage 4: Scale (规模化期)</h3>
+    <h3 class="text-xl font-semibold mt-8 mb-3 text-gray-200">Stage 4: Scale</h3>
     <p class="text-gray-300 mb-4 leading-relaxed">
       <strong class="text-white">Defining question:</strong> "Can we optimize our entire knowledge base?"
     </p>
@@ -221,7 +221,7 @@ const schemaGraph = [
       <strong class="text-white">Crossing strategy:</strong> Invest in batch tooling. Use automated scripts to audit and fix schema across the content library. Prioritize by content value — start with the top 20% of pages that drive 80% of traffic, then expand outward. Monitor AAES scores in aggregate, not just for individual pages. Verify your <a href="/tools/llms-txt-checker/" class="text-brand-400 hover:text-brand-300">llms.txt</a> covers all priority content sections.
     </p>
 
-    <h3 class="text-xl font-semibold mt-8 mb-3 text-gray-200">Stage 5: Optimize (优化期)</h3>
+    <h3 class="text-xl font-semibold mt-8 mb-3 text-gray-200">Stage 5: Optimize</h3>
     <p class="text-gray-300 mb-4 leading-relaxed">
       <strong class="text-white">Defining question:</strong> "Can we sustain competitive advantage?"
     </p>
