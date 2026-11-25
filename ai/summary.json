@@ -1,159 +1,249 @@
 {
-    "$schema":  "https://geoscore.help/ai/schema/summary.v1.json",
-    "site":  {
-                 "name":  "GeoScore",
-                 "url":  "https://geoscore.help",
-                 "tagline":  "GEO (Generative Engine Optimization) audit tool with free browser audits",
-                 "description":  "GeoScore is an open-source tool that scores any website 0-100 across 11 dimensions of AI search visibility. It audits your site for AI crawler access (robots.txt), machine-readable content (llms.txt, JSON-LD schema), and authority signals (E-E-A-T), then generates fix files you can deploy immediately. Free browser audits are available; optional Pro monitoring is paid. Used by developers, SEO specialists, and content teams to diagnose why some sites get cited by ChatGPT, Perplexity, and Claude while others don\u0027t.",
-                 "category":  "SEO Tool / Developer Tool",
-                 "audience":  "Web developers, SEO professionals, content marketers, SaaS founders, publishers",
-                 "language":  "en",
-                 "license":  "MIT (code) / CC BY-SA 4.0 (content)"
-             },
-    "publisher":  {
-                      "name":  "GeoScore",
-                      "type":  "Organization",
-                      "url":  "https://geoscore.help",
-                      "github":  "https://github.com/qq136692547-cmyk/geo-score"
-                  },
-    "what_we_offer":  [
-                          {
-                              "name":  "GEO Audit",
-                              "description":  "Score any URL 0-100 across 11 dimensions of AI search readiness",
-                              "url":  "https://geoscore.help/"
-                          },
-                          {
-                              "name":  "llms.txt Checker",
-                              "description":  "Verify your site has the AI guidance file that helps ChatGPT, Claude, and Perplexity understand your content",
-                              "url":  "https://geoscore.help/tools/llms-txt-checker"
-                          },
-                          {
-                              "name":  "Robots.txt AI Checker",
-                              "description":  "Verify your robots.txt isn\u0027t blocking GPTBot, ClaudeBot, PerplexityBot, and other AI crawlers",
-                              "url":  "https://geoscore.help/tools/robots-txt-ai-checker"
-                          },
-                          {
-                              "name":  "AI Readiness Score",
-                              "description":  "Get a 0-100 score across 11 dimensions of AI search visibility with actionable fixes",
-                              "url":  "https://geoscore.help/tools/ai-readiness-score"
-                          },
-                          {
-                              "name":  "AI Visibility Fix Pack",
-                              "description":  "Done-for-you GEO fix package: custom llms.txt built from your catalog, AI-crawler robots.txt rules, Product schema completion, a 1-page audit and a post-deploy re-audit. One-time $49.",
-                              "url":  "https://geoscore.help/fixpack"
-                          }
-                      ],
-    "geo_dimensions":  [
-                           "AI Crawlability (robots.txt for AI crawlers)",
-                           "AI Guidance (llms.txt presence and quality)",
-                           "Structured Data (JSON-LD schema coverage)",
-                           "Meta \u0026 Social (title, description, OG tags)",
-                           "Content Quality (depth, structure, originality)",
-                           "E-E-A-T (Experience, Expertise, Authority, Trust)",
-                           "Brand \u0026 Entity (Organization schema, sameAs links)",
-                           "Citation Readiness (external sources, .edu/.gov links)",
-                           "Discovery (sitemap, AI-specific endpoints)",
-                           "Agent Friendly (API docs, structured outputs)",
-                           "AI Guidance Markers (ai.txt, summary.json)",
-                           "Freshness (last-modified, copyright year)"
-                       ],
-    "key_pages":  [
-                      {
-                          "priority":  1,
-                          "title":  "GeoScore Home",
-                          "url":  "https://geoscore.help/"
-                      },
-                      {
-                          "priority":  0.8,
-                          "title":  "Blog Index",
-                          "url":  "https://geoscore.help/blog/"
-                      },
-                      {
-                          "priority":  0.6,
-                          "title":  "About / Methodology",
-                          "url":  "https://geoscore.help/methodology"
-                      },
-                      {
-                          "priority":  0.9,
-                          "title":  "llms.txt Checker",
-                          "url":  "https://geoscore.help/tools/llms-txt-checker"
-                      },
-                      {
-                          "priority":  0.9,
-                          "title":  "Robots.txt AI Checker",
-                          "url":  "https://geoscore.help/tools/robots-txt-ai-checker"
-                      },
-                      {
-                          "priority":  0.9,
-                          "title":  "AI Readiness Score",
-                          "url":  "https://geoscore.help/tools/ai-readiness-score"
-                      }
-                  ],
-    "blog_topics":  [
-                        {
-                            "url":  "https://geoscore.help/blog/ai-crawler-robots-txt-templates/",
-                            "title":  "AI Crawler Robots.txt Templates"
-                        },
-                        {
-                            "url":  "https://geoscore.help/blog/what-is-geo/",
-                            "title":  "What is GEO? Complete Guide"
-                        },
-                        {
-                            "url":  "https://geoscore.help/blog/geo-vs-seo/",
-                            "title":  "GEO vs SEO"
-                        },
-                        {
-                            "url":  "https://geoscore.help/blog/llms-txt-ultimate-guide/",
-                            "title":  "The Ultimate llms.txt Guide"
-                        },
-                        {
-                            "url":  "https://geoscore.help/blog/ai-search-engine-list/",
-                            "title":  "AI Search Engine List"
-                        },
-                        {
-                            "url":  "https://geoscore.help/blog/why-doesnt-chatgpt-cite-my-website/",
-                            "title":  "Why Doesn\u0027t ChatGPT Cite My Website?"
-                        },
-                        {
-                            "url":  "https://geoscore.help/blog/json-ld-structured-data-ai-search/",
-                            "title":  "JSON-LD Structured Data for AI Search"
-                        },
-                        {
-                            "url":  "https://geoscore.help/blog/eeat-signals-ai-search/",
-                            "title":  "E-E-A-T Signals for AI Search"
-                        },
-                        {
-                            "url":  "https://geoscore.help/blog/geo-metrics-2026/",
-                            "title":  "GEO Metrics That Matter 2026"
-                        },
-                        {
-                            "url":  "https://geoscore.help/blog/geo-citation-optimization/",
-                            "title":  "GEO Citation Optimization"
-                        },
-                        {
-                            "url":  "https://geoscore.help/blog/multimodal-geo-2026/",
-                            "title":  "Multimodal GEO 2026"
-                        },
-                        {
-                            "url":  "https://geoscore.help/blog/geo-tracking-ai-visibility/",
-                            "title":  "GEO Tracking \u0026 AI Visibility"
-                        },
-                        {
-                            "url":  "https://geoscore.help/blog/auditing-343-websites/",
-                            "title":  "Auditing 343 Websites"
-                        },
-                        {
-                            "url":  "https://geoscore.help/blog/geo-maturity-model-2026/",
-                            "title":  "GEO Maturity Model 2026"
-                        }
-                    ],
-    "last_updated":  "2026-08-31",
-    "endpoints":  {
-                      "llms_txt":  "https://geoscore.help/llms.txt",
-                      "ai_txt":  "https://geoscore.help/.well-known/ai.txt",
-                      "summary_json":  "https://geoscore.help/ai/summary.json",
-                      "faq_json":  "https://geoscore.help/ai/faq.json",
-                      "sitemap":  "https://geoscore.help/sitemap.xml",
-                      "robots":  "https://geoscore.help/robots.txt"
-                  }
+  "$schema": "https://geoscore.help/ai/schema/summary.v1.json",
+  "version": "1.9.0",
+  "site": {
+    "name": "GeoScore",
+    "url": "https://geoscore.help",
+    "tagline": "GEO (Generative Engine Optimization) audit tool with free browser audits, Chrome MV3 extension, live SVG badges, CLI, and MCP server",
+    "description": "GeoScore is an open-source tool that scores any website 0-100 across 11 weighted dimensions of AI search visibility (plus negative signals and prompt injection safety deductions). It audits AI crawler access across 20 bots (robots.txt), machine-readable guidance (llms.txt, JSON-LD schema), discovery endpoints, and E-E-A-T authority signals, then generates deployable fix files tailored to Static HTML, Next.js, WordPress, and Shopify. Free single browser audits, Chrome Extension v1.9.0, CLI, and MCP server are available alongside optional Pro monitoring and a one-time $49 Fix Pack.",
+    "category": "SEO Tool / Developer Tool",
+    "audience": "Web developers, SEO professionals, content marketers, SaaS founders, ecommerce stores, publishers",
+    "language": "en",
+    "languages": ["en", "zh-CN"],
+    "license": "MIT (code) / CC BY-SA 4.0 (content)"
+  },
+  "publisher": {
+    "name": "GeoScore",
+    "type": "Organization",
+    "url": "https://geoscore.help",
+    "github": "https://github.com/qq136692547-cmyk/geo-score"
+  },
+  "what_we_offer": [
+    {
+      "name": "GEO Audit (Single URL, Batch Sitemap, Compare Sites)",
+      "description": "Score any public URL 0-100 across 11 dimensions and 85+ checks in three unified modes: Single URL, Batch Sitemap, and Compare Sites",
+      "url": "https://geoscore.help/"
+    },
+    {
+      "name": "Live GEO Score SVG Badges",
+      "description": "Embed dynamic cache-backed SVG score badges for any public domain in GitHub READMEs and site footers via /badge/<domain>",
+      "url": "https://geoscore.help/blog/geoscore-v1-9-live-badges-stack-detection/"
+    },
+    {
+      "name": "GeoScore Chrome Extension v1.9.0 (MV3)",
+      "description": "Side Panel extension that audits open tabs, localhost, and behind-WAF sites, diffs SSR vs CSR DOM, auto-detects Shopify/WordPress/Next.js stacks, and checks all 6 discovery endpoints in the background",
+      "url": "https://geoscore.help/blog/geoscore-chrome-extension-launch/"
+    },
+    {
+      "name": "llms.txt Checker",
+      "description": "Verify your site has the AI guidance file that helps ChatGPT, Claude, and Perplexity understand your content",
+      "url": "https://geoscore.help/tools/llms-txt-checker/"
+    },
+    {
+      "name": "Robots.txt AI Checker",
+      "description": "Verify your robots.txt isn't blocking GPTBot, OAI-SearchBot, ClaudeBot, PerplexityBot, Google-Extended, and 15 other AI crawlers",
+      "url": "https://geoscore.help/tools/robots-txt-ai-checker/"
+    },
+    {
+      "name": "AI Readiness Score",
+      "description": "Get a 0-100 score across 11 dimensions of AI search visibility with actionable fixes and 4-tab stack deployment instructions",
+      "url": "https://geoscore.help/tools/ai-readiness-score/"
+    },
+    {
+      "name": "Platform Playbooks (Shopify, WordPress, Next.js)",
+      "description": "Dedicated implementation guides for Shopify (Content > Files, robots.txt.liquid, Product JSON-LD), WordPress (Yoast/Rank Math, WPCode), and Next.js App Router (public/llms.txt, app/robots.ts)",
+      "url": "https://geoscore.help/geo-for/shopify/"
+    },
+    {
+      "name": "AI Visibility Fix Pack",
+      "description": "Done-for-you GEO fix package: custom llms.txt built from your catalog, AI-crawler robots.txt rules, Product schema completion, a 1-page audit, and a post-deploy re-audit within 48 hours. One-time $49.",
+      "url": "https://geoscore.help/fixpack/"
+    },
+    {
+      "name": "CLI & MCP Server",
+      "description": "Zero-dependency CLI (npx geoscore <url> with --json, --html, --fix, --quiet) and Model Context Protocol server (geoscore-mcp) for AI agent workflows",
+      "url": "https://geoscore.help/methodology/"
+    }
+  ],
+  "geo_dimensions": [
+    "AI Crawlability (robots.txt across 20 AI crawlers, 12%)",
+    "AI Guidance (llms.txt presence and quality, 12%)",
+    "Structured Data (JSON-LD schema coverage, 14%)",
+    "Meta & Social (Open Graph, Twitter Card, canonical URL, HTML lang, 10%)",
+    "Content Quality (depth, structure, answer-first readability, 12%)",
+    "E-E-A-T (Experience, Expertise, Authoritativeness, Trust, 8%)",
+    "Brand & Entity (Organization schema, sameAs links, 8%)",
+    "Citation Readiness (external sources, .edu/.gov links, original stats, 8%)",
+    "Discovery Endpoints (.well-known/ai.txt, /ai/summary.json, /ai/faq.json, 6%)",
+    "Agent-Friendliness (API docs, structured outputs, rate limits, sitemap, 4%)",
+    "Freshness & Maintenance (last-modified, publication and copyright dates, 4%)"
+  ],
+  "deduction_checks": [
+    "Negative Signals (excessive CTAs, popups, thin content, broken links, keyword stuffing, boilerplate, 8 checks)",
+    "Prompt Injection Safety (hidden instructions or adversarial overrides, 6 checks)"
+  ],
+  "platform_guides": [
+    {
+      "platform": "Shopify",
+      "url": "https://geoscore.help/geo-for/shopify/",
+      "zh_url": "https://geoscore.help/zh/geo-for/shopify/"
+    },
+    {
+      "platform": "WordPress",
+      "url": "https://geoscore.help/geo-for/wordpress/",
+      "zh_url": "https://geoscore.help/zh/geo-for/wordpress/"
+    },
+    {
+      "platform": "Next.js",
+      "url": "https://geoscore.help/geo-for/nextjs/",
+      "zh_url": "https://geoscore.help/zh/geo-for/nextjs/"
+    }
+  ],
+  "key_pages": [
+    {
+      "priority": 1.0,
+      "title": "GeoScore Home",
+      "url": "https://geoscore.help/"
+    },
+    {
+      "priority": 0.9,
+      "title": "llms.txt Checker",
+      "url": "https://geoscore.help/tools/llms-txt-checker/"
+    },
+    {
+      "priority": 0.9,
+      "title": "Robots.txt AI Checker",
+      "url": "https://geoscore.help/tools/robots-txt-ai-checker/"
+    },
+    {
+      "priority": 0.9,
+      "title": "AI Readiness Score",
+      "url": "https://geoscore.help/tools/ai-readiness-score/"
+    },
+    {
+      "priority": 0.9,
+      "title": "GEO for Shopify",
+      "url": "https://geoscore.help/geo-for/shopify/"
+    },
+    {
+      "priority": 0.9,
+      "title": "GEO for WordPress",
+      "url": "https://geoscore.help/geo-for/wordpress/"
+    },
+    {
+      "priority": 0.9,
+      "title": "GEO for Next.js",
+      "url": "https://geoscore.help/geo-for/nextjs/"
+    },
+    {
+      "priority": 0.9,
+      "title": "Pricing",
+      "url": "https://geoscore.help/pricing/"
+    },
+    {
+      "priority": 0.9,
+      "title": "AI Visibility Fix Pack",
+      "url": "https://geoscore.help/fixpack/"
+    },
+    {
+      "priority": 0.8,
+      "title": "Blog Index",
+      "url": "https://geoscore.help/blog/"
+    },
+    {
+      "priority": 0.8,
+      "title": "Sample Audit Report",
+      "url": "https://geoscore.help/report/demo/"
+    },
+    {
+      "priority": 0.6,
+      "title": "Scoring Methodology",
+      "url": "https://geoscore.help/methodology/"
+    }
+  ],
+  "blog_topics": [
+    {
+      "url": "https://geoscore.help/blog/geoscore-v1-9-live-badges-stack-detection/",
+      "title": "GeoScore v1.9: Live GEO Score SVG Badges, Stack Auto-Detection & Platform Playbooks"
+    },
+    {
+      "url": "https://geoscore.help/blog/enterprise-geo-china-kimi-doubao-metaso/",
+      "title": "2026 Enterprise GEO in China: Getting Cited by Kimi, Doubao, and Metaso"
+    },
+    {
+      "url": "https://geoscore.help/blog/geoscore-chrome-extension-launch/",
+      "title": "GeoScore Chrome Extension Launches: Audit AI Search Readiness Directly in Your Browser"
+    },
+    {
+      "url": "https://geoscore.help/blog/geoscore-update-multi-page-security/",
+      "title": "GeoScore Engine Update: Multi-Page Scanning & CJK Support"
+    },
+    {
+      "url": "https://geoscore.help/blog/ai-crawler-robots-txt-templates/",
+      "title": "AI Crawler Robots.txt Templates"
+    },
+    {
+      "url": "https://geoscore.help/blog/what-is-geo/",
+      "title": "What is GEO? Complete Guide"
+    },
+    {
+      "url": "https://geoscore.help/blog/geo-vs-seo/",
+      "title": "GEO vs SEO"
+    },
+    {
+      "url": "https://geoscore.help/blog/llms-txt-ultimate-guide/",
+      "title": "The Ultimate llms.txt Guide"
+    },
+    {
+      "url": "https://geoscore.help/blog/ai-search-engine-list/",
+      "title": "AI Search Engine List"
+    },
+    {
+      "url": "https://geoscore.help/blog/why-doesnt-chatgpt-cite-my-website/",
+      "title": "Why Doesn't ChatGPT Cite My Website?"
+    },
+    {
+      "url": "https://geoscore.help/blog/json-ld-structured-data-ai-search/",
+      "title": "JSON-LD Structured Data for AI Search"
+    },
+    {
+      "url": "https://geoscore.help/blog/eeat-signals-ai-search/",
+      "title": "E-E-A-T Signals for AI Search"
+    },
+    {
+      "url": "https://geoscore.help/blog/geo-metrics-2026/",
+      "title": "GEO Metrics That Matter 2026"
+    },
+    {
+      "url": "https://geoscore.help/blog/geo-citation-optimization/",
+      "title": "GEO Citation Optimization"
+    },
+    {
+      "url": "https://geoscore.help/blog/multimodal-geo-2026/",
+      "title": "Multimodal GEO 2026"
+    },
+    {
+      "url": "https://geoscore.help/blog/geo-tracking-ai-visibility/",
+      "title": "GEO Tracking & AI Visibility"
+    },
+    {
+      "url": "https://geoscore.help/blog/auditing-343-websites/",
+      "title": "Auditing 343 Websites"
+    },
+    {
+      "url": "https://geoscore.help/blog/geo-maturity-model-2026/",
+      "title": "GEO Maturity Model 2026"
+    }
+  ],
+  "last_updated": "2026-11-25",
+  "endpoints": {
+    "llms_txt": "https://geoscore.help/llms.txt",
+    "ai_plugin_json": "https://geoscore.help/.well-known/ai-plugin.json",
+    "ai_txt": "https://geoscore.help/.well-known/ai.txt",
+    "summary_json": "https://geoscore.help/ai/summary.json",
+    "faq_json": "https://geoscore.help/ai/faq.json",
+    "sitemap": "https://geoscore.help/sitemap.xml",
+    "robots": "https://geoscore.help/robots.txt",
+    "live_badge": "https://geoscore.help/badge/{domain}"
+  }
 }
