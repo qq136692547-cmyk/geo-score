@@ -23,7 +23,8 @@
     "ext:package": "node extension/build.mjs && node extension/scripts/package-zip.mjs",
     "ext:cws-auth": "node --use-env-proxy extension/scripts/publish-cws.mjs --auth",
     "ext:status": "node --use-env-proxy extension/scripts/publish-cws.mjs --status",
-    "ext:publish": "node extension/build.mjs && node extension/scripts/package-zip.mjs && node --use-env-proxy extension/scripts/publish-cws.mjs --publish"
+    "ext:publish": "node extension/build.mjs && node extension/scripts/package-zip.mjs && node --use-env-proxy extension/scripts/publish-cws.mjs --publish",
+    "indexnow": "node --use-env-proxy scripts/indexnow-submit.mjs"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.0.0",
