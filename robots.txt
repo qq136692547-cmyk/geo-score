@@ -66,7 +66,3 @@ User-agent: PetalBot
 Allow: /
 
 Sitemap: https://geoscore.help/sitemap.xml
-# Mirror at a path Search Console has never submitted. /sitemap.xml stays
-# canonical everywhere else; this only exists because GSC still shows a stale
-# "Couldn't fetch" for the original path since 2026-07-20.
-Sitemap: https://geoscore.help/sitemap-all.xml
