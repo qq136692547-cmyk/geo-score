@@ -17,7 +17,7 @@ var PROXIES = [
   //      wasted round trip.
   // If this proxy fails, the audit fails honestly instead of silently handing
   // the customer's domain to an unknown middleman.
-  { url: "https://geo-score-proxy.pages.dev/api/proxy?url=", type: "raw" },
+  { url: "https://proxy.geoscore.help/api/proxy?url=", type: "raw" },
 ];
 
 async function tryProxy(proxy, url, type, signal) {

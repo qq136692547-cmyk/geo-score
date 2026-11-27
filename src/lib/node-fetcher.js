@@ -10,7 +10,7 @@ var PROXIES = [
   // all four were measured dead (timeouts / 401). Node has no CORS restriction,
   // so the direct fetch above is the real path; this proxy only covers sites
   // that block non-browser user agents.
-  { url: 'https://geo-score-proxy.pages.dev/api/proxy?url=', type: 'raw' },
+  { url: 'https://proxy.geoscore.help/api/proxy?url=', type: 'raw' },
 ];
 
 async function tryProxy(proxy, url, type) {

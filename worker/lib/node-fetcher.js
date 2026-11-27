@@ -9,7 +9,7 @@ var PROXIES = [
   // sent the audited URL to a third party, which contradicts privacy.astro, and
   // all four were measured dead (timeouts / 401). This copy had also drifted
   // from the browser one by keeping the dead corsproxy.io entry.
-  { url: 'https://geo-score-proxy.pages.dev/api/proxy?url=', type: 'raw' },
+  { url: 'https://proxy.geoscore.help/api/proxy?url=', type: 'raw' },
 ];
 
 async function tryProxy(proxy, url, type) {

@@ -25,7 +25,7 @@ const COPIES = [
 ];
 
 // 只允许自建代理。新增域名必须改这里 —— 有意识的动作，不是顺手放过。
-const ALLOWED_HOSTS = ['geo-score-proxy.pages.dev'];
+const ALLOWED_HOSTS = ['proxy.geoscore.help'];
 
 describe('PROXIES 隐私护栏', () => {
   it.each(COPIES)('%s 的代理全部落在自建域白名单内', (_file, list) => {

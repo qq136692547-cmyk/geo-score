@@ -26,7 +26,7 @@ import LayoutZh from '../../layouts/LayoutZh.astro';
         <h2 class="text-xl font-bold text-white mb-3">2. 你审计的 URL</h2>
         <p>免费审计在你的浏览器里运行。当你输入一个 URL：</p>
         <ul class="list-disc list-inside space-y-1 mt-2">
-          <li>URL 直接从你的浏览器获取到目标站点。当目标站点阻止浏览器直连时，会经过 GeoScore 自建的代理 geo-score-proxy.pages.dev——<strong>绝不经过第三方公共 CORS 代理</strong>。</li>
+          <li>URL 直接从你的浏览器获取到目标站点。当目标站点阻止浏览器直连时，会经过 GeoScore 自建的代理 proxy.geoscore.help——<strong>绝不经过第三方公共 CORS 代理</strong>。</li>
           <li>URL 不会记录在我们的服务器上，我们也不为匿名访客保留审计历史。你的审计历史只存在你自己浏览器的本地存储里。</li>
           <li><strong>域名会被发送给 Google Analytics</strong>，作为审计事件的属性（例如 <code class="text-gray-400 bg-white/5 px-1.5 py-0.5 rounded">example.com</code>，不含路径和查询字符串），用于了解哪些域名被审计。它不会被发送给任何广告网络。</li>
           <li>如果你使用可选的「我来帮你修」表单，你填的 URL 和邮箱会存入我们的数据库，以便我们回复你。这是免费审计中唯一会存储 URL 的情形。</li>
