@@ -197,12 +197,12 @@ const API_BASE = 'https://api.geoscore.help';
         } else {
           showError(data.error || t('Failed to send code', '发送验证码失败'));
           sendBtn.disabled = false;
-          sendBtn.textContent = 'Send Verification Code';
+          sendBtn.textContent = t('Send Verification Code', '发送验证码');
         }
       } catch (e) {
         showError(t('Network error. Please check your connection and try again.', '网络错误，请检查网络连接后重试。'));
         sendBtn.disabled = false;
-        sendBtn.textContent = 'Send Verification Code';
+        sendBtn.textContent = t('Send Verification Code', '发送验证码');
       }
     });
 
@@ -231,12 +231,12 @@ const API_BASE = 'https://api.geoscore.help';
         } else {
           showError(data.error || t('Verification failed', '验证失败'));
           verifyBtn.disabled = false;
-          verifyBtn.textContent = 'Verify & Sign In';
+          verifyBtn.textContent = t('Verify & Sign In', '验证并登录');
         }
       } catch (e) {
         showError(t('Network error. Please check your connection and try again.', '网络错误，请检查网络连接后重试。'));
         verifyBtn.disabled = false;
-        verifyBtn.textContent = 'Verify & Sign In';
+        verifyBtn.textContent = t('Verify & Sign In', '验证并登录');
       }
     });
 
