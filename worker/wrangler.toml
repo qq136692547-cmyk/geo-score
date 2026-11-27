@@ -1,6 +1,7 @@
 name = "geoscore-payments"
 main = "payments.js"
 compatibility_date = "2024-09-25"
+workers_dev = true
 
 # Custom domain avoids *.workers.dev DNS pollution in Mainland China while
 # keeping workers.dev active so existing Creem webhook registrations stay intact.
