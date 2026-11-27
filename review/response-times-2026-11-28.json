@@ -1,0 +1,19 @@
+{
+  "measurement": "response-time",
+  "target": "https://geoscore.help",
+  "measured_at": "2026-11-28T01:47:54+08:00",
+  "user_agent": "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)",
+  "method": "3 sequential GET requests per URL, full body read, wall-clock milliseconds",
+  "network": "direct, no proxy environment variables set",
+  "why": "These are the six sitemap URLs that Google Search Console reports as 'URL is unknown to Google' with lastCrawlTime never. Timed to rule out slow server response as the reason Google skips them.",
+  "results": [
+    { "path": "/geo-for/wordpress/", "samples_ms": [614, 325, 362], "avg_ms": 434 },
+    { "path": "/blog/geoscore-v1-9-live-badges-stack-detection/", "samples_ms": [315, 339, 310], "avg_ms": 321 },
+    { "path": "/blog/enterprise-geo-china-kimi-doubao-metaso/", "samples_ms": [339, 411, 292], "avg_ms": 347 },
+    { "path": "/blog/ai-search-engine-list/", "samples_ms": [287, 340, 293], "avg_ms": 307 },
+    { "path": "/blog/auditing-343-websites/", "samples_ms": [381, 319, 319], "avg_ms": 340 },
+    { "path": "/blog/why-doesnt-chatgpt-cite-my-website/", "samples_ms": [312, 297, 280], "avg_ms": 296 }
+  ],
+  "range_ms": { "min": 280, "max": 614, "avg_min": 296, "avg_max": 434 },
+  "conclusion": "Every page responds in under 650 ms with a sub-350 ms average on five of six. Server latency is not why Google has not crawled them; the cause is crawl demand, not response time."
+}

@@ -126,6 +126,37 @@ Sitemap: https://yourwpsite.com/sitemap_index.xml</code></pre>
       </p>
     </div>
 
+    <div class="card p-8 mb-8">
+      <h2 class="text-xl font-bold mb-4">What the data says about typical WordPress sites</h2>
+      <p class="text-gray-400 mb-4">
+        Before changing anything, it helps to know the baseline. We audited <strong class="text-white">324 production sites</strong> and ran the product's own analyzer in-process, so these are the same numbers GeoScore reports today.
+      </p>
+      <div class="overflow-x-auto mb-4">
+        <table class="w-full text-sm text-gray-300">
+          <thead><tr class="border-b border-gray-700">
+            <th scope="col" class="text-left py-2 pr-4">Metric</th>
+            <th scope="col" class="text-left py-2 pr-4">Value</th>
+            <th scope="col" class="text-left py-2">Implication for a WP install</th>
+          </tr></thead>
+          <tbody>
+            <tr class="border-b border-gray-800"><td class="py-2 pr-4">Median score</td><td class="py-2 pr-4 text-geo-400 font-mono">41 / 100</td><td class="py-2 text-gray-400">The typical site is closer to Critical than Good</td></tr>
+            <tr class="border-b border-gray-800"><td class="py-2 pr-4">Critical (&lt;36)</td><td class="py-2 pr-4 text-danger-400 font-mono">107 (33.0%)</td><td class="py-2 text-gray-400">A third of the audited sites fail fundamentals entirely</td></tr>
+            <tr class="border-b border-gray-800"><td class="py-2 pr-4">No <code class="text-geo-400">robots.txt</code> at all</td><td class="py-2 pr-4 font-mono">99 (30.6%)</td><td class="py-2 text-gray-400">Not a blocker — RFC 9309 defaults to allow</td></tr>
+            <tr class="border-b border-gray-800"><td class="py-2 pr-4">Have <code class="text-geo-400">robots.txt</code> but block an AI bot</td><td class="py-2 pr-4 text-geo-400 font-mono">8 of 225 (3.6%)</td><td class="py-2 text-gray-400">Yoast/Rank Math rules rarely block anything</td></tr>
+            <tr><td class="py-2 pr-4">Publish <code class="text-geo-400">llms.txt</code></td><td class="py-2 pr-4 text-brand-400 font-mono">78 (24.1%)</td><td class="py-2 text-gray-400">Three quarters have no LLM entry point</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="p-4 rounded-xl bg-yellow-500/10 border border-yellow-500/30 text-sm">
+        <p class="text-gray-300 leading-relaxed">
+          <strong class="text-yellow-300">The surprising one is robots.txt.</strong> Only <strong class="text-white">3.6%</strong> of sites that publish one actually block an AI crawler, and having no file at all is not a block. If you were about to spend an afternoon on robots.txt, step 2 below costs five minutes — start there, then spend the rest of the day on <code class="text-geo-400">llms.txt</code> and schema, where the real gaps are. Sites with an <code class="text-geo-400">llms.txt</code> average <strong class="text-white">60.3</strong> versus <strong class="text-white">38.0</strong> without; that is a correlation in a convenience sample, not a causal effect.
+        </p>
+      </div>
+      <p class="text-gray-400 text-sm mt-4">
+        Full method and raw data: <a href="/blog/auditing-343-websites/" class="text-brand-400 hover:underline">the 324-site study</a>.
+      </p>
+    </div>
+
     <div class="card p-8 mb-8 border-brand-500/40 bg-brand-500/5 text-center">
       <h2 class="text-2xl font-bold mb-3">Need Done-for-You WordPress or WooCommerce Fixes?</h2>
       <p class="text-gray-300 max-w-2xl mx-auto mb-6">
@@ -161,6 +192,32 @@ Sitemap: https://yourwpsite.com/sitemap_index.xml</code></pre>
           <p class="text-sm text-gray-400">Common culprits include security plugins, aggressive caching rules, or CDN Bot Fight Mode blocking AI crawlers with 403 responses, plus missing llms.txt and incomplete WooCommerce product identifiers. Running an audit catches these gaps immediately.</p>
         </div>
       </div>
+    </div>
+    <div class="card p-8 mb-8">
+      <h2 class="text-xl font-bold mb-4">Related GEO guides</h2>
+      <ul class="space-y-2 text-sm text-gray-300">
+        <li><a href="/blog/ai-crawler-robots-txt-templates/" class="text-brand-400 hover:underline">AI crawler robots.txt templates</a> — the exact rules referenced in step 2</li>
+        <li><a href="/blog/llms-txt-ultimate-guide/" class="text-brand-400 hover:underline">The ultimate llms.txt guide</a> — format, placement, and common mistakes</li>
+        <li><a href="/blog/json-ld-structured-data-ai-search/" class="text-brand-400 hover:underline">JSON-LD for AI search</a> — what the schema in step 3 should contain</li>
+        <li><a href="/tools/robots-txt-ai-checker/" class="text-brand-400 hover:underline">robots.txt AI checker</a> — verify step 2 actually worked</li>
+        <li><a href="/tools/llms-txt-checker/" class="text-brand-400 hover:underline">llms.txt checker</a> — verify step 1 returned HTTP 200</li>
+        <li><a href="/tools/ai-readiness-score/" class="text-brand-400 hover:underline">Free AI readiness score</a> — audit the finished site</li>
+        <li><a href="/blog/what-is-geo/" class="text-brand-400 hover:underline">What is GEO?</a> — the primer if you are new to this</li>
+        <li><a href="/blog/why-doesnt-chatgpt-cite-my-website/" class="text-brand-400 hover:underline">Why doesn't ChatGPT cite my site?</a> — seven blockers beyond WordPress</li>
+        <li><a href="/blog/auditing-343-websites/" class="text-brand-400 hover:underline">The 324-site study</a> — the data behind the table above</li>
+        <li><a href="/geo-for/shopify/" class="text-brand-400 hover:underline">GEO for Shopify</a> · <a href="/geo-for/nextjs/" class="text-brand-400 hover:underline">GEO for Next.js</a> — other platform guides</li>
+        <li><a href="/blog/geo-metrics-2026/" class="text-brand-400 hover:underline">GEO metrics that matter in 2026</a> — what to track after you deploy</li>
+        <li><a href="/blog/geo-maturity-model-2026/" class="text-brand-400 hover:underline">The 5-stage GEO maturity model</a> — where a typical WordPress site sits</li>
+        <li><a href="/blog/eeat-signals-ai-search/" class="text-brand-400 hover:underline">E-E-A-T signals for AI search</a> — author, About, and trust pages</li>
+        <li><a href="/blog/geo-citation-optimization/" class="text-brand-400 hover:underline">GEO citation optimization</a> — the practice behind the statistics</li>
+        <li><a href="/blog/ai-search-engine-list/" class="text-brand-400 hover:underline">The 2026 AI crawler list</a> — every engine and its user-agent</li>
+        <li><a href="/blog/geo-vs-seo/" class="text-brand-400 hover:underline">GEO vs SEO</a> — how they differ and work together</li>
+        <li><a href="/blog/geoscore-v1-9-live-badges-stack-detection/" class="text-brand-400 hover:underline">GeoScore v1.9 release notes</a> — live score badges and stack detection</li>
+        <li><a href="/methodology/" class="text-brand-400 hover:underline">How GeoScore scores a site</a> — the 11 dimensions and weights</li>
+        <li><a href="/blog/enterprise-geo-china-kimi-doubao-metaso/" class="text-brand-400 hover:underline">GEO in China: Kimi, Doubao, and Metaso</a> — the Chinese AI search landscape</li>
+        <li><a href="/blog/ai-crawler-robots-txt-templates/" class="text-brand-400 hover:underline">AI crawler robots.txt templates</a> — copy-paste allow rules for Yoast and Rank Math</li>
+        <li><a href="/" class="text-brand-400 hover:underline">Run a free audit on geoscore.help</a> — check this site in 30 seconds</li>
+      </ul>
     </div>
   </section>
 </Layout>

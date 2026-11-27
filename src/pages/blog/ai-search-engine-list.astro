@@ -2,7 +2,7 @@
 import Layout from '../../layouts/Layout.astro';
 ---
 <Layout title="AI Search Engine List 2026: All AI Crawlers & Bots | GeoScore"
-  description="Complete 2026 directory of AI search engines and bots—GPTBot, OAI-SearchBot, ClaudeBot, PerplexityBot, DeepSeekBot, Google-Extended, and Applebot—and how to allow them."
+  description="Complete 2026 directory of AI search engines and bots— GPTBot, OAI-SearchBot, ClaudeBot, PerplexityBot, DeepSeekBot, Google-Extended, and Applebot— and how to allow them."
   schema={{
     '@context': 'https://schema.org',
     '@type': 'Article',
@@ -30,8 +30,7 @@ import Layout from '../../layouts/Layout.astro';
           AI search engines are reshaping how users find information online. But before they can cite your website, <strong class="text-white">they need to crawl it</strong>. Each AI engine has its own crawler with a unique user-agent string.
         </p>
         <p class="text-gray-400">
-          This 2026 guide lists every major AI search engine, its crawler, user data, and what you need to do to make sure your site is accessible to them. We've added four new crawlers this year: DeepSeekBot, Meta-ExternalAgent, Applebot (Apple Intelligence), and cohere-ai.
-          This 2026 guide lists every major AI search engine, its crawler, user data, and what you need to do to make sure your site is accessible to them. We've added four new crawlers this year: DeepSeekBot, Meta-ExternalAgent, Applebot (Apple Intelligence), and cohere-ai. For ready-to-copy rules, see the <a href="/blog/ai-crawler-robots-txt-templates/" class="text-brand-500 hover:underline">AI crawler robots.txt templates</a>.
+          This 2026 guide lists every major AI search engine, its crawler, user data, and what you need to do to make sure your site is accessible to them. We've added four new crawlers this year: DeepSeekBot, Meta-ExternalAgent, Applebot (Apple Intelligence), and cohere-ai. For ready-to-copy rules, see the <a href="/blog/ai-crawler-robots-txt-templates/" class="text-brand-500 hover:underline">AI crawler robots.txt templates</a>, and to see whether your own site lets them in, run the <a href="/tools/robots-txt-ai-checker/" class="text-brand-500 hover:underline">robots.txt AI checker</a>.
         </p>
       </div>
 
@@ -350,6 +349,25 @@ grep -ioE "GPTBot|ClaudeBot|PerplexityBot|Google-Extended|CCBot|Bytespider|DeepS
       </div>
 
       <div class="card p-8 mb-6">
+        <h2 class="text-xl font-bold mb-4">How to tell a real AI crawler from a fake one</h2>
+        <p class="text-gray-400 mb-3">
+          A user-agent string is just a header. Anything can send it. On our own domain, most of the requests that claimed to be <code class="text-geo-400">Googlebot</code> turned out not to be, which means a log file filtered only by user-agent will overstate real crawler traffic.
+        </p>
+        <p class="text-gray-400 mb-3">
+          We measured this on our own domain. Filtering Cloudflare's request analytics by <code class="text-geo-400">Path = /sitemap.xml</code> and <code class="text-geo-400">User-Agent contains Googlebot</code> returned 25 requests over 7 days. Adding the ASN dimension (<code class="text-geo-400">AS15169</code>, Google LLC) is what separates genuine crawls from forged ones — and the 4xx responses on that path came from the forged set, never from the real one. Genuine hits arrived from <code class="text-geo-400">66.249.64.0/20</code>, the documented Googlebot range.
+        </p>
+        <p class="text-gray-400 mb-3"><strong class="text-white">Three checks that actually work:</strong></p>
+        <ul class="space-y-2 text-gray-400 mb-3">
+          <li>• <strong class="text-white">Reverse DNS.</strong> Resolve the client IP to a hostname and confirm it ends in the engine's own domain before trusting the user-agent.</li>
+          <li>• <strong class="text-white">Published IP ranges.</strong> OpenAI, Google and others publish JSON lists of their egress ranges. Match the peer address against them.</li>
+          <li>• <strong class="text-white">ASN filtering in your CDN.</strong> If your edge provider exposes an ASN dimension, filter on it directly instead of on the string.</li>
+        </ul>
+        <p class="text-gray-400 text-sm">
+          This matters for GEO specifically because the question you are trying to answer is "did an AI engine actually read my page?" A forged request answers that question wrongly. For the wider method, see <a href="/methodology/" class="text-brand-400 hover:underline">how GeoScore scores a site</a> and <a href="/blog/geo-tracking-ai-visibility/" class="text-brand-400 hover:underline">tracking AI visibility</a>.
+        </p>
+      </div>
+
+      <div class="card p-8 mb-6">
         <h2 class="text-xl font-bold mb-4">Should You Allow All AI Crawlers?</h2>
         <p class="text-gray-400 mb-3">
           For most websites, the answer is <strong class="text-white">yes</strong>. Allowing AI crawlers increases your chances of being cited in AI answers, which drives brand awareness and traffic.
@@ -400,6 +418,35 @@ Disallow: /private/</pre>
       <div class="flex flex-wrap gap-3 mt-8">
         <a href="/blog/llms-txt-ultimate-guide/" class="px-4 py-2 rounded-lg text-sm bg-white/5 hover:bg-white/10 transition">← llms.txt Ultimate Guide</a>
         <a href="/blog/what-is-geo/" class="px-4 py-2 rounded-lg text-sm bg-white/5 hover:bg-white/10 transition">What is GEO? →</a>
+        <a href="/blog/ai-crawler-robots-txt-templates/" class="px-4 py-2 rounded-lg text-sm bg-white/5 hover:bg-white/10 transition">robots.txt templates</a>
+        <a href="/tools/robots-txt-ai-checker/" class="px-4 py-2 rounded-lg text-sm bg-white/5 hover:bg-white/10 transition">robots.txt AI checker</a>
+        <a href="/blog/enterprise-geo-china-kimi-doubao-metaso/" class="px-4 py-2 rounded-lg text-sm bg-white/5 hover:bg-white/10 transition">Enterprise GEO in China</a>
+        <a href="/blog/auditing-343-websites/" class="px-4 py-2 rounded-lg text-sm bg-white/5 hover:bg-white/10 transition">324-site study</a>
+        <a href="/blog/json-ld-structured-data-ai-search/" class="px-4 py-2 rounded-lg text-sm bg-white/5 hover:bg-white/10 transition">JSON-LD for AI search</a>
+      </div>
+
+      <div class="card p-6 sm:p-8 mb-6">
+        <h2 class="text-xl font-bold mb-4 text-white">Related reading</h2>
+        <ul class="space-y-2 text-sm text-gray-300">
+          <li><a href="/blog/llms-txt-ultimate-guide/" class="text-brand-400 hover:underline">The ultimate llms.txt guide</a></li>
+          <li><a href="/blog/ai-crawler-robots-txt-templates/" class="text-brand-400 hover:underline">AI crawler robots.txt templates</a></li>
+          <li><a href="/blog/json-ld-structured-data-ai-search/" class="text-brand-400 hover:underline">JSON-LD structured data for AI search</a></li>
+          <li><a href="/blog/geo-metrics-2026/" class="text-brand-400 hover:underline">GEO metrics that matter in 2026</a></li>
+          <li><a href="/blog/geo-maturity-model-2026/" class="text-brand-400 hover:underline">The 5-stage GEO maturity model</a></li>
+          <li><a href="/blog/what-is-geo/" class="text-brand-400 hover:underline">What is GEO?</a> - the complete primer</li>
+          <li><a href="/blog/why-doesnt-chatgpt-cite-my-website/" class="text-brand-400 hover:underline">Why doesn't ChatGPT cite my website?</a></li>
+          <li><a href="/blog/auditing-343-websites/" class="text-brand-400 hover:underline">The 324-site study</a></li>
+          <li><a href="/blog/geo-vs-seo/" class="text-brand-400 hover:underline">GEO vs SEO</a></li>
+          <li><a href="/blog/eeat-signals-ai-search/" class="text-brand-400 hover:underline">E-E-A-T signals for AI search</a></li>
+          <li><a href="/blog/geo-citation-optimization/" class="text-brand-400 hover:underline">GEO citation optimization</a></li>
+          <li><a href="/blog/enterprise-geo-china-kimi-doubao-metaso/" class="text-brand-400 hover:underline">Enterprise GEO in China</a></li>
+          <li><a href="/blog/geoscore-v1-9-live-badges-stack-detection/" class="text-brand-400 hover:underline">GeoScore v1.9 release notes</a></li>
+          <li><a href="/tools/ai-readiness-score/" class="text-brand-400 hover:underline">Free AI readiness score</a></li>
+          <li><a href="/tools/robots-txt-ai-checker/" class="text-brand-400 hover:underline">robots.txt AI checker</a></li>
+          <li><a href="/geo-for/wordpress/" class="text-brand-400 hover:underline">GEO for WordPress</a></li>
+          <li><a href="/methodology/" class="text-brand-400 hover:underline">How GeoScore scores a site</a></li>
+          <li><a href="/" class="text-brand-400 hover:underline">Run a free audit on geoscore.help</a></li>
+        </ul>
       </div>
     </article>
   </section>

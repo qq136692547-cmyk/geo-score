@@ -39,6 +39,39 @@ import Layout from '../../layouts/Layout.astro';
       </div>
 
       <div class="card p-6 sm:p-8 mb-6">
+        <h2 class="text-xl font-bold mb-4 text-white">What the measured web actually looks like</h2>
+        <p class="text-gray-300 mb-4 text-sm leading-relaxed">
+          Before tuning a single enterprise page, it helps to know what the baseline is. We audited 324 production sites drawn from GitHub's highest-starred repositories with a live homepage, stratified across twelve star bands and deduplicated by registrable host. The audit ran the product's own analyzer in-process, so the numbers below are the same numbers GeoScore reports today.
+        </p>
+        <div class="overflow-x-auto mb-4">
+          <table class="w-full text-sm text-gray-300">
+            <thead>
+              <tr class="border-b border-gray-700">
+                <th scope="col" class="text-left py-2 pr-4">Metric</th>
+                <th scope="col" class="text-left py-2 pr-4">Value</th>
+                <th scope="col" class="text-left py-2">What it tells you</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="border-b border-gray-800"><td class="py-2 pr-4">Median score</td><td class="py-2 pr-4 text-geo-400 font-mono">41 / 100</td><td class="py-2 text-gray-400">The typical production site is closer to Critical than to Good</td></tr>
+              <tr class="border-b border-gray-800"><td class="py-2 pr-4">Mean / max</td><td class="py-2 pr-4 text-geo-400 font-mono">43.4 / 80</td><td class="py-2 text-gray-400">Nobody in the sample reached 86+</td></tr>
+              <tr class="border-b border-gray-800"><td class="py-2 pr-4">Critical (&lt;36)</td><td class="py-2 pr-4 text-danger-400 font-mono">107 (33.0%)</td><td class="py-2 text-gray-400">A third of the audited production sites fail fundamentals</td></tr>
+              <tr class="border-b border-gray-800"><td class="py-2 pr-4">Publishes <code class="text-geo-400">llms.txt</code></td><td class="py-2 pr-4 text-geo-400 font-mono">78 (24.1%)</td><td class="py-2 text-gray-400">Three quarters still have no LLM entry point</td></tr>
+              <tr><td class="py-2 pr-4">Publishes <code class="text-geo-400">robots.txt</code></td><td class="py-2 pr-4 text-geo-400 font-mono">225 (69.4%)</td><td class="py-2 text-gray-400">Only 8 of those 225 (3.6%) block any AI crawler</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="p-4 rounded-xl bg-yellow-500/10 border border-yellow-500/30 text-sm mb-4">
+          <p class="text-gray-300 leading-relaxed">
+            <strong class="text-yellow-300">Read the llms.txt number carefully.</strong> Sites with an <code class="text-geo-400">llms.txt</code> average <strong class="text-white">60.3</strong> versus <strong class="text-white">38.0</strong> without — a 22.3 point gap. That is a correlation in a convenience sample, not a causal effect and not evidence of any citation benefit. Sites that bother to publish one differ in a dozen other ways. What it does prove is that the file is a reliable marker of a team that has actually thought about machine readers.
+          </p>
+        </div>
+        <p class="text-gray-400 text-sm leading-relaxed">
+          The practical takeaway for a Chinese enterprise site is uncomfortable but useful: <strong class="text-white">robots.txt is almost never the problem</strong>. Only 3.6% of sites that publish one block anything. The gap is in extractable content structure and verifiable entity metadata — the two things Pillars 1 and 4 below are about. Full methodology and raw data: <a href="/blog/auditing-343-websites/" class="text-brand-400 hover:underline">the 324-site study</a> and <a href="/methodology/" class="text-brand-400 hover:underline">how GeoScore scores a site</a>.
+        </p>
+      </div>
+
+      <div class="card p-6 sm:p-8 mb-6">
         <h2 class="text-xl font-bold mb-4 text-white">Understanding China's Big 5 AI Engines &amp; Crawler Ecosystem</h2>
         <p class="text-gray-300 mb-4 text-sm leading-relaxed">
           Each major domestic AI engine runs distinct ingestion pipelines, retrieval heuristics, and ranking models. Optimizing for this ecosystem requires understanding who is knocking on your server door:
@@ -302,6 +335,29 @@ Sitemap: https://example.com/sitemap.xml</pre>
             Explore Chrome Extension
           </a>
         </div>
+      </div>
+
+      <div class="card p-6 sm:p-8 mb-6">
+        <h2 class="text-xl font-bold mb-4 text-white">Related reading</h2>
+        <ul class="space-y-2 text-sm text-gray-300">
+          <li><a href="/blog/ai-search-engine-list/" class="text-brand-400 hover:underline">The 2026 AI crawler list</a> - every engine and its user-agent</li>
+          <li><a href="/blog/llms-txt-ultimate-guide/" class="text-brand-400 hover:underline">The ultimate llms.txt guide</a> - format, placement, and common mistakes</li>
+          <li><a href="/blog/json-ld-structured-data-ai-search/" class="text-brand-400 hover:underline">JSON-LD structured data for AI search</a></li>
+          <li><a href="/blog/geo-metrics-2026/" class="text-brand-400 hover:underline">GEO metrics that matter in 2026</a></li>
+          <li><a href="/blog/geo-maturity-model-2026/" class="text-brand-400 hover:underline">The 5-stage GEO maturity model</a></li>
+          <li><a href="/blog/auditing-343-websites/" class="text-brand-400 hover:underline">The 324-site study</a> - the data behind the tables above</li>
+          <li><a href="/blog/what-is-geo/" class="text-brand-400 hover:underline">What is GEO?</a> - the complete primer</li>
+          <li><a href="/tools/ai-readiness-score/" class="text-brand-400 hover:underline">Free AI readiness score</a> - run the same audit on your domain</li>
+          <li><a href="/geo-for/wordpress/" class="text-brand-400 hover:underline">GEO for WordPress</a> - platform guide</li>
+          <li><a href="/geo-for/shopify/" class="text-brand-400 hover:underline">GEO for Shopify</a> - platform guide</li>
+          <li><a href="/geo-for/nextjs/" class="text-brand-400 hover:underline">GEO for Next.js</a> - platform guide</li>
+          <li><a href="/methodology/" class="text-brand-400 hover:underline">How GeoScore scores a site</a> - the 11 dimensions and weights</li>
+          <li><a href="/" class="text-brand-400 hover:underline">Run a free audit on geoscore.help</a></li>
+          <li><a href="/blog/geo-vs-seo/" class="text-brand-400 hover:underline">GEO vs SEO</a> - how they differ and work together</li>
+          <li><a href="/blog/eeat-signals-ai-search/" class="text-brand-400 hover:underline">E-E-A-T signals for AI search</a></li>
+          <li><a href="/blog/geo-citation-optimization/" class="text-brand-400 hover:underline">GEO citation optimization</a></li>
+          <li><a href="/blog/geoscore-v1-9-live-badges-stack-detection/" class="text-brand-400 hover:underline">GeoScore v1.9 release notes</a> - live score badges and stack detection</li>
+        </ul>
       </div>
     </article>
   </section>

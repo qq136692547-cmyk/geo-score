@@ -148,7 +148,7 @@ import Layout from '../../layouts/Layout.astro';
           <div class="p-4 rounded-xl bg-gray-900/60 border border-gray-800">
             <h3 class="font-bold text-geo-400 mb-1">Full 6-Endpoint Silent Background Audit (Extension v1.9.0)</h3>
             <p class="text-gray-400 leading-relaxed">
-              Previously, silent toolbar badge checks only sampled a subset of discovery files, which could under-report scores compared to opening the Side Panel. In v1.9.0, the MV3 service worker checks all six non-HTML discovery endpoints—<code class="text-gray-300">robots.txt</code>, <code class="text-gray-300">llms.txt</code>, <code class="text-gray-300">sitemap.xml</code>, <code class="text-gray-300">/ai/summary.json</code>, <code class="text-gray-300">/ai/faq.json</code>, and <code class="text-gray-300">/.well-known/ai-plugin.json</code>—so your toolbar badge score matches the full Side Panel report.
+              Previously, silent toolbar badge checks only sampled a subset of discovery files, which could under-report scores compared to opening the Side Panel. In v1.9.0, the MV3 service worker checks all six non-HTML discovery endpoints —<code class="text-gray-300">robots.txt</code>, <code class="text-gray-300">llms.txt</code>, <code class="text-gray-300">sitemap.xml</code>, <code class="text-gray-300">/ai/summary.json</code>, <code class="text-gray-300">/ai/faq.json</code>, and <code class="text-gray-300">/.well-known/ai-plugin.json</code>— so your toolbar badge score matches the full Side Panel report.
             </p>
           </div>
           <div class="p-4 rounded-xl bg-gray-900/60 border border-gray-800">
@@ -158,6 +158,36 @@ import Layout from '../../layouts/Layout.astro';
             </p>
           </div>
         </div>
+      </div>
+
+      <div class="card p-6 sm:p-8 mb-6">
+        <h2 class="text-xl font-bold mb-4 text-white">Why a public score badge is a trust signal</h2>
+        <p class="text-gray-300 text-sm mb-4 leading-relaxed">
+          A badge only means something if the number behind it is honest. In our <a href="/blog/auditing-343-websites/" class="text-brand-400 hover:underline">audit of 324 real websites</a>, the median site scored <strong class="text-white">41/100</strong> (mean 43.4, max 80), and <strong class="text-white">107 of 324 sites (33.0%)</strong> landed in the Critical band (below 36). Most of the web scores Basic or Critical — which is exactly why a publicly verifiable score badge stands out.
+        </p>
+        <div class="overflow-x-auto mb-4">
+          <table class="w-full text-sm text-gray-300">
+            <thead>
+              <tr class="border-b border-gray-700">
+                <th scope="col" class="text-left py-2 px-2">Measured figure (n=324 audit)</th>
+                <th scope="col" class="text-left py-2 px-2">Value</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="border-b border-gray-800"><td class="py-2 px-2">Median score</td><td class="py-2 px-2">41/100 (mean 43.4, max 80)</td></tr>
+              <tr class="border-b border-gray-800"><td class="py-2 px-2">Sites in the Critical band (&lt;36)</td><td class="py-2 px-2">107 of 324 (33.0%)</td></tr>
+              <tr class="border-b border-gray-800"><td class="py-2 px-2">Sites publishing an llms.txt</td><td class="py-2 px-2">78 of 324 (24.1%)</td></tr>
+              <tr class="border-b border-gray-800"><td class="py-2 px-2">Mean score with vs. without llms.txt</td><td class="py-2 px-2">60.3 vs. 38.0 — a 22.3 point gap*</td></tr>
+              <tr><td class="py-2 px-2">Sites blocking any AI crawler in robots.txt</td><td class="py-2 px-2">8 of 225 (3.6%)</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="text-gray-400 text-xs mb-4">
+          * This is a correlation observed in a convenience sample of audited sites, not evidence of causation — sites that publish an llms.txt may differ in many other ways. No citation gain or traffic gain is claimed here; a static audit cannot observe what an AI engine chooses to cite.
+        </p>
+        <p class="text-gray-300 text-sm leading-relaxed">
+          Because most sites score Basic or Critical, a badge that anyone can verify by re-running the audit is a genuine differentiator: it shows your site was measured, and it invites the scrutiny that makes the number trustworthy.
+        </p>
       </div>
 
       <div class="card p-6 sm:p-8 mb-6">
@@ -203,6 +233,22 @@ import Layout from '../../layouts/Layout.astro';
             Chrome Extension v1.9.0
           </a>
         </div>
+      </div>
+
+      <div class="card p-6 sm:p-8 mb-6">
+        <h2 class="text-xl font-bold mb-4 text-white">Related reading</h2>
+        <ul class="space-y-2 text-sm text-gray-300">
+          <li><a href="/blog/what-is-geo/" class="text-brand-400 hover:underline">What is GEO? Generative Engine Optimization explained</a></li>
+          <li><a href="/blog/llms-txt-ultimate-guide/" class="text-brand-400 hover:underline">The llms.txt ultimate guide</a></li>
+          <li><a href="/blog/json-ld-structured-data-ai-search/" class="text-brand-400 hover:underline">JSON-LD structured data for AI search</a></li>
+          <li><a href="/blog/geo-metrics-2026/" class="text-brand-400 hover:underline">GEO metrics for 2026</a></li>
+          <li><a href="/blog/geo-maturity-model-2026/" class="text-brand-400 hover:underline">The GEO maturity model (2026)</a></li>
+          <li><a href="/blog/auditing-343-websites/" class="text-brand-400 hover:underline">Auditing 324 real websites for AI readiness</a></li>
+          <li><a href="/tools/ai-readiness-score/" class="text-brand-400 hover:underline">AI Readiness Score tool</a></li>
+          <li><a href="/geo-for/shopify/" class="text-brand-400 hover:underline">GEO for Shopify</a></li>
+          <li><a href="/geo-for/wordpress/" class="text-brand-400 hover:underline">GEO for WordPress</a></li>
+          <li><a href="/geo-for/nextjs/" class="text-brand-400 hover:underline">GEO for Next.js</a></li>
+        </ul>
       </div>
     </article>
   </section>
