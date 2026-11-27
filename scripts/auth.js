@@ -4,7 +4,7 @@
  * Auto-injected into all pages via Layout.astro.
  */
 
-const API_BASE = 'https://geoscore-payments.geo-score.workers.dev';
+const API_BASE = 'https://api.geoscore.help';
 
   var IS_ZH = (document.documentElement.lang || 'en').toLowerCase().indexOf('zh') === 0;
   function t(en, zh) { return IS_ZH ? zh : en; }
